@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter_html/style.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/api.dart';
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class HymnList extends StatefulWidget {
   @override
@@ -31,27 +35,49 @@ class _HymnListState extends State<HymnList> {
     Hymn hymn = _filtered_hymns[index];
 
     return new Container(
-      margin: const EdgeInsets.only(top: 5.0),
+      //margin: const EdgeInsets.only(top: 5.0),
       child: new Card(
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             new Container (
               decoration: new BoxDecoration (
-                  color: hymn.version == 'new' ? Colors.grey[700] : Colors.grey[400]
-              ),
-              child:  new ListTile(
-                    //onTap: //TODO
-                    title:  new Text(
-                      hymn.number.toString() + '. '  +hymn.title,
-                      style: new TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
-                    ),
-                    subtitle: new Text(hymn.version.toUpperCase() + " Hymnal"),
-                    //isThreeLine: true, // Less Cramped Tile
-                    dense: false, // Less Cramped Tile
-
+                  color: hymn.version == 'new' ? Colors.white : Colors.grey[300],
+                  border: Border.all(
+                      color: Colors.black,
+                      width: 2.0
                   ),
-            )
+              ),
+              padding: EdgeInsets.all(0.0),
+              child: ListTile(
+
+                        title:  new Text(
+                          hymn.number.toString() + '. '  +hymn.title,
+                          style: new TextStyle(
+                              fontWeight: FontWeight.bold, 
+                              color: Colors.black54,
+                              fontSize: 16.0,
+                          ),
+                        ),
+                        leading: SvgPicture.asset(
+                          hymn.version == 'new' ? "assets/lettern.svg" : "assets/lettero.svg",
+                          semanticsLabel: 'Letter N/O',
+                          width: 32,
+                        ),
+                        //subtitle: new Text(hymn.version.toUpperCase() + " Hymnal"),
+                        //isThreeLine: true, // Less Cramped Tile
+                        contentPadding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
+                        dense: true, // Less Cramped Tile
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HymnPage(hymn: _filtered_hymns[index]),
+                            ),
+                          );
+                        },
+                      ),
+              ),
           ],
         ),
       ),
@@ -62,9 +88,9 @@ class _HymnListState extends State<HymnList> {
     return new TextField(
       style: TextStyle(color: Colors.black),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(10.0),
-        hintText: "Search Hymns",
-        hintStyle: TextStyle(fontSize: 20.0, color: Colors.lime),
+        contentPadding: EdgeInsets.all(1.0),
+        hintText: "Tap to Search Hymns",
+        hintStyle: TextStyle(fontSize: 30.0, color: Color(0xff00FF00)),
         border: OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.red,
@@ -72,7 +98,7 @@ class _HymnListState extends State<HymnList> {
         ),
         prefixIcon: const Icon(
           Icons.search,
-          color: Colors.lime,
+          color: Color(0xff00FF00),
         ),
 
       ),
