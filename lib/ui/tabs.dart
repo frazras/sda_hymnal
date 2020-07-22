@@ -9,16 +9,28 @@ class Tabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.keyboard)),
-                Tab(icon: Icon(Icons.search)),
-                Tab(icon: Icon(Icons.settings)),
-              ],
-            ),
+                Tab(
+                  child: Row(
+                          children: <Widget>[
+                            Icon(Icons.keyboard),
+                            Text(" Numbers"),
+                          ],
+                        ),
+                ),
+                Tab(
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.search),
+                        Text(" Search"),
+                      ],
+                    ),
+                  ),
+]           ),
             title: Container(
               padding: EdgeInsets.only(top: 0.0),
               child: FittedBox(
@@ -35,7 +47,7 @@ class Tabs extends StatelessWidget {
             children: [
               Buttons(),
               HymnList(),
-              Icon(Icons.directions_bike),
+              //Icon(Icons.directions_bike),
             ],
           ),
         ),

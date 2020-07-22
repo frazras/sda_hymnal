@@ -10,10 +10,12 @@ class Buttons extends StatefulWidget {
 
 class _ButtonsState extends State<Buttons> {
   String displayNumber = "";
+  bool disabled;
   String oldTitle ="";
   String newTitle = "";
   List<Hymn> _hymns_new = [];
   List<Hymn> _hymns_old = [];
+  var disabledButtons = ["OLD»", "NEW»"];
 
   @override
   void initState() {
@@ -30,19 +32,19 @@ class _ButtonsState extends State<Buttons> {
       _hymns_old = HymnApi.allHymnsFromJson(fileData, 'old');
     });
   }
-  writeToScreen(text){
+  writeToScreen(buttonData){
     int num;
     String inp = "";
     try {
-      inp = text.data;
+      inp = buttonData.data;
     }
     catch (e){}
     try {
-        num = int.parse(text.data);
+        num = int.parse(buttonData.data);
     }
     catch (e){}
     try {
-      num = text.icon.codePoint;
+      num = buttonData.icon.codePoint;
     }
     catch (e) {}
 
@@ -51,7 +53,8 @@ class _ButtonsState extends State<Buttons> {
         context,
         MaterialPageRoute(
           builder: (context) => HymnPage(
-              hymn: _hymns_new[int.parse(displayNumber) - 1]
+              hymn: _hymns_new[int.parse(displayNumber) - 1],
+              hymns: _hymns_new,
           ),
         ),
       );
@@ -62,7 +65,8 @@ class _ButtonsState extends State<Buttons> {
         context,
         MaterialPageRoute(
           builder: (context) => HymnPage(
-              hymn: _hymns_old[int.parse(displayNumber) - 1]
+              hymn: _hymns_old[int.parse(displayNumber) - 1],
+              hymns: _hymns_old,
           ),
         ),
       );
@@ -73,6 +77,7 @@ class _ButtonsState extends State<Buttons> {
         displayNumber = "";
         newTitle = "";
         oldTitle = "";
+        disabledButtons.addAll(["OLD»", "NEW»"]);
       });
       return;
     }
@@ -83,9 +88,11 @@ class _ButtonsState extends State<Buttons> {
         if (displayNumber != "") {
           newTitle = _hymns_new[int.parse(displayNumber) - 1].title;
           oldTitle = _hymns_old[int.parse(displayNumber) - 1].title;
+          disabledButtons.remove("NEW»");
         } else {
           newTitle = "";
           oldTitle = "";
+          disabledButtons.addAll(["OLD»", "NEW»"]);
         }
       });
       return;
@@ -93,10 +100,24 @@ class _ButtonsState extends State<Buttons> {
     int number = int.tryParse(displayNumber) ?? 0;
 
     setState(() {
-      if (displayNumber.length < 3 && int.parse(displayNumber + inp) < 704){
+      int requestedNum = int.parse(displayNumber + inp);
+      const old_max = 703;
+      const new_max = 695;
+      if (displayNumber.length < 3 && requestedNum <= old_max){
         displayNumber += inp;
-        newTitle = _hymns_new[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
+
+        if (requestedNum > new_max) {
+          newTitle = "...";
+          disabledButtons.add("NEW»");
+
+        }
+        else {
+          newTitle = _hymns_new[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
+          disabledButtons.remove("NEW»");
+        }
+
         oldTitle = _hymns_old[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
+        disabledButtons.remove("OLD»");
       }
 
     });
@@ -105,14 +126,14 @@ class _ButtonsState extends State<Buttons> {
   Widget _buttonIcon(icon){
     return _button(Icon(
       icon,
-      size: 48,
+      size: 24,
     ));
   }
   Widget _buttonText(text){
     return _button(Text(
       text,
       style: TextStyle(
-        fontSize: 40,
+        fontSize: 20,
         fontWeight: FontWeight.bold
       ),
     ));
@@ -124,8 +145,11 @@ class _ButtonsState extends State<Buttons> {
         margin: const EdgeInsets.all(5.0),
         child :OutlineButton (
             child: data,
-            onPressed: () => writeToScreen(data),
+            onPressed: isDisabled(data) ? null : () => writeToScreen(data),
             color: Colors.red,
+            disabledBorderColor: Colors.grey[300],
+            disabledTextColor: Colors.grey[300],
+
             textColor: Colors.black,
             padding: EdgeInsets.all(10.0),
             borderSide: BorderSide(width: 2.0, color: Colors.black),
@@ -133,6 +157,26 @@ class _ButtonsState extends State<Buttons> {
       )
     );
   }
+
+  bool isDisabled(buttonData) {
+    int num;
+    String inp = "";
+    try {
+      inp = buttonData.data;
+    }
+    catch (e){}
+    try {
+      num = int.parse(buttonData.data);
+    }
+    catch (e){}
+    try {
+      num = buttonData.icon.codePoint;
+    }
+    catch (e) {}
+
+    return disabledButtons.indexWhere((item) => item == inp) >= 0;
+  }
+
   Widget _buildButtons() {
     return new Container(
       margin: const EdgeInsets.fromLTRB(
@@ -152,7 +196,7 @@ class _ButtonsState extends State<Buttons> {
                 displayNumber,
                 style: TextStyle(
                     color: Colors.black,
-                    fontSize: 40,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold
                 ),
               ),
@@ -192,7 +236,7 @@ class _ButtonsState extends State<Buttons> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(2.0),
                     child: Text(
                       "NEW: " + displayNumber + " " + newTitle,
                       style: TextStyle(
@@ -204,7 +248,7 @@ class _ButtonsState extends State<Buttons> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(10.0),
+                  padding: EdgeInsets.all(2.0),
                   child: Text(
                     "OLD: " + displayNumber + " " + oldTitle,
                     //"OLD: " + displayNumber + " " + oldTitle,
@@ -226,6 +270,7 @@ class _ButtonsState extends State<Buttons> {
 
   @override
   Widget build(BuildContext context) {
+    FocusScope.of(context).unfocus(); //disable keyboard.
     return new Scaffold(
       body: _buildButtons(),
     );

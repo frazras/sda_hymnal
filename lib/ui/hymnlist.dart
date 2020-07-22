@@ -6,6 +6,7 @@ import 'package:sdahymnal/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/cupertino.dart';
 
 
 class HymnList extends StatefulWidget {
@@ -16,6 +17,8 @@ class HymnList extends StatefulWidget {
 class _HymnListState extends State<HymnList> {
   List<Hymn> _hymns = [];
   List<Hymn> _filtered_hymns = [];
+  List<Hymn> _hymns_new = [];
+  List<Hymn> _hymns_old = [];
 
   @override
   void initState() {
@@ -28,6 +31,8 @@ class _HymnListState extends State<HymnList> {
     setState(() {
       _hymns = HymnApi.allHymnsFromJson(fileData);
       _filtered_hymns = _hymns;
+      _hymns_new = HymnApi.allHymnsFromJson(fileData, 'new');
+      _hymns_old = HymnApi.allHymnsFromJson(fileData, 'old');
     });
   }
 
@@ -72,7 +77,9 @@ class _HymnListState extends State<HymnList> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HymnPage(hymn: _filtered_hymns[index]),
+                              builder: (context) => HymnPage(hymn: _filtered_hymns[index],
+                                  hymns: _filtered_hymns[index].version == 'new' ?
+                                          _hymns_new : _hymns_old ),
                             ),
                           );
                         },
@@ -85,29 +92,37 @@ class _HymnListState extends State<HymnList> {
   }
 
   Widget _getAppTitleWidget() {
-    return new TextField(
-      style: TextStyle(color: Colors.black),
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(1.0),
-        hintText: "Tap to Search Hymns",
-        hintStyle: TextStyle(fontSize: 30.0, color: Color(0xff00FF00)),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.red,
-          ),
+    return CupertinoTextField(
+      style: TextStyle(color: Colors.white, fontSize: 20.0),
+      placeholder: "Search Hymns",
+      placeholderStyle: TextStyle(fontSize: 20.0, color: Color(0xff00FF00)),
+      prefix: Container(
+        padding: EdgeInsets.only(left: 10.0),
+        child: Icon(
+          Icons.search,
+          color: Color(0xff00FF00),
+          size: 40,
         ),
+      ),
+      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+      /*decoration: BoxDecoration(
+        contentPadding: EdgeInsets.all(1.0),
+        hintText: "Search Hymns",
+        hintStyle: TextStyle(fontSize: 20.0, color: Color(0xff00FF00)),
+        border: OutlineInputBorder(),
         prefixIcon: const Icon(
           Icons.search,
           color: Color(0xff00FF00),
+          size: 40,
         ),
 
-      ),
+      ),*/
       onChanged: (query){
         setState(() {
           _filtered_hymns = _hymns
               .where((h) => h.title.toLowerCase().contains(query.toLowerCase())
-              || h.number.toString().contains(query.toLowerCase())
-              || h.body.toLowerCase().contains(query.toLowerCase())
+              || h.number.toString().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
+              || h.body.toLowerCase().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
           ).toList();
         });
       },
@@ -118,7 +133,7 @@ class _HymnListState extends State<HymnList> {
     return new Container(
       margin: const EdgeInsets.fromLTRB(
           8.0,  // A left margin of 8.0
-          56.0, // A top margin of 56.0
+          8.0, // A top margin of 56.0
           8.0,  // A right margin of 8.0
           0.0   // A bottom margin of 0.0
       ),
