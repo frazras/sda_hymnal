@@ -2,34 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:sdahymnal/ui/buttons.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sdahymnal/ui/settings.dart';
 
 
 class Tabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var _value = 0.0;
     return MaterialApp(
       home: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             bottom: TabBar(
               tabs: [
                 Tab(
-                  child: Row(
-                          children: <Widget>[
-                            Icon(Icons.keyboard),
-                            Text(" Numbers"),
-                          ],
-                        ),
-                ),
-                Tab(
-                    child: Row(
+                  child: FittedBox(fit:BoxFit.fitWidth,
+                      child:Row(
                       children: <Widget>[
-                        Icon(Icons.search),
-                        Text(" Search"),
+                        Icon(Icons.keyboard),
+                        Text(" Numbers"),
                       ],
                     ),
-                  ),
+                  )
+                ),
+                Tab(
+                  child: FittedBox(fit:BoxFit.fitWidth,
+                    child:Row(
+                      children: <Widget>[
+                        Icon(Icons.search),
+                        Text("Search"),
+                      ],
+                    ),
+                  )
+                ),
+                Tab(
+                  child: FittedBox(fit:BoxFit.fitWidth,
+                    child:Row(
+                      children: <Widget>[
+                        Icon(Icons.settings),
+                        Text("Settings"),
+                      ],
+                    ),
+                  )
+                ),
 ]           ),
             title: Container(
               padding: EdgeInsets.only(top: 0.0),
@@ -47,6 +63,7 @@ class Tabs extends StatelessWidget {
             children: [
               Buttons(),
               HymnList(),
+              Settings()
               //Icon(Icons.directions_bike),
             ],
           ),

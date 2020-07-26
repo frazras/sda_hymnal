@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_html/style.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/api.dart';

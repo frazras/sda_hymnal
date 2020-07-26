@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Buttons extends StatefulWidget {
   @override
@@ -16,15 +17,27 @@ class _ButtonsState extends State<Buttons> {
   List<Hymn> _hymns_new = [];
   List<Hymn> _hymns_old = [];
   var disabledButtons = ["OLD»", "NEW»"];
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<double> fontSizeValue;
 
   @override
   void initState() {
     super.initState();
     _loadHymns();
+    _loadFontSize();
     print("hymnsloaded");
     _buildButtons();
   }
 
+  _loadFontSize() async {
+    final prefs = await _prefs;
+    final double fs = prefs.getDouble('fontSize') ?? 18.0;
+    setState(() {
+      fontSizeValue = prefs.setDouble("fontSize", fs).then((bool success) {
+        return fs;
+      });
+    });
+  }
   _loadHymns() async {
     String fileData = await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
     setState(() {
@@ -123,20 +136,38 @@ class _ButtonsState extends State<Buttons> {
     });
 
   }
-  Widget _buttonIcon(icon){
-    return _button(Icon(
-      icon,
-      size: 24,
-    ));
+  Widget _buttonIcon(icon) {
+    return FutureBuilder(
+        future: fontSizeValue,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            double size = snapshot.data;
+            return _button(Icon(
+              icon,
+              size: size + 4.0,
+            ));
+          }
+        });
   }
   Widget _buttonText(text){
-    return _button(Text(
-      text,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold
-      ),
-    ));
+    return FutureBuilder(
+        future: fontSizeValue,
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            double size = snapshot.data;
+            return _button(Text(
+              text,
+              style: TextStyle(
+                  fontSize: size,
+                  fontWeight: FontWeight.bold
+              ),
+            ));
+          }
+        });
   }
 
   Widget _button(data) {
