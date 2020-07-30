@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/ui/donate.dart';
+import 'package:sdahymnal/ui/sp.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/about.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -40,7 +43,7 @@ class _SettingsState extends State<Settings> {
               onTap: () {
                 Navigator.push(
                     context,
-                    swipe('left', FontSizer())
+                    swipe('left', About())
                 );
               },
             ),
@@ -51,7 +54,7 @@ class _SettingsState extends State<Settings> {
               onTap: () {
                 Navigator.push(
                     context,
-                    swipe('left', FontSizer())
+                    swipe('left', Donate())
                 );
               },
             ),
@@ -62,7 +65,7 @@ class _SettingsState extends State<Settings> {
               onTap: () {
                 Navigator.push(
                     context,
-                    swipe('left', FontSizer())
+                    swipe('left', Sp())
                 );
               },
             )

@@ -5,6 +5,11 @@ import 'package:sdahymnal/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Buttons extends StatefulWidget {
+  final List<Hymn> hymnsNew;
+  final List<Hymn> hymnsOld;
+  
+  Buttons({Key key,@required this.hymnsOld, @required this.hymnsNew}) : super(key:key);
+  
   @override
   _ButtonsState createState() => new _ButtonsState();
 }
@@ -14,8 +19,6 @@ class _ButtonsState extends State<Buttons> {
   bool disabled;
   String oldTitle ="";
   String newTitle = "";
-  List<Hymn> _hymns_new = [];
-  List<Hymn> _hymns_old = [];
   var disabledButtons = ["OLD»", "NEW»"];
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Future<double> fontSizeValue;
@@ -23,9 +26,7 @@ class _ButtonsState extends State<Buttons> {
   @override
   void initState() {
     super.initState();
-    _loadHymns();
     _loadFontSize();
-    print("hymnsloaded");
     _buildButtons();
   }
 
@@ -38,13 +39,7 @@ class _ButtonsState extends State<Buttons> {
       });
     });
   }
-  _loadHymns() async {
-    String fileData = await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
-    setState(() {
-      _hymns_new = HymnApi.allHymnsFromJson(fileData, 'new');
-      _hymns_old = HymnApi.allHymnsFromJson(fileData, 'old');
-    });
-  }
+
   writeToScreen(buttonData){
     int num;
     String inp = "";
@@ -66,8 +61,8 @@ class _ButtonsState extends State<Buttons> {
         context,
         MaterialPageRoute(
           builder: (context) => HymnPage(
-              hymn: _hymns_new[int.parse(displayNumber) - 1],
-              hymns: _hymns_new,
+              hymn: widget.hymnsNew[int.parse(displayNumber) - 1],
+              hymns: widget.hymnsNew,
           ),
         ),
       );
@@ -78,8 +73,8 @@ class _ButtonsState extends State<Buttons> {
         context,
         MaterialPageRoute(
           builder: (context) => HymnPage(
-              hymn: _hymns_old[int.parse(displayNumber) - 1],
-              hymns: _hymns_old,
+              hymn: widget.hymnsOld[int.parse(displayNumber) - 1],
+              hymns: widget.hymnsOld,
           ),
         ),
       );
@@ -95,12 +90,13 @@ class _ButtonsState extends State<Buttons> {
       return;
     }
     print(num);
-    if (num == 57674 && displayNumber.length > 0){
+    if (num == 57674){
+      if (displayNumber.length < 1) return;
       setState(() {
         displayNumber = displayNumber.substring(0, displayNumber.length - 1);
         if (displayNumber != "") {
-          newTitle = _hymns_new[int.parse(displayNumber) - 1].title;
-          oldTitle = _hymns_old[int.parse(displayNumber) - 1].title;
+          newTitle = widget.hymnsNew[int.parse(displayNumber) - 1].title;
+          oldTitle = widget.hymnsOld[int.parse(displayNumber) - 1].title;
           disabledButtons.remove("NEW»");
         } else {
           newTitle = "";
@@ -125,11 +121,11 @@ class _ButtonsState extends State<Buttons> {
 
         }
         else {
-          newTitle = _hymns_new[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
+          newTitle = widget.hymnsNew[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
           disabledButtons.remove("NEW»");
         }
 
-        oldTitle = _hymns_old[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
+        oldTitle = widget.hymnsOld[int.parse(displayNumber == "" ? num : displayNumber) - 1].title;
         disabledButtons.remove("OLD»");
       }
 
@@ -146,7 +142,7 @@ class _ButtonsState extends State<Buttons> {
             double size = snapshot.data;
             return _button(Icon(
               icon,
-              size: size + 4.0,
+              size: (size ?? 18.0) + 4.0,
             ));
           }
         });
@@ -223,14 +219,23 @@ class _ButtonsState extends State<Buttons> {
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(
-                displayNumber,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                ),
-              ),
+              child: FutureBuilder(
+              future: fontSizeValue,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  double size = snapshot.data;
+                  return Text(
+                    displayNumber,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: size,
+                        fontWeight: FontWeight.bold
+                    ),
+                  );
+                }
+              }),
             ),
             Row(
               children: <Widget>[

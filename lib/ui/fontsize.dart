@@ -72,7 +72,7 @@ class _FontSizerState extends State<FontSizer> {
                           ),
                         ),
                         child: Slider(
-                          value: x,
+                          value: x ?? 18,
                           min: 16,
                           max: 30,
                           divisions: 14,

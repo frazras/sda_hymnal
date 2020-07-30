@@ -31,9 +31,12 @@ dependencies:
   flutter_html: ^1.0.0-pre.1
   flutter_svg: ^0.17.4
   flutter_launcher_icons: ^0.7.5
-  page_turn: ^1.0.1
   settings_ui: ^0.3.0
   shared_preferences: ^0.5.8
+  url_launcher: ^5.5.0
+  auto_size_text: ^2.1.0
+
+
 
 
 flutter_icons:
@@ -92,3 +95,7 @@ flutter:
     - assets/lettern.svg
     - assets/lettero.svg
     - assets/icon.png
+    - assets/flag.png
+    - assets/sp.png
+    - assets/rohan.jpg
+    - assets/donate.jpg

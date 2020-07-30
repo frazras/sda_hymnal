@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'package:flutter_html/style.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sdahymnal/models/hymn.dart';
-import 'package:sdahymnal/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,37 +8,31 @@ import 'package:flutter/cupertino.dart';
 
 
 class HymnList extends StatefulWidget {
+  final List<Hymn> hymns;
+  final List<Hymn> hymnsNew;
+  final List<Hymn> hymnsOld;
+
+  HymnList({Key key, @required this.hymns, @required this.hymnsOld, @required this.hymnsNew}) : super(key:key);
+
   @override
   _HymnListState createState() => new _HymnListState();
 }
 
 class _HymnListState extends State<HymnList> {
-  List<Hymn> _hymns = [];
-  List<Hymn> _filtered_hymns = [];
-  List<Hymn> _hymns_new = [];
-  List<Hymn> _hymns_old = [];
+
+  List<Hymn> _filteredHymns;
+  String filter = "ALL";
 
   @override
   void initState() {
     super.initState();
-    _loadHymns();
-  }
-
-  _loadHymns() async {
-    String fileData = await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
-    setState(() {
-      _hymns = HymnApi.allHymnsFromJson(fileData);
-      _filtered_hymns = _hymns;
-      _hymns_new = HymnApi.allHymnsFromJson(fileData, 'new');
-      _hymns_old = HymnApi.allHymnsFromJson(fileData, 'old');
-    });
+    _filteredHymns = widget.hymns;
   }
 
   Widget _buildHymnItem(BuildContext context, int index) {
-    Hymn hymn = _filtered_hymns[index];
+    Hymn hymn = _filteredHymns[index];
 
     return new Container(
-      //margin: const EdgeInsets.only(top: 5.0),
       child: new Card(
         child: new Column(
           mainAxisSize: MainAxisSize.min,
@@ -76,9 +69,9 @@ class _HymnListState extends State<HymnList> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HymnPage(hymn: _filtered_hymns[index],
-                                  hymns: _filtered_hymns[index].version == 'new' ?
-                                          _hymns_new : _hymns_old ),
+                              builder: (context) => HymnPage(hymn: _filteredHymns[index],
+                                  hymns: _filteredHymns[index].version == 'new' ?
+                                          widget.hymnsNew : widget.hymnsOld ),
                             ),
                           );
                         },
@@ -104,21 +97,11 @@ class _HymnListState extends State<HymnList> {
         ),
       ),
       padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-      /*decoration: BoxDecoration(
-        contentPadding: EdgeInsets.all(1.0),
-        hintText: "Search Hymns",
-        hintStyle: TextStyle(fontSize: 20.0, color: Color(0xff00FF00)),
-        border: OutlineInputBorder(),
-        prefixIcon: const Icon(
-          Icons.search,
-          color: Color(0xff00FF00),
-          size: 40,
-        ),
-
-      ),*/
       onChanged: (query){
+        var currentHymns = (filter == "OLD") ? widget.hymnsOld :
+                          (filter == "NEW") ? widget.hymnsNew : widget.hymns;
         setState(() {
-          _filtered_hymns = _hymns
+          _filteredHymns = currentHymns
               .where((h) => h.title.toLowerCase().contains(query.toLowerCase())
               || h.number.toString().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
               || h.body.toLowerCase().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
@@ -140,7 +123,49 @@ class _HymnListState extends State<HymnList> {
         // A column widget can have several
         // widgets that are placed in a top down fashion
         children: <Widget>[
-          _getAppTitleWidget(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: _getAppTitleWidget(),
+              ),
+              Container(
+                width: 50.0,
+                margin: EdgeInsets.only(left:5.0),
+                child: RaisedButton(
+                  color: Colors.black,
+                  padding: EdgeInsets.all(4),
+
+                  onPressed: () {
+                    setState(() {
+                      switch (filter) {
+                        case "ALL":
+                          filter = "OLD";
+                          _filteredHymns =  widget.hymnsOld;
+                          break;
+                        case "OLD":
+                          filter = "NEW";
+                          _filteredHymns =  widget.hymnsNew;
+                          break;
+                        case "NEW":
+                          filter = "ALL";
+                          _filteredHymns =  widget.hymns;
+                          break;
+                      }
+                    });
+                  },
+                  child: FittedBox(fit:BoxFit.fitWidth,
+                    child: Column(
+                      children: <Widget>[
+                        Text(filter, style: TextStyle(fontSize: 16)),
+                        const Text('Hymns', style: TextStyle(fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           _getListViewWidget()
         ],
       ),
@@ -148,7 +173,6 @@ class _HymnListState extends State<HymnList> {
   }
 
   Future<Null> refresh() {
-    _loadHymns();
     return new Future<Null>.value();
   }
 
@@ -158,7 +182,7 @@ class _HymnListState extends State<HymnList> {
             onRefresh: refresh,
             child: new ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: _filtered_hymns.length,
+                itemCount: _filteredHymns.length,
                 itemBuilder: _buildHymnItem
             )
         )

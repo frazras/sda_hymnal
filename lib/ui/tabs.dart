@@ -1,11 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/ui/buttons.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sdahymnal/ui/settings.dart';
+import 'package:sdahymnal/services/api.dart';
 
 
-class Tabs extends StatelessWidget {
+class Tabs extends StatefulWidget {
+  @override
+  _TabsState createState() => _TabsState();
+}
+
+class _TabsState extends State<Tabs> {
+  List<Hymn> _hymns = [];
+  List<Hymn> _hymnsNew = [];
+  List<Hymn> _hymnsOld = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHymns();
+    print("Hymns Loaded");
+  }
+  _loadHymns() async {
+    String fileData = await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
+    setState(() {
+      _hymns = HymnApi.allHymnsFromJson(fileData);
+      _hymnsNew = _hymns.where((f) => f.version.contains('new')).toList();
+      _hymnsOld = _hymns.where((f) => f.version.contains('old')).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var _value = 0.0;
@@ -61,8 +87,8 @@ class Tabs extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Buttons(),
-              HymnList(),
+              Buttons(hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
+              HymnList(hymns: _hymns, hymnsOld:_hymnsOld, hymnsNew: _hymnsNew),
               Settings()
               //Icon(Icons.directions_bike),
             ],

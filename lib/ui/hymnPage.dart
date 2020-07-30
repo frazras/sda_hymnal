@@ -97,9 +97,10 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   PageRouteBuilder swipe(direction){
+    double move = direction == "left" ? 1.0 : -1.0;
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => HymnPage(
-        hymn: widget.hymns[widget.hymn.number],
+        hymn: widget.hymns[widget.hymn.number - (direction == "left" ? 0 : 2)],
         hymns: widget.hymns,
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
