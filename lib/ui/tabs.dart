@@ -81,6 +81,7 @@ class _TabsState extends State<Tabs> {
                     "assets/logo.svg",
                     semanticsLabel: 'Hymnal Logo',
                     width: 900,
+                  height: 300,
                 ),
               ),
             ),

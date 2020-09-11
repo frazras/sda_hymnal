@@ -61,7 +61,6 @@ class _HymnListState extends State<HymnList> {
                           semanticsLabel: 'Letter N/O',
                           width: 32,
                         ),
-                        //subtitle: new Text(hymn.version.toUpperCase() + " Hymnal"),
                         //isThreeLine: true, // Less Cramped Tile
                         contentPadding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
                         dense: true, // Less Cramped Tile
@@ -103,8 +102,8 @@ class _HymnListState extends State<HymnList> {
         setState(() {
           _filteredHymns = currentHymns
               .where((h) => h.title.toLowerCase().contains(query.toLowerCase())
-              || h.number.toString().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
               || h.body.toLowerCase().replaceAll(new RegExp(r'[^\w\s]+'),'').contains(query.toLowerCase())
+              || h.number.toString().contains(query)
           ).toList();
         });
       },
