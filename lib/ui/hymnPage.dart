@@ -45,8 +45,9 @@ class _HymnPageState extends State<HymnPage> {
         ),
         //title: Text(hymn.number.toString() + " " + hymn.title),
       ),
-      body: Padding(
+      body: Container(
         padding: EdgeInsets.all(16.0),
+        height: double.infinity,
         child: SingleChildScrollView(
           child: GestureDetector(
             onHorizontalDragUpdate: (details) {
@@ -82,11 +83,14 @@ class _HymnPageState extends State<HymnPage> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   double size = snapshot.data;
-                  return Html(data: widget.hymn.body,
-                      style: {
-                        "html": Style(
-                            color: Colors.black, fontSize: FontSize(size))
-                      });
+                  return Container(
+                    height: 1000,
+                    child: Html(data: widget.hymn.body,
+                        style: {
+                          "html": Style(
+                              color: Colors.black, fontSize: FontSize(size))
+                        }),
+                  );
                 }
               }
             ),
