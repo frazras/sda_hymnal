@@ -6,67 +6,49 @@ import 'package:sdahymnal/ui/fontsize.dart';
 import 'package:sdahymnal/ui/about.dart';
 
 class Settings extends StatefulWidget {
+  const Settings({super.key});
+
   @override
-  _SettingsState createState() => new _SettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Widget _buildSettings() {
-    var value = true;
     return SettingsList(
       sections: [
         SettingsSection(
-          title: 'Settings',
+          title: const Text('Settings'),
           tiles: [
-            SettingsTile(
-              title: 'Font Size',
-              //subtitle: 'English',
-              leading: Icon(Icons.format_size),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    swipe('left', FontSizer())
-                );
+            SettingsTile.navigation(
+              title: const Text('Font Size'),
+              leading: const Icon(Icons.format_size),
+              onPressed: (context) {
+                Navigator.push(context, swipe('left', const FontSizer()));
               },
             ),
-            SettingsTile(
-              title: 'About Us',
-              subtitle: 'Who made this App?',
-              leading: Icon(Icons.person_pin),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    swipe('left', About())
-                );
+            SettingsTile.navigation(
+              title: const Text('About Us'),
+              description: const Text('Who made this App?'),
+              leading: const Icon(Icons.person_pin),
+              onPressed: (context) {
+                Navigator.push(context, swipe('left', const About()));
               },
             ),
-            SettingsTile(
-              title: 'Donate',
-              subtitle: 'Let me tell you why',
-              leading: Icon(Icons.attach_money),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    swipe('left', Donate())
-                );
+            SettingsTile.navigation(
+              title: const Text('Donate'),
+              description: const Text('Let me tell you why'),
+              leading: const Icon(Icons.attach_money),
+              onPressed: (context) {
+                Navigator.push(context, swipe('left', const Donate()));
               },
             ),
-            SettingsTile(
-              title: 'Our Other Projects',
-              subtitle: 'Like this app? You will love our ministry!',
-              leading: Icon(Icons.favorite),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    swipe('left', Sp())
-                );
+            SettingsTile.navigation(
+              title: const Text('Our Other Projects'),
+              description:
+                  const Text('Like this app? You will love our ministry!'),
+              leading: const Icon(Icons.favorite),
+              onPressed: (context) {
+                Navigator.push(context, swipe('left', const Sp()));
               },
             )
           ],
@@ -74,7 +56,8 @@ class _SettingsState extends State<Settings> {
       ],
     );
   }
-  PageRouteBuilder swipe(direction, page){
+
+  PageRouteBuilder swipe(direction, page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -82,7 +65,8 @@ class _SettingsState extends State<Settings> {
         var end = Offset.zero;
         var curve = Curves.ease;
 
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),
@@ -94,9 +78,8 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       body: _buildSettings(),
     );
   }
 }
-

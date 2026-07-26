@@ -1,11 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Sp extends StatefulWidget {
+  const Sp({super.key});
+
   @override
-  _SpState createState() => _SpState();
+  State<Sp> createState() => _SpState();
 }
 
 class _SpState extends State<Sp> {
@@ -137,10 +138,8 @@ class _SpState extends State<Sp> {
   }
 
   _launchWeb() async {
-    const url = 'https://sabbathprograms.com/weekly';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
+    final Uri url = Uri.parse('https://sabbathprograms.com/weekly');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
   }

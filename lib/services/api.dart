@@ -14,11 +14,10 @@ class HymnApi {
   }
 
   static Hymn _fromMap(Map<String, dynamic> map) {
-    return new Hymn(
+    return Hymn(
         number: map['number'],
         title: map['title'],
         body: map['body'],
-        version: map['version']
-    );
+        version: map['version']);
   }
 }

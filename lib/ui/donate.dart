@@ -1,11 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Donate extends StatefulWidget {
+  const Donate({super.key});
+
   @override
-  _DonateState createState() => _DonateState();
+  State<Donate> createState() => _DonateState();
 }
 
 class _DonateState extends State<Donate> {
@@ -150,10 +151,8 @@ class _DonateState extends State<Donate> {
     );
   }
   _launchWeb() async {
-    const url = 'http://bit.ly/1PAZqQ2';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
+    final Uri url = Uri.parse('http://bit.ly/1PAZqQ2');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
   }

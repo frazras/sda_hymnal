@@ -6,10 +6,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sdahymnal/ui/settings.dart';
 import 'package:sdahymnal/services/api.dart';
 
-
 class Tabs extends StatefulWidget {
+  const Tabs({super.key});
+
   @override
-  _TabsState createState() => _TabsState();
+  State<Tabs> createState() => _TabsState();
 }
 
 class _TabsState extends State<Tabs> {
@@ -21,10 +22,11 @@ class _TabsState extends State<Tabs> {
   void initState() {
     super.initState();
     _loadHymns();
-    print("Hymns Loaded");
   }
+
   _loadHymns() async {
-    String fileData = await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
+    String fileData =
+        await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
     setState(() {
       _hymns = HymnApi.allHymnsFromJson(fileData);
       _hymnsNew = _hymns.where((f) => f.version.contains('new')).toList();
@@ -34,53 +36,53 @@ class _TabsState extends State<Tabs> {
 
   @override
   Widget build(BuildContext context) {
-    var _value = 0.0;
     return MaterialApp(
       home: DefaultTabController(
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            bottom: TabBar(
+            bottom: const TabBar(
               tabs: [
                 Tab(
-                  child: FittedBox(fit:BoxFit.fitWidth,
-                      child:Row(
-                      children: <Widget>[
-                        Icon(Icons.keyboard),
-                        Text(" Numbers"),
-                      ],
-                    ),
-                  )
-                ),
+                    child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.keyboard),
+                      Text(" Numbers"),
+                    ],
+                  ),
+                )),
                 Tab(
-                  child: FittedBox(fit:BoxFit.fitWidth,
-                    child:Row(
-                      children: <Widget>[
-                        Icon(Icons.search),
-                        Text("Search"),
-                      ],
-                    ),
-                  )
-                ),
+                    child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.search),
+                      Text("Search"),
+                    ],
+                  ),
+                )),
                 Tab(
-                  child: FittedBox(fit:BoxFit.fitWidth,
-                    child:Row(
-                      children: <Widget>[
-                        Icon(Icons.settings),
-                        Text("Settings"),
-                      ],
-                    ),
-                  )
-                ),
-]           ),
+                    child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.settings),
+                      Text("Settings"),
+                    ],
+                  ),
+                )),
+              ],
+            ),
             title: Container(
-              padding: EdgeInsets.only(top: 0.0),
+              padding: const EdgeInsets.only(top: 0.0),
               child: FittedBox(
                 fit: BoxFit.fill,
                 child: SvgPicture.asset(
-                    "assets/logo.svg",
-                    semanticsLabel: 'Hymnal Logo',
-                    width: 900,
+                  "assets/logo.svg",
+                  semanticsLabel: 'Hymnal Logo',
+                  width: 900,
                   height: 300,
                 ),
               ),
@@ -89,19 +91,28 @@ class _TabsState extends State<Tabs> {
           body: TabBarView(
             children: [
               Buttons(hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
-              HymnList(hymns: _hymns, hymnsOld:_hymnsOld, hymnsNew: _hymnsNew),
-              Settings()
-              //Icon(Icons.directions_bike),
+              HymnList(hymns: _hymns, hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
+              const Settings()
             ],
           ),
         ),
       ),
       theme: ThemeData(
-        // Define the default brightness and colors.
-        brightness: Brightness.dark,
-        primaryColor: Color(0xffFFFFFF),
+        useMaterial3: false,
+        primaryColor: const Color(0xffFFFFFF),
         scaffoldBackgroundColor: Colors.white,
-        accentColor: Colors.grey[600],
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+        ),
+        tabBarTheme: const TabBarThemeData(
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.black54,
+          indicatorColor: Colors.black,
+        ),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: Colors.grey[600],
+        ),
       ),
     );
   }

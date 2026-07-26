@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 class Hymn {
   final int number;
   final String title;
@@ -7,10 +5,10 @@ class Hymn {
   final String version;
 
   Hymn({
-    @required this.number,
-    @required this.title,
-    @required this.body,
-    @required this.version,
+    required this.number,
+    required this.title,
+    required this.body,
+    required this.version,
   });
 
   @override
