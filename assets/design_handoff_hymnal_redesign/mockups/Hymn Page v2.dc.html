@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&display=swap">
+<style>
+:root{--bg:#FAFAF7;--surface:#ffffff;--surface2:#F0F1EE;--ink:#131714;--muted:#6E7873;--faint:#9AA39D;--line:#E5E8E4;--line2:#EEF0EC;--accent:#176A50;--accent-hi:#1E8A63;--deep:#0D3F30;--tint:#EAF1EC;--gold:#A87E2F;--gold-bg:rgba(168,126,47,0.1);--key:#ffffff;--kshadow:0 1px 2px rgba(16,21,15,0.04);--glow:none;--marktile:#0D3F30;--markpipe:#EAF1EC;--markpipe2:#7FD6B4;--onaccent:#ffffff;--barbg:rgba(255,255,255,0.92)}
+:root[data-theme="dark"]{--bg:#0C110E;--surface:rgba(255,255,255,0.045);--surface2:rgba(255,255,255,0.04);--ink:#F2F4F0;--muted:#93A099;--faint:#5D6862;--line:rgba(255,255,255,0.09);--line2:rgba(255,255,255,0.07);--accent:#3ECF95;--accent-hi:#5FDCAA;--deep:#0D3F30;--tint:rgba(62,207,149,0.12);--gold:#D8C289;--gold-bg:rgba(216,194,137,0.1);--key:rgba(255,255,255,0.05);--kshadow:none;--glow:radial-gradient(560px 300px at 50% -90px,rgba(30,138,99,0.18),rgba(30,138,99,0) 70%);--marktile:rgba(255,255,255,0.08);--markpipe:#DFE6E0;--markpipe2:#3ECF95;--onaccent:#0C110E;--barbg:rgba(23,30,26,0.9)}
+html,body{margin:0;padding:0;background:var(--bg)}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hi)}
+</style>
+</helmet>
+<div data-screen-label="Hymn page" style="width:100%;height:100vh;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;display:flex;flex-direction:column;overflow:hidden;position:relative">
+  <div style="height:56px;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--line2);flex:none">
+    <button onClick="{{ goBack }}" style="width:42px;height:42px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;border-radius:12px" style-active="background:var(--surface2)">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 L6.5 10 L12.5 16" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0">
+      <span style="font-size:10px;font-weight:600;letter-spacing:0.14em;color:var(--muted)">{{ crumb }}</span>
+      <span style="display:flex;align-items:baseline;gap:7px;max-width:100%;overflow:hidden"><span style="font-family:Literata,serif;font-size:16.5px;font-weight:700;color:var(--accent);flex:none">{{ num }}</span><span style="font-family:Literata,serif;font-size:16.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ title }}</span></span>
+    </div>
+    <a href="Font%20Size%20v2.dc.html" style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex:none;border-radius:12px;font-family:Literata,serif;font-size:15px;font-weight:600;color:var(--muted)">Aa</a>
+  </div>
+  <div onPointerDown="{{ swipeStart }}" onPointerUp="{{ swipeEnd }}" style="flex:1;overflow-y:auto;min-height:0;touch-action:pan-y">
+    <div style="max-width:560px;margin:0 auto;padding:26px 24px 150px">
+      <div style="font-family:Literata,serif;font-size:{{ fsPx }};line-height:1.7;color:var(--ink)">{{ bodyNode }}</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:16px;right:16px;bottom:18px;background:var(--barbg);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(16,21,15,0.1);display:flex;align-items:center;gap:10px;padding:10px 12px">
+    <button onClick="{{ goPrev }}" style="width:38px;height:38px;border:none;border-radius:50%;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none" style-active="transform:scale(0.92)">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 L6.5 10 L12.5 16" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+    <span style="flex:1"></span>
+    <span style="font-size:11.5px;font-weight:600;letter-spacing:0.06em;color:var(--accent);background:var(--tint);border-radius:999px;padding:6px 12px">Key · F</span>
+    <button style="width:44px;height:44px;border:none;border-radius:50%;background:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 4px 12px rgba(23,106,80,0.35)" style-active="transform:scale(0.92)">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M5.5 3.5 L12 8 L5.5 12.5 Z" style="fill:var(--onaccent)"></path></svg>
+    </button>
+    <span style="font-size:11.5px;font-weight:600;color:var(--muted);background:var(--surface2);border-radius:999px;padding:6px 12px">1.0×</span>
+    <span style="flex:1"></span>
+    <button onClick="{{ goNext }}" style="width:38px;height:38px;border:none;border-radius:50%;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none" style-active="transform:scale(0.92)">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M7.5 4 L13.5 10 L7.5 16" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 390, &quot;height&quot;: 844}}">
+class Component extends DCLogic {
+  state = { hymn: null, fs: parseFloat(localStorage.getItem('fontSize') || '18') };
+  list = [];
+  componentDidMount() {
+    const t = localStorage.getItem('theme') || 'light';
+    const dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    const p = new URLSearchParams(location.search);
+    const v = p.get('v') === 'old' ? 'old' : 'new';
+    const n = parseInt(p.get('n') || '1', 10) || 1;
+    fetch('assets/hymns.json').then(r => r.json()).then(d => {
+      this.list = d.hymns.filter(h => h.version === v);
+      const hymn = this.list.find(h => h.number === n) || this.list[0];
+      this.pushRecent(hymn);
+      this.setState({ hymn });
+    });
+    this._keys = (e) => {
+      if (e.key === 'ArrowRight') this.move(1);
+      if (e.key === 'ArrowLeft') this.move(-1);
+    };
+    window.addEventListener('keydown', this._keys);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this._keys); }
+  pushRecent(h) {
+    if (!h) return;
+    try {
+      let r = JSON.parse(localStorage.getItem('hymnalRecents') || '[]');
+      r = [{ n: h.number, v: h.version }].concat(r.filter(x => !(x.n === h.number && x.v === h.version))).slice(0, 6);
+      localStorage.setItem('hymnalRecents', JSON.stringify(r));
+    } catch (e) {}
+  }
+  move(dir) {
+    const h = this.state.hymn; if (!h) return;
+    const max = h.version === 'new' ? 695 : 703;
+    const n = h.number + dir;
+    if (n < 1 || n > max) return;
+    const next = this.list.find(x => x.number === n);
+    if (!next) return;
+    history.replaceState(null, '', 'Hymn%20Page%20v2.dc.html?v=' + next.version + '&n=' + next.number);
+    this.pushRecent(next);
+    this.setState({ hymn: next });
+  }
+  styleBody(html) {
+    return html
+      .replace(/<font color="#0B6138"><b>(\d+)<\/b><\/font>/g, '<span style="font-family:\'Instrument Sans\',sans-serif;font-size:0.68em;font-weight:700;letter-spacing:0.14em;color:var(--accent)">$1</span>')
+      .replace(/<font color="#CD9B1D">CHORUS:<\/font>/g, '<span style="font-family:\'Instrument Sans\',sans-serif;font-size:0.62em;font-weight:700;letter-spacing:0.14em;color:var(--gold);font-style:normal">CHORUS</span>')
+      .replace(/<font color="([^"]*)"[^>]*>/g, (m, c) => {
+        const lc = c.toLowerCase();
+        const col = lc === '#0b6138' ? 'var(--accent)' : lc === '#cd9b1d' ? 'var(--gold)' : 'inherit';
+        return '<span style="color:' + col + '">';
+      })
+      .replace(/<\/font>/g, '</span>');
+  }
+  renderVals() {
+    const h = this.state.hymn;
+    return {
+      crumb: h ? (h.version === 'new' ? 'NEW HYMNAL' : 'OLD HYMNAL') : '',
+      num: h ? h.number : '',
+      title: h ? h.title : '',
+      fsPx: this.state.fs + 'px',
+      bodyNode: h ? React.createElement('div', { dangerouslySetInnerHTML: { __html: this.styleBody(h.body) } }) : null,
+      goBack: () => { location.href = 'Numbers%20v2.dc.html'; },
+      goPrev: () => this.move(-1),
+      goNext: () => this.move(1),
+      swipeStart: (e) => { this._x = e.clientX; },
+      swipeEnd: (e) => {
+        const dx = e.clientX - (this._x ?? e.clientX);
+        if (dx > 40) this.move(-1); else if (dx < -40) this.move(1);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -23,7 +23,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_html: ^3.0.0
   flutter_svg: ^2.0.10
-  settings_ui: ^2.0.2
   shared_preferences: ^2.3.0
   url_launcher: ^6.3.0
   auto_size_text: ^3.0.0
@@ -46,6 +45,8 @@ flutter:
   assets:
     - assets/hymns.json
     - assets/logo.svg
+    - assets/logo-mark.svg
+    - assets/logo-mark-dark.svg
     - assets/lettern.svg
     - assets/lettero.svg
     - assets/icon.png
@@ -53,3 +54,37 @@ flutter:
     - assets/sp.png
     - assets/rohan.jpg
     - assets/donate.jpg
+
+  fonts:
+    - family: InstrumentSans
+      fonts:
+        - asset: assets/fonts/InstrumentSans-400.ttf
+          weight: 400
+        - asset: assets/fonts/InstrumentSans-500.ttf
+          weight: 500
+        - asset: assets/fonts/InstrumentSans-600.ttf
+          weight: 600
+        - asset: assets/fonts/InstrumentSans-700.ttf
+          weight: 700
+    - family: Literata
+      fonts:
+        - asset: assets/fonts/Literata-400.ttf
+          weight: 400
+        - asset: assets/fonts/Literata-500.ttf
+          weight: 500
+        - asset: assets/fonts/Literata-600.ttf
+          weight: 600
+        - asset: assets/fonts/Literata-700.ttf
+          weight: 700
+        - asset: assets/fonts/Literata-400-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Literata-500-Italic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Literata-600-Italic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Literata-700-Italic.ttf
+          weight: 700
+          style: italic

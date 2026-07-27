@@ -1,9 +1,12 @@
-import 'package:sdahymnal/models/hymn.dart';
 import 'package:flutter/material.dart';
-import 'package:sdahymnal/ui/hymnPage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/cupertino.dart';
 
+import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/theme.dart';
+import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/hymnPage.dart';
+
+/// Search tab (content-only: the shell renders the brand header above and
+/// the bottom nav below). Mockup: Search v2.dc.html.
 class HymnList extends StatefulWidget {
   final List<Hymn> hymns;
   final List<Hymn> hymnsNew;
@@ -21,8 +24,8 @@ class HymnList extends StatefulWidget {
 
 class _HymnListState extends State<HymnList> {
   late List<Hymn> _filteredHymns;
-  String filter = "ALL";
-  String _query = "";
+  String _filter = 'ALL';
+  String _query = '';
 
   @override
   void initState() {
@@ -38,190 +41,226 @@ class _HymnListState extends State<HymnList> {
     }
   }
 
-  List<Hymn> get _currentHymns => (filter == "OLD")
+  List<Hymn> get _currentHymns => (_filter == 'OLD')
       ? widget.hymnsOld
-      : (filter == "NEW")
+      : (_filter == 'NEW')
           ? widget.hymnsNew
           : widget.hymns;
 
+  /// Same predicate as the old app / mockup: title contains q, OR
+  /// punctuation-stripped body contains q, OR number-as-string contains q
+  /// (substring, not exact). Query is trimmed + lowercased; only the body
+  /// is punctuation-stripped.
   void _applyFilter() {
-    final query = _query;
-    if (query.isEmpty) {
+    final q = _query.trim().toLowerCase();
+    if (q.isEmpty) {
       _filteredHymns = _currentHymns;
       return;
     }
     _filteredHymns = _currentHymns
         .where((h) =>
-            h.title.toLowerCase().contains(query.toLowerCase()) ||
+            h.title.toLowerCase().contains(q) ||
             h.body
                 .toLowerCase()
                 .replaceAll(RegExp(r'[^\w\s]+'), '')
-                .contains(query.toLowerCase()) ||
-            h.number.toString().contains(query))
+                .contains(q) ||
+            h.number.toString().contains(q))
         .toList();
   }
 
-  Widget _buildHymnItem(BuildContext context, int index) {
-    Hymn hymn = _filteredHymns[index];
+  /// toLocaleString()-style thousands separator ("1,398").
+  static String _thousands(int n) {
+    final s = n.toString();
+    final b = StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
+      b.write(s[i]);
+    }
+    return b.toString();
+  }
 
+  String get _countText {
+    final count = _filteredHymns.length;
+    if (_query.trim().isEmpty) return '${_thousands(count)} hymns';
+    return '${_thousands(count)} ${count == 1 ? 'match' : 'matches'}';
+  }
+
+  void _openHymn(Hymn hymn) {
+    Navigator.push(
+      context,
+      slideRoute(HymnPage(
+        hymn: hymn,
+        hymns: hymn.version == 'new' ? widget.hymnsNew : widget.hymnsOld,
+      )),
+    );
+  }
+
+  Widget _searchField(HymnalTokens t) {
     return Container(
-      child: Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: hymn.version == 'new' ? Colors.white : Colors.grey[300],
-                border: Border.all(color: Colors.black, width: 2.0),
+      margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: t.surface,
+        border: Border.all(color: t.line),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: t.cardShadow,
+      ),
+      child: Row(
+        children: [
+          HymnalIcons.magnifier(t.faint, size: 18, stroke: 1.8),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              onChanged: (q) {
+                setState(() {
+                  _query = q;
+                  _applyFilter();
+                });
+              },
+              cursorColor: t.accentHi,
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 15.5,
+                color: t.ink,
               ),
-              padding: const EdgeInsets.all(0.0),
-              child: ListTile(
-                title: Text(
-                  '${hymn.number}. ${hymn.title}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                    fontSize: 16.0,
-                  ),
+              decoration: InputDecoration(
+                isCollapsed: true,
+                border: InputBorder.none,
+                hintText: 'Search by title, lyrics or number',
+                hintStyle: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15.5,
+                  color: t.faint,
                 ),
-                leading: SvgPicture.asset(
-                  hymn.version == 'new'
-                      ? "assets/lettern.svg"
-                      : "assets/lettero.svg",
-                  semanticsLabel: 'Letter N/O',
-                  width: 32,
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 1.0, vertical: 0.0),
-                dense: true, // Less Cramped Tile
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HymnPage(
-                          hymn: _filteredHymns[index],
-                          hymns: _filteredHymns[index].version == 'new'
-                              ? widget.hymnsNew
-                              : widget.hymnsOld),
-                    ),
-                  );
-                },
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chip(HymnalTokens t, String key, String label) {
+    final selected = _filter == key;
+    return Pressable(
+      onTap: () {
+        setState(() {
+          _filter = key;
+          _applyFilter();
+        });
+      },
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected ? t.accent : Colors.transparent,
+          border: Border.all(color: selected ? t.accent : t.line),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: selected ? t.onAccent : t.muted,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chipsRow(HymnalTokens t) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Row(
+        children: [
+          _chip(t, 'ALL', 'All'),
+          const SizedBox(width: 7),
+          _chip(t, 'NEW', 'New Hymnal'),
+          const SizedBox(width: 7),
+          _chip(t, 'OLD', 'Old Hymnal'),
+          const Spacer(),
+          Text(
+            _countText,
+            style: TextStyle(fontFamily: kSans, fontSize: 12, color: t.faint),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(BuildContext context, int index) {
+    final t = context.tokens;
+    final hymn = _filteredHymns[index];
+
+    return Pressable(
+      onTap: () => _openHymn(hymn),
+      pressedScale: 1.0,
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+        decoration: BoxDecoration(
+          color: pressed ? t.surface2 : Colors.transparent,
+          border: Border(bottom: BorderSide(color: t.line2)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              constraints: const BoxConstraints(minWidth: 34),
+              alignment: Alignment.centerRight,
+              child: Text(
+                '${hymn.number}',
+                style: TextStyle(
+                  fontFamily: kSerif,
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w600,
+                  color: t.accent,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                hymn.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: kSerif,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: t.ink,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            VersionBadge(
+              isNew: hymn.version == 'new',
+              fontSize: 9,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            ),
+            const SizedBox(width: 12),
+            HymnalIcons.rowChevron(t.faint, size: 14),
           ],
         ),
       ),
     );
   }
 
-  Widget _getAppTitleWidget() {
-    return CupertinoTextField(
-      style: const TextStyle(color: Colors.white, fontSize: 20.0),
-      // Dark background so the white input text stays visible (the 2020 app
-      // got this from its global dark theme).
-      decoration: BoxDecoration(
-        color: const Color(0xdd222222),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      placeholder: "Search Hymns",
-      placeholderStyle:
-          const TextStyle(fontSize: 20.0, color: Color(0xff00FF00)),
-      prefix: Container(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: const Icon(
-          Icons.search,
-          color: Color(0xff00FF00),
-          size: 40,
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-      onChanged: (query) {
-        setState(() {
-          _query = query;
-          _applyFilter();
-        });
-      },
-    );
-  }
-
-  Widget _buildBody() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-          8.0, // A left margin of 8.0
-          8.0, // A top margin of 8.0
-          8.0, // A right margin of 8.0
-          0.0 // A bottom margin of 0.0
-          ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Expanded(
-                child: _getAppTitleWidget(),
-              ),
-              Container(
-                width: 50.0,
-                margin: const EdgeInsets.only(left: 5.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(4),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      switch (filter) {
-                        case "ALL":
-                          filter = "OLD";
-                          break;
-                        case "OLD":
-                          filter = "NEW";
-                          break;
-                        case "NEW":
-                          filter = "ALL";
-                          break;
-                      }
-                      _applyFilter();
-                    });
-                  },
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Column(
-                      children: <Widget>[
-                        Text(filter, style: const TextStyle(fontSize: 16)),
-                        const Text('Hymns', style: TextStyle(fontSize: 14)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          _getListViewWidget()
-        ],
-      ),
-    );
-  }
-
-  Future<void> refresh() {
-    return Future<void>.value();
-  }
-
-  Widget _getListViewWidget() {
-    return Flexible(
-        child: RefreshIndicator(
-            onRefresh: refresh,
-            child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: _filteredHymns.length,
-                itemBuilder: _buildHymnItem)));
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(),
+    final t = context.tokens;
+    return Column(
+      children: [
+        _searchField(t),
+        _chipsRow(t),
+        const SizedBox(height: 6),
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: _filteredHymns.length,
+            itemBuilder: _buildRow,
+          ),
+        ),
+      ],
     );
   }
 }

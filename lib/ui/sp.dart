@@ -1,146 +1,147 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Sp extends StatefulWidget {
+import 'package:sdahymnal/theme.dart';
+import 'package:sdahymnal/ui/common.dart';
+
+/// "Our Other Projects" sub-page (mockup: Other Projects v2.dc.html).
+///
+/// Pushed full-screen with [slideRoute]; no brand header, no bottom nav.
+/// Same pattern as Donate: white logo card (pure #FFFFFF even in dark mode),
+/// serif title + paragraph, bottom-pinned CTA that scrolls with content on
+/// short screens.
+class Sp extends StatelessWidget {
   const Sp({super.key});
 
-  @override
-  State<Sp> createState() => _SpState();
-}
+  static final Uri _siteUri = Uri.parse('https://sabbathprograms.com/weekly');
 
-class _SpState extends State<Sp> {
+  Future<void> _openWebsite() async {
+    await launchUrl(_siteUri, mode: LaunchMode.externalApplication);
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        appBar:AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Icon(
-              Icons.keyboard_arrow_left,
-              color: Colors.black,
-              size: 62,
-            ),
-          ),
-        ),
-        extendBodyBehindAppBar: true,
-        body: Stack(
-          children: <Widget>[
-            Center(
-              child: Image.asset(
-                'assets/sp.png',
-                fit: BoxFit.fitHeight,
-                width: size.width,
-                height: size.height,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Card(
-                  margin: EdgeInsets.all(0.0),
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 4,
-                  color: Color(0x99000000),
-                  child: Container(
-                    height: size.height * 0.50,
-                    padding: EdgeInsets.symmetric(vertical:8.0, horizontal: 4.0),
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: <Widget>[
-                                  Text(
-                                  "Sabbathprograms.com",
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ]
-                              ),
-
-
-                              SizedBox(
-                                height: 8,
-                              ),
-
-                              SizedBox(
-                                width: size.width - 10,
-                                height: size.height*0.5 - 115,
-                                child: AutoSizeText(
-                                  "Sabbath Programs is an initiative to improve the "
-                                      "quality of church services by providing Christ-centered,"
-                                      " creative and purpose-driven programs to congregations "
-                                      "across the world. We provide innovative programs for Sabbath School, "
-                                      "Divine Service and Adventist Youth (AY).",
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-
-                        Divider(
-                          color: Colors.grey[200],
-                        ),
-                        InkWell(
-                          onTap: () => _launchWeb(),
-                          child: Container(
+    final t = context.tokens;
+    return Scaffold(
+      backgroundColor: t.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SubPageHeader(title: 'Our Other Projects'),
+            Expanded(
+              // Flex-1 spacer bottom-pins the CTA on tall screens; on short
+              // screens the whole column scrolls (CTA is not a fixed overlay).
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Logo card: hard-coded white in BOTH themes;
+                          // border stays the themed `line` token.
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            padding: const EdgeInsets.all(26),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
-                              border: Border.all(color: Colors.grey),
-                              color: Colors.red
+                              color: const Color(0xFFFFFFFF),
+                              border: Border.all(color: t.line),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
-                            child: Center(
-                              child: Text(
-                                "Visit the Website!",
-                                style: TextStyle(
-                                    fontSize: 18,
-                                  fontWeight: FontWeight.bold
-                                ),
+                            child: Image.asset(
+                              'assets/sp.png',
+                              width: double.infinity,
+                              height: 170,
+                              fit: BoxFit.contain,
+                              semanticLabel: 'Sabbath Programs',
+                            ),
+                          ),
+                          // Title
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                            child: Text(
+                              'SabbathPrograms.com',
+                              style: TextStyle(
+                                fontFamily: kSerif,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w600,
+                                color: t.ink,
                               ),
                             ),
                           ),
-                        ),
+                          // Body paragraph
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                            child: Text(
+                              'Sabbath Programs is an initiative to improve '
+                              'the quality of church services by providing '
+                              'Christ-centered, creative and purpose-driven '
+                              'programs to congregations across the world. We '
+                              'provide innovative programs for Sabbath School, '
+                              'Divine Service and Adventist Youth (AY).',
+                              style: TextStyle(
+                                fontFamily: kSerif,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                height: 1.65,
+                                color: t.ink,
+                              ),
+                            ),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          // CTA block
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Pressable(
+                                  onTap: _openWebsite,
+                                  pressedScale: 0.98,
+                                  builder: (context, pressed) => Container(
+                                    height: 52,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: t.accent,
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: t.ctaShadow,
+                                    ),
+                                    child: Text(
+                                      'Visit the website',
+                                      style: TextStyle(
+                                        fontFamily: kSans,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: t.onAccent,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'sabbathprograms.com/weekly',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: kSans,
+                                    fontSize: 12,
+                                    color: t.faint,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
+                      ),
                     ),
-                  )
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
-  }
-
-  _launchWeb() async {
-    final Uri url = Uri.parse('https://sabbathprograms.com/weekly');
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw 'Could not launch $url';
-    }
   }
 }

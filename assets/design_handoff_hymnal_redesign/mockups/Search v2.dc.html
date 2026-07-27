@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&display=swap">
+<style>
+:root{--bg:#FAFAF7;--surface:#ffffff;--surface2:#F0F1EE;--ink:#131714;--muted:#6E7873;--faint:#9AA39D;--line:#E5E8E4;--line2:#EEF0EC;--accent:#176A50;--accent-hi:#1E8A63;--deep:#0D3F30;--tint:#EAF1EC;--gold:#A87E2F;--gold-bg:rgba(168,126,47,0.1);--key:#ffffff;--kshadow:0 1px 2px rgba(16,21,15,0.04);--glow:none;--marktile:#0D3F30;--markpipe:#EAF1EC;--markpipe2:#7FD6B4;--onaccent:#ffffff}
+:root[data-theme="dark"]{--bg:#0C110E;--surface:rgba(255,255,255,0.045);--surface2:rgba(255,255,255,0.04);--ink:#F2F4F0;--muted:#93A099;--faint:#5D6862;--line:rgba(255,255,255,0.09);--line2:rgba(255,255,255,0.07);--accent:#3ECF95;--accent-hi:#5FDCAA;--deep:#0D3F30;--tint:rgba(62,207,149,0.12);--gold:#D8C289;--gold-bg:rgba(216,194,137,0.1);--key:rgba(255,255,255,0.05);--kshadow:none;--glow:radial-gradient(560px 300px at 50% -90px,rgba(30,138,99,0.18),rgba(30,138,99,0) 70%);--marktile:rgba(255,255,255,0.08);--markpipe:#DFE6E0;--markpipe2:#3ECF95;--onaccent:#0C110E}
+html,body{margin:0;padding:0;background:var(--bg)}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hi)}
+input::placeholder{color:var(--faint)}
+</style>
+</helmet>
+<div data-screen-label="Search" style="width:100%;height:100vh;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <div style="height:52px;display:flex;align-items:center;gap:9px;padding:0 24px;flex:none">
+    <svg width="26" height="26" viewBox="0 0 26 26"><rect width="26" height="26" rx="7" style="fill:var(--marktile)"></rect><rect x="6.5" y="10" width="2.6" height="9" rx="1.3" style="fill:var(--markpipe)"></rect><rect x="11.7" y="6.5" width="2.6" height="12.5" rx="1.3" style="fill:var(--markpipe)"></rect><rect x="16.9" y="12" width="2.6" height="7" rx="1.3" style="fill:var(--markpipe2)"></rect></svg>
+    <span style="font-size:15.5px;letter-spacing:-0.01em"><span style="font-family:Literata,serif;font-style:italic;font-weight:500;color:var(--accent)">Old &amp; New</span> <span style="font-weight:700">SDA Hymnal</span></span>
+  </div>
+  <div style="margin:10px 20px 0;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--kshadow);flex:none">
+    <svg width="18" height="18" viewBox="0 0 22 22" fill="none" style="flex:none"><circle cx="10" cy="10" r="6" stroke="var(--faint)" stroke-width="1.8"></circle><path d="M14.5 14.5 L18.5 18.5" stroke="var(--faint)" stroke-width="1.8" stroke-linecap="round"></path></svg>
+    <input onInput="{{ onQ }}" placeholder="Search by title, lyrics or number" style="flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--ink);font-size:15.5px;font-family:'Instrument Sans',sans-serif;padding:0">
+  </div>
+  <div style="margin:12px 20px 0;display:flex;align-items:center;gap:7px;flex:none">
+    <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3">
+      <button onClick="{{ c.tap }}" style="font-family:'Instrument Sans',sans-serif;font-size:12.5px;font-weight:600;border:1px solid {{ c.bc }};border-radius:999px;padding:6px 14px;background:{{ c.bg }};color:{{ c.fg }};cursor:pointer" style-active="transform:scale(0.95)">{{ c.label }}</button>
+    </sc-for>
+    <span style="flex:1"></span>
+    <span style="font-size:12px;color:var(--faint)">{{ countText }}</span>
+  </div>
+  <div style="flex:1;overflow-y:auto;min-height:0;margin-top:6px">
+    <sc-for list="{{ items }}" as="h" hint-placeholder-count="12">
+      <a href="{{ h.href }}" style="display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--line2)" style-active="background:var(--surface2)">
+        <span style="font-family:Literata,serif;font-size:15.5px;font-weight:600;color:var(--accent);min-width:34px;text-align:right;flex:none">{{ h.num }}</span>
+        <span style="font-family:Literata,serif;font-size:16px;font-weight:500;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.title }}</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.1em;color:{{ h.bFg }};background:{{ h.bBg }};border-radius:999px;padding:3px 8px;flex:none">{{ h.badge }}</span>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex:none"><path d="M6 3.5 L10.5 8 L6 12.5" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </a>
+    </sc-for>
+    <sc-if value="{{ capped }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:14px;font-size:12px;color:var(--faint)">{{ moreText }}</div>
+    </sc-if>
+  </div>
+  <div style="height:76px;border-top:1px solid var(--line);display:flex;padding-bottom:12px;flex:none;background:var(--bg)">
+    <a href="Numbers%20v2.dc.html" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" style="fill:var(--faint)"><circle cx="5.5" cy="5.5" r="1.8"></circle><circle cx="11" cy="5.5" r="1.8"></circle><circle cx="16.5" cy="5.5" r="1.8"></circle><circle cx="5.5" cy="11" r="1.8"></circle><circle cx="11" cy="11" r="1.8"></circle><circle cx="16.5" cy="11" r="1.8"></circle><circle cx="11" cy="16.5" r="1.8"></circle></svg>
+      <span style="font-size:10.5px;font-weight:500;color:var(--faint)">Numbers</span>
+    </a>
+    <a href="Search%20v2.dc.html" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="10" cy="10" r="6" stroke="var(--accent)" stroke-width="1.8"></circle><path d="M14.5 14.5 L18.5 18.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <span style="font-size:10.5px;font-weight:600;color:var(--accent)">Search</span>
+    </a>
+    <a href="Settings%20v2.dc.html" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 7 H18 M4 15 H18" stroke="var(--faint)" stroke-width="1.6" stroke-linecap="round"></path><circle cx="8" cy="7" r="2.4" style="fill:var(--bg)" stroke="var(--faint)" stroke-width="1.6"></circle><circle cx="14" cy="15" r="2.4" style="fill:var(--bg)" stroke="var(--faint)" stroke-width="1.6"></circle></svg>
+      <span style="font-size:10.5px;font-weight:500;color:var(--faint)">Settings</span>
+    </a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 390, &quot;height&quot;: 844}}">
+class Component extends DCLogic {
+  state = { q: "", filter: "ALL", loaded: false };
+  all = []; news = []; olds = [];
+  componentDidMount() {
+    const t = localStorage.getItem('theme') || 'light';
+    const dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    fetch('assets/hymns.json').then(r => r.json()).then(d => {
+      this.all = d.hymns;
+      this.news = d.hymns.filter(h => h.version === 'new');
+      this.olds = d.hymns.filter(h => h.version === 'old');
+      this.setState({ loaded: true });
+    });
+  }
+  renderVals() {
+    const f = this.state.filter;
+    const base = f === 'OLD' ? this.olds : f === 'NEW' ? this.news : this.all;
+    const q = this.state.q.trim().toLowerCase();
+    const filtered = q === '' ? base : base.filter(h =>
+      h.title.toLowerCase().includes(q) ||
+      h.body.toLowerCase().replace(/[^\w\s]+/g, '').includes(q) ||
+      String(h.number).includes(q));
+    const CAP = 250;
+    const items = filtered.slice(0, CAP).map(h => ({
+      num: h.number,
+      title: h.title,
+      badge: h.version === 'new' ? 'NEW' : 'OLD',
+      bFg: h.version === 'new' ? 'var(--accent)' : 'var(--muted)',
+      bBg: h.version === 'new' ? 'var(--tint)' : 'var(--surface2)',
+      href: 'Hymn%20Page%20v2.dc.html?v=' + h.version + '&n=' + h.number
+    }));
+    const chips = ['ALL', 'NEW', 'OLD'].map(k => ({
+      label: k === 'ALL' ? 'All' : k === 'NEW' ? 'New Hymnal' : 'Old Hymnal',
+      bg: f === k ? 'var(--accent)' : 'transparent',
+      fg: f === k ? 'var(--onaccent)' : 'var(--muted)',
+      bc: f === k ? 'var(--accent)' : 'var(--line)',
+      tap: () => this.setState({ filter: k })
+    }));
+    return {
+      items, chips,
+      countText: q ? filtered.length.toLocaleString() + (filtered.length === 1 ? ' match' : ' matches') : filtered.length.toLocaleString() + ' hymns',
+      capped: filtered.length > CAP,
+      moreText: 'Showing first ' + CAP + ' — keep typing to narrow',
+      onQ: (e) => this.setState({ q: e.target.value })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sdahymnal/models/hymn.dart';
-import 'package:sdahymnal/ui/buttons.dart';
-import 'package:sdahymnal/ui/hymnlist.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sdahymnal/ui/settings.dart';
-import 'package:sdahymnal/services/api.dart';
 
+import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/api.dart';
+import 'package:sdahymnal/theme.dart';
+import 'package:sdahymnal/ui/buttons.dart';
+import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/hymnlist.dart';
+import 'package:sdahymnal/ui/settings.dart';
+
+/// App shell: brand header + active tab + bottom nav.
+/// Tab screens are content-only; the header and nav live here.
 class Tabs extends StatefulWidget {
   const Tabs({super.key});
 
@@ -17,6 +21,7 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymns = [];
   List<Hymn> _hymnsNew = [];
   List<Hymn> _hymnsOld = [];
+  int _tab = 0;
 
   @override
   void initState() {
@@ -36,83 +41,61 @@ class _TabsState extends State<Tabs> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: const TabBar(
-              tabs: [
-                Tab(
-                    child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.keyboard),
-                      Text(" Numbers"),
-                    ],
+    final t = context.tokens;
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Dark-mode radial glow behind the top of the Numbers screen:
+          // radial-gradient(560px 300px at 50% -90px, rgba(30,138,99,0.18), 70%)
+          if (t.isDark && _tab == 0)
+            Positioned(
+              top: -90,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Center(
+                  child: Transform.scale(
+                    scaleY: 300 / 560,
+                    child: Container(
+                      width: 560,
+                      height: 560,
+                      decoration: const BoxDecoration(
+                        gradient: RadialGradient(
+                          colors: [Color(0x2E1E8A63), Color(0x001E8A63)],
+                          stops: [0.0, 0.7],
+                        ),
+                      ),
+                    ),
                   ),
-                )),
-                Tab(
-                    child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.search),
-                      Text("Search"),
-                    ],
-                  ),
-                )),
-                Tab(
-                    child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.settings),
-                      Text("Settings"),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-            title: Container(
-              padding: const EdgeInsets.only(top: 0.0),
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: SvgPicture.asset(
-                  "assets/logo.svg",
-                  semanticsLabel: 'Hymnal Logo',
-                  width: 900,
-                  height: 300,
                 ),
               ),
             ),
+          SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                const BrandHeader(),
+                Expanded(
+                  child: IndexedStack(
+                    index: _tab,
+                    children: [
+                      Buttons(hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
+                      HymnList(
+                          hymns: _hymns,
+                          hymnsOld: _hymnsOld,
+                          hymnsNew: _hymnsNew),
+                      const Settings(),
+                    ],
+                  ),
+                ),
+                HymnalBottomNav(
+                  active: _tab,
+                  onSelect: (i) => setState(() => _tab = i),
+                ),
+              ],
+            ),
           ),
-          body: TabBarView(
-            children: [
-              Buttons(hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
-              HymnList(hymns: _hymns, hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
-              const Settings()
-            ],
-          ),
-        ),
-      ),
-      theme: ThemeData(
-        useMaterial3: false,
-        primaryColor: const Color(0xffFFFFFF),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-        ),
-        tabBarTheme: const TabBarThemeData(
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.black54,
-          indicatorColor: Colors.black,
-        ),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.grey[600],
-        ),
+        ],
       ),
     );
   }

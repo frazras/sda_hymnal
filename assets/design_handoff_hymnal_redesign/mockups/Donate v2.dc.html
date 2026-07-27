@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400;1,7..72,500&display=swap">
+<style>
+:root{--bg:#FAFAF7;--surface:#ffffff;--surface2:#F0F1EE;--ink:#131714;--muted:#6E7873;--faint:#9AA39D;--line:#E5E8E4;--line2:#EEF0EC;--accent:#176A50;--accent-hi:#1E8A63;--deep:#0D3F30;--tint:#EAF1EC;--gold:#A87E2F;--gold-bg:rgba(168,126,47,0.1);--key:#ffffff;--kshadow:0 1px 2px rgba(16,21,15,0.04);--marktile:#0D3F30;--markpipe:#EAF1EC;--markpipe2:#7FD6B4;--onaccent:#ffffff}
+:root[data-theme="dark"]{--bg:#0C110E;--surface:rgba(255,255,255,0.045);--surface2:rgba(255,255,255,0.04);--ink:#F2F4F0;--muted:#93A099;--faint:#5D6862;--line:rgba(255,255,255,0.09);--line2:rgba(255,255,255,0.07);--accent:#3ECF95;--accent-hi:#5FDCAA;--deep:#0D3F30;--tint:rgba(62,207,149,0.12);--gold:#D8C289;--gold-bg:rgba(216,194,137,0.1);--key:rgba(255,255,255,0.05);--kshadow:none;--marktile:rgba(255,255,255,0.08);--markpipe:#DFE6E0;--markpipe2:#3ECF95;--onaccent:#0C110E}
+html,body{margin:0;padding:0;background:var(--bg)}
+a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hi)}
+</style>
+</helmet>
+<div data-screen-label="Donate" style="width:100%;height:100vh;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <div style="height:56px;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid var(--line2);flex:none">
+    <a href="Settings%20v2.dc.html" style="width:42px;height:42px;display:flex;align-items:center;justify-content:center;flex:none;border-radius:12px">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 4 L6.5 10 L12.5 16" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </a>
+    <span style="font-size:16.5px;font-weight:600;flex:1;text-align:center">Donate</span>
+    <span style="width:42px;flex:none"></span>
+  </div>
+  <div style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column">
+    <div style="margin:20px 20px 0;border-radius:20px;overflow:hidden">
+      <img src="assets/donate.jpg" alt="Jar of donations" style="width:100%;height:190px;object-fit:cover;display:block">
+    </div>
+    <div style="padding:20px 24px 0;font-family:Literata,serif;font-size:24px;font-weight:600;line-height:1.25">Every dollar is appreciated</div>
+    <div style="padding:12px 24px 0;font-family:Literata,serif;font-size:16px;line-height:1.65;color:var(--ink)">Writing software is hard work! It takes a lot of time to develop and maintain good software. I made this app free so that all can access the benefits in spite of your means. If this app has brought you joy and you would like to support the development of more features, please give below.</div>
+    <div style="flex:1"></div>
+    <div style="padding:20px 20px 28px;display:flex;flex-direction:column;gap:10px">
+      <a href="http://bit.ly/1PAZqQ2" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:52px;background:var(--accent);color:var(--onaccent);border-radius:14px;font-size:16px;font-weight:600;box-shadow:0 4px 14px rgba(23,106,80,0.3)">Donate</a>
+      <span style="text-align:center;font-size:12px;color:var(--faint)">Opens a secure page in your browser</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 390, &quot;height&quot;: 844}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const t = localStorage.getItem('theme') || 'light';
+    const dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
