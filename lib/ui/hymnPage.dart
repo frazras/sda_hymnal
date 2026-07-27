@@ -446,7 +446,12 @@ class _HymnPageState extends State<HymnPage> {
                                 for (var slot = 0; slot < 3; slot++)
                                   Expanded(
                                     child: _chordSlot(
-                                        t, track, index + slot, slot, semis),
+                                        t,
+                                        track,
+                                        index + slot,
+                                        slot,
+                                        semis,
+                                        loaded ? pos.inMilliseconds : -1),
                                   ),
                               ],
                             ),
@@ -466,43 +471,85 @@ class _HymnPageState extends State<HymnPage> {
 
   /// One fixed-width strip slot: 0 = current chord (accent pill), 1 and 2 =
   /// the upcoming chords, visibly receding. Empty past the end of the track.
-  Widget _chordSlot(
-      HymnalTokens t, ChordTrack track, int i, int slot, int semis) {
+  /// A chord held across several beats shows one dot per repeat; on the
+  /// current chord each dot lights as its beat strikes ([positionMs] is -1
+  /// when this hymn is not the one loaded).
+  Widget _chordSlot(HymnalTokens t, ChordTrack track, int i, int slot,
+      int semis, int positionMs) {
     if (i >= track.chords.length) return const SizedBox.shrink();
     final e = track.chords[i];
     final label = chordLabel(e.rootPc, e.quality, track.key, semis);
+    final repeats = e.beatMs.length - 1;
     if (slot == 0) {
       return Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          decoration: BoxDecoration(
-            color: t.tint,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: t.accent,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: t.tint,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: t.accent,
+                  ),
+                ),
+                if (repeats > 0) const SizedBox(width: 6),
+                for (var k = 1; k <= repeats; k++) ...[
+                  if (k > 1) const SizedBox(width: 3),
+                  _beatDot(
+                    // Lit once its beat has struck.
+                    positionMs >= 0 && positionMs >= e.beatMs[k]
+                        ? t.accent
+                        : t.accent.withValues(alpha: 0.25),
+                  ),
+                ],
+              ],
             ),
           ),
         ),
       );
     }
+    final tone = slot == 1 ? t.muted : t.faint;
     return Center(
-      child: Text(
-        label,
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: slot == 1 ? 14 : 13,
-          fontWeight: FontWeight.w600,
-          color: slot == 1 ? t.muted : t.faint,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: slot == 1 ? 14 : 13,
+                fontWeight: FontWeight.w600,
+                color: tone,
+              ),
+            ),
+            if (repeats > 0) const SizedBox(width: 5),
+            for (var k = 1; k <= repeats; k++) ...[
+              if (k > 1) const SizedBox(width: 3),
+              _beatDot(tone.withValues(alpha: 0.35)),
+            ],
+          ],
         ),
       ),
     );
   }
+
+  Widget _beatDot(Color color) => Container(
+        width: 4,
+        height: 4,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      );
 
   /// Chord chart sheet (same visual pattern as the speed sheet, but taller
   /// and scrollable): the whole tune as a measure grid, four bars per row,

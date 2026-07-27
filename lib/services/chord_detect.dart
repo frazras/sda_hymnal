@@ -41,6 +41,7 @@ class ChordEvent {
     required this.durationMs,
     required this.rootPc,
     required this.quality,
+    required this.beatMs,
   });
 
   /// Media-time ms in the rendered file.
@@ -52,6 +53,12 @@ class ChordEvent {
 
   /// '', 'm', '7', 'maj7', 'm7', 'dim', 'sus4' or 'aug'.
   final String quality;
+
+  /// Media-time ms of every beat onset the chord is held through, the first
+  /// being [startMs] itself — a 4-beat hold has 4 entries. The player strip
+  /// shows one dot per repeat (entries beyond the first) and lights each dot
+  /// as its beat strikes.
+  final List<int> beatMs;
 }
 
 /// The detected harmony of one MIDI file: merged chords in chronological
@@ -229,6 +236,9 @@ List<ChordEvent> _detect(_Score score, _TempoMap tempo) {
         durationMs: tempo.msOf(end) - tempo.msOf(start),
         rootPc: rootPc,
         quality: quality,
+        // Spans start on a window boundary and grow in whole windows, so
+        // stepping by the window size enumerates the beat onsets.
+        beatMs: [for (var bt = start; bt < end; bt += step) tempo.msOf(bt)],
       ),
   ];
 }

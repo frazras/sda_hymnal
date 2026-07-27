@@ -73,6 +73,17 @@ void main() {
       expect(track.measureStartMs, [0, 2000, 4000, 6000]);
     });
 
+    test('carries every beat onset of each held chord', () {
+      // Whole-note chords at 120bpm: four 500ms beats each, the first onset
+      // being the chord's own startMs.
+      expect([for (final c in track.chords) c.beatMs], [
+        [0, 500, 1000, 1500],
+        [2000, 2500, 3000, 3500],
+        [4000, 4500, 5000, 5500],
+        [6000, 6500, 7000, 7500],
+      ]);
+    });
+
     test('indexAt returns the last chord at or before the position', () {
       expect(track.indexAt(-1), -1);
       expect(track.indexAt(0), 0);
@@ -132,6 +143,17 @@ void main() {
       final labels = _labels(track);
       expect(labels.take(8), containsAll(['G', 'D', 'Em']));
       expect(labels.last, 'G');
+    });
+
+    test('every chord carries ordered beat onsets within its span', () {
+      for (final c in track.chords) {
+        expect(c.beatMs, isNotEmpty);
+        expect(c.beatMs.first, c.startMs);
+        for (var k = 1; k < c.beatMs.length; k++) {
+          expect(c.beatMs[k], greaterThan(c.beatMs[k - 1]));
+        }
+        expect(c.beatMs.last, lessThan(c.startMs + c.durationMs));
+      }
     });
 
     test('chords and measures are chronological and searchable', () {
