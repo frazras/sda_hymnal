@@ -276,6 +276,8 @@ class _HymnPageState extends State<HymnPage> {
                     _playButton(t),
                     const SizedBox(width: 10),
                     _seekButton(t, forward: true),
+                    const SizedBox(width: 10),
+                    _speedPill(t),
                     const Spacer(),
                     _circleButton(
                       t,
@@ -347,6 +349,117 @@ class _HymnPageState extends State<HymnPage> {
           decoration:
               BoxDecoration(color: t.surface2, shape: BoxShape.circle),
           child: HymnalIcons.seek10(t.ink, forward: forward, size: 20),
+        ),
+      ),
+    );
+  }
+
+  static const _speeds = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+
+  static String _speedLabel(double s) =>
+      '${s == s.roundToDouble() ? s.round() : s}×';
+
+  /// Current-speed pill (mockup's "1.0×" placeholder, now live): tap opens
+  /// the speed picker sheet.
+  Widget _speedPill(HymnalTokens t) {
+    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    return Opacity(
+      opacity: canPlay ? 1.0 : 0.45,
+      child: ValueListenableBuilder<double>(
+        valueListenable: MidiPlayer.instance.speed,
+        builder: (context, speed, _) => Pressable(
+          onTap: canPlay ? () => _showSpeedSheet(t) : null,
+          pressedScale: 0.95,
+          builder: (context, pressed) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: speed == 1.0 ? t.surface2 : t.tint,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              _speedLabel(speed),
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: speed == 1.0 ? t.muted : t.accent,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSpeedSheet(HymnalTokens t) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+          decoration: BoxDecoration(
+            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'PLAYBACK SPEED',
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: trackingEm(0.14, 11),
+                  color: t.muted,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  for (final (i, s) in _speeds.indexed) ...[
+                    if (i > 0) const SizedBox(width: 7),
+                    Expanded(
+                      child: _speedChip(t, s, sheetContext),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _speedChip(HymnalTokens t, double s, BuildContext sheetContext) {
+    final selected = MidiPlayer.instance.speed.value == s;
+    return Pressable(
+      onTap: () {
+        MidiPlayer.instance.setSpeed(s);
+        Navigator.pop(sheetContext);
+      },
+      pressedScale: 0.95,
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 9),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? t.accent : Colors.transparent,
+          border: Border.all(color: selected ? t.accent : t.line),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          _speedLabel(s),
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: selected ? t.onAccent : t.muted,
+          ),
         ),
       ),
     );

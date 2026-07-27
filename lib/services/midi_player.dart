@@ -28,6 +28,10 @@ class MidiPlayer {
   final ValueNotifier<Duration> position = ValueNotifier(Duration.zero);
   final ValueNotifier<Duration> duration = ValueNotifier(Duration.zero);
 
+  /// Playback speed multiplier (0.75–2.0, pitch preserved). Session-scoped;
+  /// applies to the current tune immediately and to every tune started after.
+  final ValueNotifier<double> speed = ValueNotifier(1.0);
+
   static bool hasMidi(Hymn hymn) => hymn.version == 'new';
 
   static String _asset(int n) => 'midi/${n.toString().padLeft(3, '0')}.mid';
@@ -40,6 +44,7 @@ class MidiPlayer {
       if (cur.paused) {
         await _player.resume();
         current.value = (n: hymn.number, paused: false);
+        await _applySpeed();
       } else {
         await _player.pause();
         current.value = (n: hymn.number, paused: true);
@@ -50,9 +55,25 @@ class MidiPlayer {
     current.value = (n: hymn.number, paused: false);
     try {
       await _player.play(AssetSource(_asset(hymn.number)));
+      await _applySpeed();
     } catch (_) {
       current.value = null;
     }
+  }
+
+  Future<void> setSpeed(double s) async {
+    speed.value = s;
+    await _applySpeed();
+  }
+
+  /// MediaPlayer only accepts a rate while actively playing; paused/stopped
+  /// states pick it up from the next resume/play.
+  Future<void> _applySpeed() async {
+    final cur = current.value;
+    if (cur == null || cur.paused) return;
+    try {
+      await _player.setPlaybackRate(speed.value);
+    } catch (_) {}
   }
 
   /// Jump forward/back by [delta], clamped to the track bounds.
