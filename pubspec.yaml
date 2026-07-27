@@ -33,6 +33,8 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon.png"
+  adaptive_icon_background: "#0D3F30"
+  adaptive_icon_foreground: "assets/icon_foreground.png"
 
 # path_provider_android 2.3.x pulls the experimental `jni` package whose
 # Gradle script is incompatible with this project's AGP; pin to the last
