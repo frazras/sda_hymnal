@@ -70,23 +70,40 @@ class Settings extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(
           t,
-          child: _SettingsRow(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-            leading: HymnalIcons.organPipes(t.muted),
-            title: 'Instrument',
-            subtitle: 'How hymn music sounds',
-            trailing: ValueListenableBuilder<String>(
-              valueListenable: InstrumentTheme.instance,
-              builder: (context, _, __) => Text(
-                InstrumentTheme.instance.label,
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 13,
-                  color: t.muted,
+          child: Column(
+            children: [
+              _SettingsRow(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                leading: HymnalIcons.organPipes(t.muted),
+                title: 'Instrument',
+                subtitle: 'How hymn music sounds',
+                divider: true,
+                trailing: ValueListenableBuilder<String>(
+                  valueListenable: InstrumentTheme.instance,
+                  builder: (context, _, __) => Text(
+                    InstrumentTheme.instance.label,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 13,
+                      color: t.muted,
+                    ),
+                  ),
                 ),
+                onTap: () => _showInstrumentSheet(context, t),
               ),
-            ),
-            onTap: () => _showInstrumentSheet(context, t),
+              _SettingsRow(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                leading: HymnalIcons.grid2x2(t.muted),
+                title: 'Chord tabs',
+                subtitle: 'Play-along chords for musicians',
+                trailing: const _MiniSwitch(),
+                chevron: false,
+                onTap: () =>
+                    ChordTabs.instance.set(!ChordTabs.instance.value),
+              ),
+            ],
           ),
         ),
         const SectionLabel('MORE',
@@ -336,13 +353,15 @@ class _ThemeSegmentedControl extends StatelessWidget {
 }
 
 /// A tappable settings-card row: leading widget, title (+ optional subtitle),
-/// optional trailing value, chevron. Pressed state highlights with surface2.
+/// optional trailing value, chevron ([chevron] false drops it — toggle rows).
+/// Pressed state highlights with surface2.
 class _SettingsRow extends StatelessWidget {
   final Widget leading;
   final String title;
   final String? subtitle;
   final Widget? trailing;
   final bool divider;
+  final bool chevron;
   final EdgeInsets padding;
   final VoidCallback onTap;
 
@@ -352,6 +371,7 @@ class _SettingsRow extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.divider = false,
+    this.chevron = true,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     required this.onTap,
   });
@@ -406,9 +426,50 @@ class _SettingsRow extends StatelessWidget {
               const SizedBox(width: 14),
               trailing!,
             ],
-            const SizedBox(width: 14),
-            HymnalIcons.rowChevron(t.faint, size: 15),
+            if (chevron) ...[
+              const SizedBox(width: 14),
+              HymnalIcons.rowChevron(t.faint, size: 15),
+            ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Flat mini switch for the Chord-tabs row (no Material Switch — wrong look):
+/// 44×24 pill track, accent when on, thumb sliding via AnimatedAlign. Taps
+/// land on the enclosing row, which toggles [ChordTabs].
+class _MiniSwitch extends StatelessWidget {
+  const _MiniSwitch();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return ValueListenableBuilder<bool>(
+      valueListenable: ChordTabs.instance,
+      builder: (context, on, _) => Container(
+        width: 44,
+        height: 24,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: on ? t.accent : t.surface2,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.ease,
+          alignment: on ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: on ? t.onAccent : t.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: t.line),
+              boxShadow: t.thumbShadow,
+            ),
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
@@ -53,6 +54,13 @@ class MidiPlayer {
   /// for Old-Hymnal hymns and files without one.
   final ValueNotifier<MidiKey?> originalKey = ValueNotifier(null);
 
+  /// Chords detected in the hymn page's tune ([prepareKey]); null for
+  /// Old-Hymnal hymns and files where detection finds nothing.
+  final ValueNotifier<ChordTrack?> chordTrack = ValueNotifier(null);
+
+  /// Detection results per hymn number, so revisiting a page skips the parse.
+  final Map<int, ChordTrack?> _chordCache = {};
+
   /// Last hymn number prepared or played — the anchor for the automatic
   /// transpose reset.
   int? _lastN;
@@ -74,18 +82,24 @@ class MidiPlayer {
   }
 
   /// Called by the hymn page on init: publishes the tune's written key to
-  /// [originalKey] (null when there is no MIDI or no key signature) and
-  /// resets [transpose] when the page shows a new hymn number.
+  /// [originalKey] and its detected chords to [chordTrack] (both null when
+  /// there is no MIDI) and resets [transpose] when the page shows a new hymn
+  /// number.
   Future<void> prepareKey(Hymn hymn) async {
     _trackHymn(hymn.number);
     if (!hasMidi(hymn)) {
       originalKey.value = null;
+      chordTrack.value = null;
       return;
     }
     try {
-      originalKey.value = readKeySignature(await _assetBytes(hymn.number));
+      final bytes = await _assetBytes(hymn.number);
+      originalKey.value = readKeySignature(bytes);
+      chordTrack.value =
+          _chordCache.putIfAbsent(hymn.number, () => detectChords(bytes));
     } catch (_) {
       originalKey.value = null;
+      chordTrack.value = null;
     }
   }
 

@@ -11,6 +11,7 @@ void main() async {
   await Recents.instance.load();
   await Favorites.instance.load();
   await InstrumentTheme.instance.load();
+  await ChordTabs.instance.load();
   runApp(const Hymnal());
 }
 

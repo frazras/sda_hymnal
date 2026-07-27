@@ -122,6 +122,25 @@ class InstrumentTheme extends ValueNotifier<String> {
   }
 }
 
+/// Chord-tabs toggle (SharedPreferences key 'chordTabs', default false —
+/// opt-in): when on, the hymn page shows the live chord strip and the chord
+/// chart sheet for musicians playing along.
+class ChordTabs extends ValueNotifier<bool> {
+  ChordTabs._() : super(false);
+  static final ChordTabs instance = ChordTabs._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getBool('chordTabs') ?? false;
+  }
+
+  Future<void> set(bool on) async {
+    value = on;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('chordTabs', on);
+  }
+}
+
 /// Favorited hymns (SharedPreferences key 'hymnalFavorites'):
 /// JSON list of {n, v}, most recently added first, deduped by (n,v).
 class Favorites extends ValueNotifier<List<({int n, String v})>> {

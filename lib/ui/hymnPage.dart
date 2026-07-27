@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -301,6 +302,7 @@ class _HymnPageState extends State<HymnPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                _chordStrip(t),
                 _progressLine(t),
                 // FittedBox lets the whole control strip scale down as one
                 // unit on narrow screens instead of overflowing.
@@ -376,6 +378,268 @@ class _HymnPageState extends State<HymnPage> {
           ),
         );
       },
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Chord tabs (live strip + chart sheet)
+  // -------------------------------------------------------------------------
+
+  /// Live chord strip above the progress line: the current chord and the next
+  /// two, sliding left as playback advances. Shown only when the Chord-tabs
+  /// setting is on and this hymn's tune yielded a chord track; before play it
+  /// previews the opening chords. Tap opens the full chord chart sheet.
+  Widget _chordStrip(HymnalTokens t) {
+    if (!MidiPlayer.hasMidi(widget.hymn)) return const SizedBox.shrink();
+    return ValueListenableBuilder<bool>(
+      valueListenable: ChordTabs.instance,
+      builder: (context, enabled, _) {
+        if (!enabled) return const SizedBox.shrink();
+        return ValueListenableBuilder<ChordTrack?>(
+          valueListenable: MidiPlayer.instance.chordTrack,
+          builder: (context, track, _) {
+            if (track == null) return const SizedBox.shrink();
+            return ValueListenableBuilder<({int n, bool paused})?>(
+              valueListenable: MidiPlayer.instance.current,
+              builder: (context, cur, _) => ValueListenableBuilder<int>(
+                valueListenable: MidiPlayer.instance.transpose,
+                builder: (context, semis, _) =>
+                    ValueListenableBuilder<Duration>(
+                  valueListenable: MidiPlayer.instance.position,
+                  builder: (context, pos, _) {
+                    final loaded =
+                        cur != null && cur.n == widget.hymn.number;
+                    final at =
+                        loaded ? track.indexAt(pos.inMilliseconds) : 0;
+                    final index = at < 0 ? 0 : at;
+                    return Pressable(
+                      onTap: () => _showChordSheet(t),
+                      pressedScale: 0.98,
+                      builder: (context, pressed) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: SizedBox(
+                          height: 36,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 220),
+                            transitionBuilder: (child, animation) {
+                              // Incoming slides in from the right; the
+                              // outgoing child (reversed animation) slides
+                              // out to the left — the row reads as sliding
+                              // left on each chord hit.
+                              final incoming =
+                                  child.key == ValueKey<int>(index);
+                              final slide = Tween<Offset>(
+                                begin: Offset(incoming ? 0.35 : -0.35, 0),
+                                end: Offset.zero,
+                              );
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: animation.drive(slide),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Row(
+                              key: ValueKey<int>(index),
+                              children: [
+                                for (var slot = 0; slot < 3; slot++)
+                                  Expanded(
+                                    child: _chordSlot(
+                                        t, track, index + slot, slot, semis),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// One fixed-width strip slot: 0 = current chord (accent pill), 1 and 2 =
+  /// the upcoming chords, visibly receding. Empty past the end of the track.
+  Widget _chordSlot(
+      HymnalTokens t, ChordTrack track, int i, int slot, int semis) {
+    if (i >= track.chords.length) return const SizedBox.shrink();
+    final e = track.chords[i];
+    final label = chordLabel(e.rootPc, e.quality, track.key, semis);
+    if (slot == 0) {
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: t.tint,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: t.accent,
+            ),
+          ),
+        ),
+      );
+    }
+    return Center(
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: kSans,
+          fontSize: slot == 1 ? 14 : 13,
+          fontWeight: FontWeight.w600,
+          color: slot == 1 ? t.muted : t.faint,
+        ),
+      ),
+    );
+  }
+
+  /// Chord chart sheet (same visual pattern as the speed sheet, but taller
+  /// and scrollable): the whole tune as a measure grid, four bars per row,
+  /// with the playing measure highlighted live. Relabels on transpose.
+  void _showChordSheet(HymnalTokens t) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(sheetContext).size.height * 0.65,
+          ),
+          decoration: BoxDecoration(
+            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ValueListenableBuilder<ChordTrack?>(
+            valueListenable: MidiPlayer.instance.chordTrack,
+            builder: (context, track, _) {
+              if (track == null) return const SizedBox.shrink();
+              return ValueListenableBuilder<int>(
+                valueListenable: MidiPlayer.instance.transpose,
+                builder: (context, semis, _) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const SectionLabel('CHORDS'),
+                        const Spacer(),
+                        Text(
+                          _chordMeta(track, semis),
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 12,
+                            color: t.muted,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Flexible(child: _measureGrid(t, track, semis)),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Sheet meta line: 'Key of G · 4/4' (key part omitted when the file has
+  /// no key signature); the key relabels with the transposition.
+  String _chordMeta(ChordTrack track, int semis) {
+    final key = track.key;
+    final meter = '${track.beatsPerBar}/4';
+    return key == null
+        ? meter
+        : 'Key of ${transposedKeyLabel(key, semis)} · $meter';
+  }
+
+  /// Scrollable measure grid: one cell per measure (chords assigned by start
+  /// time), four per row, barline on the left edge of each cell; the measure
+  /// under the playhead is highlighted while this hymn is loaded.
+  Widget _measureGrid(HymnalTokens t, ChordTrack track, int semis) {
+    final measures =
+        List.generate(track.measureStartMs.length, (_) => <ChordEvent>[]);
+    if (measures.isNotEmpty) {
+      for (final e in track.chords) {
+        final m = track.measureAt(e.startMs);
+        measures[m < 0 ? 0 : m].add(e);
+      }
+    }
+    return ValueListenableBuilder<({int n, bool paused})?>(
+      valueListenable: MidiPlayer.instance.current,
+      builder: (context, cur, _) => ValueListenableBuilder<Duration>(
+        valueListenable: MidiPlayer.instance.position,
+        builder: (context, pos, _) {
+          final loaded = cur != null && cur.n == widget.hymn.number;
+          final at = loaded ? track.measureAt(pos.inMilliseconds) : -1;
+          return GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 2.2,
+            ),
+            itemCount: measures.length,
+            itemBuilder: (context, i) => _measureCell(
+                t, measures[i], track.key, semis,
+                current: i == at),
+          );
+        },
+      ),
+    );
+  }
+
+  /// One measure cell: its chords joined with middle dots ('—' while a chord
+  /// holds over from an earlier bar), left border as the barline.
+  Widget _measureCell(
+    HymnalTokens t,
+    List<ChordEvent> chords,
+    MidiKey? key,
+    int semis, {
+    required bool current,
+  }) {
+    final label = chords.isEmpty
+        ? '—'
+        : [
+            for (final e in chords)
+              chordLabel(e.rootPc, e.quality, key, semis)
+          ].join(' · ');
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: current ? t.tint : Colors.transparent,
+        border: Border(left: BorderSide(color: t.line2)),
+      ),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: current ? t.accent : t.ink,
+          ),
+        ),
+      ),
     );
   }
 
