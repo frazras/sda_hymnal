@@ -9,6 +9,7 @@ void main() async {
   await ThemeController.instance.load();
   await FontSizeController.instance.load();
   await Recents.instance.load();
+  await Favorites.instance.load();
   runApp(const Hymnal());
 }
 

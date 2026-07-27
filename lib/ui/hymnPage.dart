@@ -87,7 +87,13 @@ class _HymnPageState extends State<HymnPage> {
               children: [
                 SubPageHeader(
                   center: _headerCenter(t),
-                  trailing: _fontSizeButton(t),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _favoriteButton(t),
+                      _fontSizeButton(t),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: Stack(
@@ -162,6 +168,35 @@ class _HymnPageState extends State<HymnPage> {
           ],
         ),
       ],
+    );
+  }
+
+  /// Heart toggle: accent + filled while this hymn is favorited, muted
+  /// outline otherwise. Re-renders via the Favorites notifier.
+  Widget _favoriteButton(HymnalTokens t) {
+    return ValueListenableBuilder<List<({int n, String v})>>(
+      valueListenable: Favorites.instance,
+      builder: (context, _, __) {
+        final favorited = Favorites.instance
+            .contains(widget.hymn.number, widget.hymn.version);
+        return Pressable(
+          onTap: () => Favorites.instance.toggle(widget.hymn),
+          pressedScale: 1.0,
+          builder: (context, pressed) => Container(
+            width: 42,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: pressed ? t.surface2 : null,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: HymnalIcons.heart(
+              favorited ? t.accent : t.muted,
+              filled: favorited,
+            ),
+          ),
+        );
+      },
     );
   }
 

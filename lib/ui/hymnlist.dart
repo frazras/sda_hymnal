@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
@@ -236,6 +237,17 @@ class _HymnListState extends State<HymnList> {
               isNew: hymn.version == 'new',
               fontSize: 9,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            ),
+            // Static favorited indicator (the heart is toggled elsewhere).
+            ValueListenableBuilder<List<({int n, String v})>>(
+              valueListenable: Favorites.instance,
+              builder: (context, _, __) =>
+                  Favorites.instance.contains(hymn.number, hymn.version)
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: HymnalIcons.heart(t.accent, size: 13),
+                        )
+                      : const SizedBox.shrink(),
             ),
             const SizedBox(width: 12),
             HymnalIcons.rowChevron(t.faint, size: 14),

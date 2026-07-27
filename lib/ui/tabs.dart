@@ -84,7 +84,7 @@ class _TabsState extends State<Tabs> {
                           hymns: _hymns,
                           hymnsOld: _hymnsOld,
                           hymnsNew: _hymnsNew),
-                      const Settings(),
+                      Settings(hymnsNew: _hymnsNew, hymnsOld: _hymnsOld),
                     ],
                   ),
                 ),

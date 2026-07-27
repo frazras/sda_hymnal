@@ -83,3 +83,39 @@ class Recents extends ValueNotifier<List<({int n, String v})>> {
         ]));
   }
 }
+
+/// Favorited hymns (SharedPreferences key 'hymnalFavorites'):
+/// JSON list of {n, v}, most recently added first, deduped by (n,v).
+class Favorites extends ValueNotifier<List<({int n, String v})>> {
+  Favorites._() : super(const []);
+  static final Favorites instance = Favorites._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final raw =
+          jsonDecode(prefs.getString('hymnalFavorites') ?? '[]') as List;
+      value = [
+        for (final e in raw) (n: e['n'] as int, v: e['v'] as String)
+      ];
+    } catch (_) {
+      value = const [];
+    }
+  }
+
+  bool contains(int n, String v) => value.any((e) => e.n == n && e.v == v);
+
+  /// Adds the hymn (to the front) if absent, removes it otherwise.
+  Future<void> toggle(Hymn hymn) async {
+    final entry = (n: hymn.number, v: hymn.version);
+    value = contains(entry.n, entry.v)
+        ? value.where((e) => !(e.n == entry.n && e.v == entry.v)).toList()
+        : [entry, ...value];
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        'hymnalFavorites',
+        jsonEncode([
+          for (final e in value) {'n': e.n, 'v': e.v}
+        ]));
+  }
+}

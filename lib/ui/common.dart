@@ -196,9 +196,10 @@ class HymnalIcons {
 <path d="M4.5 18c1.2-3.4 11.8-3.4 13 0" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linecap="round"/>
 </svg>''', size, size);
 
-  static Widget heart(Color c, {double size = 20}) => _svg('''
+  static Widget heart(Color c, {double size = 20, bool filled = false}) =>
+      _svg('''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none">
-<path d="M11 18.2s-6.6-4.1-6.6-8.6a3.7 3.7 0 016.6-2.2 3.7 3.7 0 016.6 2.2c0 4.5-6.6 8.6-6.6 8.6z" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M11 18.2s-6.6-4.1-6.6-8.6a3.7 3.7 0 016.6-2.2 3.7 3.7 0 016.6 2.2c0 4.5-6.6 8.6-6.6 8.6z"${filled ? ' fill="${_rgb(c)}"' : ''} stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linejoin="round"/>
 </svg>''', size, size);
 
   static Widget grid2x2(Color c, {double size = 20}) => _svg('''
