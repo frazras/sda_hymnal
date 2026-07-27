@@ -413,15 +413,17 @@ class HymnalBottomNav extends StatelessWidget {
 class VersionBadge extends StatelessWidget {
   final bool isNew;
 
-  /// Numbers preview cards use 10px/4×8; search rows use 9px/3×8.
+  /// Per-line size of the wrapped two-line label ('NEW' over 'HYMNAL');
+  /// smaller than the old single-line sizes so the pill keeps a reasonable
+  /// height. Preview cards use the 8px default; list rows pass 7.5.
   final double fontSize;
   final EdgeInsets padding;
 
   const VersionBadge(
       {super.key,
       required this.isNew,
-      this.fontSize = 10,
-      this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4)});
+      this.fontSize = 8,
+      this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 3)});
 
   @override
   Widget build(BuildContext context) {
@@ -433,10 +435,12 @@ class VersionBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        isNew ? 'NEW HYMNAL' : 'OLD HYMNAL',
+        isNew ? 'NEW\nHYMNAL' : 'OLD\nHYMNAL',
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: kSans,
           fontSize: fontSize,
+          height: 1.25,
           fontWeight: FontWeight.w700,
           letterSpacing: trackingEm(0.1, fontSize),
           color: isNew ? t.accent : t.muted,

@@ -117,8 +117,8 @@ class FavoritesTab extends StatelessWidget {
             const SizedBox(width: 12),
             VersionBadge(
               isNew: hymn.version == 'new',
-              fontSize: 9,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              fontSize: 7.5,
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
             ),
             const SizedBox(width: 12),
             Pressable.child(

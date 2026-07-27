@@ -235,8 +235,8 @@ class _HymnListState extends State<HymnList> {
             const SizedBox(width: 12),
             VersionBadge(
               isNew: hymn.version == 'new',
-              fontSize: 9,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              fontSize: 7.5,
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
             ),
             // Static favorited indicator (the heart is toggled elsewhere).
             ValueListenableBuilder<List<({int n, String v})>>(

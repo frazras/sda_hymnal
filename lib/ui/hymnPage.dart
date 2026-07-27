@@ -699,7 +699,10 @@ class _HymnPageState extends State<HymnPage> {
                 children: [
                   for (var k = 0; k < beats.length; k++) ...[
                     if (k > 0) const SizedBox(width: 5),
-                    if (beats[k].onset)
+                    // A chord carried over the barline is spelled out when it
+                    // is the bar's first symbol; dots are only ever holds
+                    // WITHIN the bar.
+                    if (k == 0 || beats[k].onset)
                       Text(
                         chordLabel(beats[k].chord.rootPc,
                             beats[k].chord.quality, key, semis),
