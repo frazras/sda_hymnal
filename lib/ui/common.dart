@@ -202,6 +202,14 @@ class HymnalIcons {
 <path d="M11 18.2s-6.6-4.1-6.6-8.6a3.7 3.7 0 016.6-2.2 3.7 3.7 0 016.6 2.2c0 4.5-6.6 8.6-6.6 8.6z"${filled ? ' fill="${_rgb(c)}"' : ''} stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linejoin="round"/>
 </svg>''', size, size);
 
+  /// The logo mark's three organ pipes, single-color (SOUND settings row).
+  static Widget organPipes(Color c, {double size = 20}) => _svg('''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">
+<rect x="4.7" y="8.5" width="2.6" height="9" rx="1.3" fill="${_rgb(c)}" fill-opacity="${_op(c)}"/>
+<rect x="9.7" y="5" width="2.6" height="12.5" rx="1.3" fill="${_rgb(c)}" fill-opacity="${_op(c)}"/>
+<rect x="14.7" y="10.5" width="2.6" height="7" rx="1.3" fill="${_rgb(c)}" fill-opacity="${_op(c)}"/>
+</svg>''', size, size);
+
   static Widget grid2x2(Color c, {double size = 20}) => _svg('''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none">
 <rect x="4" y="4" width="6" height="6" rx="1.8" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6"/>

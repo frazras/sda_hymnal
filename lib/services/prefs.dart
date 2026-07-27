@@ -84,6 +84,44 @@ class Recents extends ValueNotifier<List<({int n, String v})>> {
   }
 }
 
+/// MIDI instrument theme (SharedPreferences key 'midiTheme', default
+/// 'classic'). Value is a theme id from [themes]; 'classic' keeps each hymn
+/// file's own instruments, every other theme forces one GM program.
+class InstrumentTheme extends ValueNotifier<String> {
+  InstrumentTheme._() : super('classic');
+  static final InstrumentTheme instance = InstrumentTheme._();
+
+  /// (id, label, GM program); a null program leaves the file as-is.
+  static const List<(String, String, int?)> themes = [
+    ('classic', 'Classic', null),
+    ('piano', 'Grand Piano', 0),
+    ('organ', 'Cathedral Organ', 19),
+    ('strings', 'Strings', 48),
+    ('choir', 'Choir', 52),
+    ('musicbox', 'Music Box', 10),
+  ];
+
+  (String, String, int?) get _theme =>
+      themes.firstWhere((e) => e.$1 == value, orElse: () => themes.first);
+
+  /// Display label of the current theme ('Classic', 'Grand Piano', …).
+  String get label => _theme.$2;
+
+  /// GM program forced onto playback, or null to leave the file as-is.
+  int? get program => _theme.$3;
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getString('midiTheme') ?? 'classic';
+  }
+
+  Future<void> set(String id) async {
+    value = id;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('midiTheme', id);
+  }
+}
+
 /// Favorited hymns (SharedPreferences key 'hymnalFavorites'):
 /// JSON list of {n, v}, most recently added first, deduped by (n,v).
 class Favorites extends ValueNotifier<List<({int n, String v})>> {

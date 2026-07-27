@@ -12,8 +12,9 @@ import 'package:sdahymnal/ui/sp.dart';
 
 /// Settings tab — content only (the shell renders the brand header above and
 /// the bottom nav below). Sections: APPEARANCE (theme segmented control),
-/// READING (font size row), MORE (favorites / about / donate / other
-/// projects), footer. Holds the hymn lists so Favorites can resolve titles.
+/// READING (font size row), SOUND (instrument theme row + picker sheet),
+/// MORE (favorites / about / donate / other projects), footer. Holds the
+/// hymn lists so Favorites can resolve titles.
 class Settings extends StatelessWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
@@ -63,6 +64,29 @@ class Settings extends StatelessWidget {
             ),
             onTap: () =>
                 Navigator.push(context, slideRoute(const FontSizer())),
+          ),
+        ),
+        const SectionLabel('SOUND',
+            padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        _card(
+          t,
+          child: _SettingsRow(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+            leading: HymnalIcons.organPipes(t.muted),
+            title: 'Instrument',
+            subtitle: 'How hymn music sounds',
+            trailing: ValueListenableBuilder<String>(
+              valueListenable: InstrumentTheme.instance,
+              builder: (context, _, __) => Text(
+                InstrumentTheme.instance.label,
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  color: t.muted,
+                ),
+              ),
+            ),
+            onTap: () => _showInstrumentSheet(context, t),
           ),
         ),
         const SectionLabel('MORE',
@@ -154,6 +178,86 @@ class Settings extends StatelessWidget {
     );
   }
 
+  /// Instrument picker sheet (same pattern as the hymn page's speed sheet):
+  /// one row per theme, tap applies and closes.
+  void _showInstrumentSheet(BuildContext context, HymnalTokens t) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
+          decoration: BoxDecoration(
+            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionLabel('INSTRUMENT'),
+              const SizedBox(height: 6),
+              for (final (i, theme) in InstrumentTheme.themes.indexed)
+                _instrumentRow(
+                  t,
+                  theme,
+                  sheetContext,
+                  divider: i < InstrumentTheme.themes.length - 1,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _instrumentRow(
+    HymnalTokens t,
+    (String, String, int?) theme,
+    BuildContext sheetContext, {
+    required bool divider,
+  }) {
+    final selected = InstrumentTheme.instance.value == theme.$1;
+    return Pressable(
+      onTap: () {
+        InstrumentTheme.instance.set(theme.$1);
+        Navigator.pop(sheetContext);
+      },
+      pressedScale: 1.0,
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
+        decoration: BoxDecoration(
+          color: pressed ? t.surface2 : Colors.transparent,
+          border:
+              divider ? Border(bottom: BorderSide(color: t.line2)) : null,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                theme.$2,
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: selected ? t.accent : t.ink,
+                ),
+              ),
+            ),
+            if (selected)
+              Container(
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: t.accent, shape: BoxShape.circle),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Light / Dark / System segmented control wired to ThemeController.

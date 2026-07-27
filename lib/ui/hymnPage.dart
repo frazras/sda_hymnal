@@ -8,6 +8,7 @@ import 'package:flutter_html/flutter_html.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/midi_player.dart';
+import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
@@ -15,10 +16,10 @@ import 'package:sdahymnal/ui/fontsize.dart';
 
 /// Hymn reading page (full-screen sub-page, pushed with slideRoute).
 ///
-/// Header: crumb + number/title stack, "Aa" shortcut to Font Size.
+/// Header: crumb + number/title stack, favorite heart, "Aa" shortcut.
 /// Body: hymn HTML at the user's font size, max-width 560, centered.
-/// Floating player bar: functional prev/next, inert play/key/speed
-/// placeholders for upcoming audio features.
+/// Floating player bar: prev/next, key pill (transpose sheet), seek ±10,
+/// play/pause, speed pill — key/play/speed dimmed on Old-Hymnal pages.
 class HymnPage extends StatefulWidget {
   final Hymn hymn;
   final List<Hymn> hymns;
@@ -40,6 +41,9 @@ class _HymnPageState extends State<HymnPage> {
     // every prev/next/swipe move constructs a new HymnPage, so this covers
     // them all.
     Recents.instance.push(widget.hymn);
+    // Publishes this hymn's written key for the key pill and resets the
+    // transposition when the page moved to a different hymn.
+    MidiPlayer.instance.prepareKey(widget.hymn);
   }
 
   @override
@@ -298,28 +302,36 @@ class _HymnPageState extends State<HymnPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _progressLine(t),
-                Row(
-                  children: [
-                    _circleButton(
-                      t,
-                      onTap: () => _move(-1),
-                      icon: HymnalIcons.backChevron(t.ink, size: 16),
-                    ),
-                    const Spacer(),
-                    _seekButton(t, forward: false),
-                    const SizedBox(width: 10),
-                    _playButton(t),
-                    const SizedBox(width: 10),
-                    _seekButton(t, forward: true),
-                    const SizedBox(width: 10),
-                    _speedPill(t),
-                    const Spacer(),
-                    _circleButton(
-                      t,
-                      onTap: () => _move(1),
-                      icon: HymnalIcons.forwardChevron(t.ink, size: 16),
-                    ),
-                  ],
+                // FittedBox lets the whole control strip scale down as one
+                // unit on narrow screens instead of overflowing.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _circleButton(
+                        t,
+                        onTap: () => _move(-1),
+                        icon: HymnalIcons.backChevron(t.ink, size: 16),
+                      ),
+                      const SizedBox(width: 10),
+                      _keyPill(t),
+                      const SizedBox(width: 10),
+                      _seekButton(t, forward: false),
+                      const SizedBox(width: 10),
+                      _playButton(t),
+                      const SizedBox(width: 10),
+                      _seekButton(t, forward: true),
+                      const SizedBox(width: 10),
+                      _speedPill(t),
+                      const SizedBox(width: 10),
+                      _circleButton(
+                        t,
+                        onTap: () => _move(1),
+                        icon: HymnalIcons.forwardChevron(t.ink, size: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -494,6 +506,199 @@ class _HymnPageState extends State<HymnPage> {
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
             color: selected ? t.onAccent : t.muted,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Current-key pill: shows the (possibly transposed) key of this hymn's
+  /// tune; tap opens the transpose sheet. Dimmed and inert on Old-Hymnal
+  /// pages, like the play button.
+  Widget _keyPill(HymnalTokens t) {
+    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    return Opacity(
+      opacity: canPlay ? 1.0 : 0.45,
+      child: ValueListenableBuilder<MidiKey?>(
+        valueListenable: MidiPlayer.instance.originalKey,
+        builder: (context, key, _) => ValueListenableBuilder<int>(
+          valueListenable: MidiPlayer.instance.transpose,
+          builder: (context, semis, _) {
+            final shifted = semis != 0;
+            final label = key != null
+                ? 'Key · ${transposedKeyLabel(key, semis)}'
+                : shifted
+                    ? '${semis > 0 ? '+' : ''}$semis st'
+                    : 'Key';
+            return Pressable(
+              onTap: canPlay ? () => _showKeySheet(t) : null,
+              pressedScale: 0.95,
+              builder: (context, pressed) => Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: shifted ? t.tint : t.surface2,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: shifted ? t.accent : t.muted,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Transpose sheet: −/+ steppers around the current key, live (-6..+6,
+  /// each tap re-renders playback immediately; the sheet stays open and
+  /// rebuilds off the transpose notifier).
+  void _showKeySheet(HymnalTokens t) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+          decoration: BoxDecoration(
+            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ValueListenableBuilder<int>(
+            valueListenable: MidiPlayer.instance.transpose,
+            builder: (context, semis, _) {
+              final key = MidiPlayer.instance.originalKey.value;
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'KEY',
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: trackingEm(0.14, 11),
+                          color: t.muted,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (semis != 0)
+                        Pressable(
+                          onTap: () => MidiPlayer.instance.setTranspose(0),
+                          pressedScale: 0.95,
+                          builder: (context, pressed) => Text(
+                            'Reset',
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: t.accent,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      _keyStepper(t, semis: semis, delta: -1),
+                      Expanded(child: _keyReadout(t, key, semis)),
+                      _keyStepper(t, semis: semis, delta: 1),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Center of the transpose sheet: big current key, shift indicator when
+  /// transposed, and the written key underneath.
+  Widget _keyReadout(HymnalTokens t, MidiKey? key, int semis) {
+    final big = key != null
+        ? transposedKeyLabel(key, semis)
+        : semis != 0
+            ? '${semis > 0 ? '+' : ''}$semis st'
+            : '±0';
+    return Column(
+      children: [
+        Text.rich(
+          TextSpan(children: [
+            TextSpan(
+              text: big,
+              style: TextStyle(
+                fontFamily: kSerif,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: t.accent,
+              ),
+            ),
+            if (key != null && semis != 0)
+              TextSpan(
+                text: '  (${semis > 0 ? '+' : ''}$semis)',
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: t.accent,
+                ),
+              ),
+          ]),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 3),
+        Text(
+          'Original · ${key?.label ?? '—'}',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 11.5,
+            color: t.muted,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// −/+ stepper (42px surface2 circle); dimmed and inert at the -6/+6 ends.
+  Widget _keyStepper(HymnalTokens t, {required int semis, required int delta}) {
+    final target = semis + delta;
+    final enabled = target >= -6 && target <= 6;
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.45,
+      child: Pressable(
+        onTap:
+            enabled ? () => MidiPlayer.instance.setTranspose(target) : null,
+        pressedScale: 0.92,
+        builder: (context, pressed) => Container(
+          width: 42,
+          height: 42,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: t.surface2, shape: BoxShape.circle),
+          child: Text(
+            delta < 0 ? '−' : '+',
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              height: 1.0,
+              color: t.ink,
+            ),
           ),
         ),
       ),
