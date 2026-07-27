@@ -259,33 +259,94 @@ class _HymnPageState extends State<HymnPage> {
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: t.line),
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _circleButton(
-                  t,
-                  onTap: () => _move(-1),
-                  icon: HymnalIcons.backChevron(t.ink, size: 16),
-                ),
-                const Spacer(),
-                _pill(
-                  'Key · F',
-                  color: t.accent,
-                  background: t.tint,
-                  letterSpacing: trackingEm(0.06, 11.5),
-                ),
-                const SizedBox(width: 10),
-                _playButton(t),
-                const SizedBox(width: 10),
-                _pill('1.0×', color: t.muted, background: t.surface2),
-                const Spacer(),
-                _circleButton(
-                  t,
-                  onTap: () => _move(1),
-                  icon: HymnalIcons.forwardChevron(t.ink, size: 16),
+                _progressLine(t),
+                Row(
+                  children: [
+                    _circleButton(
+                      t,
+                      onTap: () => _move(-1),
+                      icon: HymnalIcons.backChevron(t.ink, size: 16),
+                    ),
+                    const Spacer(),
+                    _seekButton(t, forward: false),
+                    const SizedBox(width: 10),
+                    _playButton(t),
+                    const SizedBox(width: 10),
+                    _seekButton(t, forward: true),
+                    const Spacer(),
+                    _circleButton(
+                      t,
+                      onTap: () => _move(1),
+                      icon: HymnalIcons.forwardChevron(t.ink, size: 16),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Thin progress line across the bar while this hymn's MIDI is loaded.
+  Widget _progressLine(HymnalTokens t) {
+    return ValueListenableBuilder<({int n, bool paused})?>(
+      valueListenable: MidiPlayer.instance.current,
+      builder: (context, cur, _) {
+        if (cur == null || cur.n != widget.hymn.number) {
+          return const SizedBox.shrink();
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: ValueListenableBuilder<Duration>(
+            valueListenable: MidiPlayer.instance.duration,
+            builder: (context, dur, _) => ValueListenableBuilder<Duration>(
+              valueListenable: MidiPlayer.instance.position,
+              builder: (context, pos, _) {
+                final frac = dur.inMilliseconds > 0
+                    ? (pos.inMilliseconds / dur.inMilliseconds).clamp(0.0, 1.0)
+                    : 0.0;
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: Container(
+                    height: 3,
+                    color: t.surface2,
+                    alignment: Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: frac,
+                      child: Container(color: t.accent),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _seekButton(HymnalTokens t, {required bool forward}) {
+    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    return Opacity(
+      opacity: canPlay ? 1.0 : 0.45,
+      child: Pressable(
+        onTap: canPlay
+            ? () => MidiPlayer.instance
+                .seekBy(Duration(seconds: forward ? 10 : -10))
+            : null,
+        pressedScale: 0.92,
+        builder: (context, pressed) => Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration:
+              BoxDecoration(color: t.surface2, shape: BoxShape.circle),
+          child: HymnalIcons.seek10(t.ink, forward: forward, size: 20),
         ),
       ),
     );
@@ -343,26 +404,4 @@ class _HymnPageState extends State<HymnPage> {
     );
   }
 
-  Widget _pill(String text,
-      {required Color color,
-      required Color background,
-      double? letterSpacing}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: 11.5,
-          fontWeight: FontWeight.w600,
-          letterSpacing: letterSpacing,
-          color: color,
-        ),
-      ),
-    );
-  }
 }

@@ -8,7 +8,13 @@ import 'package:sdahymnal/models/hymn.dart';
 /// Old-Hymnal hymns have no MIDI, so [hasMidi] gates the UI.
 class MidiPlayer {
   MidiPlayer._() {
-    _player.onPlayerComplete.listen((_) => current.value = null);
+    _player.onPlayerComplete.listen((_) {
+      current.value = null;
+      position.value = Duration.zero;
+      duration.value = Duration.zero;
+    });
+    _player.onPositionChanged.listen((p) => position.value = p);
+    _player.onDurationChanged.listen((d) => duration.value = d);
   }
 
   static final MidiPlayer instance = MidiPlayer._();
@@ -17,6 +23,10 @@ class MidiPlayer {
 
   /// Hymn number currently loaded (+ paused flag); null when stopped.
   final ValueNotifier<({int n, bool paused})?> current = ValueNotifier(null);
+
+  /// Playback progress of the current hymn (zero when stopped).
+  final ValueNotifier<Duration> position = ValueNotifier(Duration.zero);
+  final ValueNotifier<Duration> duration = ValueNotifier(Duration.zero);
 
   static bool hasMidi(Hymn hymn) => hymn.version == 'new';
 
@@ -45,9 +55,25 @@ class MidiPlayer {
     }
   }
 
+  /// Jump forward/back by [delta], clamped to the track bounds.
+  Future<void> seekBy(Duration delta) async {
+    if (current.value == null) return;
+    final target = position.value + delta;
+    final max = duration.value;
+    final clamped = target < Duration.zero
+        ? Duration.zero
+        : (max > Duration.zero && target > max)
+            ? max
+            : target;
+    await _player.seek(clamped);
+    position.value = clamped;
+  }
+
   Future<void> stop() async {
     await _player.stop();
     current.value = null;
+    position.value = Duration.zero;
+    duration.value = Duration.zero;
   }
 
   /// Stop only if [number] is the hymn currently loaded — lets a disposed

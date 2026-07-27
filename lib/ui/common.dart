@@ -109,6 +109,42 @@ class HymnalIcons {
 <path d="M5.5 3.5 L12 8 L5.5 12.5 Z" fill="${_rgb(c)}"/>
 </svg>''', size, size);
 
+  /// Skip-10-seconds arc arrow (backward when [forward] is false) with a
+  /// small "10" set inside the arc.
+  static Widget seek10(Color c, {required bool forward, double size = 22}) {
+    final arc = forward
+        ? '<path d="M11 5 A7 7 0 1 1 4 12" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+            '<path d="M11 5 L7.8 2.6 M11 5 L7.8 7.4" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+        : '<path d="M11 5 A7 7 0 1 0 18 12" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+            '<path d="M11 5 L14.2 2.6 M11 5 L14.2 7.4" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _svg(
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22">$arc</svg>',
+              size,
+              size),
+          Padding(
+            padding: EdgeInsets.only(top: size * 0.14),
+            child: Text(
+              '10',
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: size * 0.34,
+                fontWeight: FontWeight.w700,
+                height: 1.0,
+                color: c,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   static Widget pauseBars(Color c, {double size = 16}) => _svg('''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
 <rect x="4.2" y="3.5" width="2.6" height="9" rx="1.3" fill="${_rgb(c)}"/>
