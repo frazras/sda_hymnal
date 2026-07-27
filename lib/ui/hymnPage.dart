@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
@@ -39,6 +40,14 @@ class _HymnPageState extends State<HymnPage> {
     // every prev/next/swipe move constructs a new HymnPage, so this covers
     // them all.
     Recents.instance.push(widget.hymn);
+  }
+
+  @override
+  void dispose() {
+    // Leaving the page (back, or prev/next replacing it) stops its playback;
+    // guarded so it never cuts off a newer page that already started its own.
+    MidiPlayer.instance.stopIfCurrent(widget.hymn.number);
+    super.dispose();
   }
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
@@ -298,22 +307,39 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   Widget _playButton(HymnalTokens t) {
-    return Pressable(
-      // Inert placeholder for upcoming audio features: press feedback only,
-      // no action wired.
-      onTap: () {},
-      pressedScale: 0.92,
-      builder: (context, pressed) => Container(
-        width: 44,
-        height: 44,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: t.accent,
-          shape: BoxShape.circle,
-          boxShadow: t.playShadow,
-        ),
-        child: HymnalIcons.playTriangle(t.onAccent),
-      ),
+    // MIDI exists for the New Hymnal only; Old-Hymnal pages show the button
+    // dimmed and inert.
+    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    return ValueListenableBuilder<({int n, bool paused})?>(
+      valueListenable: MidiPlayer.instance.current,
+      builder: (context, cur, _) {
+        final isPlaying = canPlay &&
+            cur != null &&
+            cur.n == widget.hymn.number &&
+            !cur.paused;
+        return Opacity(
+          opacity: canPlay ? 1.0 : 0.45,
+          child: Pressable(
+            onTap: canPlay
+                ? () => MidiPlayer.instance.toggle(widget.hymn)
+                : null,
+            pressedScale: 0.92,
+            builder: (context, pressed) => Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: t.accent,
+                shape: BoxShape.circle,
+                boxShadow: t.playShadow,
+              ),
+              child: isPlaying
+                  ? HymnalIcons.pauseBars(t.onAccent)
+                  : HymnalIcons.playTriangle(t.onAccent),
+            ),
+          ),
+        );
+      },
     );
   }
 

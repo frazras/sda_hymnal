@@ -109,6 +109,12 @@ class HymnalIcons {
 <path d="M5.5 3.5 L12 8 L5.5 12.5 Z" fill="${_rgb(c)}"/>
 </svg>''', size, size);
 
+  static Widget pauseBars(Color c, {double size = 16}) => _svg('''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+<rect x="4.2" y="3.5" width="2.6" height="9" rx="1.3" fill="${_rgb(c)}"/>
+<rect x="9.2" y="3.5" width="2.6" height="9" rx="1.3" fill="${_rgb(c)}"/>
+</svg>''', size, size);
+
   static Widget clearX(Color c, {double size = 18}) => _svg('''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" fill="none">
 <path d="M4.5 4.5 L13.5 13.5 M13.5 4.5 L4.5 13.5" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linecap="round"/>
