@@ -135,7 +135,14 @@ class Settings extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 32, 0, 8),
           child: Column(
             children: [
-              HymnalIcons.logoMark(t, size: 22),
+              Image.asset(
+                t.isDark
+                    ? 'assets/brand/mark_dark.png'
+                    : 'assets/brand/mark_light.png',
+                height: 30,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.medium,
+              ),
               const SizedBox(height: 6),
               Text(
                 'Old & New SDA Hymnal',

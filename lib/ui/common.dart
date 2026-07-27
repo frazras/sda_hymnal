@@ -232,34 +232,16 @@ class BrandHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final brand = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        HymnalIcons.logoMark(t),
-        const SizedBox(width: 9),
-        Text.rich(
-          TextSpan(children: [
-            TextSpan(
-              text: 'Old & New',
-              style: TextStyle(
-                fontFamily: kSerif,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
-                color: t.accent,
-              ),
-            ),
-            TextSpan(
-              text: ' SDA Hymnal',
-              style: TextStyle(fontWeight: FontWeight.w700, color: t.ink),
-            ),
-          ]),
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 15.5,
-            letterSpacing: trackingEm(-0.01, 15.5),
-          ),
-        ),
-      ],
+    // Canticle Ampersand wordmark (assets/brand): custom lettering with the
+    // staff-threaded '&'; separate renders per theme.
+    final brand = Image.asset(
+      t.isDark
+          ? 'assets/brand/wordmark_dark.png'
+          : 'assets/brand/wordmark_light.png',
+      height: 38,
+      fit: BoxFit.contain,
+      alignment: Alignment.centerLeft,
+      filterQuality: FilterQuality.medium,
     );
     return Container(
       height: 52,

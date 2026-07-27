@@ -62,6 +62,7 @@ flutter:
     - assets/sp.png
     - assets/rohan.jpg
     - assets/donate.jpg
+    - assets/brand/
     - assets/midi/
 
   fonts:
