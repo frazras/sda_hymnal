@@ -617,16 +617,24 @@ class _HymnPageState extends State<HymnPage> {
         : 'Key of ${transposedKeyLabel(key, semis)} · $meter';
   }
 
-  /// Scrollable measure grid: one cell per measure (chords assigned by start
-  /// time), four per row, barline on the left edge of each cell; the measure
-  /// under the playhead is highlighted while this hymn is loaded.
+  /// Scrollable measure grid: one cell per measure, four per row, barline on
+  /// the left edge of each cell. Each cell is a beat grid — every chord beat
+  /// onset in the measure's window, sorted by time — so its symbols always
+  /// add up to the bar's beats. The measure under the playhead is highlighted
+  /// while this hymn is loaded and pulses beat by beat.
   Widget _measureGrid(HymnalTokens t, ChordTrack track, int semis) {
-    final measures =
-        List.generate(track.measureStartMs.length, (_) => <ChordEvent>[]);
+    final measures = List.generate(
+        track.measureStartMs.length, (_) => <_MeasureBeat>[]);
     if (measures.isNotEmpty) {
       for (final e in track.chords) {
-        final m = track.measureAt(e.startMs);
-        measures[m < 0 ? 0 : m].add(e);
+        for (final b in e.beatMs) {
+          final m = track.measureAt(b);
+          measures[m < 0 ? 0 : m]
+              .add((ms: b, onset: b == e.beatMs.first, chord: e));
+        }
+      }
+      for (final beats in measures) {
+        beats.sort((a, b) => a.ms - b.ms);
       }
     }
     return ValueListenableBuilder<({int n, bool paused})?>(
@@ -646,28 +654,35 @@ class _HymnPageState extends State<HymnPage> {
             itemCount: measures.length,
             itemBuilder: (context, i) => _measureCell(
                 t, measures[i], track.key, semis,
-                current: i == at),
+                current: i == at,
+                positionMs: loaded ? pos.inMilliseconds : -1),
           );
         },
       ),
     );
   }
 
-  /// One measure cell: its chords joined with middle dots ('—' while a chord
-  /// holds over from an earlier bar), left border as the barline.
+  /// One measure cell: a symbol per beat — the chord label on its onset beat,
+  /// a dot for every further beat it is held — with the left border as the
+  /// barline. In the current measure, symbols light up in accent as their
+  /// beats strike ([positionMs] is -1 when this hymn is not the one loaded).
   Widget _measureCell(
     HymnalTokens t,
-    List<ChordEvent> chords,
+    List<_MeasureBeat> beats,
     MidiKey? key,
     int semis, {
     required bool current,
+    required int positionMs,
   }) {
-    final label = chords.isEmpty
-        ? '—'
-        : [
-            for (final e in chords)
-              chordLabel(e.rootPc, e.quality, key, semis)
-          ].join(' · ');
+    Color tone(int ms, {required bool dot}) {
+      if (current) {
+        return ms <= positionMs
+            ? t.accent
+            : t.accent.withValues(alpha: 0.35);
+      }
+      return dot ? t.ink.withValues(alpha: 0.35) : t.ink;
+    }
+
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -675,18 +690,32 @@ class _HymnPageState extends State<HymnPage> {
         color: current ? t.tint : Colors.transparent,
         border: Border(left: BorderSide(color: t.line2)),
       ),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 13.5,
-            fontWeight: FontWeight.w600,
-            color: current ? t.accent : t.ink,
-          ),
-        ),
-      ),
+      child: beats.isEmpty
+          ? null
+          : FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var k = 0; k < beats.length; k++) ...[
+                    if (k > 0) const SizedBox(width: 5),
+                    if (beats[k].onset)
+                      Text(
+                        chordLabel(beats[k].chord.rootPc,
+                            beats[k].chord.quality, key, semis),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: tone(beats[k].ms, dot: false),
+                        ),
+                      )
+                    else
+                      _beatDot(tone(beats[k].ms, dot: true)),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
@@ -1069,3 +1098,8 @@ class _HymnPageState extends State<HymnPage> {
   }
 
 }
+
+/// One beat slot of a chord-chart measure cell: the beat's media-time ms,
+/// whether it is the chord's onset beat (label) or a hold beat (dot), and the
+/// chord sounding on it.
+typedef _MeasureBeat = ({int ms, bool onset, ChordEvent chord});

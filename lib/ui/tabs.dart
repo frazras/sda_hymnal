@@ -5,6 +5,7 @@ import 'package:sdahymnal/services/api.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/buttons.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/settings.dart';
 
@@ -74,7 +75,7 @@ class _TabsState extends State<Tabs> {
             bottom: false,
             child: Column(
               children: [
-                const BrandHeader(),
+                BrandHeader(onLogoTap: () => setState(() => _tab = 0)),
                 Expanded(
                   child: IndexedStack(
                     index: _tab,
@@ -84,7 +85,8 @@ class _TabsState extends State<Tabs> {
                           hymns: _hymns,
                           hymnsOld: _hymnsOld,
                           hymnsNew: _hymnsNew),
-                      Settings(hymnsNew: _hymnsNew, hymnsOld: _hymnsOld),
+                      FavoritesTab(hymnsNew: _hymnsNew, hymnsOld: _hymnsOld),
+                      const Settings(),
                     ],
                   ),
                 ),

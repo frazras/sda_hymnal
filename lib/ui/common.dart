@@ -224,40 +224,56 @@ class HymnalIcons {
 // ---------------------------------------------------------------------------
 
 class BrandHeader extends StatelessWidget {
-  const BrandHeader({super.key});
+  /// When set, the logo mark + wordmark become tappable (Numbers tab home).
+  final VoidCallback? onLogoTap;
+
+  const BrandHeader({super.key, this.onLogoTap});
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    final brand = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        HymnalIcons.logoMark(t),
+        const SizedBox(width: 9),
+        Text.rich(
+          TextSpan(children: [
+            TextSpan(
+              text: 'Old & New',
+              style: TextStyle(
+                fontFamily: kSerif,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+                color: t.accent,
+              ),
+            ),
+            TextSpan(
+              text: ' SDA Hymnal',
+              style: TextStyle(fontWeight: FontWeight.w700, color: t.ink),
+            ),
+          ]),
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 15.5,
+            letterSpacing: trackingEm(-0.01, 15.5),
+          ),
+        ),
+      ],
+    );
     return Container(
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          HymnalIcons.logoMark(t),
-          const SizedBox(width: 9),
-          Text.rich(
-            TextSpan(children: [
-              TextSpan(
-                text: 'Old & New',
-                style: TextStyle(
-                  fontFamily: kSerif,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w500,
-                  color: t.accent,
-                ),
-              ),
-              TextSpan(
-                text: ' SDA Hymnal',
-                style: TextStyle(fontWeight: FontWeight.w700, color: t.ink),
-              ),
-            ]),
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 15.5,
-              letterSpacing: trackingEm(-0.01, 15.5),
+          if (onLogoTap == null)
+            brand
+          else
+            Pressable.child(
+              onTap: onLogoTap,
+              pressedScale: 0.97,
+              child: brand,
             ),
-          ),
         ],
       ),
     );
@@ -381,7 +397,9 @@ class HymnalBottomNav extends StatelessWidget {
         children: [
           item(0, 'Numbers', HymnalIcons.navNumbers(c(0))),
           item(1, 'Search', HymnalIcons.magnifier(c(1), stroke: s(1))),
-          item(2, 'Settings', HymnalIcons.navSettings(c(2), t.bg, stroke: s(2))),
+          item(2, 'Favorites',
+              HymnalIcons.heart(c(2), size: 22, filled: active == 2)),
+          item(3, 'Settings', HymnalIcons.navSettings(c(3), t.bg, stroke: s(3))),
         ],
       ),
     );
@@ -389,13 +407,13 @@ class HymnalBottomNav extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// NEW / OLD pill badges
+// NEW HYMNAL / OLD HYMNAL pill badges
 // ---------------------------------------------------------------------------
 
 class VersionBadge extends StatelessWidget {
   final bool isNew;
 
-  /// Numbers preview cards use 10px/4×9; search rows use 9px/3×8.
+  /// Numbers preview cards use 10px/4×8; search rows use 9px/3×8.
   final double fontSize;
   final EdgeInsets padding;
 
@@ -403,7 +421,7 @@ class VersionBadge extends StatelessWidget {
       {super.key,
       required this.isNew,
       this.fontSize = 10,
-      this.padding = const EdgeInsets.symmetric(horizontal: 9, vertical: 4)});
+      this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4)});
 
   @override
   Widget build(BuildContext context) {
@@ -415,7 +433,7 @@ class VersionBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        isNew ? 'NEW' : 'OLD',
+        isNew ? 'NEW HYMNAL' : 'OLD HYMNAL',
         style: TextStyle(
           fontFamily: kSans,
           fontSize: fontSize,

@@ -6,14 +6,15 @@ import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 
-/// Favorites sub-page (full-screen, pushed with slideRoute): the hymns the
-/// user hearted, most recently added first. Rows mirror the Search list rows,
-/// with a trailing heart that unfavorites instead of a chevron.
-class FavoritesPage extends StatelessWidget {
+/// Favorites tab — content only (the shell renders the brand header above and
+/// the bottom nav below): the hymns the user hearted, most recently added
+/// first. Rows mirror the Search list rows, with a trailing heart that
+/// unfavorites instead of a chevron.
+class FavoritesTab extends StatelessWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
 
-  const FavoritesPage(
+  const FavoritesTab(
       {super.key, required this.hymnsNew, required this.hymnsOld});
 
   /// Looks up the favorite's Hymn in the matching version list; null when it
@@ -39,30 +40,17 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SubPageHeader(title: 'Favorites'),
-            Expanded(
-              child: ValueListenableBuilder<List<({int n, String v})>>(
-                valueListenable: Favorites.instance,
-                builder: (context, favorites, _) {
-                  final hymns =
-                      favorites.map(_resolve).whereType<Hymn>().toList();
-                  if (hymns.isEmpty) return _emptyState(t);
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: hymns.length,
-                    itemBuilder: (context, index) =>
-                        _buildRow(context, hymns[index]),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ValueListenableBuilder<List<({int n, String v})>>(
+      valueListenable: Favorites.instance,
+      builder: (context, favorites, _) {
+        final hymns = favorites.map(_resolve).whereType<Hymn>().toList();
+        if (hymns.isEmpty) return _emptyState(t);
+        return ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: hymns.length,
+          itemBuilder: (context, index) => _buildRow(context, hymns[index]),
+        );
+      },
     );
   }
 

@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/about.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/donate.dart';
-import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
 import 'package:sdahymnal/ui/sp.dart';
 
 /// Settings tab — content only (the shell renders the brand header above and
 /// the bottom nav below). Sections: APPEARANCE (theme segmented control),
 /// READING (font size row), SOUND (instrument theme row + picker sheet),
-/// MORE (favorites / about / donate / other projects), footer. Holds the
-/// hymn lists so Favorites can resolve titles.
+/// MORE (about / donate / other projects), footer.
 class Settings extends StatelessWidget {
-  final List<Hymn> hymnsNew;
-  final List<Hymn> hymnsOld;
-
-  const Settings(
-      {super.key, required this.hymnsNew, required this.hymnsOld});
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -112,16 +105,6 @@ class Settings extends StatelessWidget {
           t,
           child: Column(
             children: [
-              _SettingsRow(
-                leading: HymnalIcons.heart(t.muted),
-                title: 'Favorites',
-                subtitle: 'Your saved hymns',
-                divider: true,
-                onTap: () => Navigator.push(
-                    context,
-                    slideRoute(FavoritesPage(
-                        hymnsNew: hymnsNew, hymnsOld: hymnsOld))),
-              ),
               _SettingsRow(
                 leading: HymnalIcons.person(t.muted),
                 title: 'About Us',
