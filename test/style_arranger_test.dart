@@ -463,22 +463,59 @@ void main() {
       expect(vels.reduce((a, b) => a > b ? a : b), greaterThanOrEqualTo(110));
     });
 
-    test('the tempo map is flattened to a single opening tempo', () {
-      expect(reggaeScan.tempoCount, 1);
-      expect(calypsoScan.tempoCount, 1);
-      expect(_scan(arrangeStyle(input, ArrangeStyle.gospel)).tempoCount, 1);
+    test('the tempo map is clamped into the dominant band', () {
+      // No arranged tempo may exceed the dominant (opener flourishes are
+      // gone) or fall below 70% of it (cadence dips survive as gentle
+      // holds, not lurches or a dead flat line).
+      for (final scan in [
+        reggaeScan,
+        calypsoScan,
+        _scan(arrangeStyle(input, ArrangeStyle.gospel)),
+      ]) {
+        final bpms = scan.tempi.map((us) => 6e7 / us).toList();
+        expect(bpms, isNotEmpty);
+        final fastest = bpms.reduce((a, b) => a > b ? a : b);
+        final slowest = bpms.reduce((a, b) => a < b ? a : b);
+        expect(fastest / slowest, lessThanOrEqualTo(1 / 0.7 + 0.01));
+      }
     });
 
-    test('#15 flattens to its dominant 121 BPM body, not the 240 opener', () {
+    test('#15 clamps to its dominant 121 BPM body, not the 240 opener', () {
       // Hymn 15 opens with a seven-beat 240 BPM flourish marking before
       // the 121 BPM body; taking the opener played the whole arrangement
       // double-speed (heard as the one drop "removed... a stifled
-      // one-note fill"). The dominant tempo — most governed ticks — wins.
+      // one-note fill"). The dominant tempo — most governed ticks — caps
+      // the map; the closing rits survive only down to the 70% floor.
       final h15 = Uint8List.fromList(
           File('assets/midi/015.mid').readAsBytesSync());
       final scan = _scan(arrangeStyle(h15, ArrangeStyle.reggae));
-      expect(scan.tempi, hasLength(1));
-      expect((6e7 / scan.tempi.single).round(), 121);
+      final bpms = scan.tempi.map((us) => 6e7 / us).toList();
+      expect(bpms.first.round(), 121);
+      expect(bpms.reduce((a, b) => a > b ? a : b).round(), 121);
+      expect(bpms.reduce((a, b) => a < b ? a : b),
+          greaterThanOrEqualTo(121 * 0.7 - 0.5));
+    });
+
+    test('#15 chord display retimes onto the arranged timeline', () {
+      // The ticker consumes positions of the PLAYING file. Hymn 15's
+      // original map starts at 240 BPM (chords flew by early — "didn't
+      // hear the first 2 chords") and ends in deep rits (the indicator
+      // outlived the audio). Retimed: the opening chords sit LATER than
+      // raw (slowed to 121) and the final measure lands EARLIER (rits
+      // clamped to the 70% floor).
+      final h15 = Uint8List.fromList(
+          File('assets/midi/015.mid').readAsBytesSync());
+      final raw = detectChords(h15)!;
+      final retimed = retimeTrackForArrangement(h15, raw);
+      expect(retimed.chords.length, raw.chords.length);
+      expect(retimed.measureStartMs.length, raw.measureStartMs.length);
+      expect(retimed.chords.first.startMs,
+          greaterThan(raw.chords.first.startMs));
+      expect(retimed.measureStartMs.last, lessThan(raw.measureStartMs.last));
+      // Beat counts are conserved chord by chord.
+      for (var i = 0; i < raw.chords.length; i++) {
+        expect(retimed.chords[i].beatMs.length, raw.chords[i].beatMs.length);
+      }
     });
 
     test('the calypso strum drops out for the button ending', () {

@@ -151,12 +151,41 @@ class MidiPlayer {
     try {
       final bytes = await _assetBytes(hymn.number);
       originalKey.value = readKeySignature(bytes);
-      chordTrack.value =
+      final raw =
           _chordCache.putIfAbsent(hymn.number, () => detectChords(bytes));
+      chordTrack.value = _displayTrack(bytes, raw);
     } catch (_) {
       originalKey.value = null;
       chordTrack.value = null;
     }
+  }
+
+  /// The chord track as the UI must time it. Raw detection is timed on the
+  /// hymn's ORIGINAL tempo map, but arranged themes play a render whose
+  /// map is reshaped (clamped) by the arranger — so their chords are
+  /// remapped onto the render's timeline, or the ticker runs ahead of the
+  /// audio at fast openers and outlives it through closing rits (#15).
+  ChordTrack? _displayTrack(Uint8List bytes, ChordTrack? raw) {
+    if (raw == null) return null;
+    if (_arrangedThemes[InstrumentTheme.instance.value] == null) return raw;
+    try {
+      return retimeTrackForArrangement(bytes, raw);
+    } on FormatException {
+      return raw;
+    }
+  }
+
+  /// Re-times the published chord track for the current theme (called on
+  /// every instrument change — switching between a passthrough theme and
+  /// an arranged one changes the playing file's timeline).
+  Future<void> _republishChords() async {
+    final n = _lastN;
+    if (n == null || chordTrack.value == null) return;
+    try {
+      final bytes = await _assetBytes(n);
+      chordTrack.value = _displayTrack(
+          bytes, _chordCache.putIfAbsent(n, () => detectChords(bytes)));
+    } catch (_) {}
   }
 
   /// Source for hymn [n] under the current transpose + instrument theme
@@ -176,7 +205,7 @@ class MidiPlayer {
   /// Bump when render output changes for the same (hymn, shift, theme) —
   /// e.g. theme program retunes or arranger revisions — so stale caches
   /// from earlier app versions are bypassed.
-  static const int _renderVersion = 6;
+  static const int _renderVersion = 7;
 
   /// Generated-arrangement themes: the [ArrangeStyle] behind each theme id,
   /// plus the GM program of the plain remap used when a file has no
@@ -310,6 +339,7 @@ class MidiPlayer {
   /// Restart the loaded hymn through the current transform and pick up
   /// where it was: same position, same pause state, same speed.
   Future<void> _restartWithTransform() async {
+    await _republishChords();
     if (_useChannel) return _channelRestartWithTransform();
     final cur = current.value;
     if (cur == null) return;

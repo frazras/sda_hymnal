@@ -213,38 +213,9 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     if (beat > lastBeat) lastBeat = beat;
   }
 
-  // The arrangement's single tempo (and the half-time decision) comes from
-  // the hymn's DOMINANT tempo — the marking that governs the most ticks —
-  // never simply the first FF51: hymn 15 opens with a 240 BPM flourish
-  // marking that lasts seven beats before the 121 BPM body, and taking the
-  // opener played the whole song double-speed (heard as the one drop
-  // "removed... a stifled one-note fill"). Verse-end rit dips only govern
-  // a beat or two, so tick-weighting ignores them too.
-  var songEnd = 0;
-  for (final note in song.notes) {
-    if (note.endTick > songEnd) songEnd = note.endTick;
-  }
-  var usPerQuarter = _defaultUsPerQuarter;
-  if (song.tempi.isNotEmpty) {
-    final ordered = [...song.tempi]..sort((a, b) => a.$1.compareTo(b.$1));
-    final governed = <int, int>{}; // usPerQuarter -> ticks it governs
-    for (var i = 0; i < ordered.length; i++) {
-      final (tick, us) = ordered[i];
-      final until = i + 1 < ordered.length ? ordered[i + 1].$1 : songEnd;
-      if (until > tick) {
-        governed[us] = (governed[us] ?? 0) + (until - tick);
-      }
-    }
-    // Strict > keeps the earliest marking on ties — deterministic.
-    var bestTicks = -1;
-    for (final (_, us) in ordered) {
-      final ticks = governed[us] ?? 0;
-      if (ticks > bestTicks) {
-        bestTicks = ticks;
-        usPerQuarter = us;
-      }
-    }
-  }
+  // The half-time decision and the tempo clamp both key off the hymn's
+  // DOMINANT tempo; see [_arrangedTempi].
+  final (usPerQuarter, arrangedTempi) = _arrangedTempi(song);
 
   final ctx = _Ctx(
     d: d,
@@ -256,20 +227,22 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     bpm: 60e6 / usPerQuarter,
   );
 
-  // Bands keep time: the hymn files carry stepped ritardandos at every
-  // verse end (natural on the original organ rendition, a lurch under a
-  // groove — listening feedback). The arranged conductor states the hymn's
-  // opening tempo once and drops the rest of the tempo map; time-signature
-  // and key metas are kept verbatim.
-  final conductor = _Track()
-    ..meta(
-        0,
+  // Bands keep time — but they breathe at cadences. The conductor carries
+  // the CLAMPED tempo map from [_arrangedTempi] instead of the original
+  // (lurching) one or a flat line (which deleted the fermatas some files
+  // encode purely as tempo dips, so verse ends rushed and stuttered —
+  // listening feedback). Time-signature and key metas are kept verbatim.
+  final conductor = _Track();
+  for (final (tick, us) in arrangedTempi) {
+    conductor.meta(
+        tick,
         Uint8List.fromList([
           0xFF, 0x51, 0x03, //
-          (usPerQuarter >> 16) & 0xFF,
-          (usPerQuarter >> 8) & 0xFF,
-          usPerQuarter & 0xFF,
+          (us >> 16) & 0xFF,
+          (us >> 8) & 0xFF,
+          us & 0xFF,
         ]));
+  }
   for (final (tick, bytes) in song.metas) {
     if (bytes.length > 1 && bytes[1] == 0x51) continue;
     conductor.meta(tick, bytes);
@@ -378,6 +351,86 @@ class _Ctx {
     h = (h ^ slot) * 16777619 & 0x7FFFFFFF;
     return base + h % (2 * range + 1) - range;
   }
+}
+
+/// The arranged tempo policy for [song]: the DOMINANT tempo (the marking
+/// governing the most ticks — hymn 15 opens with a seven-beat 240 BPM
+/// flourish before its 121 BPM body, so "first FF51" is a trap) and the
+/// CLAMPED tempo map the arrangement plays under. Anything faster than the
+/// dominant clamps down to it (opener flourishes disappear); anything
+/// slower than 70% of it clamps up to that floor — so the fermatas some
+/// files encode purely as tempo dips survive as gentle cadence holds
+/// instead of lurches, and the groove never stutters through them.
+(int, List<(int, int)>) _arrangedTempi(_Song song) {
+  var songEnd = 0;
+  for (final note in song.notes) {
+    if (note.endTick > songEnd) songEnd = note.endTick;
+  }
+  var usPerQuarter = _defaultUsPerQuarter;
+  final ordered = [...song.tempi]..sort((a, b) => a.$1.compareTo(b.$1));
+  if (ordered.isNotEmpty) {
+    final governed = <int, int>{}; // usPerQuarter -> ticks it governs
+    for (var i = 0; i < ordered.length; i++) {
+      final (tick, us) = ordered[i];
+      final until = i + 1 < ordered.length ? ordered[i + 1].$1 : songEnd;
+      if (until > tick) {
+        governed[us] = (governed[us] ?? 0) + (until - tick);
+      }
+    }
+    // Strict > keeps the earliest marking on ties — deterministic.
+    var bestTicks = -1;
+    for (final (_, us) in ordered) {
+      final ticks = governed[us] ?? 0;
+      if (ticks > bestTicks) {
+        bestTicks = ticks;
+        usPerQuarter = us;
+      }
+    }
+  }
+  final slowest = usPerQuarter * 10 ~/ 7; // the 70%-speed cadence floor
+  final tempi = <(int, int)>[(0, usPerQuarter)];
+  for (final (tick, us) in ordered) {
+    final clamped = us.clamp(usPerQuarter, slowest);
+    if (tick == 0) {
+      tempi[0] = (0, clamped);
+    } else if (clamped != tempi.last.$2) {
+      tempi.add((tick, clamped));
+    }
+  }
+  return (usPerQuarter, tempi);
+}
+
+/// Remaps [track] — detected on [originalBytes] and therefore timed on the
+/// hymn's ORIGINAL tempo map — onto the timeline of this hymn's arranged
+/// render (the clamped map from [_arrangedTempi], which [arrangeStyle]
+/// writes). The chord ticker and chart consume media-time positions of
+/// whatever file is PLAYING; without this remap they drift on any hymn
+/// whose map the arrangement reshapes (#15: chords ran ahead through the
+/// 240 BPM opener and outlived the audio through the closing rits).
+///
+/// Throws [FormatException] when [originalBytes] is not a well-formed SMF.
+ChordTrack retimeTrackForArrangement(
+    Uint8List originalBytes, ChordTrack track) {
+  final song = _parseSong(originalBytes);
+  final (_, tempi) = _arrangedTempi(song);
+  final original = _TempoMap(song.tempi, song.division);
+  final arranged = _TempoMap(tempi, song.division);
+  int remap(int ms) => arranged.msOf(original.tickOf(ms)).round();
+  return ChordTrack(
+    chords: [
+      for (final e in track.chords)
+        ChordEvent(
+          startMs: remap(e.startMs),
+          durationMs: remap(e.startMs + e.durationMs) - remap(e.startMs),
+          rootPc: e.rootPc,
+          quality: e.quality,
+          beatMs: [for (final ms in e.beatMs) remap(ms)],
+        ),
+    ],
+    key: track.key,
+    beatsPerBar: track.beatsPerBar,
+    measureStartMs: [for (final ms in track.measureStartMs) remap(ms)],
+  );
 }
 
 /// FNV-1a hash of [bytes], truncated to a positive 31-bit int.
@@ -1257,6 +1310,21 @@ class _TempoMap {
   final List<int> _ticks = [];
   final List<double> _msStarts = [];
   final List<double> _msPerTick = [];
+
+  /// Fractional media-time ms of a (possibly fractional) [tick].
+  double msOf(double tick) {
+    var lo = 0, hi = _ticks.length - 1, best = 0;
+    while (lo <= hi) {
+      final mid = (lo + hi) >> 1;
+      if (_ticks[mid] <= tick) {
+        best = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return _msStarts[best] + (tick - _ticks[best]) * _msPerTick[best];
+  }
 
   /// Fractional tick of media-time [ms]; the caller rounds to a beat index.
   double tickOf(int ms) {
