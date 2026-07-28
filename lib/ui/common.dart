@@ -240,24 +240,19 @@ class BrandHeader extends StatelessWidget {
           : 'assets/brand/wordmark_light.png',
       height: 38,
       fit: BoxFit.contain,
-      alignment: Alignment.centerLeft,
       filterQuality: FilterQuality.medium,
     );
     return Container(
       height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          if (onLogoTap == null)
-            brand
-          else
-            Pressable.child(
+      alignment: Alignment.center,
+      child: onLogoTap == null
+          ? brand
+          : Pressable.child(
               onTap: onLogoTap,
               pressedScale: 0.97,
               child: brand,
             ),
-        ],
-      ),
     );
   }
 }
