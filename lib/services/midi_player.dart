@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
@@ -10,30 +11,51 @@ import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
-/// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid)
-/// through the platform media player. One hymn at a time; play/pause toggles.
-/// Old-Hymnal hymns have no MIDI, so [hasMidi] gates the UI.
+/// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid).
+/// One hymn at a time; play/pause toggles. Old-Hymnal hymns have no MIDI, so
+/// [hasMidi] gates the UI.
+///
+/// Two engines behind one API:
+///  * Android (and host test runs): the platform media player via
+///    audioplayers, unchanged.
+///  * iOS: the native soundfont player behind the 'sdahymnal/midi'
+///    MethodChannel (load/play/pause/stop/seek/setRate/getPosition, plus an
+///    'onComplete' callback), which only accepts real file paths.
 ///
 /// Transposition ([transpose]) and the instrument theme ([InstrumentTheme])
 /// are applied by rewriting the asset bytes with [transformMidi] into a
 /// temp-dir cache file and playing that; at the defaults (no shift, Classic)
-/// the untouched asset plays directly as before.
+/// the untouched asset plays directly (audioplayers) or is materialized
+/// verbatim into the same cache (iOS).
 class MidiPlayer {
   MidiPlayer._() {
-    _player.onPlayerComplete.listen((_) {
-      current.value = null;
-      position.value = Duration.zero;
-      duration.value = Duration.zero;
-    });
-    _player.onPositionChanged.listen((p) => position.value = p);
-    _player.onDurationChanged.listen((d) => duration.value = d);
+    if (_useChannel) {
+      _channel.setMethodCallHandler((call) async {
+        if (call.method == 'onComplete') _onComplete();
+        return null;
+      });
+    } else {
+      _player.onPlayerComplete.listen((_) => _onComplete());
+      _player.onPositionChanged.listen((p) => position.value = p);
+      _player.onDurationChanged.listen((d) => duration.value = d);
+    }
     // An instrument change re-renders the loaded tune in place.
     InstrumentTheme.instance.addListener(_restartWithTransform);
   }
 
   static final MidiPlayer instance = MidiPlayer._();
 
-  final AudioPlayer _player = AudioPlayer();
+  /// True when playback goes through the native iOS channel engine. Host
+  /// test runs report Platform.isIOS == false and keep the audioplayers path.
+  static final bool _useChannel = !kIsWeb && Platform.isIOS;
+
+  static const MethodChannel _channel = MethodChannel('sdahymnal/midi');
+
+  /// Created lazily so the iOS engine never spins up an audioplayers player.
+  late final AudioPlayer _player = AudioPlayer();
+
+  /// Polls getPosition while the channel engine is audibly playing.
+  Timer? _posTimer;
 
   /// Hymn number currently loaded (+ paused flag); null when stopped.
   final ValueNotifier<({int n, bool paused})?> current = ValueNotifier(null);
@@ -74,6 +96,39 @@ class MidiPlayer {
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
+  static Duration _toDuration(double seconds) =>
+      Duration(milliseconds: (seconds * 1000).round());
+
+  static double _toSeconds(Duration d) => d.inMilliseconds / 1000.0;
+
+  /// Natural end of the tune: same reset on both engines.
+  void _onComplete() {
+    _stopPositionPolling();
+    current.value = null;
+    position.value = Duration.zero;
+    duration.value = Duration.zero;
+  }
+
+  void _startPositionPolling() {
+    _posTimer?.cancel();
+    _posTimer = Timer.periodic(const Duration(milliseconds: 150), (_) async {
+      try {
+        final secs = await _channel.invokeMethod<double>('getPosition');
+        final cur = current.value;
+        // A poll can resolve after a pause/stop raced past the cancel; only
+        // a still-playing tune may move the notifier.
+        if (secs != null && cur != null && !cur.paused) {
+          position.value = _toDuration(secs);
+        }
+      } catch (_) {}
+    });
+  }
+
+  void _stopPositionPolling() {
+    _posTimer?.cancel();
+    _posTimer = null;
+  }
+
   /// Reset the per-hymn transposition when [n] is a new hymn number.
   void _trackHymn(int n) {
     if (_lastN == n) return;
@@ -103,28 +158,41 @@ class MidiPlayer {
     }
   }
 
-  /// Source for hymn [n] under the current transpose + instrument theme:
-  /// the bare asset when both are at their defaults, otherwise a transformed
-  /// render cached in the temp dir per (hymn, shift, theme).
+  /// Source for hymn [n] under the current transpose + instrument theme
+  /// (audioplayers engine only): the bare asset when both are at their
+  /// defaults, otherwise the cached render from [_renderFile].
   Future<Source> _source(int n) async {
+    if (transpose.value == 0 && InstrumentTheme.instance.program == null) {
+      return AssetSource(_asset(n));
+    }
+    return DeviceFileSource((await _renderFile(n)).path);
+  }
+
+  /// File for hymn [n] under the current transpose + instrument theme,
+  /// cached in the temp dir per (hymn, shift, theme). At the defaults (no
+  /// shift, Classic) the raw asset bytes are materialized verbatim (e.g.
+  /// 001_t0_classic.mid) — the iOS channel engine can only load real files.
+  Future<File> _renderFile(int n) async {
     final semis = transpose.value;
     final theme = InstrumentTheme.instance;
-    if (semis == 0 && theme.program == null) return AssetSource(_asset(n));
     final dir = Directory('${(await getTemporaryDirectory()).path}/midi_cache');
     final name = '${n.toString().padLeft(3, '0')}_t${semis}_${theme.value}.mid';
     final file = File('${dir.path}/$name');
     if (!await file.exists()) {
-      final out = transformMidi(await _assetBytes(n),
-          semitones: semis, forceProgram: theme.program);
+      final bytes = await _assetBytes(n);
+      final out = (semis == 0 && theme.program == null)
+          ? bytes
+          : transformMidi(bytes, semitones: semis, forceProgram: theme.program);
       await dir.create(recursive: true);
       await file.writeAsBytes(out, flush: true);
     }
-    return DeviceFileSource(file.path);
+    return file;
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
   Future<void> toggle(Hymn hymn) async {
     if (!hasMidi(hymn)) return;
+    if (_useChannel) return _channelToggle(hymn);
     final cur = current.value;
     if (cur != null && cur.n == hymn.number) {
       if (cur.paused) {
@@ -148,6 +216,49 @@ class MidiPlayer {
     }
   }
 
+  Future<void> _channelToggle(Hymn hymn) async {
+    final cur = current.value;
+    if (cur != null && cur.n == hymn.number) {
+      try {
+        if (cur.paused) {
+          await _channel.invokeMethod('play');
+          current.value = (n: hymn.number, paused: false);
+          await _applySpeed();
+          _startPositionPolling();
+        } else {
+          _stopPositionPolling();
+          await _channel.invokeMethod('pause');
+          current.value = (n: hymn.number, paused: true);
+          // Snap to the exact paused position (the last poll can be stale).
+          final secs = await _channel.invokeMethod<double>('getPosition');
+          if (secs != null) position.value = _toDuration(secs);
+        }
+      } catch (_) {
+        _stopPositionPolling();
+        current.value = null;
+      }
+      return;
+    }
+    _trackHymn(hymn.number);
+    _stopPositionPolling();
+    // A failed stop (e.g. nothing loaded yet) must not block the new tune.
+    try {
+      await _channel.invokeMethod('stop');
+    } catch (_) {}
+    current.value = (n: hymn.number, paused: false);
+    try {
+      final path = (await _renderFile(hymn.number)).path;
+      final secs = await _channel.invokeMethod<double>('load', path);
+      duration.value = _toDuration(secs ?? 0);
+      position.value = Duration.zero;
+      await _channel.invokeMethod('play');
+      await _applySpeed();
+      _startPositionPolling();
+    } catch (_) {
+      current.value = null;
+    }
+  }
+
   /// Shift the current key by [semitones] (clamped -6..+6). Takes effect
   /// immediately: a loaded hymn is re-rendered and resumed in place.
   Future<void> setTranspose(int semitones) async {
@@ -160,6 +271,7 @@ class MidiPlayer {
   /// Restart the loaded hymn through the current transform and pick up
   /// where it was: same position, same pause state, same speed.
   Future<void> _restartWithTransform() async {
+    if (_useChannel) return _channelRestartWithTransform();
     final cur = current.value;
     if (cur == null) return;
     final pos = position.value;
@@ -181,18 +293,53 @@ class MidiPlayer {
     }
   }
 
+  Future<void> _channelRestartWithTransform() async {
+    final cur = current.value;
+    if (cur == null) return;
+    final pos = position.value;
+    _stopPositionPolling();
+    try {
+      await _channel.invokeMethod('stop');
+    } catch (_) {}
+    current.value = (n: cur.n, paused: false);
+    try {
+      final path = (await _renderFile(cur.n)).path;
+      final secs = await _channel.invokeMethod<double>('load', path);
+      duration.value = _toDuration(secs ?? 0);
+      await _applySpeed();
+      await _channel.invokeMethod('seek', _toSeconds(pos));
+      position.value = pos;
+      if (cur.paused) {
+        // No need to start-then-pause: play() later resumes from the seek.
+        current.value = (n: cur.n, paused: true);
+      } else {
+        await _channel.invokeMethod('play');
+        _startPositionPolling();
+      }
+    } catch (_) {
+      current.value = null;
+      position.value = Duration.zero;
+      duration.value = Duration.zero;
+    }
+  }
+
   Future<void> setSpeed(double s) async {
     speed.value = s;
     await _applySpeed();
   }
 
-  /// MediaPlayer only accepts a rate while actively playing; paused/stopped
-  /// states pick it up from the next resume/play.
+  /// Applied only while actively playing on both engines (MediaPlayer
+  /// rejects a rate otherwise); paused/stopped states pick it up from the
+  /// next resume/play — on iOS setRate also persists natively across loads.
   Future<void> _applySpeed() async {
     final cur = current.value;
     if (cur == null || cur.paused) return;
     try {
-      await _player.setPlaybackRate(speed.value);
+      if (_useChannel) {
+        await _channel.invokeMethod('setRate', speed.value);
+      } else {
+        await _player.setPlaybackRate(speed.value);
+      }
     } catch (_) {}
   }
 
@@ -206,12 +353,25 @@ class MidiPlayer {
         : (max > Duration.zero && target > max)
             ? max
             : target;
-    await _player.seek(clamped);
+    if (_useChannel) {
+      try {
+        await _channel.invokeMethod('seek', _toSeconds(clamped));
+      } catch (_) {}
+    } else {
+      await _player.seek(clamped);
+    }
     position.value = clamped;
   }
 
   Future<void> stop() async {
-    await _player.stop();
+    if (_useChannel) {
+      _stopPositionPolling();
+      try {
+        await _channel.invokeMethod('stop');
+      } catch (_) {}
+    } else {
+      await _player.stop();
+    }
     current.value = null;
     position.value = Duration.zero;
     duration.value = Duration.zero;
