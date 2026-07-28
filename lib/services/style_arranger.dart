@@ -33,13 +33,14 @@ enum ArrangeStyle {
   gospel,
 
   /// Roots reggae, church register: one-drop drums (bar accent on beat 3,
-  /// beat 1 kick-free), offbeat guitar skank, drawbar-organ bubble, riff
+  /// beat 1 kick-free), offbeat piano skank, drawbar-organ bubble, riff
   /// bass with structural rests. Gentle global swing on the offbeats.
   reggae,
 
-  /// Trinidadian calypso: steel pan melody and offbeat pan strum, calypso
-  /// bass on the 3+3+2 tresillo, kit plus an engine room of claves,
-  /// maracas and cowbell. Straight sixteenths, no swing.
+  /// Trinidadian calypso: trumpet lead (the brass-frontline sound) over an
+  /// offbeat steel-pan strum, calypso bass on the 3+3+2 tresillo, kit plus
+  /// an engine room of claves, maracas and cowbell. Straight sixteenths,
+  /// no swing.
   calypso,
 }
 
@@ -51,17 +52,22 @@ const int _defaultUsPerQuarter = 500000;
 
 // GM programs (0-indexed program-change bytes).
 const int _rhodesProgram = 4; // Electric Piano 1
+const int _pianoProgram = 0; // Acoustic Grand Piano
 const int _fingerBassProgram = 33; // Electric Bass (finger)
 const int _acousticBassProgram = 32; // Acoustic Bass
-const int _cleanGuitarProgram = 27; // Electric Guitar (clean)
 const int _drawbarOrganProgram = 16; // Drawbar Organ
-const int _fluteProgram = 73; // Flute
 const int _steelDrumsProgram = 114; // Steel Drums
+const int _trumpetProgram = 56; // Trumpet
 
 // GM percussion keys.
 const int _kick = 36;
 const int _sidestick = 37;
 const int _snare = 38;
+const int _lowTom = 45;
+const int _lowMidTom = 47;
+const int _hiMidTom = 48;
+const int _hiBongo = 60;
+const int _loBongo = 61;
 const int _closedHat = 42;
 const int _pedalHat = 44;
 const int _openHat = 46;
@@ -127,8 +133,9 @@ const Map<String, List<int>> _guideTones = {
 /// Comp stabs live in this octave band (around middle C).
 const int _stabLow = 60;
 
-/// Reggae skank band: top-string voicings, no roots below middle C (64..75).
-const int _skankLow = 64;
+/// Reggae skank band: the "piano bang" — root-position triads around middle
+/// C (60..71), the register the research gives for the piano chop.
+const int _skankLow = 60;
 
 /// Organ bubble right hand: triads C3–C4 (48..59).
 const int _bubbleRhLow = 48;
@@ -163,8 +170,10 @@ int _fifth(String quality) => switch (quality) {
 /// * conductor track — the original tempo (FF 51), time-signature (FF 58)
 ///   and key-signature (FF 59) meta events, copied verbatim at their ticks;
 /// * channel 0 — the melody (the input channel with the highest average
-///   pitch), notes copied verbatim on the style's lead instrument with
-///   velocities scaled to 0.9 (capped at 112) so the backing sits around it;
+///   pitch), notes copied verbatim on the style's lead instrument. Gospel
+///   scales melody velocities to 0.9 (cap 112) so the backing sits around
+///   it; reggae and calypso keep them at full weight (cap 120) — their
+///   percussive backings otherwise overpower the tune (listening feedback);
 /// * style-specific comp/bass/percussion tracks generated bar by bar from
 ///   the chord detected on each hit's own beat.
 ///
@@ -218,19 +227,42 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     bpm: 60e6 / usPerQuarter,
   );
 
-  final conductor = _Track();
+  // Bands keep time: the hymn files carry stepped ritardandos at every
+  // verse end (natural on the original organ rendition, a lurch under a
+  // groove — listening feedback). The arranged conductor states the hymn's
+  // opening tempo once and drops the rest of the tempo map; time-signature
+  // and key metas are kept verbatim.
+  final conductor = _Track()
+    ..meta(
+        0,
+        Uint8List.fromList([
+          0xFF, 0x51, 0x03, //
+          (usPerQuarter >> 16) & 0xFF,
+          (usPerQuarter >> 8) & 0xFF,
+          usPerQuarter & 0xFF,
+        ]));
   for (final (tick, bytes) in song.metas) {
+    if (bytes.length > 1 && bytes[1] == 0x51) continue;
     conductor.meta(tick, bytes);
   }
 
+  // Reggae's lead is Rhodes — the reggae keyboardist's melody voice; the
+  // researched flute-adjacent options read as non-idiomatic on this synth.
+  // Calypso's lead is trumpet — the Trinidad brass-frontline sound the
+  // research endorses; the steel-pan patch decays, so a sustained hymn
+  // melody on it vanishes under the strum (listening feedback).
   final melodyProgram = switch (style) {
     ArrangeStyle.gospel => _rhodesProgram,
-    ArrangeStyle.reggae => _fluteProgram,
-    ArrangeStyle.calypso => _steelDrumsProgram,
+    ArrangeStyle.reggae => _rhodesProgram,
+    ArrangeStyle.calypso => _trumpetProgram,
   };
+  final gospel = style == ArrangeStyle.gospel;
+  final melodyScale = gospel ? 0.9 : 1.0;
+  final melodyCap = gospel ? 112 : 120;
   final melody = _Track()..program(0, 0, melodyProgram);
   for (final note in _melodyNotes(song)) {
-    final velocity = (note.velocity * 0.9).round().clamp(1, 112);
+    final velocity =
+        (note.velocity * melodyScale).round().clamp(1, melodyCap);
     melody.note(note.startTick, 0, note.pitch, velocity,
         note.endTick - note.startTick);
   }
@@ -243,7 +275,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
       _emitGospel(ctx, comp, bass, drums);
       return _writeSmf(d, [conductor, melody, comp, bass, drums]);
     case ArrangeStyle.reggae:
-      final skank = _Track()..program(0, 1, _cleanGuitarProgram);
+      final skank = _Track()..program(0, 1, _pianoProgram);
       final bass = _Track()..program(0, 2, _fingerBassProgram);
       final organ = _Track()..program(0, 3, _drawbarOrganProgram);
       final drums = _Track();
@@ -404,16 +436,23 @@ void _emitGospel(_Ctx c, _Track comp, _Track bass, _Track drums) {
 /// * channel 9 — the one drop: kick + sidestick together on beat 3 and
 ///   nothing on beat 1 but a pedal hat; closed-hat eighths accented on the
 ///   swung offbeats, open hat as the bar-end pickup; tambourine on the
-///   backbeats; a sidestick fill every 8 bars resolving to a crash on the
-///   NEXT bar's beat 3 (never beat 1 — that absence is the genre);
-/// * channel 1, clean guitar — the skank: staccato triad stabs on every
-///   swung offbeat eighth;
+///   backbeats; an 8-bar fill rotating through side-stick build / tom run /
+///   snare ruff (with a light side-stick answer at bar 4), resolving to a
+///   crash on the NEXT bar's beat 3 (never beat 1 — that absence is the
+///   genre);
+/// * channel 1, piano — the skank as the "piano bang": staccato root-
+///   position triads around middle C on every swung offbeat eighth (the
+///   synth's clean-guitar patch reads as a buzzer, so the research's piano
+///   double carries the chop alone);
 /// * channel 3, drawbar organ — the bubble: low left-hand root dabs on the
 ///   beats, right-hand triads answering on the swung offbeats;
-/// * channel 2, finger bass — riff bass, Pattern A: root long-short on
-///   beat 1, beat 2 structurally SILENT, fifth on 3, third on 4 with a
-///   chromatic walk into every chord change. The bass anchors the "one" the
-///   drums omit.
+/// * channel 2, finger bass — riff bass as a two-bar ostinato (the
+///   research's ideal): Pattern A bars play root long-short on beat 1,
+///   beat 2 structurally SILENT, fifth on 3, third on 4 with a chromatic
+///   walk into every chord change; harmonically stable answer bars play
+///   Pattern B — root, the fifth below, silent 2, root on 3, then a
+///   scale-plus-chromatic walk-up. Beat 1 is hottest (vel 112); the bass
+///   anchors the "one" the drums omit and sits forward of the comping.
 ///
 /// Swing: every offbeat eighth (hats, skank, organ RH together — the swing
 /// is global) sits at 56.25% of the beat.
@@ -443,16 +482,35 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
           length ?? d ~/ 4);
     }
 
+    // The button ending: the last bar drops the patterns for one held
+    // chord — crash on the downbeat, bass root and piano chord ringing to
+    // the bar line, one final drop on beat 3 — instead of the groove
+    // clattering through the melody's final note (listening feedback: the
+    // old close-out read as a staggered stop).
+    if (bar == c.lastBar) {
+      final chord = c.chordAt(bar * n) ?? c.chordAt(bar * n + 1);
+      dnote(0, _crash, 96, n * d);
+      if (chord != null) {
+        bass.note(barStart, 2, _voiceBass(chord.rootPc), 112, n * d);
+        for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
+          skank.note(barStart, 1, pitch, 84, n * d);
+        }
+      }
+      dnote(2 * d, _kick, 105);
+      dnote(2 * d, _sidestick, 98);
+      continue;
+    }
+
     // --- Drums: the one drop -------------------------------------------
     const dropBeat = 2; // beat 3 in both meters (0-based index 2)
     dnote(0, _pedalHat, c.vel(58, 2, bar, 1));
     for (var k = 0; k < beats; k++) {
-      dnote(k * d, _closedHat, c.vel(60, 3, bar, 2 + 2 * k));
+      dnote(k * d, _closedHat, c.vel(56, 3, bar, 2 + 2 * k));
       final isPickup = k == beats - 1;
       if (isPickup) {
-        dnote(sw(k), _openHat, c.vel(88, 3, bar, 3 + 2 * k), d ~/ 3);
+        dnote(sw(k), _openHat, c.vel(84, 3, bar, 3 + 2 * k), d ~/ 3);
       } else {
-        dnote(sw(k), _closedHat, c.vel(80, 3, bar, 3 + 2 * k));
+        dnote(sw(k), _closedHat, c.vel(74, 3, bar, 3 + 2 * k));
       }
     }
     dnote(dropBeat * d, _kick, 105);
@@ -464,13 +522,31 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
       dnote(d, _tambourine, c.vel(50, 4, bar, 30));
       dnote(3 * d, _tambourine, c.vel(50, 4, bar, 31));
     }
-    // Fill on the last beat of every 8th bar; crash lands with the NEXT
+    // Fills on the last beat: the 8-bar fill rotates deterministically
+    // through three shapes — side-stick build, a tom run down the kit, a
+    // snare ruff (the open snare's one sanctioned appearance) — and bar 4
+    // gets a light side-stick answer. The crash still lands with the NEXT
     // bar's drop, not its downbeat.
+    final fillBeat = (beats - 1) * d;
     if (phase == 7) {
-      final fillBeat = (beats - 1) * d;
-      dnote(fillBeat + d ~/ 4, _sidestick, 60);
-      dnote(fillBeat + d ~/ 2, _sidestick, 74);
-      dnote(fillBeat + 3 * d ~/ 4, _sidestick, 86);
+      switch (c.vel(1, 1, bar, 90)) {
+        case 0:
+          dnote(fillBeat + d ~/ 4, _sidestick, 60);
+          dnote(fillBeat + d ~/ 2, _sidestick, 74);
+          dnote(fillBeat + 3 * d ~/ 4, _sidestick, 86);
+        case 1:
+          dnote(fillBeat, _hiMidTom, 72, d ~/ 4);
+          dnote(fillBeat + d ~/ 4, _hiMidTom, 64, d ~/ 4);
+          dnote(fillBeat + d ~/ 2, _lowMidTom, 84, d ~/ 4);
+          dnote(fillBeat + 3 * d ~/ 4, _lowTom, 94, d ~/ 3);
+        default:
+          dnote(fillBeat + d ~/ 4, _snare, 58);
+          dnote(fillBeat + d ~/ 2, _snare, 76);
+          dnote(fillBeat + 3 * d ~/ 4, _snare, 90);
+      }
+    } else if (phase == 3) {
+      dnote(fillBeat + d ~/ 2, _sidestick, 62);
+      dnote(fillBeat + 3 * d ~/ 4, _sidestick, 72);
     }
     if (phase == 0 && bar != c.firstBar) {
       dnote(dropBeat * d, _crash, 95, d);
@@ -484,7 +560,7 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
     for (final (i, (offset, beat)) in skankHits.indexed) {
       final chord = c.chordAt(bar * n + beat);
       if (chord == null || !c.hit(bar, offset)) continue;
-      final v = c.vel(92, 4, bar, 50 + i);
+      final v = c.vel(76, 4, bar, 50 + i);
       for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
         skank.note(barStart + offset, 1, pitch, v, d ~/ 8);
       }
@@ -509,51 +585,81 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
       final offset = halfTime ? k * d + d ~/ 2 : sw(k);
       final chord = c.chordAt(bar * n + k);
       if (chord == null || !c.hit(bar, offset)) continue;
-      final v = c.vel(74, 3, bar, 70 + k);
+      final v = c.vel(66, 3, bar, 70 + k);
       for (final pitch in _voice(_triadIntervals, chord, _bubbleRhLow)) {
         organ.note(barStart + offset, 3, pitch, v, d ~/ 3);
       }
     }
 
     // --- Bass -----------------------------------------------------------
+    // Two-bar riff ostinato per the research ("busy bar, sparse answer bar
+    // ... are the ideal; when the hymn changes chords every bar, collapse
+    // to Pattern A"). Velocities sit at the researched 100–112 with beat 1
+    // hottest — the bass is the melody-carrier of the low end and mixes
+    // forward of the comping.
     final c1 = c.chordAt(bar * n);
     final nextChord = c.chordAt((bar + 1) * n);
     if (waltz) {
       if (c1 != null) {
-        bass.note(barStart, 2, _voiceBass(c1.rootPc), 104, 6 * d ~/ 5);
+        // The "doo—doot" read for 3/4: long root plus a late-beat pickup.
+        bass.note(barStart, 2, _voiceBass(c1.rootPc), 110, 6 * d ~/ 5);
+        bass.note(barStart + 3 * d ~/ 4, 2, _voiceBass(c1.rootPc), 92, d ~/ 8);
       }
       final c3 = c.chordAt(bar * n + 2);
       if (c3 != null) {
         bass.note(barStart + 2 * d, 2,
-            _voiceBass(c3.rootPc + _fifth(c3.quality)), 88, d ~/ 2);
+            _voiceBass(c3.rootPc + _fifth(c3.quality)), 98, d ~/ 2);
         if (nextChord != null && nextChord != c3) {
           bass.note(barStart + 2 * d + d ~/ 2, 2,
-              _voiceBass(nextChord.rootPc + 11), 84, 2 * d ~/ 5);
+              _voiceBass(nextChord.rootPc + 11), 92, 2 * d ~/ 5);
         }
       }
     } else {
-      if (c1 != null) {
-        // The "doo—doot": dotted-eighth root plus a sixteenth at 1a.
-        bass.note(barStart, 2, _voiceBass(c1.rootPc), 106, 3 * d ~/ 5);
-        if (!halfTime) {
-          bass.note(barStart + 3 * d ~/ 4, 2, _voiceBass(c1.rootPc), 88, d ~/ 8);
-        }
-      }
-      // Beat 2: structurally silent — continuous motion destroys the style.
+      final c2 = c.chordAt(bar * n + 1);
       final c3 = c.chordAt(bar * n + 2);
-      if (c3 != null) {
-        bass.note(barStart + 2 * d, 2,
-            _voiceBass(c3.rootPc + _fifth(c3.quality)), 96, 4 * d ~/ 5);
-      }
       final c4 = c.chordAt(bar * n + 3);
-      if (c4 != null) {
-        if (!halfTime) {
+      final stable = c1 != null && c2 == c1 && c3 == c1 && c4 == c1;
+      final answerBar = stable && !halfTime && (bar - c.firstBar).isOdd;
+      if (answerBar) {
+        // Pattern B — the sparse answer bar: root, the fifth BELOW (the
+        // octave jump of the textbook shape would leave the E1–G2 band,
+        // the low fifth is the equally idiomatic substitute), silent 2,
+        // root again on 3, then the scale + chromatic walk-up into the
+        // next chord ("approach from below is idiomatic").
+        final root = _voiceBass(c1.rootPc);
+        bass.note(barStart, 2, root, 110, 2 * d ~/ 5);
+        bass.note(barStart + d ~/ 2, 2, root - 5, 100, 2 * d ~/ 5);
+        bass.note(barStart + 2 * d, 2, root, 102, 4 * d ~/ 5);
+        if (nextChord != null) {
           bass.note(barStart + 3 * d, 2,
-              _voiceBass(c4.rootPc + _third(c4.quality)), 84, 2 * d ~/ 5);
-        }
-        if (nextChord != null && nextChord != c4) {
+              _voiceBass(nextChord.rootPc + 10), 96, 2 * d ~/ 5);
           bass.note(barStart + 3 * d + d ~/ 2, 2,
-              _voiceBass(nextChord.rootPc + 11), 86, 2 * d ~/ 5);
+              _voiceBass(nextChord.rootPc + 11), 100, 2 * d ~/ 5);
+        }
+      } else {
+        if (c1 != null) {
+          // The "doo—doot": dotted-eighth root plus a sixteenth at 1a.
+          bass.note(barStart, 2, _voiceBass(c1.rootPc), 112, 3 * d ~/ 5);
+          if (!halfTime) {
+            bass.note(
+                barStart + 3 * d ~/ 4, 2, _voiceBass(c1.rootPc), 96, d ~/ 8);
+          }
+        }
+        // Beat 2: structurally silent — continuous motion destroys the
+        // style.
+        if (c3 != null) {
+          bass.note(barStart + 2 * d, 2,
+              _voiceBass(c3.rootPc + _fifth(c3.quality)), 104, 4 * d ~/ 5);
+        }
+        if (c4 != null) {
+          if (!halfTime) {
+            bass.note(barStart + 3 * d, 2,
+                _voiceBass(c4.rootPc + _third(c4.quality)), 92, 2 * d ~/ 5);
+          }
+          if (nextChord != null && nextChord != c4) {
+            bass.note(barStart + 3 * d + d ~/ 2, 2,
+                _voiceBass(nextChord.rootPc + 11), 96, 2 * d ~/ 5);
+          }
         }
       }
     }
@@ -575,8 +681,10 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
 /// * channel 9 — kit (syncopated kick 1 / 2& / 3, side-stick backbeat with
 ///   tambourine, offbeat-accented eighth hats with an open hat on 4& every
 ///   2nd bar) plus an engine room of claves on the 3+3+2 anchor (1, 2&, 4),
-///   running maracas eighths, and a 2-bar cowbell loop; snare pickup fill
-///   every 8 bars into a crash on the following downbeat.
+///   running maracas eighths, and a 2-bar cowbell loop; the 8-bar fill
+///   alternates a snare pickup with a bongo lead-in, into a crash on the
+///   following downbeat. The final bar is a button ending: kick + crash,
+///   held bass root, strum silent — the trumpet lead carries the tune out.
 ///
 /// Everything is straight — the lilt comes from velocity shape and the
 /// rests on the downbeats, not timing offsets. 3/4 hymns get the Caribbean
@@ -587,9 +695,11 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
   final n = c.n;
   final waltz = n == 3;
 
-  // Strum velocities per beat, for the 2nd/3rd/4th sixteenth of the beat.
-  const strumVels44 = [[70, 85, 72], [70, 88, 72], [70, 85, 72], [70, 90, 75]];
-  const strumVels34 = [[70, 85, 72], [70, 85, 72]];
+  // Strum velocities per beat, for the 2nd/3rd/4th sixteenth of the beat —
+  // trimmed below the trumpet lead (listening feedback: the strum buried
+  // the melody).
+  const strumVels44 = [[60, 76, 62], [60, 78, 62], [60, 76, 62], [60, 80, 66]];
+  const strumVels34 = [[60, 76, 62], [60, 76, 62]];
 
   for (var bar = c.firstBar; bar <= c.lastBar; bar++) {
     final barStart = bar * n * d;
@@ -600,6 +710,20 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
       if (!c.hit(bar, offset)) return;
       drums.note(barStart + offset, _percussionChannel, key, velocity,
           length ?? d ~/ 4);
+    }
+
+    // The button ending: kick + crash on the final downbeat, bass root
+    // held to the bar line, the strum and engine room silent — the
+    // trumpet carries the tune out (listening feedback: the old close-out
+    // read as a staggered stop).
+    if (bar == c.lastBar) {
+      dnote(0, _kick, 100);
+      dnote(0, _crash, 96, n * d);
+      final chord = c.chordAt(bar * n) ?? c.chordAt(bar * n + 1);
+      if (chord != null) {
+        bass.note(barStart, 2, _voiceBass(chord.rootPc), 104, n * d);
+      }
+      continue;
     }
 
     // --- Strum: rest on the beat, hit every e, &, a ---------------------
@@ -668,19 +792,19 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
       dnote(0, _kick, 100);
       dnote(d + d ~/ 2, _sidestick, 75);
       for (var k = 0; k < 5; k++) {
-        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 55 : 72, 3, bar, 40 + k));
+        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 52 : 66, 3, bar, 40 + k));
       }
       if (evenBar) {
-        dnote(5 * d ~/ 2, _closedHat, c.vel(72, 3, bar, 45));
+        dnote(5 * d ~/ 2, _closedHat, c.vel(66, 3, bar, 45));
       } else {
-        dnote(5 * d ~/ 2, _openHat, c.vel(78, 3, bar, 45), d ~/ 3);
+        dnote(5 * d ~/ 2, _openHat, c.vel(74, 3, bar, 45), d ~/ 3);
       }
-      dnote(0, _claves, 90);
-      dnote(d + d ~/ 2, _claves, 90); // the 3+3 hemiola over the bar
-      dnote(d, _triangle, c.vel(55, 3, bar, 46));
-      dnote(2 * d, _triangle, c.vel(55, 3, bar, 47));
+      dnote(0, _claves, 82);
+      dnote(d + d ~/ 2, _claves, 82); // the 3+3 hemiola over the bar
+      dnote(d, _triangle, c.vel(52, 3, bar, 46));
+      dnote(2 * d, _triangle, c.vel(52, 3, bar, 47));
       for (var k = 0; k < 6; k++) {
-        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 55 : 70, 4, bar, 50 + k));
+        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 46 : 60, 4, bar, 50 + k));
       }
       if (phase == 7) {
         dnote(2 * d + d ~/ 2, _snare, 80);
@@ -695,34 +819,44 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
       dnote(d, _tambourine, c.vel(70, 4, bar, 38));
       dnote(3 * d, _tambourine, c.vel(72, 4, bar, 39));
       for (var k = 0; k < 7; k++) {
-        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 60 : 78, 3, bar, 40 + k));
+        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 56 : 70, 3, bar, 40 + k));
       }
       if (evenBar) {
-        dnote(7 * d ~/ 2, _closedHat, c.vel(82, 3, bar, 47));
+        dnote(7 * d ~/ 2, _closedHat, c.vel(74, 3, bar, 47));
       } else {
-        dnote(7 * d ~/ 2, _openHat, c.vel(82, 3, bar, 47), d ~/ 3);
+        dnote(7 * d ~/ 2, _openHat, c.vel(76, 3, bar, 47), d ~/ 3);
       }
       // Engine room: claves on the 3+3+2 anchor — 1, 2&, 4.
-      dnote(0, _claves, 90);
-      dnote(d + d ~/ 2, _claves, 90);
-      dnote(3 * d, _claves, 90);
+      dnote(0, _claves, 82);
+      dnote(d + d ~/ 2, _claves, 82);
+      dnote(3 * d, _claves, 82);
       for (var k = 0; k < 8; k++) {
-        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 55 : 70, 4, bar, 50 + k));
+        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 46 : 60, 4, bar, 50 + k));
       }
       // Cowbell, 2-bar loop.
       if (evenBar) {
-        dnote(d ~/ 2, _cowbell, c.vel(78, 3, bar, 60));
-        dnote(d + d ~/ 2, _cowbell, c.vel(78, 3, bar, 61));
-        dnote(3 * d, _cowbell, c.vel(82, 3, bar, 62));
+        dnote(d ~/ 2, _cowbell, c.vel(70, 3, bar, 60));
+        dnote(d + d ~/ 2, _cowbell, c.vel(70, 3, bar, 61));
+        dnote(3 * d, _cowbell, c.vel(74, 3, bar, 62));
       } else {
-        dnote(d + d ~/ 2, _cowbell, c.vel(78, 3, bar, 60));
-        dnote(3 * d, _cowbell, c.vel(82, 3, bar, 61));
-        dnote(3 * d + d ~/ 2, _cowbell, c.vel(75, 3, bar, 62));
+        dnote(d + d ~/ 2, _cowbell, c.vel(70, 3, bar, 60));
+        dnote(3 * d, _cowbell, c.vel(74, 3, bar, 61));
+        dnote(3 * d + d ~/ 2, _cowbell, c.vel(68, 3, bar, 62));
       }
+      // The 8-bar fill alternates deterministically between the snare
+      // pickup and a bongo lead-in (bongos are fills/lead-ins only, per
+      // the research).
       if (phase == 7) {
-        dnote(3 * d + d ~/ 4, _snare, 70);
-        dnote(3 * d + d ~/ 2, _snare, 85);
-        dnote(3 * d + 3 * d ~/ 4, _snare, 95);
+        if (c.vel(0, 1, bar, 90) <= 0) {
+          dnote(3 * d + d ~/ 4, _snare, 70);
+          dnote(3 * d + d ~/ 2, _snare, 85);
+          dnote(3 * d + 3 * d ~/ 4, _snare, 95);
+        } else {
+          dnote(3 * d, _hiBongo, 72, d ~/ 4);
+          dnote(3 * d + d ~/ 4, _hiBongo, 64, d ~/ 4);
+          dnote(3 * d + d ~/ 2, _loBongo, 84, d ~/ 4);
+          dnote(3 * d + 3 * d ~/ 4, _hiBongo, 94, d ~/ 4);
+        }
       }
     }
     if (phase == 0 && bar != c.firstBar) {

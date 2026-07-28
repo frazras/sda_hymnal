@@ -9,18 +9,27 @@ import 'package:sdahymnal/services/style_arranger.dart';
 
 /// One note-on (velocity > 0) as scanned straight from the SMF bytes.
 class _NoteOn {
-  _NoteOn(this.tick, this.channel, this.pitch, this.seq);
+  _NoteOn(this.tick, this.channel, this.pitch, this.vel, this.seq);
 
   final int tick;
   final int channel;
   final int pitch;
+  final int vel;
   final int seq;
 }
 
-/// Minimal SMF scan: every note-on with its absolute tick and channel, plus
-/// the last note-off tick in the file (0x80, or 0x90 with velocity 0).
-({List<_NoteOn> ons, int lastOffTick}) _scan(Uint8List bytes) {
+/// Minimal SMF scan: every note-on with its absolute tick, channel and
+/// velocity, the last note-off tick in the file (0x80, or 0x90 with velocity
+/// 0), the programs selected per channel, and the number of tempo metas.
+({
+  List<_NoteOn> ons,
+  int lastOffTick,
+  Map<int, Set<int>> programs,
+  int tempoCount,
+}) _scan(Uint8List bytes) {
   final ons = <_NoteOn>[];
+  final programs = <int, Set<int>>{};
+  var tempoCount = 0;
   var lastOff = 0;
   var seq = 0;
   var i = 8 + ((bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7]);
@@ -45,6 +54,7 @@ class _NoteOn {
         tick += delta;
         final status = bytes[i] & 0x80 != 0 ? bytes[i++] : running;
         if (status == 0xFF) {
+          if (bytes[i] == 0x51) tempoCount++;
           i++; // meta type
           var len = 0;
           while (true) {
@@ -67,9 +77,11 @@ class _NoteOn {
           running = status;
           final hi = status & 0xF0;
           if (hi == 0x90 && bytes[i + 1] > 0) {
-            ons.add(_NoteOn(tick, status & 0x0F, bytes[i], seq++));
+            ons.add(_NoteOn(tick, status & 0x0F, bytes[i], bytes[i + 1], seq++));
           } else if (hi == 0x80 || hi == 0x90) {
             if (tick > lastOff) lastOff = tick;
+          } else if (hi == 0xC0) {
+            programs.putIfAbsent(status & 0x0F, () => {}).add(bytes[i]);
           }
           i += (hi == 0xC0 || hi == 0xD0) ? 1 : 2;
         }
@@ -78,7 +90,12 @@ class _NoteOn {
     i = end;
   }
   ons.sort((a, b) => a.tick != b.tick ? a.tick - b.tick : a.seq - b.seq);
-  return (ons: ons, lastOffTick: lastOff);
+  return (
+    ons: ons,
+    lastOffTick: lastOff,
+    programs: programs,
+    tempoCount: tempoCount,
+  );
 }
 
 /// SMF division (ticks per quarter note) straight from the header.
@@ -211,10 +228,14 @@ void _styleTests(
     // (qualities differ), so fidelity is judged where the groove states the
     // harmony: the chord governing each measure start, at the same
     // media-time instants in both files.
+    // Each track is sampled at its OWN measure starts: the arranger
+    // flattens the tempo map (bands keep time through the hymn's verse-end
+    // ritardandos), so identical measure indices — not identical
+    // media-time instants — are the common frame.
     final inTrack = detectChords(input)!;
     final outTrack = detectChords(output)!;
     final inRoots = _barStartRoots(inTrack, inTrack.measureStartMs, 8);
-    final outRoots = _barStartRoots(outTrack, inTrack.measureStartMs, 8);
+    final outRoots = _barStartRoots(outTrack, outTrack.measureStartMs, 8);
     expect(inRoots, hasLength(8));
     expect(outRoots, inRoots);
   });
@@ -360,6 +381,78 @@ void main() {
         percussionKeys: {36, 37, 42, 70, 75, 81},
         registerBands: calypsoBands);
     _calypsoStructureTests('assets/midi/001.mid');
+  });
+
+  group('listening retune (2026-07-28 feedback) on assets/midi/016.mid', () {
+    final input =
+        Uint8List.fromList(File('assets/midi/016.mid').readAsBytesSync());
+    final reggae = arrangeStyle(input, ArrangeStyle.reggae);
+    final calypso = arrangeStyle(input, ArrangeStyle.calypso);
+    final reggaeScan = _scan(reggae);
+    final calypsoScan = _scan(calypso);
+
+    double avgVel(List<_NoteOn> ons, int ch) {
+      final vels = [
+        for (final on in ons)
+          if (on.channel == ch) on.vel,
+      ];
+      return vels.reduce((a, b) => a + b) / vels.length;
+    }
+
+    test('reggae lead is Rhodes, skank is piano — the flute is gone', () {
+      expect(reggaeScan.programs[0], {4});
+      expect(reggaeScan.programs[1], {0});
+      for (final programs in reggaeScan.programs.values) {
+        expect(programs, isNot(contains(73)));
+      }
+    });
+
+    test('calypso lead is trumpet over the steel-pan strum', () {
+      expect(calypsoScan.programs[0], {56});
+      expect(calypsoScan.programs[1], {114});
+    });
+
+    test('the melody outweighs the comping in both styles', () {
+      expect(avgVel(reggaeScan.ons, 0), greaterThan(avgVel(reggaeScan.ons, 1)));
+      expect(
+          avgVel(calypsoScan.ons, 0), greaterThan(avgVel(calypsoScan.ons, 1)));
+    });
+
+    test('the reggae bass anchors at full weight', () {
+      final vels = [
+        for (final on in reggaeScan.ons)
+          if (on.channel == 2) on.vel,
+      ];
+      expect(vels.reduce((a, b) => a > b ? a : b), greaterThanOrEqualTo(110));
+    });
+
+    test('the tempo map is flattened to a single opening tempo', () {
+      expect(reggaeScan.tempoCount, 1);
+      expect(calypsoScan.tempoCount, 1);
+      expect(_scan(arrangeStyle(input, ArrangeStyle.gospel)).tempoCount, 1);
+    });
+
+    test('the calypso strum drops out for the button ending', () {
+      final crashTicks = [
+        for (final on in calypsoScan.ons)
+          if (on.channel == 9 && on.pitch == 49) on.tick,
+      ];
+      final lastCrash = crashTicks.reduce((a, b) => a > b ? a : b);
+      expect(
+          calypsoScan.ons.where((on) => on.channel == 1 && on.tick >= lastCrash),
+          isEmpty);
+    });
+
+    test('reggae ends on a downbeat crash button', () {
+      final d = _division(reggae);
+      final n = detectChords(input)!.beatsPerBar;
+      final downbeatCrashes = [
+        for (final on in reggaeScan.ons)
+          if (on.channel == 9 && on.pitch == 49 && on.tick % (n * d) == 0)
+            on.tick,
+      ];
+      expect(downbeatCrashes, isNotEmpty);
+    });
   });
 
   group('arrangeStyle(reggae) rejects unusable input', () {

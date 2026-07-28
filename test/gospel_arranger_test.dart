@@ -182,12 +182,15 @@ void _arrangementTests(String path) {
   test('re-detects the hymn\'s own roots on the first 8 harmonized bars', () {
     // Colors added by the arrangement may split or relabel chord spans
     // (qualities differ), so fidelity is judged where the groove states the
-    // harmony: the chord governing each measure start, at the same
-    // media-time instants in both files.
+    // harmony: the chord governing each measure start. Each track is
+    // sampled at its OWN measure starts — the arranger flattens the tempo
+    // map (bands keep time through the hymn's verse-end ritardandos), so
+    // identical measure indices, not identical media-time instants, are
+    // the common frame.
     final inTrack = detectChords(input)!;
     final outTrack = detectChords(output)!;
     final inRoots = _barStartRoots(inTrack, inTrack.measureStartMs, 8);
-    final outRoots = _barStartRoots(outTrack, inTrack.measureStartMs, 8);
+    final outRoots = _barStartRoots(outTrack, outTrack.measureStartMs, 8);
     expect(inRoots, hasLength(8));
     expect(outRoots, inRoots);
   });
