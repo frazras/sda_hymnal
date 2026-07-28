@@ -767,7 +767,7 @@ class _HymnPageState extends State<HymnPage> {
     );
   }
 
-  static const _speeds = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+  static const _speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
   static String _speedLabel(double s) =>
       '${s == s.roundToDouble() ? s.round() : s}×';
@@ -832,16 +832,24 @@ class _HymnPageState extends State<HymnPage> {
                 ),
               ),
               const SizedBox(height: 14),
-              Row(
-                children: [
-                  for (final (i, s) in _speeds.indexed) ...[
-                    if (i > 0) const SizedBox(width: 7),
-                    Expanded(
-                      child: _speedChip(t, s, sheetContext),
-                    ),
+              // Eight speeds flow as two rows of four; the slow half is for
+              // learning parts, the fast half for review.
+              for (final row in [
+                _speeds.sublist(0, 4),
+                _speeds.sublist(4)
+              ]) ...[
+                Row(
+                  children: [
+                    for (final (i, s) in row.indexed) ...[
+                      if (i > 0) const SizedBox(width: 7),
+                      Expanded(
+                        child: _speedChip(t, s, sheetContext),
+                      ),
+                    ],
                   ],
-                ],
-              ),
+                ),
+                if (row.first == _speeds.first) const SizedBox(height: 8),
+              ],
             ],
           ),
         ),
