@@ -170,11 +170,13 @@ int _fifth(String quality) => switch (quality) {
 ///
 /// * conductor track — the original tempo (FF 51), time-signature (FF 58)
 ///   and key-signature (FF 59) meta events, copied verbatim at their ticks;
-/// * channel 0 — the melody (the input channel with the highest average
-///   pitch), notes copied verbatim on the style's lead instrument. Gospel
-///   scales melody velocities to 0.9 (cap 112) so the backing sits around
-///   it; reggae and calypso keep them at full weight (cap 120) — their
-///   percussive backings otherwise overpower the tune (listening feedback);
+/// * channel 0 — the melody (the full-coverage input channel with the
+///   highest average pitch; see [_leadAndDescants]), notes copied verbatim
+///   on the style's lead instrument with velocities NORMALIZED to the
+///   style's target level (gospel 90, others 100; relative dynamics kept)
+///   — the hymnal's engraved levels range from whisper to forte and a
+///   band balances to the room. Part-time voices pitched above the lead
+///   (hymn 190's obbligato) ride quietly on channel 4;
 /// * style-specific comp/bass/percussion tracks generated bar by bar from
 ///   the chord detected on each hit's own beat.
 ///
@@ -262,23 +264,29 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     ArrangeStyle.calypso => _rhodesProgram,
   };
   final gospel = style == ArrangeStyle.gospel;
-  // Melody weight: gospel sits in the bed; reggae and calypso ride at full
-  // weight with their backings brought up to meet them (listening
-  // feedback: backing at the same volume as the lead).
-  final (melodyScale, melodyCap) = switch (style) {
-    ArrangeStyle.gospel => (0.9, 112),
-    ArrangeStyle.reggae => (1.0, 120),
-    ArrangeStyle.calypso => (1.0, 120),
-  };
-  final melodyNotes = _melodyNotes(song);
+  final melodyCap = gospel ? 112 : 120;
+  final (leadChannel, descantChannels) = _leadAndDescants(song, n * d);
+  final melodyNotes = [
+    for (final note in song.notes)
+      if (note.channel == leadChannel) note,
+  ];
   var lastMelodyStart = 0;
+  var velocitySum = 0;
   for (final note in melodyNotes) {
     if (note.startTick > lastMelodyStart) lastMelodyStart = note.startTick;
+    velocitySum += note.velocity;
   }
+  // A band balances to the room, not to the engraving: the hymnal ships
+  // some melodies at average velocity 35-48 (hymns 30, 354, 662 in the
+  // sweep) and the fixed-level backing drowned them. The lead is
+  // NORMALIZED so its average lands on the style's target level — gospel
+  // sits in the bed, reggae and calypso ride on top — with the file's
+  // relative dynamics preserved.
+  final targetLevel = gospel ? 90.0 : 100.0;
+  final norm = targetLevel * melodyNotes.length / velocitySum;
   final melody = _Track()..program(0, 0, melodyProgram);
   for (final note in melodyNotes) {
-    final velocity =
-        (note.velocity * melodyScale).round().clamp(1, melodyCap);
+    final velocity = (note.velocity * norm).round().clamp(1, melodyCap);
     var length = note.endTick - note.startTick;
     // The closing ritardando is flattened away with the rest of the tempo
     // map, which clipped the final chord's ring — so the last melody note
@@ -288,27 +296,39 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     melody.note(note.startTick, 0, note.pitch, velocity, length);
   }
 
+  // The descant rides above the tune on channel 4 in the lead's own voice,
+  // quiet — the church sound of a choir's descant on the refrains, kept
+  // rather than discarded.
+  final descant = _Track()..program(0, 4, melodyProgram);
+  for (final note in song.notes) {
+    if (!descantChannels.contains(note.channel)) continue;
+    final velocity = (note.velocity * norm * 0.7).round().clamp(1, 96);
+    descant.note(note.startTick, 4, note.pitch, velocity,
+        note.endTick - note.startTick);
+  }
+  final lead = descantChannels.isEmpty ? [melody] : [melody, descant];
+
   switch (style) {
     case ArrangeStyle.gospel:
       final comp = _Track()..program(0, 1, _rhodesProgram);
       final bass = _Track()..program(0, 2, _fingerBassProgram);
       final drums = _Track();
       _emitGospel(ctx, comp, bass, drums);
-      return _writeSmf(d, [conductor, melody, comp, bass, drums]);
+      return _writeSmf(d, [conductor, ...lead, comp, bass, drums]);
     case ArrangeStyle.reggae:
       final skank = _Track()..program(0, 1, _pianoProgram);
       final bass = _Track()..program(0, 2, _fingerBassProgram);
       final organ = _Track()..program(0, 3, _drawbarOrganProgram);
       final drums = _Track();
       _emitReggae(ctx, skank, bass, organ, drums);
-      return _writeSmf(d, [conductor, melody, skank, bass, organ, drums]);
+      return _writeSmf(d, [conductor, ...lead, skank, bass, organ, drums]);
     case ArrangeStyle.calypso:
       final strum = _Track()..program(0, 1, _steelDrumsProgram);
       final shimmer = _Track()..program(0, 3, _vibraphoneProgram);
       final bass = _Track()..program(0, 2, _acousticBassProgram);
       final drums = _Track();
       _emitCalypso(ctx, strum, shimmer, bass, drums);
-      return _writeSmf(d, [conductor, melody, strum, shimmer, bass, drums]);
+      return _writeSmf(d, [conductor, ...lead, strum, shimmer, bass, drums]);
   }
 }
 
@@ -1065,37 +1085,57 @@ List<int> _voice(Map<String, List<int>> table, _Chord chord, int low) {
 /// [pitchOrPc] transposed by octaves into the bass band (36..47 ⊂ 36..50).
 int _voiceBass(int pitchOrPc) => _bassLow + ((pitchOrPc % 12) + 12) % 12;
 
-/// The notes of the melody channel — the sounding non-percussion channel with
-/// the highest average pitch (ties: most notes, then lowest channel number) —
-/// in the order they appear in the file.
-List<_NoteEvent> _melodyNotes(_Song song) {
+/// The lead channel and any descant channels of [song].
+///
+/// The lead is the sounding non-percussion channel with the highest average
+/// pitch AMONG channels that carry the tune the whole way through — bar
+/// coverage within 70% of the best-covered channel (ties: most notes, then
+/// lowest channel number). Coverage matters: hymn 190 carries a part-time
+/// descant pitched ABOVE the soprano (an intro flourish plus refrains,
+/// silence through whole verses); picking by pitch alone led with it and
+/// the melody fell silent for the entire first verse.
+///
+/// Channels pitched above the chosen lead come back as the descants: a
+/// choir doesn't discard its descant, it lets it ride quietly above the
+/// tune — so the arrangement layers those instead of dropping (or leading
+/// with) them.
+(int, Set<int>) _leadAndDescants(_Song song, int barTicks) {
   final counts = <int, int>{};
   final sums = <int, int>{};
+  final bars = <int, Set<int>>{};
   for (final note in song.notes) {
     if (note.channel == _percussionChannel) continue;
     counts[note.channel] = (counts[note.channel] ?? 0) + 1;
     sums[note.channel] = (sums[note.channel] ?? 0) + note.pitch;
+    (bars[note.channel] ??= {}).add(note.startTick ~/ barTicks);
   }
   if (counts.isEmpty) {
     throw const FormatException('No melody notes to arrange');
   }
-  int? melodyChannel;
+  var maxCoverage = 0;
+  for (final covered in bars.values) {
+    if (covered.length > maxCoverage) maxCoverage = covered.length;
+  }
+  int? lead;
   for (final channel in counts.keys.toList()..sort()) {
-    if (melodyChannel == null) {
-      melodyChannel = channel;
+    if (bars[channel]!.length * 10 < maxCoverage * 7) continue; // part-time
+    if (lead == null) {
+      lead = channel;
       continue;
     }
     final avg = sums[channel]! / counts[channel]!;
-    final bestAvg = sums[melodyChannel]! / counts[melodyChannel]!;
-    if (avg > bestAvg ||
-        (avg == bestAvg && counts[channel]! > counts[melodyChannel]!)) {
-      melodyChannel = channel;
+    final bestAvg = sums[lead]! / counts[lead]!;
+    if (avg > bestAvg || (avg == bestAvg && counts[channel]! > counts[lead]!)) {
+      lead = channel;
     }
   }
-  return [
-    for (final note in song.notes)
-      if (note.channel == melodyChannel) note,
-  ];
+  final leadAvg = sums[lead]! / counts[lead]!;
+  final descants = <int>{
+    for (final channel in counts.keys)
+      if (channel != lead && sums[channel]! / counts[channel]! > leadAvg)
+        channel,
+  };
+  return (lead!, descants);
 }
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -560,6 +561,112 @@ void main() {
         registerBands: reggaeBands,
         fidelity: false);
     _oneDropTests('assets/midi/456.mid');
+  });
+
+  group('hymn 190 (part-time descant above the soprano)', () {
+    // The file's channel 7 is an obbligato: highest average pitch in the
+    // file but sounding only in bars 1-4 and the refrains. Choosing the
+    // lead by pitch alone led with it — and the melody went silent for
+    // the whole first verse (bars 5-12). The lead chooser now requires
+    // full-song coverage, and the descant rides quietly on channel 4.
+    final input =
+        Uint8List.fromList(File('assets/midi/190.mid').readAsBytesSync());
+    final output = arrangeStyle(input, ArrangeStyle.reggae);
+    final scan = _scan(output);
+    final barTicks = detectChords(input)!.beatsPerBar * _division(output);
+
+    test('the lead never falls silent for more than a bar mid-song', () {
+      final leadBars =
+          {for (final on in scan.ons) if (on.channel == 0) on.tick ~/ barTicks}
+              .toList()
+            ..sort();
+      var worstGap = 0;
+      for (var i = 1; i < leadBars.length; i++) {
+        final gap = leadBars[i] - leadBars[i - 1] - 1;
+        if (gap > worstGap) worstGap = gap;
+      }
+      expect(worstGap, lessThanOrEqualTo(1));
+    });
+
+    test('the descant is kept, quiet, above the lead, on channel 4', () {
+      final leads = [for (final on in scan.ons) if (on.channel == 0) on];
+      final descants = [for (final on in scan.ons) if (on.channel == 4) on];
+      expect(descants, isNotEmpty);
+      expect(descants.length, lessThan(leads.length));
+      double avgPitch(List<_NoteOn> ons) =>
+          ons.map((o) => o.pitch).reduce((a, b) => a + b) / ons.length;
+      double avgVel(List<_NoteOn> ons) =>
+          ons.map((o) => o.vel).reduce((a, b) => a + b) / ons.length;
+      expect(avgPitch(descants), greaterThan(avgPitch(leads)));
+      expect(avgVel(descants), lessThan(avgVel(leads)));
+    });
+  });
+
+  group('30-hymn seeded sweep — structural invariants', () {
+    // A fixed-seed random sample of the hymnal, so file-shape aberrations
+    // (part-time descants, flourish tempo markings, odd meters...) surface
+    // in CI instead of in church. Seed pinned: the same 30 hymns every
+    // run.
+    final numbers = <int>{};
+    final rand = Random(20260728);
+    while (numbers.length < 30) {
+      numbers.add(rand.nextInt(695) + 1);
+    }
+    for (final hymn in numbers.toList()..sort()) {
+      test('hymn $hymn: reggae arrangement invariants', () {
+        final path = 'assets/midi/${hymn.toString().padLeft(3, '0')}.mid';
+        final input = Uint8List.fromList(File(path).readAsBytesSync());
+        final Uint8List output;
+        try {
+          output = arrangeStyle(input, ArrangeStyle.reggae);
+        } on FormatException {
+          // No detectable harmony: the app falls back to a plain remap.
+          return;
+        }
+        final scan = _scan(output);
+        final d = _division(output);
+        final barTicks = detectChords(input)!.beatsPerBar * d;
+
+        // The one drop's law: kick only ever on the drop beat.
+        for (final on in scan.ons) {
+          if (on.channel == 9 && on.pitch == 36) {
+            expect(on.tick % barTicks, 2 * d,
+                reason: 'hymn $hymn: kick off the drop');
+          }
+        }
+        // Tempo stays inside the dominant band.
+        final bpms = scan.tempi.map((us) => 6e7 / us).toList();
+        final fastest = bpms.reduce((a, b) => a > b ? a : b);
+        final slowest = bpms.reduce((a, b) => a < b ? a : b);
+        expect(fastest / slowest, lessThanOrEqualTo(1 / 0.85 + 0.01),
+            reason: 'hymn $hymn: tempo outside the band');
+        // The lead carries the tune the whole way: no silent stretch of
+        // more than one bar between its first and last sounding bars.
+        final leadBars = {
+          for (final on in scan.ons)
+            if (on.channel == 0) on.tick ~/ barTicks,
+        }.toList()
+          ..sort();
+        expect(leadBars, isNotEmpty, reason: 'hymn $hymn: no lead at all');
+        var worstGap = 0;
+        for (var i = 1; i < leadBars.length; i++) {
+          final gap = leadBars[i] - leadBars[i - 1] - 1;
+          if (gap > worstGap) worstGap = gap;
+        }
+        expect(worstGap, lessThanOrEqualTo(1),
+            reason: 'hymn $hymn: lead silent for $worstGap bars');
+        // The lead outweighs the skank.
+        double avgVel(int ch) {
+          final vels = [
+            for (final on in scan.ons)
+              if (on.channel == ch) on.vel,
+          ];
+          return vels.reduce((a, b) => a + b) / vels.length;
+        }
+        expect(avgVel(0), greaterThan(avgVel(1)),
+            reason: 'hymn $hymn: skank overpowers the lead');
+      });
+    }
   });
 
   group('arrangeStyle(reggae) rejects unusable input', () {
