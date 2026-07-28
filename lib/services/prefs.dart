@@ -93,11 +93,14 @@ class InstrumentTheme extends ValueNotifier<String> {
   static final InstrumentTheme instance = InstrumentTheme._();
 
   /// (id, label, GM program); a null program means the theme is not a simple
-  /// single-instrument remap: 'classic' leaves the file as-is, 'gospel' maps
-  /// channels individually (bass line -> electric bass, voices -> Rhodes).
+  /// single-instrument remap: 'classic' leaves the file as-is, while
+  /// 'gospel', 'reggae' and 'calypso' are generated arrangements (melody
+  /// preserved, backing regenerated per style by the style arranger).
   static const List<(String, String, int?)> themes = [
     ('classic', 'Classic', null),
     ('gospel', 'Modern Gospel', null),
+    ('reggae', 'Island Reggae', null),
+    ('calypso', 'Steel Pan Calypso', null),
     ('organ', 'Cathedral Organ', 19),
     ('strings', 'Strings', 49),
     ('choir', 'Choir', 91),

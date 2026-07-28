@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
-import 'package:sdahymnal/services/gospel_arranger.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
+import 'package:sdahymnal/services/style_arranger.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
 /// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid).
@@ -176,7 +176,18 @@ class MidiPlayer {
   /// Bump when render output changes for the same (hymn, shift, theme) —
   /// e.g. theme program retunes or arranger revisions — so stale caches
   /// from earlier app versions are bypassed.
-  static const int _renderVersion = 2;
+  static const int _renderVersion = 3;
+
+  /// Generated-arrangement themes: the [ArrangeStyle] behind each theme id,
+  /// plus the GM program of the plain remap used when a file has no
+  /// detectable harmony to arrange (gospel falls back to Rhodes; reggae to
+  /// drawbar organ, the church instrument of its palette; calypso to steel
+  /// drums — Trinidadian steel orchestras play hymns straight).
+  static const Map<String, (ArrangeStyle, int)> _arrangedThemes = {
+    'gospel': (ArrangeStyle.gospel, 4),
+    'reggae': (ArrangeStyle.reggae, 16),
+    'calypso': (ArrangeStyle.calypso, 114),
+  };
 
   Future<File> _renderFile(int n) async {
     final semis = transpose.value;
@@ -190,15 +201,16 @@ class MidiPlayer {
       final Uint8List out;
       if (semis == 0 && !theme.transforms) {
         out = bytes;
-      } else if (theme.value == 'gospel') {
+      } else if (_arrangedThemes[theme.value] != null) {
         // Generated accompaniment: melody preserved, backing rearranged from
         // the detected chords. Transposition composes on the arranged bytes.
+        final (style, fallbackProgram) = _arrangedThemes[theme.value]!;
         Uint8List arranged;
         try {
-          arranged = arrangeGospel(bytes);
+          arranged = arrangeStyle(bytes, style);
         } on FormatException {
-          // No detectable harmony: degrade to a plain Rhodes remap.
-          arranged = transformMidi(bytes, forceProgram: 4);
+          // No detectable harmony: degrade to a plain single-program remap.
+          arranged = transformMidi(bytes, forceProgram: fallbackProgram);
         }
         out = semis == 0
             ? arranged
