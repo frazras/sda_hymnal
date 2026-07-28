@@ -100,8 +100,8 @@ class InstrumentTheme extends ValueNotifier<String> {
     ('gospel', 'Modern Gospel', null),
     ('organ', 'Cathedral Organ', 19),
     ('strings', 'Strings', 49),
-    ('choir', 'Choir', 52),
-    ('musicbox', 'Music Box', 10),
+    ('choir', 'Choir', 91),
+    ('musicbox', 'Music Box', 11),
   ];
 
   (String, String, int?) get _theme =>
