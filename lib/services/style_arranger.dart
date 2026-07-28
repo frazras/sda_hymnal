@@ -58,6 +58,7 @@ const int _fingerBassProgram = 33; // Electric Bass (finger)
 const int _acousticBassProgram = 32; // Acoustic Bass
 const int _drawbarOrganProgram = 16; // Drawbar Organ
 const int _steelDrumsProgram = 114; // Steel Drums
+const int _vibraphoneProgram = 11; // Vibraphone
 
 // GM percussion keys.
 const int _kick = 36;
@@ -216,11 +217,13 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
 
   // The half-time decision and the tempo clamp both key off the hymn's
   // DOMINANT tempo; see [_arrangedTempi].
-  final (usPerQuarter, arrangedTempi) = _arrangedTempi(song);
+  final (usPerQuarter, arrangedTempi, dipTicks) = _arrangedTempi(song);
+  final holdBars = <int>{for (final tick in dipTicks) tick ~/ (n * d)};
 
   final ctx = _Ctx(
     d: d,
     n: n,
+    holdBars: holdBars,
     beatChords: beatChords,
     firstBeat: firstBeat,
     lastBeat: lastBeat,
@@ -301,10 +304,11 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
       return _writeSmf(d, [conductor, melody, skank, bass, organ, drums]);
     case ArrangeStyle.calypso:
       final strum = _Track()..program(0, 1, _steelDrumsProgram);
+      final shimmer = _Track()..program(0, 3, _vibraphoneProgram);
       final bass = _Track()..program(0, 2, _acousticBassProgram);
       final drums = _Track();
-      _emitCalypso(ctx, strum, bass, drums);
-      return _writeSmf(d, [conductor, melody, strum, bass, drums]);
+      _emitCalypso(ctx, strum, shimmer, bass, drums);
+      return _writeSmf(d, [conductor, melody, strum, shimmer, bass, drums]);
   }
 }
 
@@ -314,6 +318,7 @@ class _Ctx {
   _Ctx({
     required this.d,
     required this.n,
+    required this.holdBars,
     required this.beatChords,
     required this.firstBeat,
     required this.lastBeat,
@@ -323,6 +328,11 @@ class _Ctx {
 
   final int d; // ticks per beat
   final int n; // beats per bar
+
+  /// Bars containing a marked cadence hold (the original tempo map dipped
+  /// below the clamp floor there). Emitters mark these musically.
+  final Set<int> holdBars;
+
   final Map<int, _Chord> beatChords;
   final int firstBeat;
   final int lastBeat;
@@ -352,17 +362,29 @@ class _Ctx {
   }
 }
 
+/// Tempo-policy tunables — the veteran-band feel in three numbers. Raise
+/// the floor toward 1.0 for a stiffer band, widen the ramp for lazier
+/// transitions, add steps for finer grades; nothing else needs touching.
+const double _cadenceFloorSpeed = 0.85; // holds ease to 85% speed, no lower
+const int _rampBeats = 2; // each transition spreads across 2 beats
+const int _rampSteps = 8; // in 8 micro-steps (≈2% each)
+
 /// The arranged tempo policy for [song]: the DOMINANT tempo (the marking
 /// governing the most ticks — hymn 15 opens with a seven-beat 240 BPM
 /// flourish before its 121 BPM body, so "first FF51" is a trap) and the
 /// CLAMPED tempo map the arrangement plays under. Anything faster than the
 /// dominant clamps down to it (opener flourishes disappear); anything
-/// slower than 70% of it clamps up to that floor — so the fermatas some
-/// files encode purely as tempo dips survive as gentle cadence holds
-/// instead of lurches — and every remaining transition is smoothed into a
-/// four-step ramp across the preceding beat (the adaptive beat: hard tempo
-/// steps under a groove read as stutters).
-(int, List<(int, int)>) _arrangedTempi(_Song song) {
+/// slower than [_cadenceFloorSpeed] clamps up to that floor — so the
+/// fermatas some files encode purely as tempo dips survive as subtle
+/// breaths, never lurches — and every remaining transition is smoothed
+/// into a [_rampSteps]-step ramp across the [_rampBeats] preceding beats
+/// (the adaptive beat: hard tempo steps under a groove read as stutters).
+/// Ticks where the original map dipped below the floor come back as the
+/// third tuple member: those are the hymn's cadence holds, and the
+/// emitters mark them MUSICALLY (a drummer's fill and a re-entry crash)
+/// the way a player who has lived in the genre for fifty years marks a
+/// fermata — with the sticks, not the clock.
+(int, List<(int, int)>, List<int>) _arrangedTempi(_Song song) {
   var songEnd = 0;
   for (final note in song.notes) {
     if (note.endTick > songEnd) songEnd = note.endTick;
@@ -388,9 +410,11 @@ class _Ctx {
       }
     }
   }
-  final slowest = usPerQuarter * 10 ~/ 7; // the 70%-speed cadence floor
+  final slowest = (usPerQuarter / _cadenceFloorSpeed).round();
   final tempi = <(int, int)>[(0, usPerQuarter)];
+  final dipTicks = <int>[];
   for (final (tick, us) in ordered) {
+    if (us > slowest) dipTicks.add(tick); // a marked hold — see doc above
     final clamped = us.clamp(usPerQuarter, slowest);
     if (tick == 0) {
       tempi[0] = (0, clamped);
@@ -408,12 +432,11 @@ class _Ctx {
   for (var i = 1; i < tempi.length; i++) {
     final (tick, us) = tempi[i];
     final prevUs = tempi[i - 1].$2;
-    var rampStart = tick - song.division;
+    var rampStart = tick - _rampBeats * song.division;
     if (rampStart <= tempi[i - 1].$1) rampStart = tempi[i - 1].$1 + 1;
-    const steps = 4;
-    for (var s = 1; s < steps; s++) {
-      final st = rampStart + (tick - rampStart) * s ~/ steps;
-      final su = prevUs + (us - prevUs) * s ~/ steps;
+    for (var s = 1; s < _rampSteps; s++) {
+      final st = rampStart + (tick - rampStart) * s ~/ _rampSteps;
+      final su = prevUs + (us - prevUs) * s ~/ _rampSteps;
       if (st > smoothed.last.$1 && su != smoothed.last.$2) {
         smoothed.add((st, su));
       }
@@ -424,7 +447,7 @@ class _Ctx {
       smoothed[smoothed.length - 1] = (smoothed.last.$1, us);
     }
   }
-  return (usPerQuarter, smoothed);
+  return (usPerQuarter, smoothed, dipTicks);
 }
 
 /// Remaps [track] — detected on [originalBytes] and therefore timed on the
@@ -439,7 +462,7 @@ class _Ctx {
 ChordTrack retimeTrackForArrangement(
     Uint8List originalBytes, ChordTrack track) {
   final song = _parseSong(originalBytes);
-  final (_, tempi) = _arrangedTempi(song);
+  final (_, tempi, _) = _arrangedTempi(song);
   final original = _TempoMap(song.tempi, song.division);
   final arranged = _TempoMap(tempi, song.division);
   int remap(int ms) => arranged.msOf(original.tickOf(ms)).round();
@@ -642,12 +665,21 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
     }
     dnote(dropBeat * d, _kick, 105);
     dnote(dropBeat * d, _sidestick, 98);
+    // The cadence, played like a fifty-year drummer plays a fermata: a
+    // fill INTO the hold bar, lighter color ON it (no tambourine, no
+    // mini-fill — let it breathe), and a crash with the drop coming OUT.
+    final inHold = c.holdBars.contains(bar);
+    final beforeHold = !inHold && c.holdBars.contains(bar + 1);
+    final afterHold = !inHold && c.holdBars.contains(bar - 1);
+
     // Tambourine backbeat, light — the church signature.
-    if (waltz) {
-      dnote(d, _tambourine, c.vel(50, 4, bar, 30));
-    } else {
-      dnote(d, _tambourine, c.vel(50, 4, bar, 30));
-      dnote(3 * d, _tambourine, c.vel(50, 4, bar, 31));
+    if (!inHold) {
+      if (waltz) {
+        dnote(d, _tambourine, c.vel(50, 4, bar, 30));
+      } else {
+        dnote(d, _tambourine, c.vel(50, 4, bar, 30));
+        dnote(3 * d, _tambourine, c.vel(50, 4, bar, 31));
+      }
     }
     // Fills on the last beat: the 8-bar fill rotates deterministically
     // through three shapes — side-stick build, a tom run down the kit, a
@@ -655,7 +687,7 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
     // gets a light side-stick answer. The crash still lands with the NEXT
     // bar's drop, not its downbeat.
     final fillBeat = (beats - 1) * d;
-    if (phase == 7) {
+    if (phase == 7 || beforeHold) {
       switch (c.vel(1, 1, bar, 90)) {
         case 0:
           dnote(fillBeat + d ~/ 4, _sidestick, 60);
@@ -671,11 +703,11 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
           dnote(fillBeat + d ~/ 2, _snare, 76);
           dnote(fillBeat + 3 * d ~/ 4, _snare, 90);
       }
-    } else if (phase == 3) {
+    } else if (phase == 3 && !inHold) {
       dnote(fillBeat + d ~/ 2, _sidestick, 62);
       dnote(fillBeat + 3 * d ~/ 4, _sidestick, 72);
     }
-    if (phase == 0 && bar != c.firstBar) {
+    if ((phase == 0 || afterHold) && bar != c.firstBar) {
       dnote(dropBeat * d, _crash, 95, d);
     }
 
@@ -812,7 +844,12 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
 ///
 /// * channel 1, steel drums — the calypso strum: the genre's fingerprint,
 ///   double stops on the 2nd, 3rd and 4th sixteenth of each beat, RESTING
-///   on every downbeat, accents on the "&"s (strongest on 2& and 4&);
+///   on every downbeat, accents on the "&"s (strongest on 2& and 4&). The
+///   two notes of each stop land a hair apart with the hand alternating
+///   low-first/high-first (no pan player strikes both notes as one), and
+///   channel 3 doubles every stroke with a quiet vibraphone — the
+///   metallic attack transient the synth's pan patch lacks (feedback:
+///   "sounds more like a keyboard");
 /// * channel 2, acoustic bass — tresillo bass: root on 1, fifth on 2&,
 ///   root on 3, pickup on 4& walking chromatically into chord changes;
 /// * channel 9 — kit (syncopated kick 1 / 2& / 3, side-stick backbeat with
@@ -827,7 +864,8 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
 /// rests on the downbeats, not timing offsets. 3/4 hymns get the Caribbean
 /// waltz: strum resting on beat 1 and filling beats 2–3, claves on the
 /// 1 / 2& hemiola, triangle color on 2 and 3.
-void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
+void _emitCalypso(
+    _Ctx c, _Track strum, _Track shimmer, _Track bass, _Track drums) {
   final d = c.d;
   final n = c.n;
   final waltz = n == 3;
@@ -867,6 +905,9 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
     // --- Strum: rest on the beat, hit every e, &, a ---------------------
     final strumBeats = waltz ? [1, 2] : [0, 1, 2, 3];
     final vels = waltz ? strumVels34 : strumVels44;
+    // Two sticks never land as one: the notes of each double stop spread
+    // by a 128th, alternating low-first / high-first like real hands.
+    final spread = d ~/ 32;
     for (final (i, beat) in strumBeats.indexed) {
       final chord = c.chordAt(bar * n + beat);
       if (chord == null) continue;
@@ -879,8 +920,12 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
         // organ-bubble note in the reggae emitter); "e" and "a" stay
         // staccato d/8.
         final length = sub == 2 ? d ~/ 3 : d ~/ 8;
-        for (final pitch in _voice(_guideTones, chord, _strumLow)) {
-          strum.note(barStart + offset, 1, pitch, v, length);
+        final pitches = _voice(_guideTones, chord, _strumLow);
+        final stroke = sub.isEven ? pitches : pitches.reversed.toList();
+        for (final (j, pitch) in stroke.indexed) {
+          final at = barStart + offset + j * spread;
+          strum.note(at, 1, pitch, v, length);
+          shimmer.note(at, 3, pitch, (v - 25).clamp(1, 127), length);
         }
       }
     }

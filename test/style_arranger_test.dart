@@ -371,6 +371,7 @@ void main() {
   };
   const calypsoBands = {
     1: (55, 80), // pan strum double stops, researched G3–E5 band
+    3: (55, 80), // vibraphone shimmer doubles the strum stroke for stroke
   };
   const reggaeKeys = {36, 37, 42, 44, 46, 54}; // kick, rim, hats, tambourine
   const calypsoKeys = {36, 37, 42, 56, 70, 75}; // kit + cowbell/maracas/claves
@@ -393,7 +394,7 @@ void main() {
 
   group('arrangeStyle(calypso) on assets/midi/016.mid (4/4)', () {
     _styleTests('assets/midi/016.mid', ArrangeStyle.calypso,
-        pitchedChannels: {0, 1, 2},
+        pitchedChannels: {0, 1, 2, 3},
         percussionKeys: calypsoKeys,
         registerBands: calypsoBands);
     _calypsoStructureTests('assets/midi/016.mid');
@@ -402,7 +403,7 @@ void main() {
   group('arrangeStyle(calypso) on assets/midi/001.mid (3/4)', () {
     // The Caribbean waltz drops the cowbell loop for triangle color.
     _styleTests('assets/midi/001.mid', ArrangeStyle.calypso,
-        pitchedChannels: {0, 1, 2},
+        pitchedChannels: {0, 1, 2, 3},
         percussionKeys: {36, 37, 42, 70, 75, 81},
         registerBands: calypsoBands);
     _calypsoStructureTests('assets/midi/001.mid');
@@ -433,9 +434,10 @@ void main() {
     });
 
     test('calypso lead is Rhodes — same voice as the reggae lead — over '
-        'the steel-pan strum', () {
+        'the steel-pan strum with its vibraphone attack layer', () {
       expect(calypsoScan.programs[0], {4});
       expect(calypsoScan.programs[1], {114});
+      expect(calypsoScan.programs[3], {11});
     });
 
     test('the skank varies single and double chops (the chack-a)', () {
