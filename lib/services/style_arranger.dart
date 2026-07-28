@@ -37,10 +37,10 @@ enum ArrangeStyle {
   /// bass with structural rests. Gentle global swing on the offbeats.
   reggae,
 
-  /// Trinidadian calypso: trumpet lead (the brass-frontline sound) over an
-  /// offbeat steel-pan strum, calypso bass on the 3+3+2 tresillo, kit plus
-  /// an engine room of claves, maracas and cowbell. Straight sixteenths,
-  /// no swing.
+  /// Trinidadian calypso: piano lead (the soca keyboardist's voice) over
+  /// an offbeat steel-pan strum, calypso bass on the 3+3+2 tresillo, kit
+  /// plus an engine room of claves, maracas and cowbell. Straight
+  /// sixteenths, no swing.
   calypso,
 }
 
@@ -57,7 +57,6 @@ const int _fingerBassProgram = 33; // Electric Bass (finger)
 const int _acousticBassProgram = 32; // Acoustic Bass
 const int _drawbarOrganProgram = 16; // Drawbar Organ
 const int _steelDrumsProgram = 114; // Steel Drums
-const int _trumpetProgram = 56; // Trumpet
 
 // GM percussion keys.
 const int _kick = 36;
@@ -181,9 +180,17 @@ int _fifth(String quality) => switch (quality) {
 /// contains no detectable harmony (the caller falls back to a plain remap).
 Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
   final song = _parseSong(originalBytes);
-  final chordTrack = detectChords(originalBytes);
+  var chordTrack = detectChords(originalBytes);
   if (chordTrack == null) {
     throw const FormatException('No detectable harmony to arrange');
+  }
+  // Reggae and calypso comp from the MEDIUM-simplified harmony: raw
+  // per-beat detection occasionally reads an inversion or passing tones as
+  // a phantom out-of-key chord (heard in #456), and the diatonic filter
+  // built for the chord tabs kills exactly those. Gospel keeps the raw
+  // colors the owner has approved.
+  if (style != ArrangeStyle.gospel) {
+    chordTrack = simplifyTrack(chordTrack, ChordLevel.medium);
   }
 
   final d = song.division; // ticks per beat (quarter note)
@@ -248,23 +255,33 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
 
   // Reggae's lead is Rhodes — the reggae keyboardist's melody voice; the
   // researched flute-adjacent options read as non-idiomatic on this synth.
-  // Calypso's lead is trumpet — the Trinidad brass-frontline sound the
-  // research endorses; the steel-pan patch decays, so a sustained hymn
-  // melody on it vanishes under the strum (listening feedback).
+  // Calypso's lead is acoustic piano — the soca keyboardist's voice; the
+  // steel-pan patch decays (a sustained hymn melody on it vanished under
+  // the strum) and the trumpet patch reads as a bagpipe on this synth.
   final melodyProgram = switch (style) {
     ArrangeStyle.gospel => _rhodesProgram,
     ArrangeStyle.reggae => _rhodesProgram,
-    ArrangeStyle.calypso => _trumpetProgram,
+    ArrangeStyle.calypso => _pianoProgram,
   };
   final gospel = style == ArrangeStyle.gospel;
   final melodyScale = gospel ? 0.9 : 1.0;
   final melodyCap = gospel ? 112 : 120;
+  final melodyNotes = _melodyNotes(song);
+  var lastMelodyStart = 0;
+  for (final note in melodyNotes) {
+    if (note.startTick > lastMelodyStart) lastMelodyStart = note.startTick;
+  }
   final melody = _Track()..program(0, 0, melodyProgram);
-  for (final note in _melodyNotes(song)) {
+  for (final note in melodyNotes) {
     final velocity =
         (note.velocity * melodyScale).round().clamp(1, melodyCap);
-    melody.note(note.startTick, 0, note.pitch, velocity,
-        note.endTick - note.startTick);
+    var length = note.endTick - note.startTick;
+    // The closing ritardando is flattened away with the rest of the tempo
+    // map, which clipped the final chord's ring — so the last melody note
+    // (like the button-ending voices) holds one extra bar past the final
+    // bar line.
+    if (!gospel && note.startTick == lastMelodyStart) length += n * d;
+    melody.note(note.startTick, 0, note.pitch, velocity, length);
   }
 
   switch (style) {
@@ -443,7 +460,8 @@ void _emitGospel(_Ctx c, _Track comp, _Track bass, _Track drums) {
 /// * channel 1, piano — the skank as the "piano bang": staccato root-
 ///   position triads around middle C on every swung offbeat eighth (the
 ///   synth's clean-guitar patch reads as a buzzer, so the research's piano
-///   double carries the chop alone);
+///   double carries the chop alone), with the "chack-a" double skank on
+///   the bar's last chop and on alternate 2&s;
 /// * channel 3, drawbar organ — the bubble: low left-hand root dabs on the
 ///   beats, right-hand triads answering on the swung offbeats;
 /// * channel 2, finger bass — riff bass as a two-bar ostinato (the
@@ -483,17 +501,17 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
     }
 
     // The button ending: the last bar drops the patterns for one held
-    // chord — crash on the downbeat, bass root and piano chord ringing to
-    // the bar line, one final drop on beat 3 — instead of the groove
+    // chord — crash on the downbeat, bass root and piano chord ringing a
+    // full bar past the bar line, one final drop on beat 3 — instead of the groove
     // clattering through the melody's final note (listening feedback: the
     // old close-out read as a staggered stop).
     if (bar == c.lastBar) {
       final chord = c.chordAt(bar * n) ?? c.chordAt(bar * n + 1);
-      dnote(0, _crash, 96, n * d);
+      dnote(0, _crash, 96, 2 * n * d);
       if (chord != null) {
-        bass.note(barStart, 2, _voiceBass(chord.rootPc), 112, n * d);
+        bass.note(barStart, 2, _voiceBass(chord.rootPc), 112, 2 * n * d);
         for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
-          skank.note(barStart, 1, pitch, 84, n * d);
+          skank.note(barStart, 1, pitch, 84, 2 * n * d);
         }
       }
       dnote(2 * d, _kick, 105);
@@ -561,8 +579,18 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
       final chord = c.chordAt(bar * n + beat);
       if (chord == null || !c.hit(bar, offset)) continue;
       final v = c.vel(76, 4, bar, 50 + i);
+      // The "chack-a" double skank (the research's double-skank colour):
+      // the bar's LAST chop always doubles at the following "a", and
+      // full-time 4/4 bars also double 2& on alternate bars — single and
+      // double chops in variation rather than a uniform chop.
+      final doubled = beat == beats - 1 ||
+          (!halfTime && beat == 1 && (bar - c.firstBar).isOdd);
+      final aOffset = halfTime ? offset + d ~/ 4 : beat * d + 4 * d ~/ 5;
       for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
         skank.note(barStart + offset, 1, pitch, v, d ~/ 8);
+        if (doubled) {
+          skank.note(barStart + aOffset, 1, pitch, v - 14, d ~/ 8);
+        }
       }
     }
 
@@ -684,7 +712,7 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
 ///   running maracas eighths, and a 2-bar cowbell loop; the 8-bar fill
 ///   alternates a snare pickup with a bongo lead-in, into a crash on the
 ///   following downbeat. The final bar is a button ending: kick + crash,
-///   held bass root, strum silent — the trumpet lead carries the tune out.
+///   held bass root, strum silent — the piano lead carries the tune out.
 ///
 /// Everything is straight — the lilt comes from velocity shape and the
 /// rests on the downbeats, not timing offsets. 3/4 hymns get the Caribbean
@@ -713,15 +741,15 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
     }
 
     // The button ending: kick + crash on the final downbeat, bass root
-    // held to the bar line, the strum and engine room silent — the
-    // trumpet carries the tune out (listening feedback: the old close-out
-    // read as a staggered stop).
+    // held past the bar line, the strum and engine room silent — the
+    // piano lead carries the tune out (listening feedback: the old
+    // close-out read as a staggered stop).
     if (bar == c.lastBar) {
       dnote(0, _kick, 100);
-      dnote(0, _crash, 96, n * d);
+      dnote(0, _crash, 96, 2 * n * d);
       final chord = c.chordAt(bar * n) ?? c.chordAt(bar * n + 1);
       if (chord != null) {
-        bass.note(barStart, 2, _voiceBass(chord.rootPc), 104, n * d);
+        bass.note(barStart, 2, _voiceBass(chord.rootPc), 104, 2 * n * d);
       }
       continue;
     }
