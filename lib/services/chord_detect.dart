@@ -136,6 +136,93 @@ int _transposedSf(int sf, int semitones) {
   return x > 6 ? x - 12 : x;
 }
 
+// ---------------------------------------------------------------------------
+// Chord simplification
+// ---------------------------------------------------------------------------
+
+/// How much harmonic detail [simplifyTrack] keeps.
+enum ChordLevel { simple, medium, original }
+
+/// Quality rewrites per level; anything unlisted keeps its quality.
+const Map<String, String> _mediumRemap = {
+  'maj7': '', 'aug': '', 'sus4': '', //
+};
+const Map<String, String> _simpleRemap = {
+  '7': '', 'maj7': '', 'sus4': '', 'aug': '', 'm7': 'm', 'dim': 'm', //
+};
+
+/// Returns [track] reduced to [level]: qualities are remapped (medium drops
+/// the color tones of maj7/aug/sus4 down to plain majors; simple keeps only
+/// major and minor), runs of now-identical chords are merged, and at
+/// [ChordLevel.simple] any 1-beat leftover with a predecessor is absorbed
+/// into it. Merging keeps the first event's [ChordEvent.startMs], sums
+/// durations, and concatenates [ChordEvent.beatMs] in time order, so the
+/// track's total beat count — and the chart's beats-per-bar sums — never
+/// change. [ChordLevel.original] returns [track] itself; the other levels
+/// build a fresh track and leave the input untouched.
+ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
+  if (level == ChordLevel.original) return track;
+  final remap = level == ChordLevel.medium ? _mediumRemap : _simpleRemap;
+
+  var events = _mergeAdjacent([
+    for (final e in track.chords)
+      ChordEvent(
+        startMs: e.startMs,
+        durationMs: e.durationMs,
+        rootPc: e.rootPc,
+        quality: remap[e.quality] ?? e.quality,
+        beatMs: List<int>.of(e.beatMs),
+      ),
+  ]);
+
+  if (level == ChordLevel.simple) {
+    // A single leftover beat of some passing chord reads as clutter: fold it
+    // into the chord before it (the track opener has none and stays), then
+    // re-merge the neighbours that absorption may have made equal.
+    final absorbed = <ChordEvent>[];
+    for (final e in events) {
+      if (absorbed.isNotEmpty && e.beatMs.length == 1) {
+        absorbed[absorbed.length - 1] = _joined(absorbed.last, e);
+      } else {
+        absorbed.add(e);
+      }
+    }
+    events = _mergeAdjacent(absorbed);
+  }
+
+  return ChordTrack(
+    chords: events,
+    key: track.key,
+    beatsPerBar: track.beatsPerBar,
+    measureStartMs: track.measureStartMs,
+  );
+}
+
+/// Merges every run of adjacent events sharing (rootPc, quality) into one.
+List<ChordEvent> _mergeAdjacent(List<ChordEvent> events) {
+  final out = <ChordEvent>[];
+  for (final e in events) {
+    if (out.isNotEmpty &&
+        out.last.rootPc == e.rootPc &&
+        out.last.quality == e.quality) {
+      out[out.length - 1] = _joined(out.last, e);
+    } else {
+      out.add(e);
+    }
+  }
+  return out;
+}
+
+/// [a] extended through [b]: keeps a's identity and start, sums the
+/// durations, and concatenates the beat onsets in time order.
+ChordEvent _joined(ChordEvent a, ChordEvent b) => ChordEvent(
+      startMs: a.startMs,
+      durationMs: a.durationMs + b.durationMs,
+      rootPc: a.rootPc,
+      quality: a.quality,
+      beatMs: [...a.beatMs, ...b.beatMs],
+    );
+
 /// Detects the chord track of the SMF in [midiBytes]; null when the bytes are
 /// not a parseable SMF or contain no usable notes. Pure and synchronous.
 ChordTrack? detectChords(Uint8List midiBytes) {

@@ -54,6 +54,27 @@ List<String> _labels(ChordTrack track) => [
       for (final c in track.chords) chordLabel(c.rootPc, c.quality, track.key, 0),
     ];
 
+/// Hand-made [beats]-beat chord at 500ms/beat.
+ChordEvent _ev(int startMs, int beats, int rootPc, String quality) =>
+    ChordEvent(
+      startMs: startMs,
+      durationMs: beats * 500,
+      rootPc: rootPc,
+      quality: quality,
+      beatMs: [for (var b = 0; b < beats; b++) startMs + b * 500],
+    );
+
+/// Wraps hand-made [chords] in a 4/4 track (no key).
+ChordTrack _handTrack(List<ChordEvent> chords) => ChordTrack(
+      chords: chords,
+      key: null,
+      beatsPerBar: 4,
+      measureStartMs: [0, 2000, 4000, 6000],
+    );
+
+int _beatCount(ChordTrack track) =>
+    track.chords.fold(0, (sum, c) => sum + c.beatMs.length);
+
 void main() {
   group('detectChords on a synthetic C major progression', () {
     final track = detectChords(_smf([_conductor, _notes]))!;
@@ -130,6 +151,108 @@ void main() {
     });
   });
 
+  group('simplifyTrack quality mapping', () {
+    // Two beats per event so nothing triggers the 1-beat absorption here.
+    final track = _handTrack([
+      _ev(0, 2, 0, ''), // C
+      _ev(1000, 2, 0, 'maj7'), // Cmaj7
+      _ev(2000, 2, 0, '7'), // C7
+      _ev(3000, 2, 0, 'sus4'), // Csus4
+      _ev(4000, 2, 0, 'aug'), // Caug
+      _ev(5000, 2, 9, 'm'), // Am
+      _ev(6000, 2, 9, 'm7'), // Am7
+      _ev(7000, 2, 11, 'dim'), // Bdim
+    ]);
+
+    test('original returns the track unchanged', () {
+      expect(simplifyTrack(track, ChordLevel.original), same(track));
+    });
+
+    test('medium drops maj7/aug/sus4 to major and merges the runs', () {
+      final medium = simplifyTrack(track, ChordLevel.medium);
+      expect([for (final c in medium.chords) (c.rootPc, c.quality)], [
+        (0, ''), // C + Cmaj7 merged
+        (0, '7'), // C7 kept apart
+        (0, ''), // Csus4 + Caug merged
+        (9, 'm'),
+        (9, 'm7'),
+        (11, 'dim'),
+      ]);
+      expect(medium.chords.first.startMs, 0);
+      expect(medium.chords.first.durationMs, 2000);
+      expect(medium.chords.first.beatMs, [0, 500, 1000, 1500]);
+      expect(medium.chords[2].startMs, 3000);
+      expect(medium.chords[2].beatMs, [3000, 3500, 4000, 4500]);
+      expect(medium.key, track.key);
+      expect(medium.beatsPerBar, track.beatsPerBar);
+      expect(medium.measureStartMs, track.measureStartMs);
+    });
+
+    test('simple keeps only major and minor and merges across the run', () {
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)], [
+        (0, ''), // C..Caug: one C spanning all five
+        (9, 'm'), // Am + Am7
+        (11, 'm'), // Bdim
+      ]);
+      expect(simple.chords.first.startMs, 0);
+      expect(simple.chords.first.durationMs, 5000);
+      expect(simple.chords.first.beatMs,
+          [for (var ms = 0; ms < 5000; ms += 500) ms]);
+      expect(simple.chords[1].durationMs, 2000);
+    });
+
+    test('conserves every beat and keeps merged onsets ordered', () {
+      for (final level in ChordLevel.values) {
+        final simplified = simplifyTrack(track, level);
+        expect(_beatCount(simplified), _beatCount(track));
+        for (final c in simplified.chords) {
+          expect(c.beatMs.first, c.startMs);
+          for (var k = 1; k < c.beatMs.length; k++) {
+            expect(c.beatMs[k], greaterThan(c.beatMs[k - 1]));
+          }
+        }
+      }
+    });
+
+    test('leaves the input track untouched', () {
+      simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in track.chords) c.quality],
+          ['', 'maj7', '7', 'sus4', 'aug', 'm', 'm7', 'dim']);
+      expect([for (final c in track.chords) c.beatMs.length],
+          everyElement(2));
+    });
+  });
+
+  group('simplifyTrack 1-beat absorption', () {
+    test('folds a passing chord into its predecessor, then re-merges', () {
+      final track = _handTrack([
+        _ev(0, 4, 7, ''), // G, 4 beats
+        _ev(2000, 1, 2, ''), // D, 1 beat
+        _ev(2500, 4, 7, ''), // G, 4 beats
+      ]);
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      final g = simple.chords.single;
+      expect(g.rootPc, 7);
+      expect(g.quality, '');
+      expect(g.startMs, 0);
+      expect(g.durationMs, 4500);
+      expect(g.beatMs, [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000]);
+      // Medium never absorbs: the D survives there.
+      expect(simplifyTrack(track, ChordLevel.medium).chords, hasLength(3));
+    });
+
+    test('a 1-beat track opener has no predecessor and stays', () {
+      final track = _handTrack([
+        _ev(0, 1, 2, ''), // D, 1 beat, opens the track
+        _ev(500, 4, 7, ''), // G
+      ]);
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) c.rootPc], [2, 7]);
+      expect(simple.chords.first.beatMs, [0]);
+    });
+  });
+
   group('real hymn assets/midi/016.mid', () {
     final track = detectChords(
         Uint8List.fromList(File('assets/midi/016.mid').readAsBytesSync()))!;
@@ -165,6 +288,16 @@ void main() {
       expect(track.indexAt(starts.last), track.chords.length - 1);
       expect(track.measureAt(-1), -1);
       expect(track.measureStartMs.first, 0);
+    });
+
+    test('simplified to simple: fewer events, only major/minor, same beats',
+        () {
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect(simple.chords.length, lessThan(track.chords.length));
+      for (final c in simple.chords) {
+        expect(c.quality, anyOf('', 'm'));
+      }
+      expect(_beatCount(simple), _beatCount(track));
     });
   });
 

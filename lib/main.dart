@@ -12,6 +12,7 @@ void main() async {
   await Favorites.instance.load();
   await InstrumentTheme.instance.load();
   await ChordTabs.instance.load();
+  await ChordLevelPref.instance.load();
   runApp(const Hymnal());
 }
 

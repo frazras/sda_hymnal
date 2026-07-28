@@ -399,71 +399,83 @@ class _HymnPageState extends State<HymnPage> {
         if (!enabled) return const SizedBox.shrink();
         return ValueListenableBuilder<ChordTrack?>(
           valueListenable: MidiPlayer.instance.chordTrack,
-          builder: (context, track, _) {
-            if (track == null) return const SizedBox.shrink();
-            return ValueListenableBuilder<({int n, bool paused})?>(
-              valueListenable: MidiPlayer.instance.current,
-              builder: (context, cur, _) => ValueListenableBuilder<int>(
-                valueListenable: MidiPlayer.instance.transpose,
-                builder: (context, semis, _) =>
-                    ValueListenableBuilder<Duration>(
-                  valueListenable: MidiPlayer.instance.position,
-                  builder: (context, pos, _) {
-                    final loaded =
-                        cur != null && cur.n == widget.hymn.number;
-                    final at =
-                        loaded ? track.indexAt(pos.inMilliseconds) : 0;
-                    final index = at < 0 ? 0 : at;
-                    return Pressable(
-                      onTap: () => _showChordSheet(t),
-                      pressedScale: 0.98,
-                      builder: (context, pressed) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: SizedBox(
-                          height: 36,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 220),
-                            transitionBuilder: (child, animation) {
-                              // Incoming slides in from the right; the
-                              // outgoing child (reversed animation) slides
-                              // out to the left — the row reads as sliding
-                              // left on each chord hit.
-                              final incoming =
-                                  child.key == ValueKey<int>(index);
-                              final slide = Tween<Offset>(
-                                begin: Offset(incoming ? 0.35 : -0.35, 0),
-                                end: Offset.zero,
-                              );
-                              return FadeTransition(
-                                opacity: animation,
-                                child: SlideTransition(
-                                  position: animation.drive(slide),
-                                  child: child,
+          builder: (context, raw, _) {
+            if (raw == null) return const SizedBox.shrink();
+            return ValueListenableBuilder<String>(
+              valueListenable: ChordLevelPref.instance,
+              builder: (context, _, __) {
+                // Simplified once per track/level change (not per position
+                // tick); slots, indexAt sync and beat dots all read it.
+                final track =
+                    simplifyTrack(raw, ChordLevelPref.instance.level);
+                return ValueListenableBuilder<({int n, bool paused})?>(
+                  valueListenable: MidiPlayer.instance.current,
+                  builder: (context, cur, _) => ValueListenableBuilder<int>(
+                    valueListenable: MidiPlayer.instance.transpose,
+                    builder: (context, semis, _) =>
+                        ValueListenableBuilder<Duration>(
+                      valueListenable: MidiPlayer.instance.position,
+                      builder: (context, pos, _) {
+                        final loaded =
+                            cur != null && cur.n == widget.hymn.number;
+                        final at =
+                            loaded ? track.indexAt(pos.inMilliseconds) : 0;
+                        final index = at < 0 ? 0 : at;
+                        return Pressable(
+                          onTap: () => _showChordSheet(t),
+                          pressedScale: 0.98,
+                          builder: (context, pressed) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: SizedBox(
+                              height: 36,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 220),
+                                transitionBuilder: (child, animation) {
+                                  // Incoming slides in from the right; the
+                                  // outgoing child (reversed animation)
+                                  // slides out to the left — the row reads
+                                  // as sliding left on each chord hit.
+                                  final incoming =
+                                      child.key == ValueKey<int>(index);
+                                  final slide = Tween<Offset>(
+                                    begin:
+                                        Offset(incoming ? 0.35 : -0.35, 0),
+                                    end: Offset.zero,
+                                  );
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SlideTransition(
+                                      position: animation.drive(slide),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  key: ValueKey<int>(index),
+                                  children: [
+                                    for (var slot = 0; slot < 3; slot++)
+                                      Expanded(
+                                        child: _chordSlot(
+                                            t,
+                                            track,
+                                            index + slot,
+                                            slot,
+                                            semis,
+                                            loaded
+                                                ? pos.inMilliseconds
+                                                : -1),
+                                      ),
+                                  ],
                                 ),
-                              );
-                            },
-                            child: Row(
-                              key: ValueKey<int>(index),
-                              children: [
-                                for (var slot = 0; slot < 3; slot++)
-                                  Expanded(
-                                    child: _chordSlot(
-                                        t,
-                                        track,
-                                        index + slot,
-                                        slot,
-                                        semis,
-                                        loaded ? pos.inMilliseconds : -1),
-                                  ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
             );
           },
         );
@@ -575,32 +587,41 @@ class _HymnPageState extends State<HymnPage> {
           ),
           child: ValueListenableBuilder<ChordTrack?>(
             valueListenable: MidiPlayer.instance.chordTrack,
-            builder: (context, track, _) {
-              if (track == null) return const SizedBox.shrink();
-              return ValueListenableBuilder<int>(
-                valueListenable: MidiPlayer.instance.transpose,
-                builder: (context, semis, _) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+            builder: (context, raw, _) {
+              if (raw == null) return const SizedBox.shrink();
+              return ValueListenableBuilder<String>(
+                valueListenable: ChordLevelPref.instance,
+                builder: (context, _, __) {
+                  // The chart reads the same simplified track as the strip,
+                  // so bars, labels and beat dots track the level live.
+                  final track =
+                      simplifyTrack(raw, ChordLevelPref.instance.level);
+                  return ValueListenableBuilder<int>(
+                    valueListenable: MidiPlayer.instance.transpose,
+                    builder: (context, semis, _) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SectionLabel('CHORDS'),
-                        const Spacer(),
-                        Text(
-                          _chordMeta(track, semis),
-                          style: TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 12,
-                            color: t.muted,
-                          ),
+                        Row(
+                          children: [
+                            const SectionLabel('CHORDS'),
+                            const Spacer(),
+                            Text(
+                              _chordMeta(track, semis),
+                              style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 12,
+                                color: t.muted,
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 14),
+                        Flexible(child: _measureGrid(t, track, semis)),
                       ],
                     ),
-                    const SizedBox(height: 14),
-                    Flexible(child: _measureGrid(t, track, semis)),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),

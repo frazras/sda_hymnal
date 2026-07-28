@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/chord_detect.dart';
 
 /// App-wide theme preference: 'light' | 'dark' | 'system'
 /// (SharedPreferences key 'theme', default 'light' to match the mockups).
@@ -144,6 +145,39 @@ class ChordTabs extends ValueNotifier<bool> {
     value = on;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('chordTabs', on);
+  }
+}
+
+/// Chord difficulty (SharedPreferences key 'chordLevel', default 'original'):
+/// 'simple' | 'medium' | 'original' — how far detected chords are simplified
+/// before the strip and chart label them.
+class ChordLevelPref extends ValueNotifier<String> {
+  ChordLevelPref._() : super('original');
+  static final ChordLevelPref instance = ChordLevelPref._();
+
+  /// The stored string as the chord_detect enum.
+  ChordLevel get level => switch (value) {
+        'simple' => ChordLevel.simple,
+        'medium' => ChordLevel.medium,
+        _ => ChordLevel.original,
+      };
+
+  /// Display label of the current level ('Simple' / 'Medium' / 'Original').
+  String get label => switch (value) {
+        'simple' => 'Simple',
+        'medium' => 'Medium',
+        _ => 'Original',
+      };
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getString('chordLevel') ?? 'original';
+  }
+
+  Future<void> set(String level) async {
+    value = level;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('chordLevel', level);
   }
 }
 

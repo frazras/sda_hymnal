@@ -85,16 +85,56 @@ class Settings extends StatelessWidget {
                 ),
                 onTap: () => _showInstrumentSheet(context, t),
               ),
-              _SettingsRow(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-                leading: HymnalIcons.grid2x2(t.muted),
-                title: 'Chord tabs',
-                subtitle: 'Play-along chords for musicians',
-                trailing: const _MiniSwitch(),
-                chevron: false,
-                onTap: () =>
-                    ChordTabs.instance.set(!ChordTabs.instance.value),
+              // Chord tabs + its dependent difficulty row rebuild together:
+              // the divider under Chord tabs exists exactly while the
+              // difficulty row is visible, so the card's last row never
+              // carries a stray hairline.
+              ValueListenableBuilder<bool>(
+                valueListenable: ChordTabs.instance,
+                builder: (context, chordsOn, _) => Column(
+                  children: [
+                    _SettingsRow(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 15),
+                      leading: HymnalIcons.grid2x2(t.muted),
+                      title: 'Chord tabs',
+                      subtitle: 'Play-along chords for musicians',
+                      divider: chordsOn,
+                      trailing: const _MiniSwitch(),
+                      chevron: false,
+                      onTap: () =>
+                          ChordTabs.instance.set(!ChordTabs.instance.value),
+                    ),
+                    if (chordsOn)
+                      _SettingsRow(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 15),
+                        leading: Text(
+                          'C7',
+                          style: TextStyle(
+                            fontFamily: kSerif,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: t.muted,
+                          ),
+                        ),
+                        title: 'Chord difficulty',
+                        subtitle: 'Simplify chords for learners',
+                        trailing: ValueListenableBuilder<String>(
+                          valueListenable: ChordLevelPref.instance,
+                          builder: (context, _, __) => Text(
+                            ChordLevelPref.instance.label,
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 13,
+                              color: t.muted,
+                            ),
+                          ),
+                        ),
+                        onTap: () => _showChordLevelSheet(context, t),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -215,6 +255,108 @@ class Settings extends StatelessWidget {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Chord-difficulty options: (pref id, label, description).
+  static const List<(String, String, String)> _chordLevels = [
+    ('simple', 'Simple', 'Major and minor only'),
+    ('medium', 'Medium', 'Keeps common sevenths'),
+    ('original', 'Original', 'As detected'),
+  ];
+
+  /// Chord-difficulty picker sheet (same pattern as the instrument sheet):
+  /// one row per level, tap applies and closes.
+  void _showChordLevelSheet(BuildContext context, HymnalTokens t) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
+          decoration: BoxDecoration(
+            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionLabel('CHORD DIFFICULTY'),
+              const SizedBox(height: 6),
+              for (final (i, level) in _chordLevels.indexed)
+                _chordLevelRow(
+                  t,
+                  level,
+                  sheetContext,
+                  divider: i < _chordLevels.length - 1,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chordLevelRow(
+    HymnalTokens t,
+    (String, String, String) level,
+    BuildContext sheetContext, {
+    required bool divider,
+  }) {
+    final selected = ChordLevelPref.instance.value == level.$1;
+    return Pressable(
+      onTap: () {
+        ChordLevelPref.instance.set(level.$1);
+        Navigator.pop(sheetContext);
+      },
+      pressedScale: 1.0,
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
+        decoration: BoxDecoration(
+          color: pressed ? t.surface2 : Colors.transparent,
+          border:
+              divider ? Border(bottom: BorderSide(color: t.line2)) : null,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    level.$2,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: selected ? t.accent : t.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    level.$3,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 12.5,
+                      color: t.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (selected)
+              Container(
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: t.accent, shape: BoxShape.circle),
+              ),
+          ],
         ),
       ),
     );
