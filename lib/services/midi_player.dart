@@ -176,7 +176,7 @@ class MidiPlayer {
   /// Bump when render output changes for the same (hymn, shift, theme) —
   /// e.g. theme program retunes or arranger revisions — so stale caches
   /// from earlier app versions are bypassed.
-  static const int _renderVersion = 5;
+  static const int _renderVersion = 6;
 
   /// Generated-arrangement themes: the [ArrangeStyle] behind each theme id,
   /// plus the GM program of the plain remap used when a file has no

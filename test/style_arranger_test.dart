@@ -26,9 +26,11 @@ class _NoteOn {
   int lastOffTick,
   Map<int, Set<int>> programs,
   int tempoCount,
+  List<int> tempi,
 }) _scan(Uint8List bytes) {
   final ons = <_NoteOn>[];
   final programs = <int, Set<int>>{};
+  final tempi = <int>[]; // FF51 values, microseconds per quarter
   var tempoCount = 0;
   var lastOff = 0;
   var seq = 0;
@@ -54,13 +56,16 @@ class _NoteOn {
         tick += delta;
         final status = bytes[i] & 0x80 != 0 ? bytes[i++] : running;
         if (status == 0xFF) {
-          if (bytes[i] == 0x51) tempoCount++;
-          i++; // meta type
+          final type = bytes[i++];
           var len = 0;
           while (true) {
             final b = bytes[i++];
             len = (len << 7) | (b & 0x7F);
             if (b & 0x80 == 0) break;
+          }
+          if (type == 0x51 && len == 3) {
+            tempoCount++;
+            tempi.add((bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]);
           }
           i += len;
           running = 0;
@@ -95,6 +100,7 @@ class _NoteOn {
     lastOffTick: lastOff,
     programs: programs,
     tempoCount: tempoCount,
+    tempi: tempi,
   );
 }
 
@@ -461,6 +467,18 @@ void main() {
       expect(reggaeScan.tempoCount, 1);
       expect(calypsoScan.tempoCount, 1);
       expect(_scan(arrangeStyle(input, ArrangeStyle.gospel)).tempoCount, 1);
+    });
+
+    test('#15 flattens to its dominant 121 BPM body, not the 240 opener', () {
+      // Hymn 15 opens with a seven-beat 240 BPM flourish marking before
+      // the 121 BPM body; taking the opener played the whole arrangement
+      // double-speed (heard as the one drop "removed... a stifled
+      // one-note fill"). The dominant tempo — most governed ticks — wins.
+      final h15 = Uint8List.fromList(
+          File('assets/midi/015.mid').readAsBytesSync());
+      final scan = _scan(arrangeStyle(h15, ArrangeStyle.reggae));
+      expect(scan.tempi, hasLength(1));
+      expect((6e7 / scan.tempi.single).round(), 121);
     });
 
     test('the calypso strum drops out for the button ending', () {

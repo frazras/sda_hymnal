@@ -213,14 +213,36 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     if (beat > lastBeat) lastBeat = beat;
   }
 
-  // The hymn's opening tempo decides tempo-sensitive pattern choices (the
-  // reggae half-time reading); mid-hymn fermata dips don't.
+  // The arrangement's single tempo (and the half-time decision) comes from
+  // the hymn's DOMINANT tempo — the marking that governs the most ticks —
+  // never simply the first FF51: hymn 15 opens with a 240 BPM flourish
+  // marking that lasts seven beats before the 121 BPM body, and taking the
+  // opener played the whole song double-speed (heard as the one drop
+  // "removed... a stifled one-note fill"). Verse-end rit dips only govern
+  // a beat or two, so tick-weighting ignores them too.
+  var songEnd = 0;
+  for (final note in song.notes) {
+    if (note.endTick > songEnd) songEnd = note.endTick;
+  }
   var usPerQuarter = _defaultUsPerQuarter;
-  var tempoTick = -1;
-  for (final (tick, us) in song.tempi) {
-    if (tempoTick < 0 || tick < tempoTick) {
-      tempoTick = tick;
-      usPerQuarter = us;
+  if (song.tempi.isNotEmpty) {
+    final ordered = [...song.tempi]..sort((a, b) => a.$1.compareTo(b.$1));
+    final governed = <int, int>{}; // usPerQuarter -> ticks it governs
+    for (var i = 0; i < ordered.length; i++) {
+      final (tick, us) = ordered[i];
+      final until = i + 1 < ordered.length ? ordered[i + 1].$1 : songEnd;
+      if (until > tick) {
+        governed[us] = (governed[us] ?? 0) + (until - tick);
+      }
+    }
+    // Strict > keeps the earliest marking on ties — deterministic.
+    var bestTicks = -1;
+    for (final (_, us) in ordered) {
+      final ticks = governed[us] ?? 0;
+      if (ticks > bestTicks) {
+        bestTicks = ticks;
+        usPerQuarter = us;
+      }
     }
   }
 
@@ -264,8 +286,15 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     ArrangeStyle.calypso => _pianoProgram,
   };
   final gospel = style == ArrangeStyle.gospel;
-  final melodyScale = gospel ? 0.9 : 1.0;
-  final melodyCap = gospel ? 112 : 120;
+  // Per-style melody weight: gospel sits in the bed, reggae rides at full
+  // weight, calypso splits the difference — its piano lead at full weight
+  // towered over the trimmed strum (listening feedback: "closer together
+  // but the melody should still be higher").
+  final (melodyScale, melodyCap) = switch (style) {
+    ArrangeStyle.gospel => (0.9, 112),
+    ArrangeStyle.reggae => (1.0, 120),
+    ArrangeStyle.calypso => (0.94, 114),
+  };
   final melodyNotes = _melodyNotes(song);
   var lastMelodyStart = 0;
   for (final note in melodyNotes) {
@@ -724,10 +753,10 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
   final waltz = n == 3;
 
   // Strum velocities per beat, for the 2nd/3rd/4th sixteenth of the beat —
-  // trimmed below the trumpet lead (listening feedback: the strum buried
-  // the melody).
-  const strumVels44 = [[60, 76, 62], [60, 78, 62], [60, 76, 62], [60, 80, 66]];
-  const strumVels34 = [[60, 76, 62], [60, 76, 62]];
+  // a step below the piano lead, a step above the first trim (listening
+  // feedback: melody and backing closer together, melody still on top).
+  const strumVels44 = [[66, 82, 68], [66, 84, 68], [66, 82, 68], [66, 86, 72]];
+  const strumVels34 = [[66, 82, 68], [66, 82, 68]];
 
   for (var bar = c.firstBar; bar <= c.lastBar; bar++) {
     final barStart = bar * n * d;
@@ -820,19 +849,19 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
       dnote(0, _kick, 100);
       dnote(d + d ~/ 2, _sidestick, 75);
       for (var k = 0; k < 5; k++) {
-        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 52 : 66, 3, bar, 40 + k));
+        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 55 : 70, 3, bar, 40 + k));
       }
       if (evenBar) {
-        dnote(5 * d ~/ 2, _closedHat, c.vel(66, 3, bar, 45));
+        dnote(5 * d ~/ 2, _closedHat, c.vel(70, 3, bar, 45));
       } else {
-        dnote(5 * d ~/ 2, _openHat, c.vel(74, 3, bar, 45), d ~/ 3);
+        dnote(5 * d ~/ 2, _openHat, c.vel(76, 3, bar, 45), d ~/ 3);
       }
-      dnote(0, _claves, 82);
-      dnote(d + d ~/ 2, _claves, 82); // the 3+3 hemiola over the bar
-      dnote(d, _triangle, c.vel(52, 3, bar, 46));
-      dnote(2 * d, _triangle, c.vel(52, 3, bar, 47));
+      dnote(0, _claves, 86);
+      dnote(d + d ~/ 2, _claves, 86); // the 3+3 hemiola over the bar
+      dnote(d, _triangle, c.vel(55, 3, bar, 46));
+      dnote(2 * d, _triangle, c.vel(55, 3, bar, 47));
       for (var k = 0; k < 6; k++) {
-        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 46 : 60, 4, bar, 50 + k));
+        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 52 : 66, 4, bar, 50 + k));
       }
       if (phase == 7) {
         dnote(2 * d + d ~/ 2, _snare, 80);
@@ -847,29 +876,29 @@ void _emitCalypso(_Ctx c, _Track strum, _Track bass, _Track drums) {
       dnote(d, _tambourine, c.vel(70, 4, bar, 38));
       dnote(3 * d, _tambourine, c.vel(72, 4, bar, 39));
       for (var k = 0; k < 7; k++) {
-        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 56 : 70, 3, bar, 40 + k));
+        dnote(k * d ~/ 2, _closedHat, c.vel(k.isEven ? 58 : 74, 3, bar, 40 + k));
       }
       if (evenBar) {
-        dnote(7 * d ~/ 2, _closedHat, c.vel(74, 3, bar, 47));
+        dnote(7 * d ~/ 2, _closedHat, c.vel(78, 3, bar, 47));
       } else {
-        dnote(7 * d ~/ 2, _openHat, c.vel(76, 3, bar, 47), d ~/ 3);
+        dnote(7 * d ~/ 2, _openHat, c.vel(78, 3, bar, 47), d ~/ 3);
       }
       // Engine room: claves on the 3+3+2 anchor — 1, 2&, 4.
-      dnote(0, _claves, 82);
-      dnote(d + d ~/ 2, _claves, 82);
-      dnote(3 * d, _claves, 82);
+      dnote(0, _claves, 86);
+      dnote(d + d ~/ 2, _claves, 86);
+      dnote(3 * d, _claves, 86);
       for (var k = 0; k < 8; k++) {
-        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 46 : 60, 4, bar, 50 + k));
+        dnote(k * d ~/ 2, _maracas, c.vel(k.isEven ? 52 : 66, 4, bar, 50 + k));
       }
       // Cowbell, 2-bar loop.
       if (evenBar) {
-        dnote(d ~/ 2, _cowbell, c.vel(70, 3, bar, 60));
-        dnote(d + d ~/ 2, _cowbell, c.vel(70, 3, bar, 61));
-        dnote(3 * d, _cowbell, c.vel(74, 3, bar, 62));
+        dnote(d ~/ 2, _cowbell, c.vel(74, 3, bar, 60));
+        dnote(d + d ~/ 2, _cowbell, c.vel(74, 3, bar, 61));
+        dnote(3 * d, _cowbell, c.vel(78, 3, bar, 62));
       } else {
-        dnote(d + d ~/ 2, _cowbell, c.vel(70, 3, bar, 60));
-        dnote(3 * d, _cowbell, c.vel(74, 3, bar, 61));
-        dnote(3 * d + d ~/ 2, _cowbell, c.vel(68, 3, bar, 62));
+        dnote(d + d ~/ 2, _cowbell, c.vel(74, 3, bar, 60));
+        dnote(3 * d, _cowbell, c.vel(78, 3, bar, 61));
+        dnote(3 * d + d ~/ 2, _cowbell, c.vel(72, 3, bar, 62));
       }
       // The 8-bar fill alternates deterministically between the snare
       // pickup and a bongo lead-in (bongos are fills/lead-ins only, per
