@@ -485,8 +485,8 @@ PageRouteBuilder slideRoute(Widget page, {bool fromLeft = false}) {
 String styleHymnBody(String html, HymnalTokens t, double fontSize) {
   final accent = _rgb(t.accent);
   final gold = _rgb(t.gold);
-  final versePx = fontSize * 0.68;
-  final chorusPx = fontSize * 0.62;
+  final versePx = fontSize * 1.36;
+  final chorusPx = fontSize * 1.24;
 
   return html
       .replaceAllMapped(
