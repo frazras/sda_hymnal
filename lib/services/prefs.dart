@@ -97,7 +97,6 @@ class InstrumentTheme extends ValueNotifier<String> {
   static const List<(String, String, int?)> themes = [
     ('classic', 'Classic', null),
     ('gospel', 'Modern Gospel', null),
-    ('piano', 'Grand Piano', 1),
     ('organ', 'Cathedral Organ', 19),
     ('strings', 'Strings', 49),
     ('choir', 'Choir', 52),
