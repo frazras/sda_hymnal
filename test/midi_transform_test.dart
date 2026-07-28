@@ -198,4 +198,46 @@ void main() {
       expect(transformMidi(out, semitones: -2), equals(bytes));
     });
   });
+
+  group('channelStats and per-channel programs on the real hymn files', () {
+    final bytes = File('assets/midi/001.mid').readAsBytesSync();
+
+    test('finds the dedicated bass channel', () {
+      final stats = channelStats(Uint8List.fromList(bytes));
+      expect(stats.length, 7);
+      var bassCh = -1;
+      var bass = double.infinity;
+      stats.forEach((ch, s) {
+        expect(s.notes, greaterThan(0));
+        expect(s.avgPitch, inInclusiveRange(30, 75));
+        if (s.avgPitch < bass) {
+          bass = s.avgPitch;
+          bassCh = ch;
+        }
+      });
+      expect(bassCh, 4); // the hymn files carry the bass line on channel 4
+      expect(bass, lessThan(45));
+    });
+
+    test('channelPrograms rewrites only the mapped channels', () {
+      final input = Uint8List.fromList(bytes);
+      final mapped = transformMidi(input, channelPrograms: const {4: 33});
+      expect(mapped, isNot(equals(input)));
+      // Note content is untouched: stats identical before and after.
+      expect(channelStats(mapped).toString(),
+          channelStats(input).toString());
+      // Unmapped transform at defaults stays byte-identical.
+      expect(transformMidi(input), equals(input));
+    });
+
+    test('channelPrograms combines with a forceProgram fallback', () {
+      final input = Uint8List.fromList(bytes);
+      final combined = transformMidi(input,
+          forceProgram: 4, channelPrograms: const {4: 33});
+      final blanket = transformMidi(input, forceProgram: 4);
+      expect(combined, isNot(equals(blanket)));
+      expect(channelStats(combined).toString(),
+          channelStats(input).toString());
+    });
+  });
 }

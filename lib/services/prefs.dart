@@ -91,12 +91,15 @@ class InstrumentTheme extends ValueNotifier<String> {
   InstrumentTheme._() : super('classic');
   static final InstrumentTheme instance = InstrumentTheme._();
 
-  /// (id, label, GM program); a null program leaves the file as-is.
+  /// (id, label, GM program); a null program means the theme is not a simple
+  /// single-instrument remap: 'classic' leaves the file as-is, 'gospel' maps
+  /// channels individually (bass line -> electric bass, voices -> Rhodes).
   static const List<(String, String, int?)> themes = [
     ('classic', 'Classic', null),
-    ('piano', 'Grand Piano', 0),
+    ('gospel', 'Modern Gospel', null),
+    ('piano', 'Grand Piano', 1),
     ('organ', 'Cathedral Organ', 19),
-    ('strings', 'Strings', 48),
+    ('strings', 'Strings', 49),
     ('choir', 'Choir', 52),
     ('musicbox', 'Music Box', 10),
   ];
@@ -107,8 +110,12 @@ class InstrumentTheme extends ValueNotifier<String> {
   /// Display label of the current theme ('Classic', 'Grand Piano', …).
   String get label => _theme.$2;
 
-  /// GM program forced onto playback, or null to leave the file as-is.
+  /// GM program forced onto playback; null for 'classic' (file as-is) and
+  /// 'gospel' (per-channel mapping built at render time).
   int? get program => _theme.$3;
+
+  /// Whether playback needs a rewritten render (everything except Classic).
+  bool get transforms => value != 'classic';
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();

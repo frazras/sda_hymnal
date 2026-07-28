@@ -162,7 +162,7 @@ class MidiPlayer {
   /// (audioplayers engine only): the bare asset when both are at their
   /// defaults, otherwise the cached render from [_renderFile].
   Future<Source> _source(int n) async {
-    if (transpose.value == 0 && InstrumentTheme.instance.program == null) {
+    if (transpose.value == 0 && !InstrumentTheme.instance.transforms) {
       return AssetSource(_asset(n));
     }
     return DeviceFileSource((await _renderFile(n)).path);
@@ -180,13 +180,43 @@ class MidiPlayer {
     final file = File('${dir.path}/$name');
     if (!await file.exists()) {
       final bytes = await _assetBytes(n);
-      final out = (semis == 0 && theme.program == null)
-          ? bytes
-          : transformMidi(bytes, semitones: semis, forceProgram: theme.program);
+      final Uint8List out;
+      if (semis == 0 && !theme.transforms) {
+        out = bytes;
+      } else {
+        out = transformMidi(
+          bytes,
+          semitones: semis,
+          forceProgram: theme.program,
+          channelPrograms:
+              theme.value == 'gospel' ? _gospelChannelMap(bytes) : null,
+        );
+      }
       await dir.create(recursive: true);
       await file.writeAsBytes(out, flush: true);
     }
     return file;
+  }
+
+  /// Modern Gospel voicing: the channel with the lowest average pitch (the
+  /// hymn files carry a dedicated bass line) becomes fingered electric bass
+  /// (GM 33); every other sounding channel becomes Rhodes electric piano
+  /// (GM 4). Percussion is untouched. Single-channel files just go full
+  /// Rhodes.
+  static Map<int, int> _gospelChannelMap(Uint8List bytes) {
+    final stats = channelStats(bytes);
+    if (stats.isEmpty) return const {};
+    var bassCh = -1;
+    var bassPitch = double.infinity;
+    stats.forEach((ch, s) {
+      if (s.avgPitch < bassPitch) {
+        bassPitch = s.avgPitch;
+        bassCh = ch;
+      }
+    });
+    return {
+      for (final ch in stats.keys) ch: ch == bassCh && stats.length > 1 ? 33 : 4,
+    };
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.

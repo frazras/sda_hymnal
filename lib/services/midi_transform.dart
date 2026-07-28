@@ -75,16 +75,29 @@ String transposedKeyLabel(MidiKey original, int semitones) {
 ///   (such channels otherwise default to program 0). Percussion is excluded.
 ///
 /// Throws [FormatException] when [bytes] is not a well-formed SMF.
-Uint8List transformMidi(Uint8List bytes, {int semitones = 0, int? forceProgram}) {
+Uint8List transformMidi(
+  Uint8List bytes, {
+  int semitones = 0,
+  int? forceProgram,
+  Map<int, int>? channelPrograms,
+}) {
   if (forceProgram != null) {
     RangeError.checkValueInInterval(forceProgram, 0, 127, 'forceProgram');
   }
+  channelPrograms?.forEach((ch, program) {
+    RangeError.checkValueInInterval(ch, 0, 15, 'channelPrograms key');
+    RangeError.checkValueInInterval(program, 0, 127, 'channelPrograms value');
+  });
+  // Per-channel programs win over the blanket forceProgram.
+  int? programFor(int ch) => channelPrograms?[ch] ?? forceProgram;
+  final remapping = forceProgram != null ||
+      (channelPrograms != null && channelPrograms.isNotEmpty);
   final chunks = _readChunks(bytes);
 
   // Which non-percussion channels play notes but never see a Program Change,
   // and which track first plays them — that's where the default PC goes.
   final insertions = <int, List<int>>{}; // MTrk index -> channels
-  if (forceProgram != null) {
+  if (remapping) {
     final firstNoteTrack = <int, int>{};
     final pcChannels = <int>{};
     var t = 0;
@@ -98,7 +111,11 @@ Uint8List transformMidi(Uint8List bytes, {int semitones = 0, int? forceProgram})
       t++;
     }
     firstNoteTrack.forEach((ch, track) {
-      if (ch == _percussionChannel || pcChannels.contains(ch)) return;
+      if (ch == _percussionChannel ||
+          pcChannels.contains(ch) ||
+          programFor(ch) == null) {
+        return;
+      }
       (insertions[track] ??= []).add(ch);
     });
     for (final channels in insertions.values) {
@@ -111,7 +128,7 @@ Uint8List transformMidi(Uint8List bytes, {int semitones = 0, int? forceProgram})
   for (final chunk in chunks) {
     var data = chunk.data;
     if (chunk.id == 'MTrk') {
-      data = _rewriteTrack(data, semitones, forceProgram, insertions[t] ?? const []);
+      data = _rewriteTrack(data, semitones, programFor, insertions[t] ?? const []);
       t++;
     }
     out.add(_chunkHeader(chunk.id, data.length));
@@ -123,12 +140,12 @@ Uint8List transformMidi(Uint8List bytes, {int semitones = 0, int? forceProgram})
 Uint8List _rewriteTrack(
   Uint8List data,
   int semitones,
-  int? forceProgram,
+  int? Function(int channel) programFor,
   List<int> insertChannels,
 ) {
   final out = BytesBuilder(copy: false);
   for (final ch in insertChannels) {
-    out.add([0x00, 0xC0 | ch, forceProgram!]); // delta 0, before the first note
+    out.add([0x00, 0xC0 | ch, programFor(ch)!]); // delta 0, before first note
   }
   for (final e in _trackEvents(data)) {
     out.add(e.delta);
@@ -140,9 +157,9 @@ Uint8List _rewriteTrack(
     if ((hi == 0x80 || hi == 0x90 || hi == 0xA0) && !percussion && semitones != 0) {
       body = Uint8List.fromList(body);
       body[0] = (body[0] + semitones).clamp(0, 127);
-    } else if (hi == 0xC0 && !percussion && forceProgram != null) {
+    } else if (hi == 0xC0 && !percussion && programFor(ch) != null) {
       body = Uint8List.fromList(body);
-      body[0] = forceProgram;
+      body[0] = programFor(ch)!;
     } else if (e.status == 0xFF && body[0] == 0x59 && semitones != 0) {
       final (len, at) = _readVarLen(body, 1);
       if (len >= 2) {
@@ -165,6 +182,29 @@ int _transposeSf(int sf, int semitones) {
 }
 
 int _signedByte(int b) => b > 0x7F ? b - 0x100 : b;
+
+/// Note statistics per sounding non-percussion channel: how many note-ons it
+/// has and their average pitch — enough to tell a bass line from the voices.
+Map<int, ({int notes, double avgPitch})> channelStats(Uint8List bytes) {
+  final chunks = _readChunks(bytes);
+  final counts = <int, int>{};
+  final sums = <int, int>{};
+  for (final chunk in chunks) {
+    if (chunk.id != 'MTrk') continue;
+    for (final e in _trackEvents(chunk.data)) {
+      final hi = e.status & 0xF0;
+      final ch = e.status & 0x0F;
+      if (hi == 0x90 && ch != _percussionChannel && e.body[1] > 0) {
+        counts[ch] = (counts[ch] ?? 0) + 1;
+        sums[ch] = (sums[ch] ?? 0) + e.body[0];
+      }
+    }
+  }
+  return {
+    for (final ch in counts.keys)
+      ch: (notes: counts[ch]!, avgPitch: sums[ch]! / counts[ch]!),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // SMF parsing
