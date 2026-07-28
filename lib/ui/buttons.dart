@@ -287,7 +287,7 @@ class _ButtonsState extends State<Buttons>
       onTap: onTap,
       pressedScale: 0.985,
       builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
           color: t.surface,
           border: Border.all(color: t.line),
@@ -301,12 +301,13 @@ class _ButtonsState extends State<Buttons>
             Expanded(
               child: Text(
                 title,
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: kSerif,
                   fontSize: 16.5,
                   fontWeight: FontWeight.w500,
+                  height: 1.15,
                   fontStyle: invalid ? FontStyle.italic : FontStyle.normal,
                   color: invalid ? t.faint : t.ink,
                 ),

@@ -160,12 +160,14 @@ class _HymnPageState extends State<HymnPage> {
             Flexible(
               child: Text(
                 widget.hymn.title,
-                maxLines: 1,
+                maxLines: 2,
+                textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: kSerif,
                   fontSize: 16.5,
                   fontWeight: FontWeight.w600,
+                  height: 1.1,
                   color: t.ink,
                 ),
               ),

@@ -198,7 +198,7 @@ class _HymnListState extends State<HymnList> {
       onTap: () => _openHymn(hymn),
       pressedScale: 1.0,
       builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
           color: pressed ? t.surface2 : Colors.transparent,
           border: Border(bottom: BorderSide(color: t.line2)),
@@ -206,7 +206,7 @@ class _HymnListState extends State<HymnList> {
         child: Row(
           children: [
             Container(
-              constraints: const BoxConstraints(minWidth: 34),
+              constraints: const BoxConstraints(minWidth: 28),
               alignment: Alignment.centerRight,
               child: Text(
                 '${hymn.number}',
@@ -218,16 +218,17 @@ class _HymnListState extends State<HymnList> {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Text(
                 hymn.title,
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: kSerif,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  height: 1.12,
                   color: t.ink,
                 ),
               ),
