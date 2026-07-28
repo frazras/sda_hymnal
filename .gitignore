@@ -44,3 +44,4 @@ app.*.map.json
 android/key.properties
 ios/Flutter/ephemeral/
 android/build/
+ios/build/
