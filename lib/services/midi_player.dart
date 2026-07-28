@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
+import 'package:sdahymnal/services/gospel_arranger.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
@@ -183,40 +184,30 @@ class MidiPlayer {
       final Uint8List out;
       if (semis == 0 && !theme.transforms) {
         out = bytes;
+      } else if (theme.value == 'gospel') {
+        // Generated accompaniment: melody preserved, backing rearranged from
+        // the detected chords. Transposition composes on the arranged bytes.
+        Uint8List arranged;
+        try {
+          arranged = arrangeGospel(bytes);
+        } on FormatException {
+          // No detectable harmony: degrade to a plain Rhodes remap.
+          arranged = transformMidi(bytes, forceProgram: 4);
+        }
+        out = semis == 0
+            ? arranged
+            : transformMidi(arranged, semitones: semis);
       } else {
         out = transformMidi(
           bytes,
           semitones: semis,
           forceProgram: theme.program,
-          channelPrograms:
-              theme.value == 'gospel' ? _gospelChannelMap(bytes) : null,
         );
       }
       await dir.create(recursive: true);
       await file.writeAsBytes(out, flush: true);
     }
     return file;
-  }
-
-  /// Modern Gospel voicing: the channel with the lowest average pitch (the
-  /// hymn files carry a dedicated bass line) becomes fingered electric bass
-  /// (GM 33); every other sounding channel becomes Rhodes electric piano
-  /// (GM 4). Percussion is untouched. Single-channel files just go full
-  /// Rhodes.
-  static Map<int, int> _gospelChannelMap(Uint8List bytes) {
-    final stats = channelStats(bytes);
-    if (stats.isEmpty) return const {};
-    var bassCh = -1;
-    var bassPitch = double.infinity;
-    stats.forEach((ch, s) {
-      if (s.avgPitch < bassPitch) {
-        bassPitch = s.avgPitch;
-        bassCh = ch;
-      }
-    });
-    return {
-      for (final ch in stats.keys) ch: ch == bassCh && stats.length > 1 ? 33 : 4,
-    };
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
