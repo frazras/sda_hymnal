@@ -150,21 +150,40 @@ const Map<String, String> _colorRemap = {
   'maj7': '', 'sus4': '', 'aug': '', 'm7': 'm', //
 };
 
-/// Returns [track] reduced to [level]. Every substitution keeps the chord
-/// harmonically defensible on its own beat; no event is ever absorbed into a
-/// neighbour with a different harmony.
+/// Semitones above the tonic of the seven major-scale degrees.
+const List<int> _majorScaleDegrees = [0, 2, 4, 5, 7, 9, 11];
+
+/// Degrees (semitones above the tonic) whose diatonic triad is minor in a
+/// major key: ii, iii and vi.
+const List<int> _minorTriadDegrees = [2, 4, 9];
+
+/// Returns [track] reduced to [level]. Both reduced levels apply, in order:
 ///
-/// [ChordLevel.simple] speaks only major and minor: colour tones fall to
-/// their triad ('7'/'maj7'/'sus4'/'aug' become major, 'm7' becomes minor),
-/// and a 'dim' is replaced by the dominant it stands for — the diminished
-/// root is that dominant's 3rd, so the root drops a major third (Bdim
-/// becomes G, not the out-of-key Bm).
+/// 1. Vocabulary substitution — colour tones fall to their triad ('maj7'/
+///    'sus4'/'aug' become major, 'm7' becomes minor), and a 'dim' is
+///    replaced by the dominant it stands for: the diminished root is that
+///    dominant's 3rd, so the root drops a major third (Bdim becomes G, not
+///    the out-of-key Bm). A dominant '7' survives only at
+///    [ChordLevel.medium] and only when it actually resolves — the next
+///    event's (substituted) root a fourth above, the V7-to-I motion of C7
+///    to F; every other '7' falls to plain major.
 ///
-/// [ChordLevel.medium] additionally keeps a dominant '7' when it actually
-/// resolves — the next event's (substituted) root a fourth above, the
-/// V7-to-I motion of C7 to F. A non-resolving or track-final '7' falls to
-/// plain major, and a 'dim' becomes that stand-in dominant's '7' or plain
-/// major by the same rule.
+/// 2. Diatonic filter (skipped when [ChordTrack.key] is null) — the
+///    detector sometimes misreads a thin passing beat as an out-of-key
+///    chord (a G/B inversion in C scored as a B triad). Such artifacts are
+///    removed by substitution toward the prevailing harmony: a chord whose
+///    root lies outside the key's seven-tone scale or on its leading tone,
+///    or a minor chord on a degree other than ii/iii/vi, extends the
+///    previous kept chord instead (an artifact opening the track takes the
+///    identity of the next kept chord). A major on any other scale root
+///    passes, which keeps real secondary dominants like E major in G.
+///
+/// 3. Harmonic-rhythm quantization ([ChordLevel.simple] only) — harmony
+///    snaps to the half-bar so beginners see at most two changes per bar:
+///    each bar splits into a bucket of its first ceil(B/2) beats and one of
+///    the rest, and every bucket sounds the chord governing the majority of
+///    its beats (ties go to the chord on the bucket's earliest beat).
+///    Pickup beats before the first measure keep their filtered chord.
 ///
 /// Adjacent events left identical in (root, quality) merge: the run keeps
 /// the first event's [ChordEvent.startMs], sums durations, and concatenates
@@ -174,9 +193,9 @@ const Map<String, String> _colorRemap = {
 ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
   if (level == ChordLevel.original) return track;
 
-  // Pass 1: substituted (root, quality) per event. Only 'dim' moves the
-  // root; at this stage '7' marks a dominant candidate whose fate pass 2
-  // decides.
+  // Vocabulary pass 1: substituted (root, quality) per event. Only 'dim'
+  // moves the root; at this stage '7' marks a dominant candidate whose fate
+  // pass 2 decides.
   final subs = <(int, String)>[
     for (final e in track.chords)
       e.quality == 'dim'
@@ -184,9 +203,10 @@ ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
           : (e.rootPc, _colorRemap[e.quality] ?? e.quality),
   ];
 
-  // Pass 2: settle the dominants. Simple has no '7' in its vocabulary at
-  // all; medium keeps one only when the next event's root (stable after
-  // pass 1) is a fourth up. Everything else falls to plain major.
+  // Vocabulary pass 2: settle the dominants. Simple has no '7' in its
+  // vocabulary at all; medium keeps one only when the next event's root
+  // (stable after pass 1) is a fourth up. Everything else falls to plain
+  // major.
   for (var i = 0; i < subs.length; i++) {
     if (subs[i].$2 != '7') continue;
     final resolves = level == ChordLevel.medium &&
@@ -195,21 +215,161 @@ ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
     if (!resolves) subs[i] = (subs[i].$1, '');
   }
 
+  var events = <ChordEvent>[
+    for (var i = 0; i < subs.length; i++)
+      ChordEvent(
+        startMs: track.chords[i].startMs,
+        durationMs: track.chords[i].durationMs,
+        rootPc: subs[i].$1,
+        quality: subs[i].$2,
+        beatMs: List<int>.of(track.chords[i].beatMs),
+      ),
+  ];
+
+  final key = track.key;
+  if (key != null) events = _substituteNonDiatonic(events, key);
+  if (level == ChordLevel.simple) events = _quantizeToHalfBars(events, track);
+
   return ChordTrack(
-    chords: _mergeAdjacent([
-      for (var i = 0; i < subs.length; i++)
-        ChordEvent(
-          startMs: track.chords[i].startMs,
-          durationMs: track.chords[i].durationMs,
-          rootPc: subs[i].$1,
-          quality: subs[i].$2,
-          beatMs: List<int>.of(track.chords[i].beatMs),
-        ),
-    ]),
+    chords: _mergeAdjacent(events),
     key: track.key,
     beatsPerBar: track.beatsPerBar,
     measureStartMs: track.measureStartMs,
   );
+}
+
+/// Replaces every non-diatonic event in [events] — a detection artifact —
+/// with the surrounding harmony: it extends the previous kept event, or,
+/// when it opens the track, takes the identity of the next kept event while
+/// keeping its own start and beats. Returns [events] unchanged when nothing
+/// diatonic remains to substitute toward.
+List<ChordEvent> _substituteNonDiatonic(List<ChordEvent> events, MidiKey key) {
+  // Major tonic pc via the circle of fifths. A minor key needs no separate
+  // handling: the natural-minor scale of its relative minor (tonic + 9) is
+  // the same pitch-class set, its i/iv/v minor triads sit on the very roots
+  // that are ii/iii/vi of the relative major, and the harmonic-minor V major
+  // is admitted by the any-scale-root rule for majors below.
+  final tonic = (key.sf * 7) % 12;
+  final scale = {for (final d in _majorScaleDegrees) (tonic + d) % 12};
+  final minorRoots = {for (final d in _minorTriadDegrees) (tonic + d) % 12};
+  final leadingTone = (tonic + 11) % 12;
+
+  // Majors — and medium's dominant 7s — pass on any scale root except the
+  // leading tone, keeping secondary dominants like E in G; degree vii's only
+  // real harmony is the diminished chord the vocabulary already rewrote to
+  // V, so a major there is the classic inversion misread (G/B in C scored
+  // as a B triad). Minors are trusted only on ii/iii/vi — a detected minor
+  // on I/IV/V is mode-mixture noise — and out-of-scale roots always fail.
+  bool diatonic(ChordEvent e) =>
+      scale.contains(e.rootPc) &&
+      e.rootPc != leadingTone &&
+      (e.quality != 'm' || minorRoots.contains(e.rootPc));
+
+  final out = <ChordEvent>[];
+  final leading = <ChordEvent>[]; // artifacts before the first kept chord
+  for (final e in events) {
+    if (diatonic(e)) {
+      for (final artifact in leading) {
+        out.add(ChordEvent(
+          startMs: artifact.startMs,
+          durationMs: artifact.durationMs,
+          rootPc: e.rootPc,
+          quality: e.quality,
+          beatMs: artifact.beatMs,
+        ));
+      }
+      leading.clear();
+      out.add(e);
+    } else if (out.isNotEmpty) {
+      out[out.length - 1] = _joined(out.last, e);
+    } else {
+      leading.add(e);
+    }
+  }
+  return out.isEmpty ? events : out;
+}
+
+/// Snaps the harmony of [events] to the half-bar grid of [track]: each beat
+/// is assigned the chord of the majority of its half-bar bucket (ties go to
+/// the bucket's earliest beat), while pickup beats before the first measure
+/// keep their own chord. Returns beat-level events for [_mergeAdjacent] to
+/// fuse; the total beat count and duration are conserved exactly.
+List<ChordEvent> _quantizeToHalfBars(List<ChordEvent> events, ChordTrack track) {
+  if (track.measureStartMs.isEmpty) return events;
+
+  // One slice per beat onset; the last slice of an event runs to the
+  // event's end, so slice durations sum to the event's duration.
+  final slices = <ChordEvent>[];
+  for (final e in events) {
+    for (var i = 0; i < e.beatMs.length; i++) {
+      final end =
+          i + 1 < e.beatMs.length ? e.beatMs[i + 1] : e.startMs + e.durationMs;
+      slices.add(ChordEvent(
+        startMs: e.beatMs[i],
+        durationMs: end - e.beatMs[i],
+        rootPc: e.rootPc,
+        quality: e.quality,
+        beatMs: [e.beatMs[i]],
+      ));
+    }
+  }
+
+  // Bucket per slice: bar*2 for a bar's first ceil(B/2) beats, bar*2+1 for
+  // the rest; -1 marks pickup beats before the first measure.
+  final firstHalf = (track.beatsPerBar + 1) ~/ 2;
+  final buckets = List<int>.filled(slices.length, -1);
+  var bar = -1, beatInBar = 0;
+  for (var i = 0; i < slices.length; i++) {
+    final b = track.measureAt(slices[i].startMs);
+    if (b != bar) {
+      bar = b;
+      beatInBar = 0;
+    } else {
+      beatInBar++;
+    }
+    if (b >= 0) buckets[i] = 2 * b + (beatInBar < firstHalf ? 0 : 1);
+  }
+
+  // Relabel each bucket's slices (contiguous, since slices are
+  // chronological) to its governing chord.
+  var i = 0;
+  while (i < slices.length) {
+    var j = i + 1;
+    while (j < slices.length && buckets[j] == buckets[i]) {
+      j++;
+    }
+    if (buckets[i] >= 0) {
+      final counts = <(int, String), int>{};
+      var bestCount = 0;
+      for (var k = i; k < j; k++) {
+        final id = (slices[k].rootPc, slices[k].quality);
+        final c = (counts[id] ?? 0) + 1;
+        counts[id] = c;
+        if (c > bestCount) bestCount = c;
+      }
+      // Earliest beat whose chord reaches the majority count — on a tie
+      // that is the chord sounding at the bucket's first beat.
+      var winner = (slices[i].rootPc, slices[i].quality);
+      for (var k = i; k < j; k++) {
+        final id = (slices[k].rootPc, slices[k].quality);
+        if (counts[id] == bestCount) {
+          winner = id;
+          break;
+        }
+      }
+      for (var k = i; k < j; k++) {
+        slices[k] = ChordEvent(
+          startMs: slices[k].startMs,
+          durationMs: slices[k].durationMs,
+          rootPc: winner.$1,
+          quality: winner.$2,
+          beatMs: slices[k].beatMs,
+        );
+      }
+    }
+    i = j;
+  }
+  return slices;
 }
 
 /// Merges every run of adjacent events sharing (rootPc, quality) into one.

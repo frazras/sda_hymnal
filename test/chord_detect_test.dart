@@ -64,13 +64,23 @@ ChordEvent _ev(int startMs, int beats, int rootPc, String quality) =>
       beatMs: [for (var b = 0; b < beats; b++) startMs + b * 500],
     );
 
-/// Wraps hand-made [chords] in a 4/4 track (no key).
-ChordTrack _handTrack(List<ChordEvent> chords) => ChordTrack(
+/// Wraps hand-made [chords] in a [beatsPerBar] track; the default grid is
+/// four 4/4 bars of 500ms beats.
+ChordTrack _handTrack(
+  List<ChordEvent> chords, {
+  MidiKey? key,
+  int beatsPerBar = 4,
+  List<int> measureStartMs = const [0, 2000, 4000, 6000],
+}) =>
+    ChordTrack(
       chords: chords,
-      key: null,
-      beatsPerBar: 4,
-      measureStartMs: [0, 2000, 4000, 6000],
+      key: key,
+      beatsPerBar: beatsPerBar,
+      measureStartMs: measureStartMs,
     );
+
+/// Written-key context for hand-made tracks in C major.
+const _cMajor = MidiKey(0);
 
 int _beatCount(ChordTrack track) =>
     track.chords.fold(0, (sum, c) => sum + c.beatMs.length);
@@ -151,8 +161,8 @@ void main() {
     });
   });
 
-  group('simplifyTrack simple', () {
-    // One event per quality, two beats each.
+  group('simplifyTrack vocabulary at simple', () {
+    // One event per quality, two beats each, in a written C major.
     final track = _handTrack([
       _ev(0, 2, 0, ''), // C
       _ev(1000, 2, 0, 'maj7'), // Cmaj7
@@ -162,7 +172,7 @@ void main() {
       _ev(5000, 2, 9, 'm'), // Am
       _ev(6000, 2, 9, 'm7'), // Am7
       _ev(7000, 2, 11, 'dim'), // Bdim
-    ]);
+    ], key: _cMajor);
 
     test('original returns the track unchanged', () {
       expect(simplifyTrack(track, ChordLevel.original), same(track));
@@ -193,21 +203,20 @@ void main() {
         _ev(0, 4, 4, 'dim'), // Edim
         _ev(2000, 2, 11, 'dim'), // Bdim
         _ev(3000, 2, 6, 'dim'), // F#dim
-      ]);
+      ], key: _cMajor);
       final simple = simplifyTrack(dims, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(0, ''), (7, ''), (2, '')]); // C, G, D — never Em/Bm/F#m
       expect(simple.chords.first.beatMs, [0, 500, 1000, 1500]);
     });
 
-    test('never absorbs a held chord: F, Fmaj7, Dm keeps the Dm', () {
-      // One beat each: rapid changes between easy chords are fine — a wrong
-      // chord held over a real harmony is not.
+    test('keeps a real minor holding its own half-bar: F, Fmaj7, Dm', () {
+      // Dm governs the bar's second half, so it survives even at one beat.
       final quick = _handTrack([
         _ev(0, 1, 5, ''), // F
         _ev(500, 1, 5, 'maj7'), // Fmaj7
         _ev(1000, 1, 2, 'm'), // Dm
-      ]);
+      ], key: _cMajor);
       final simple = simplifyTrack(quick, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(5, ''), (2, 'm')]);
@@ -240,10 +249,201 @@ void main() {
     });
   });
 
+  group('simplifyTrack diatonic filter', () {
+    const reducedLevels = [ChordLevel.simple, ChordLevel.medium];
+
+    test('an out-of-key major extends the previous chord at both levels', () {
+      // The passing-beat artifact: a G/B inversion in C misread as B major.
+      final track = _handTrack([
+        _ev(0, 2, 0, ''), // C
+        _ev(1000, 1, 11, ''), // "B major": not a chord of C
+        _ev(1500, 1, 0, ''), // C
+      ], key: _cMajor);
+      for (final level in reducedLevels) {
+        final out = simplifyTrack(track, level);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)],
+            [(0, '')]);
+        expect(out.chords.single.startMs, 0);
+        expect(out.chords.single.durationMs, 2000);
+        expect(out.chords.single.beatMs, [0, 500, 1000, 1500]);
+      }
+    });
+
+    test('an opening artifact takes the identity of the next kept chord', () {
+      final track = _handTrack([
+        _ev(0, 1, 11, ''), // B artifact on the very first beat
+        _ev(500, 3, 5, ''), // F
+      ], key: _cMajor);
+      for (final level in reducedLevels) {
+        final out = simplifyTrack(track, level);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)],
+            [(5, '')]); // F from the start
+        expect(out.chords.single.startMs, 0);
+        expect(out.chords.single.durationMs, 2000);
+        expect(out.chords.single.beatMs, [0, 500, 1000, 1500]);
+      }
+    });
+
+    test('a minor on a major-triad degree is filtered as mode mixture', () {
+      final track = _handTrack([
+        _ev(0, 3, 0, ''), // C
+        _ev(1500, 1, 0, 'm'), // "Cm" in C major: detector noise
+      ], key: _cMajor);
+      for (final level in reducedLevels) {
+        final out = simplifyTrack(track, level);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)],
+            [(0, '')]);
+        expect(out.chords.single.beatMs, [0, 500, 1000, 1500]);
+      }
+    });
+
+    test('a secondary dominant survives: E major in C (V/vi)', () {
+      final track = _handTrack([
+        _ev(0, 2, 0, ''), // C
+        _ev(1000, 2, 4, ''), // E major: chromatic 3rd, but a real dominant
+      ], key: _cMajor);
+      for (final level in reducedLevels) {
+        final out = simplifyTrack(track, level);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)],
+            [(0, ''), (4, '')]);
+      }
+    });
+
+    test('no written key skips the filter entirely', () {
+      final medium = simplifyTrack(
+          _handTrack([
+            _ev(0, 2, 0, ''), // C
+            _ev(1000, 1, 11, ''), // B major
+            _ev(1500, 1, 0, ''), // C
+          ]),
+          ChordLevel.medium);
+      expect([for (final c in medium.chords) (c.rootPc, c.quality)],
+          [(0, ''), (11, ''), (0, '')]);
+
+      final simple =
+          simplifyTrack(_handTrack([_ev(0, 4, 11, '')]), ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(11, '')]);
+    });
+  });
+
+  group('simplifyTrack harmonic rhythm at simple', () {
+    test('a tied half-bar takes the chord on its first beat', () {
+      // G C G C: both half-bar buckets split 1-1, so both land on G — one
+      // chord for the whole bar instead of four transitions.
+      final track = _handTrack([
+        _ev(0, 1, 7, ''), // G
+        _ev(500, 1, 0, ''), // C
+        _ev(1000, 1, 7, ''), // G
+        _ev(1500, 1, 0, ''), // C
+      ], key: _cMajor);
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(7, '')]);
+      expect(simple.chords.single.startMs, 0);
+      expect(simple.chords.single.durationMs, 2000);
+      expect(simple.chords.single.beatMs, [0, 500, 1000, 1500]);
+    });
+
+    test('an artifact-thinned bar lands on two half-bar chords', () {
+      // G G C B: the filter folds B into the prevailing C, then each
+      // half-bar speaks with one voice — 'G . C .'.
+      final track = _handTrack([
+        _ev(0, 1, 7, ''), // G
+        _ev(500, 1, 7, ''), // G
+        _ev(1000, 1, 0, ''), // C
+        _ev(1500, 1, 11, ''), // B artifact
+      ], key: _cMajor);
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(7, ''), (0, '')]);
+      expect([for (final c in simple.chords) c.beatMs], [
+        [0, 500],
+        [1000, 1500],
+      ]);
+      expect([for (final c in simple.chords) c.durationMs], [1000, 1000]);
+
+      // Medium removes the artifact but keeps the beat-level rhythm; here
+      // the two coincide because the changes already sit on the half-bar.
+      final medium = simplifyTrack(track, ChordLevel.medium);
+      expect([for (final c in medium.chords) (c.rootPc, c.quality)],
+          [(7, ''), (0, '')]);
+      expect([for (final c in medium.chords) c.beatMs], [
+        [0, 500],
+        [1000, 1500],
+      ]);
+    });
+
+    test('medium keeps the beat-level rhythm simple quantizes away', () {
+      final track = _handTrack([
+        _ev(0, 1, 7, ''), // G for one beat
+        _ev(500, 3, 0, ''), // C for the rest of the bar
+      ], key: _cMajor);
+      final medium = simplifyTrack(track, ChordLevel.medium);
+      expect([for (final c in medium.chords) c.beatMs], [
+        [0],
+        [500, 1000, 1500],
+      ]);
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(7, ''), (0, '')]);
+      expect([for (final c in simple.chords) c.beatMs], [
+        [0, 500],
+        [1000, 1500],
+      ]);
+      expect([for (final c in simple.chords) c.durationMs], [1000, 1000]);
+    });
+
+    test('the majority chord wins a bucket even off its first beat', () {
+      // 6/4: the first bucket is C G G, so G outvotes the downbeat C.
+      final track = _handTrack(
+        [
+          _ev(0, 1, 0, ''), // C
+          _ev(500, 2, 7, ''), // G
+          _ev(1500, 3, 5, ''), // F
+        ],
+        key: _cMajor,
+        beatsPerBar: 6,
+        measureStartMs: const [0, 3000],
+      );
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(7, ''), (5, '')]);
+      expect([for (final c in simple.chords) c.beatMs], [
+        [0, 500, 1000],
+        [1500, 2000, 2500],
+      ]);
+      expect([for (final c in simple.chords) c.durationMs], [1500, 1500]);
+    });
+
+    test('pickup beats before the first measure keep their chord', () {
+      final track = _handTrack(
+        [
+          _ev(0, 2, 7, ''), // G pickup
+          _ev(1000, 2, 0, ''), // C: bar 1 first half
+          _ev(2000, 1, 7, ''), // G: bar 1 second half...
+          _ev(2500, 1, 11, ''), // ...whose B artifact folds into it
+        ],
+        key: _cMajor,
+        measureStartMs: const [1000, 3000],
+      );
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(7, ''), (0, ''), (7, '')]);
+      expect([for (final c in simple.chords) c.beatMs], [
+        [0, 500],
+        [1000, 1500],
+        [2000, 2500],
+      ]);
+      expect(_beatCount(simple), _beatCount(track));
+    });
+  });
+
   group('simplifyTrack medium', () {
     List<(int, String)> reduced(List<ChordEvent> chords) => [
-          for (final c
-              in simplifyTrack(_handTrack(chords), ChordLevel.medium).chords)
+          for (final c in simplifyTrack(
+                  _handTrack(chords, key: _cMajor), ChordLevel.medium)
+              .chords)
             (c.rootPc, c.quality),
         ];
 
@@ -365,6 +565,69 @@ void main() {
     });
   });
 
+  group('real hymn assets/midi/015.mid', () {
+    final track = detectChords(
+        Uint8List.fromList(File('assets/midi/015.mid').readAsBytesSync()))!;
+    const scale = {0, 2, 4, 5, 7, 9, 11}; // C major pitch classes
+    const minorRoots = {2, 4, 9}; // ii, iii, vi: Dm, Em, Am
+
+    test('is written in C major, 4/4', () {
+      expect(track.key!.sf, 0);
+      expect(track.key!.minor, isFalse);
+      expect(track.beatsPerBar, 4);
+    });
+
+    test('simple: diatonic C-major chords, at most two per bar', () {
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      for (final c in simple.chords) {
+        // No phantom out-of-key majors (the B-in-C that transposes to a
+        // glaring C#) and no leading-tone chord at all.
+        expect(scale, contains(c.rootPc));
+        expect(c.rootPc, isNot(11));
+        expect(c.quality, anyOf('', 'm'));
+        if (c.quality == 'm') expect(minorRoots, contains(c.rootPc));
+      }
+      // Half-bar harmonic rhythm: never more than two chord starts per bar.
+      final startsPerBar = <int, int>{};
+      for (final c in simple.chords) {
+        final bar = simple.measureAt(c.startMs);
+        startsPerBar[bar] = (startsPerBar[bar] ?? 0) + 1;
+      }
+      expect(startsPerBar.values, everyElement(lessThanOrEqualTo(2)));
+      expect(_beatCount(simple), _beatCount(track));
+    });
+
+    test('medium: no out-of-key roots, and a level of its own', () {
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      final medium = simplifyTrack(track, ChordLevel.medium);
+      for (final c in medium.chords) {
+        expect(scale, contains(c.rootPc));
+        expect(c.rootPc, isNot(11));
+        expect(c.quality, anyOf('', 'm', '7'));
+      }
+      expect(medium.chords.any((c) => c.quality == '7'), isTrue);
+      expect(_labels(medium), isNot(equals(_labels(simple))));
+      expect(_labels(medium), isNot(equals(_labels(track))));
+      expect(_beatCount(medium), _beatCount(track));
+    });
+
+    test('both reduced levels stay chronological with ordered onsets', () {
+      for (final level in [ChordLevel.simple, ChordLevel.medium]) {
+        final reduced = simplifyTrack(track, level);
+        for (var i = 1; i < reduced.chords.length; i++) {
+          expect(reduced.chords[i].startMs,
+              greaterThan(reduced.chords[i - 1].startMs));
+        }
+        for (final c in reduced.chords) {
+          expect(c.beatMs.first, c.startMs);
+          for (var k = 1; k < c.beatMs.length; k++) {
+            expect(c.beatMs[k], greaterThan(c.beatMs[k - 1]));
+          }
+        }
+      }
+    });
+  });
+
   group('real hymn assets/midi/001.mid', () {
     final track = detectChords(
         Uint8List.fromList(File('assets/midi/001.mid').readAsBytesSync()))!;
@@ -380,6 +643,94 @@ void main() {
       expect(labels, contains('Bb'));
       expect(labels, contains('C7'));
       expect(labels.last, 'F');
+    });
+  });
+
+  group('three-level comparison on hymn 12 (Joyful, Joyful — G major)', () {
+    // Owner-supplied fixture: the Original chart shows Dm7/Eaug/Gmaj7/B7
+    // texture with four-chord bars; Simple and Medium must tame it without
+    // inventing chords. G major: scale {G A B C D E F#}, ii/iii/vi = Am/Bm/Em.
+    final bytes = File('assets/midi/012.mid').readAsBytesSync();
+    final original = detectChords(Uint8List.fromList(bytes))!;
+    final medium = simplifyTrack(original, ChordLevel.medium);
+    final simple = simplifyTrack(original, ChordLevel.simple);
+    const gScale = {7, 9, 11, 0, 2, 4, 6};
+    const gMinorDegrees = {9, 11, 4}; // A, B, E
+
+    test('is in G and the original carries the rich vocabulary', () {
+      expect(original.key!.sf, 1);
+      expect(original.beatsPerBar, 4);
+      final qualities = {for (final c in original.chords) c.quality};
+      // The baseline really contains the advanced texture the levels remove.
+      expect(qualities.intersection({'maj7', 'm7', 'sus4', 'aug'}), isNotEmpty);
+    });
+
+    test('medium: diatonic roots, working sevenths only, no phantom minors',
+        () {
+      for (var i = 0; i < medium.chords.length; i++) {
+        final c = medium.chords[i];
+        expect(gScale, contains(c.rootPc),
+            reason: 'out-of-scale root at $i');
+        expect({'', 'm', '7'}, contains(c.quality));
+        if (c.quality == 'm') {
+          expect(gMinorDegrees, contains(c.rootPc),
+              reason: 'minor on a major degree at $i (e.g. the Dm7 phantom)');
+        }
+        if (c.quality == '7' && i + 1 < medium.chords.length) {
+          expect((c.rootPc + 5) % 12, medium.chords[i + 1].rootPc,
+              reason: 'non-resolving seventh survived at $i');
+        }
+      }
+      expect(_labels(medium), isNot(equals(_labels(original))));
+    });
+
+    test('simple: major/minor only, minors on ii/iii/vi, max 2 per bar', () {
+      final starts = <int, int>{};
+      for (final c in simple.chords) {
+        expect(gScale, contains(c.rootPc));
+        expect({'', 'm'}, contains(c.quality));
+        if (c.quality == 'm') expect(gMinorDegrees, contains(c.rootPc));
+        final bar = simple.measureAt(c.startMs);
+        starts[bar] = (starts[bar] ?? 0) + 1;
+      }
+      starts.forEach((bar, n) {
+        expect(n, lessThanOrEqualTo(2), reason: 'bar $bar has $n chords');
+      });
+      expect(_labels(simple), isNot(equals(_labels(medium))));
+    });
+
+    test('levels shrink monotonically and conserve every beat', () {
+      expect(simple.chords.length, lessThan(medium.chords.length));
+      expect(medium.chords.length, lessThan(original.chords.length));
+      expect(_beatCount(simple), _beatCount(original));
+      expect(_beatCount(medium), _beatCount(original));
+    });
+  });
+
+  group('three-level comparison on hymn 15 (My Maker and My King — C major)',
+      () {
+    final bytes = File('assets/midi/015.mid').readAsBytesSync();
+    final original = detectChords(Uint8List.fromList(bytes))!;
+    final medium = simplifyTrack(original, ChordLevel.medium);
+    final simple = simplifyTrack(original, ChordLevel.simple);
+
+    test('the three levels are pairwise distinct', () {
+      expect(_labels(simple), isNot(equals(_labels(medium))));
+      expect(_labels(medium), isNot(equals(_labels(original))));
+      expect(_labels(simple), isNot(equals(_labels(original))));
+    });
+
+    test('transposition of the filtered levels never spells the phantom', () {
+      // The owner hit 'C#' after transposing to D: the phantom B-in-C shifted
+      // up two. With the diatonic filter no B-rooted major exists to shift.
+      for (final level in [simple, medium]) {
+        for (final c in level.chords) {
+          final labelInD = chordLabel(c.rootPc, c.quality, level.key, 2);
+          expect(labelInD, isNot(startsWith('C#')),
+              reason: 'phantom leading-tone chord survived transposition');
+          expect(labelInD, isNot(startsWith('Db')));
+        }
+      }
     });
   });
 }
