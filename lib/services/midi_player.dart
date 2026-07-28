@@ -173,11 +173,17 @@ class MidiPlayer {
   /// cached in the temp dir per (hymn, shift, theme). At the defaults (no
   /// shift, Classic) the raw asset bytes are materialized verbatim (e.g.
   /// 001_t0_classic.mid) — the iOS channel engine can only load real files.
+  /// Bump when render output changes for the same (hymn, shift, theme) —
+  /// e.g. theme program retunes or arranger revisions — so stale caches
+  /// from earlier app versions are bypassed.
+  static const int _renderVersion = 2;
+
   Future<File> _renderFile(int n) async {
     final semis = transpose.value;
     final theme = InstrumentTheme.instance;
     final dir = Directory('${(await getTemporaryDirectory()).path}/midi_cache');
-    final name = '${n.toString().padLeft(3, '0')}_t${semis}_${theme.value}.mid';
+    final name =
+        '${n.toString().padLeft(3, '0')}_t${semis}_${theme.value}_v$_renderVersion.mid';
     final file = File('${dir.path}/$name');
     if (!await file.exists()) {
       final bytes = await _assetBytes(n);
