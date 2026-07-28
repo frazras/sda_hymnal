@@ -432,8 +432,9 @@ void main() {
       }
     });
 
-    test('calypso lead is piano over the steel-pan strum', () {
-      expect(calypsoScan.programs[0], {0});
+    test('calypso lead is Rhodes — same voice as the reggae lead — over '
+        'the steel-pan strum', () {
+      expect(calypsoScan.programs[0], {4});
       expect(calypsoScan.programs[1], {114});
     });
 
@@ -494,6 +495,14 @@ void main() {
       expect(bpms.reduce((a, b) => a > b ? a : b).round(), 121);
       expect(bpms.reduce((a, b) => a < b ? a : b),
           greaterThanOrEqualTo(121 * 0.7 - 0.5));
+      // The adaptive beat: transitions ramp in sub-steps — no single jump
+      // between adjacent tempo events may exceed ~15% (a hard step under
+      // the groove reads as a stutter).
+      for (var i = 1; i < bpms.length; i++) {
+        final ratio =
+            bpms[i] > bpms[i - 1] ? bpms[i] / bpms[i - 1] : bpms[i - 1] / bpms[i];
+        expect(ratio, lessThanOrEqualTo(1.15));
+      }
     });
 
     test('#15 chord display retimes onto the arranged timeline', () {
