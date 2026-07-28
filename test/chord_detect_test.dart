@@ -151,8 +151,8 @@ void main() {
     });
   });
 
-  group('simplifyTrack quality mapping', () {
-    // Two beats per event so nothing triggers the 1-beat absorption here.
+  group('simplifyTrack simple', () {
+    // One event per quality, two beats each.
     final track = _handTrack([
       _ev(0, 2, 0, ''), // C
       _ev(1000, 2, 0, 'maj7'), // Cmaj7
@@ -168,38 +168,51 @@ void main() {
       expect(simplifyTrack(track, ChordLevel.original), same(track));
     });
 
-    test('medium drops maj7/aug/sus4 to major and merges the runs', () {
-      final medium = simplifyTrack(track, ChordLevel.medium);
-      expect([for (final c in medium.chords) (c.rootPc, c.quality)], [
-        (0, ''), // C + Cmaj7 merged
-        (0, '7'), // C7 kept apart
-        (0, ''), // Csus4 + Caug merged
-        (9, 'm'),
-        (9, 'm7'),
-        (11, 'dim'),
-      ]);
-      expect(medium.chords.first.startMs, 0);
-      expect(medium.chords.first.durationMs, 2000);
-      expect(medium.chords.first.beatMs, [0, 500, 1000, 1500]);
-      expect(medium.chords[2].startMs, 3000);
-      expect(medium.chords[2].beatMs, [3000, 3500, 4000, 4500]);
-      expect(medium.key, track.key);
-      expect(medium.beatsPerBar, track.beatsPerBar);
-      expect(medium.measureStartMs, track.measureStartMs);
-    });
-
-    test('simple keeps only major and minor and merges across the run', () {
+    test('reduces every quality to major or minor and merges the runs', () {
       final simple = simplifyTrack(track, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)], [
         (0, ''), // C..Caug: one C spanning all five
         (9, 'm'), // Am + Am7
-        (11, 'm'), // Bdim
+        (7, ''), // Bdim stands for the G it implies
       ]);
       expect(simple.chords.first.startMs, 0);
       expect(simple.chords.first.durationMs, 5000);
       expect(simple.chords.first.beatMs,
           [for (var ms = 0; ms < 5000; ms += 500) ms]);
+      expect(simple.chords[1].startMs, 5000);
       expect(simple.chords[1].durationMs, 2000);
+      expect(simple.chords.last.startMs, 7000);
+      expect(simple.chords.last.beatMs, [7000, 7500]);
+      expect(simple.key, track.key);
+      expect(simple.beatsPerBar, track.beatsPerBar);
+      expect(simple.measureStartMs, track.measureStartMs);
+    });
+
+    test('dim stands for its dominant: the root drops a major third', () {
+      final dims = _handTrack([
+        _ev(0, 4, 4, 'dim'), // Edim
+        _ev(2000, 2, 11, 'dim'), // Bdim
+        _ev(3000, 2, 6, 'dim'), // F#dim
+      ]);
+      final simple = simplifyTrack(dims, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(0, ''), (7, ''), (2, '')]); // C, G, D — never Em/Bm/F#m
+      expect(simple.chords.first.beatMs, [0, 500, 1000, 1500]);
+    });
+
+    test('never absorbs a held chord: F, Fmaj7, Dm keeps the Dm', () {
+      // One beat each: rapid changes between easy chords are fine — a wrong
+      // chord held over a real harmony is not.
+      final quick = _handTrack([
+        _ev(0, 1, 5, ''), // F
+        _ev(500, 1, 5, 'maj7'), // Fmaj7
+        _ev(1000, 1, 2, 'm'), // Dm
+      ]);
+      final simple = simplifyTrack(quick, ChordLevel.simple);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
+          [(5, ''), (2, 'm')]);
+      expect(simple.chords.first.beatMs, [0, 500]);
+      expect(simple.chords.last.beatMs, [1000]);
     });
 
     test('conserves every beat and keeps merged onsets ordered', () {
@@ -217,39 +230,73 @@ void main() {
 
     test('leaves the input track untouched', () {
       simplifyTrack(track, ChordLevel.simple);
+      simplifyTrack(track, ChordLevel.medium);
       expect([for (final c in track.chords) c.quality],
           ['', 'maj7', '7', 'sus4', 'aug', 'm', 'm7', 'dim']);
+      expect([for (final c in track.chords) c.rootPc],
+          [0, 0, 0, 0, 0, 9, 9, 11]);
       expect([for (final c in track.chords) c.beatMs.length],
           everyElement(2));
     });
   });
 
-  group('simplifyTrack 1-beat absorption', () {
-    test('folds a passing chord into its predecessor, then re-merges', () {
-      final track = _handTrack([
-        _ev(0, 4, 7, ''), // G, 4 beats
-        _ev(2000, 1, 2, ''), // D, 1 beat
-        _ev(2500, 4, 7, ''), // G, 4 beats
-      ]);
-      final simple = simplifyTrack(track, ChordLevel.simple);
-      final g = simple.chords.single;
-      expect(g.rootPc, 7);
-      expect(g.quality, '');
-      expect(g.startMs, 0);
-      expect(g.durationMs, 4500);
-      expect(g.beatMs, [0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000]);
-      // Medium never absorbs: the D survives there.
-      expect(simplifyTrack(track, ChordLevel.medium).chords, hasLength(3));
+  group('simplifyTrack medium', () {
+    List<(int, String)> reduced(List<ChordEvent> chords) => [
+          for (final c
+              in simplifyTrack(_handTrack(chords), ChordLevel.medium).chords)
+            (c.rootPc, c.quality),
+        ];
+
+    test('keeps a 7 that resolves a fourth up', () {
+      expect(
+          reduced([
+            _ev(0, 2, 0, '7'), // C7
+            _ev(1000, 2, 5, ''), // F: the I of C7's V7-I motion
+          ]),
+          [(0, '7'), (5, '')]);
     });
 
-    test('a 1-beat track opener has no predecessor and stays', () {
-      final track = _handTrack([
-        _ev(0, 1, 2, ''), // D, 1 beat, opens the track
-        _ev(500, 4, 7, ''), // G
-      ]);
-      final simple = simplifyTrack(track, ChordLevel.simple);
-      expect([for (final c in simple.chords) c.rootPc], [2, 7]);
-      expect(simple.chords.first.beatMs, [0]);
+    test('drops a non-resolving 7 to major', () {
+      expect(
+          reduced([
+            _ev(0, 2, 0, '7'), // C7
+            _ev(1000, 2, 7, ''), // G: no resolution
+          ]),
+          [(0, ''), (7, '')]);
+    });
+
+    test('drops a track-final 7 to major', () {
+      expect(reduced([_ev(0, 2, 0, '7')]), [(0, '')]);
+    });
+
+    test('dim becomes the dominant 7 it stands for when that resolves', () {
+      expect(
+          reduced([
+            _ev(0, 2, 11, 'dim'), // Bdim
+            _ev(1000, 2, 0, ''), // C: G7 -> C resolves
+          ]),
+          [(7, '7'), (0, '')]);
+    });
+
+    test('dim becomes the plain dominant when there is no resolution', () {
+      expect(
+          reduced([
+            _ev(0, 2, 11, 'dim'), // Bdim
+            _ev(1000, 2, 2, ''), // D: G7 -> D would not resolve
+          ]),
+          [(7, ''), (2, '')]);
+    });
+
+    test('drops colour tones to their triads and merges the runs', () {
+      expect(
+          reduced([
+            _ev(0, 2, 0, 'maj7'), // Cmaj7
+            _ev(1000, 2, 0, 'sus4'), // Csus4
+            _ev(2000, 2, 0, 'aug'), // Caug
+            _ev(3000, 2, 9, 'm'), // Am
+            _ev(4000, 2, 9, 'm7'), // Am7
+          ]),
+          [(0, ''), (9, 'm')]);
     });
   });
 
@@ -298,6 +345,23 @@ void main() {
         expect(c.quality, anyOf('', 'm'));
       }
       expect(_beatCount(simple), _beatCount(track));
+    });
+
+    test('simplified to medium: sits strictly between simple and original',
+        () {
+      final simple = simplifyTrack(track, ChordLevel.simple);
+      final medium = simplifyTrack(track, ChordLevel.medium);
+      // Medium is a real level of its own: it drops colour tones the
+      // original carries but keeps the resolving dominants simple flattens.
+      expect(_labels(medium), isNot(equals(_labels(track))));
+      expect(_labels(medium), isNot(equals(_labels(simple))));
+      expect(medium.chords.length,
+          inExclusiveRange(simple.chords.length, track.chords.length));
+      for (final c in medium.chords) {
+        expect(c.quality, anyOf('', 'm', '7'));
+      }
+      expect(medium.chords.any((c) => c.quality == '7'), isTrue);
+      expect(_beatCount(medium), _beatCount(track));
     });
   });
 

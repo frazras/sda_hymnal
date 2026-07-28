@@ -263,7 +263,7 @@ class Settings extends StatelessWidget {
   /// Chord-difficulty options: (pref id, label, description).
   static const List<(String, String, String)> _chordLevels = [
     ('simple', 'Simple', 'Major and minor only'),
-    ('medium', 'Medium', 'Keeps common sevenths'),
+    ('medium', 'Medium', 'Sevenths where they resolve'),
     ('original', 'Original', 'As detected'),
   ];
 

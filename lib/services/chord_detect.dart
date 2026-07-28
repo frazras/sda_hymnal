@@ -143,55 +143,69 @@ int _transposedSf(int sf, int semitones) {
 /// How much harmonic detail [simplifyTrack] keeps.
 enum ChordLevel { simple, medium, original }
 
-/// Quality rewrites per level; anything unlisted keeps its quality.
-const Map<String, String> _mediumRemap = {
-  'maj7': '', 'aug': '', 'sus4': '', //
-};
-const Map<String, String> _simpleRemap = {
-  '7': '', 'maj7': '', 'sus4': '', 'aug': '', 'm7': 'm', 'dim': 'm', //
+/// Colour-tone rewrites shared by both reduced levels. The two qualities that
+/// need more than a suffix swap — '7' (context decides whether it survives at
+/// medium) and 'dim' (its root moves) — are handled in [simplifyTrack].
+const Map<String, String> _colorRemap = {
+  'maj7': '', 'sus4': '', 'aug': '', 'm7': 'm', //
 };
 
-/// Returns [track] reduced to [level]: qualities are remapped (medium drops
-/// the color tones of maj7/aug/sus4 down to plain majors; simple keeps only
-/// major and minor), runs of now-identical chords are merged, and at
-/// [ChordLevel.simple] any 1-beat leftover with a predecessor is absorbed
-/// into it. Merging keeps the first event's [ChordEvent.startMs], sums
-/// durations, and concatenates [ChordEvent.beatMs] in time order, so the
-/// track's total beat count — and the chart's beats-per-bar sums — never
-/// change. [ChordLevel.original] returns [track] itself; the other levels
+/// Returns [track] reduced to [level]. Every substitution keeps the chord
+/// harmonically defensible on its own beat; no event is ever absorbed into a
+/// neighbour with a different harmony.
+///
+/// [ChordLevel.simple] speaks only major and minor: colour tones fall to
+/// their triad ('7'/'maj7'/'sus4'/'aug' become major, 'm7' becomes minor),
+/// and a 'dim' is replaced by the dominant it stands for — the diminished
+/// root is that dominant's 3rd, so the root drops a major third (Bdim
+/// becomes G, not the out-of-key Bm).
+///
+/// [ChordLevel.medium] additionally keeps a dominant '7' when it actually
+/// resolves — the next event's (substituted) root a fourth above, the
+/// V7-to-I motion of C7 to F. A non-resolving or track-final '7' falls to
+/// plain major, and a 'dim' becomes that stand-in dominant's '7' or plain
+/// major by the same rule.
+///
+/// Adjacent events left identical in (root, quality) merge: the run keeps
+/// the first event's [ChordEvent.startMs], sums durations, and concatenates
+/// [ChordEvent.beatMs] in time order, so the track's total beat count never
+/// changes. [ChordLevel.original] returns [track] itself; the other levels
 /// build a fresh track and leave the input untouched.
 ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
   if (level == ChordLevel.original) return track;
-  final remap = level == ChordLevel.medium ? _mediumRemap : _simpleRemap;
 
-  var events = _mergeAdjacent([
+  // Pass 1: substituted (root, quality) per event. Only 'dim' moves the
+  // root; at this stage '7' marks a dominant candidate whose fate pass 2
+  // decides.
+  final subs = <(int, String)>[
     for (final e in track.chords)
-      ChordEvent(
-        startMs: e.startMs,
-        durationMs: e.durationMs,
-        rootPc: e.rootPc,
-        quality: remap[e.quality] ?? e.quality,
-        beatMs: List<int>.of(e.beatMs),
-      ),
-  ]);
+      e.quality == 'dim'
+          ? ((e.rootPc + 8) % 12, '7')
+          : (e.rootPc, _colorRemap[e.quality] ?? e.quality),
+  ];
 
-  if (level == ChordLevel.simple) {
-    // A single leftover beat of some passing chord reads as clutter: fold it
-    // into the chord before it (the track opener has none and stays), then
-    // re-merge the neighbours that absorption may have made equal.
-    final absorbed = <ChordEvent>[];
-    for (final e in events) {
-      if (absorbed.isNotEmpty && e.beatMs.length == 1) {
-        absorbed[absorbed.length - 1] = _joined(absorbed.last, e);
-      } else {
-        absorbed.add(e);
-      }
-    }
-    events = _mergeAdjacent(absorbed);
+  // Pass 2: settle the dominants. Simple has no '7' in its vocabulary at
+  // all; medium keeps one only when the next event's root (stable after
+  // pass 1) is a fourth up. Everything else falls to plain major.
+  for (var i = 0; i < subs.length; i++) {
+    if (subs[i].$2 != '7') continue;
+    final resolves = level == ChordLevel.medium &&
+        i + 1 < subs.length &&
+        subs[i + 1].$1 == (subs[i].$1 + 5) % 12;
+    if (!resolves) subs[i] = (subs[i].$1, '');
   }
 
   return ChordTrack(
-    chords: events,
+    chords: _mergeAdjacent([
+      for (var i = 0; i < subs.length; i++)
+        ChordEvent(
+          startMs: track.chords[i].startMs,
+          durationMs: track.chords[i].durationMs,
+          rootPc: subs[i].$1,
+          quality: subs[i].$2,
+          beatMs: List<int>.of(track.chords[i].beatMs),
+        ),
+    ]),
     key: track.key,
     beatsPerBar: track.beatsPerBar,
     measureStartMs: track.measureStartMs,
