@@ -9,7 +9,12 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
 # In Android, build-name is used as versionName while build-number used as versionCode.
-version: 3.0.0+4
+#
+# versionCode scheme (since 4.0.0): major * 10000 + minor * 100 + patch.
+# The pre-2026 releases were Cordova builds whose codes were single digits, so
+# this scheme clears them by a wide margin and stays monotonic forever. Play
+# rejects a versionCode it has seen before — always bump before uploading.
+version: 4.0.0+40000
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
