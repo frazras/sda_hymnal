@@ -66,15 +66,15 @@ class _ButtonsState extends State<Buttons>
   // Navigation
   // -------------------------------------------------------------------------
 
-  String _titleFor(List<Hymn> list, int n) =>
-      (n < 1 || n > list.length) ? '' : list[n - 1].title;
+  String _titleFor(List<Hymn> list, int n) => hymnByNumber(list, n)?.title ?? '';
 
   void _openHymn({required bool isNew, required int n}) {
     final list = isNew ? widget.hymnsNew : widget.hymnsOld;
-    if (n < 1 || n > list.length) return;
+    final hymn = hymnByNumber(list, n);
+    if (hymn == null) return;
     Navigator.push(
       context,
-      slideRoute(HymnPage(hymn: list[n - 1], hymns: list)),
+      slideRoute(HymnPage(hymn: hymn, hymns: list)),
     );
   }
 

@@ -194,7 +194,8 @@ class Settings extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Version 3.0',
+                // Keep in step with `version:` in pubspec.yaml.
+                'Version 4.0',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,

@@ -1,0 +1,143 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/api.dart';
+
+/// Integrity guards on the shipped hymn database, and on the number-keyed
+/// lookups that read it.
+///
+/// These exist because of a defect inherited from the original 2016 Ionic
+/// app and shipped in every release since: its `threeonefour` record held a
+/// mislabeled, truncated copy of hymn 313 instead of hymn 314, so
+/// assets/hymns.json carried 313 twice and 314 not at all. Combined with
+/// positional `list[number - 1]` lookups, typing 314 opened a one-verse stub
+/// titled 313, and paging forward from 313 resolved to that same row again —
+/// a dead end the reader could only escape with Back.
+void main() {
+  final hymns =
+      HymnApi.allHymnsFromJson(File('assets/hymns.json').readAsStringSync());
+  final newHymns = [
+    for (final h in hymns)
+      if (h.version == 'new') h,
+  ];
+  final oldHymns = [
+    for (final h in hymns)
+      if (h.version == 'old') h,
+  ];
+
+  group('hymns.json integrity', () {
+    test('no hymnal repeats a number', () {
+      for (final (label, list) in [('new', newHymns), ('old', oldHymns)]) {
+        final seen = <int>{};
+        final dupes = <int>{};
+        for (final h in list) {
+          if (!seen.add(h.number)) dupes.add(h.number);
+        }
+        expect(dupes, isEmpty, reason: '$label hymnal repeats $dupes');
+      }
+    });
+
+    test('the Old Hymnal is complete, 1..703', () {
+      final nums = {for (final h in oldHymns) h.number};
+      expect([for (var n = 1; n <= 703; n++) if (!nums.contains(n)) n],
+          isEmpty);
+    });
+
+    test('the New Hymnal is complete 1..695 apart from the known 314 gap', () {
+      // 314 ("Just as I Am, Thine Own to Be") has no text in the source data
+      // the app inherited — assets/midi/314.mid ships, but the words were
+      // never present. When the lyrics are supplied, add the record and
+      // tighten this expectation to isEmpty.
+      final nums = {for (final h in newHymns) h.number};
+      final missing = [
+        for (var n = 1; n <= 695; n++)
+          if (!nums.contains(n)) n,
+      ];
+      expect(missing, [314]);
+    });
+
+    test('every hymn carries a title and a body', () {
+      for (final h in hymns) {
+        expect(h.title.trim(), isNotEmpty, reason: '${h.version} ${h.number}');
+        expect(h.body.trim(), isNotEmpty,
+            reason: '${h.version} ${h.number} "${h.title}"');
+      }
+    });
+
+    test('no hymn body is a truncated copy of another', () {
+      // The stub that caused this bug held only verse 1 of the hymn it
+      // duplicated, so its body was a strict PREFIX of the full record's.
+      // Length alone cannot catch that — the book carries genuine 78-char
+      // responses — and identical bodies are legitimate, since the same
+      // words appear under several numbers with different tunes (Old 118,
+      // 119 and 120 are three settings of "When I Survey the Wondrous
+      // Cross"). A strict prefix under the same title is the truncation
+      // signature.
+      final byTitle = <String, List<Hymn>>{};
+      for (final h in hymns) {
+        (byTitle['${h.version}|${h.title.trim()}'] ??= []).add(h);
+      }
+      for (final group in byTitle.values) {
+        if (group.length < 2) continue;
+        for (final a in group) {
+          for (final b in group) {
+            if (identical(a, b)) continue;
+            final short = a.body.trim();
+            final long = b.body.trim();
+            expect(short != long && long.startsWith(short), isFalse,
+                reason: '${a.version} ${a.number} "${a.title}" is a '
+                    'truncated copy of ${b.number}');
+          }
+        }
+      }
+    });
+  });
+
+  group('number-keyed lookup', () {
+    test('finds a hymn by its number, not its position', () {
+      expect(hymnByNumber(newHymns, 313)?.title, 'Just as I Am');
+      // 315 sits at index 313 now that 314 is absent — positional indexing
+      // would return the wrong hymn here.
+      expect(hymnByNumber(newHymns, 315)?.number, 315);
+      expect(hymnByNumber(newHymns, 695)?.number, 695);
+      expect(hymnByNumber(oldHymns, 703)?.number, 703);
+    });
+
+    test('returns null for numbers the hymnal does not carry', () {
+      expect(hymnByNumber(newHymns, 314), isNull);
+      expect(hymnByNumber(newHymns, 0), isNull);
+      expect(hymnByNumber(newHymns, 696), isNull);
+    });
+
+    test('paging steps over a missing number instead of stalling', () {
+      // The regression: next from 313 must reach 315, and never 313 again.
+      expect(adjacentHymn(newHymns, 313, 1, 695)?.number, 315);
+      expect(adjacentHymn(newHymns, 315, -1, 695)?.number, 313);
+    });
+
+    test('paging stops at the ends of each hymnal', () {
+      expect(adjacentHymn(newHymns, 1, -1, 695), isNull);
+      expect(adjacentHymn(newHymns, 695, 1, 695), isNull);
+      expect(adjacentHymn(oldHymns, 703, 1, 703), isNull);
+    });
+
+    test('every hymn in both books is reachable by paging from the first', () {
+      for (final (list, max) in [(newHymns, 695), (oldHymns, 703)]) {
+        var hymn = hymnByNumber(list, 1);
+        var visited = 1;
+        while (hymn != null) {
+          final next = adjacentHymn(list, hymn.number, 1, max);
+          if (next != null) {
+            // Paging must always advance, or the reader is trapped.
+            expect(next.number, greaterThan(hymn.number));
+            visited++;
+          }
+          hymn = next;
+        }
+        expect(visited, list.length);
+      }
+    });
+  });
+}

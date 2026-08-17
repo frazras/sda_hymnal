@@ -56,20 +56,17 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
-  /// Silently no-ops outside 1..max (new <= 695, old <= 703) or when the
-  /// target index is missing from the list.
+  /// Silently no-ops at the ends of the hymnal (new <= 695, old <= 703).
+  /// Numbers the hymnal does not carry are stepped over rather than landed
+  /// on — see [adjacentHymn].
   void _move(int dir) {
-    final n = widget.hymn.number + dir;
     final max = widget.hymn.version == 'new' ? 695 : 703;
-    if (n < 1 || n > max) return;
-    // Same indexing as before: hymns[number - 2] is prev, hymns[number] is
-    // next, i.e. target index n - 1.
-    final index = n - 1;
-    if (index < 0 || index >= widget.hymns.length) return;
+    final target = adjacentHymn(widget.hymns, widget.hymn.number, dir, max);
+    if (target == null) return;
     Navigator.pushReplacement(
       context,
       slideRoute(
-        HymnPage(hymn: widget.hymns[index], hymns: widget.hymns),
+        HymnPage(hymn: target, hymns: widget.hymns),
         fromLeft: dir < 0,
       ),
     );
