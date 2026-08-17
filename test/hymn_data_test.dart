@@ -66,6 +66,34 @@ void main() {
       }
     });
 
+    test('no verse repeats a word back to back', () {
+      // Cheap, near-zero false positives, and it caught four real defects
+      // reported by users for years: 336 "from the the grave" and 384
+      // "Till we we rise", each in BOTH hymnals' copy of the hymn.
+      // "ten thousand thousand" (255) is genuine poetic repetition.
+      final doubled = RegExp(r'\b(\w+) \1\b', caseSensitive: false);
+      for (final h in hymns) {
+        for (final m in doubled.allMatches(h.body)) {
+          if (m.group(1)!.toLowerCase() == 'thousand') continue;
+          fail('${h.version} ${h.number} "${h.title}" repeats a word: '
+              '"${m.group(0)}"');
+        }
+      }
+    });
+
+    test('verse numbering runs 1..k with no gap or repeat', () {
+      // 254 shipped as 1,2,4,4 for years — content complete, label wrong.
+      final marker = RegExp(r'<b>(\d+)</b>');
+      for (final h in hymns) {
+        final nums = [
+          for (final m in marker.allMatches(h.body)) int.parse(m.group(1)!),
+        ];
+        if (nums.isEmpty) continue; // service music carries no numbering
+        expect(nums, [for (var i = 1; i <= nums.length; i++) i],
+            reason: '${h.version} ${h.number} "${h.title}" verse markers');
+      }
+    });
+
     test('no hymn body is a truncated copy of another', () {
       // The stub that caused this bug held only verse 1 of the hymn it
       // duplicated, so its body was a strict PREFIX of the full record's.
