@@ -45,17 +45,15 @@ void main() {
           isEmpty);
     });
 
-    test('the New Hymnal is complete 1..695 apart from the known 314 gap', () {
-      // 314 ("Just as I Am, Thine Own to Be") has no text in the source data
-      // the app inherited — assets/midi/314.mid ships, but the words were
-      // never present. When the lyrics are supplied, add the record and
-      // tighten this expectation to isEmpty.
+    test('the New Hymnal is complete, 1..695', () {
+      // 314 was absent from every release since 2016 — the source data the
+      // app inherited held a mislabeled, truncated copy of 313 in its slot.
+      // The printed 1985 hymnal settled it: 314 is a genuine one-stanza
+      // second setting of "Just as I Am", ending "I come, I come".
+      // Restored 2026-08-17 from a photograph of the page.
       final nums = {for (final h in newHymns) h.number};
-      final missing = [
-        for (var n = 1; n <= 695; n++)
-          if (!nums.contains(n)) n,
-      ];
-      expect(missing, [314]);
+      expect([for (var n = 1; n <= 695; n++) if (!nums.contains(n)) n],
+          isEmpty);
     });
 
     test('every hymn carries a title and a body', () {
@@ -134,15 +132,34 @@ void main() {
     });
 
     test('returns null for numbers the hymnal does not carry', () {
-      expect(hymnByNumber(newHymns, 314), isNull);
       expect(hymnByNumber(newHymns, 0), isNull);
       expect(hymnByNumber(newHymns, 696), isNull);
+      expect(hymnByNumber(oldHymns, 704), isNull);
     });
 
-    test('paging steps over a missing number instead of stalling', () {
-      // The regression: next from 313 must reach 315, and never 313 again.
-      expect(adjacentHymn(newHymns, 313, 1, 695)?.number, 315);
-      expect(adjacentHymn(newHymns, 315, -1, 695)?.number, 313);
+    test('313, 314 and 315 are three distinct hymns', () {
+      // Seven users reported this trio freezing: 314 was missing and 313
+      // was duplicated as a stub, so paging forward from 313 returned the
+      // same row forever. All three must now be distinct and reachable.
+      final h313 = hymnByNumber(newHymns, 313)!;
+      final h314 = hymnByNumber(newHymns, 314)!;
+      final h315 = hymnByNumber(newHymns, 315)!;
+      expect(h313.body, isNot(h314.body));
+      expect(h314.body, isNot(h315.body));
+      expect(adjacentHymn(newHymns, 313, 1, 695)?.number, 314);
+      expect(adjacentHymn(newHymns, 314, 1, 695)?.number, 315);
+      expect(adjacentHymn(newHymns, 315, -1, 695)?.number, 314);
+    });
+
+    test('paging steps over a gap rather than stalling', () {
+      // Both books are complete today, so this guards the mechanism: from
+      // any hymn, paging forward must strictly advance or stop.
+      for (final (list, max) in [(newHymns, 695), (oldHymns, 703)]) {
+        for (final h in list) {
+          final next = adjacentHymn(list, h.number, 1, max);
+          if (next != null) expect(next.number, greaterThan(h.number));
+        }
+      }
     });
 
     test('paging stops at the ends of each hymnal', () {

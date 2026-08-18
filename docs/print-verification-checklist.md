@@ -1,4 +1,35 @@
-# Print verification checklist — 21 hymns to photograph
+# Print verification checklist — RESOLVED 17 Aug 2026
+
+> **Status: closed.** The owner photographed the printed 1985 SDA Hymnal on
+> 17 August 2026 and 19 of the 21 items were settled from those pages. All
+> confirmed corrections are applied (commit below) and the New Hymnal is
+> **complete 1–695 for the first time in the app's history**.
+>
+> **Verified CORRECT as shipped — do not reopen:** 58 (two stanzas, each
+> closing "Jubilate… Amen"), 162 (three stanzas; "When I was sinking down"
+> is not in the 1985 book), 563 (a genuine three-line piece), 295 stanza 1
+> ("Died… Died" is right — the died/lives variant is another tradition's),
+> 481 (a single five-line stanza), 141 (one refrain only; stanzas 2–3 carry
+> none), 205's refrain ("O, we see the gleams" / "His" are the 1985
+> readings).
+>
+> **Users were RIGHT, now fixed:** 612 "Christians, we are treading" (not
+> "Brothers"), 142 "Singing sweetly through the night / Echoing their brave
+> delight" (the hymnal prints Earl Marlatt's adaptation, not the familiar
+> carol), 309 "Let me feel the Holy Spirit", 74 "Trusting in Jehovah" (not
+> Havergal's "Stayed upon"), 205 verse 4, 424 "Can sing thee as thou art".
+>
+> **Recovered content:** 314 turned out to be a genuine one-stanza second
+> setting of "Just as I Am" (ending "I come, I come") — not the different
+> hymn its absence had suggested; 247's true text; 133's refrain; 387's
+> missing opening line; 234's missing closing line; 169's dropped couplet;
+> 440 is three stanzas, not four, and nothing was missing after all.
+>
+> **STILL OPEN — needs the 1941 Church Hymnal, a different book:** OLD 533
+> (The Old Rugged Cross text is absent entirely), OLD 576 (duplicate
+> stanza), OLD 160/161 (mislabeled cascade).
+
+---
 
 Everything below was triaged first: anything settleable from the app's own data or from SDA-specific sources **was** settled and is not on this list. What remains genuinely needs the printed page.
 
