@@ -17,7 +17,7 @@ class About extends StatelessWidget {
   /// Google Play requires a privacy policy link inside the app itself, not
   /// only in the Play Console listing field.
   static final Uri _privacyUrl =
-      Uri.parse('https://frazras.github.io/sdahymnal/privacy-policy.html');
+      Uri.parse('https://frazras.github.io/sda_hymnal/privacy-policy.html');
 
   static const String _bio =
       'I am a software developer for Mobile Apps and Websites. This project '
