@@ -14,6 +14,11 @@ class About extends StatelessWidget {
   static final Uri _twitterUrl = Uri.parse('https://twitter.com/frazras');
   static final Uri _emailUrl = Uri(scheme: 'mailto', path: 'rohan@exterbox.com');
 
+  /// Google Play requires a privacy policy link inside the app itself, not
+  /// only in the Play Console listing field.
+  static final Uri _privacyUrl =
+      Uri.parse('https://frazras.github.io/sdahymnal/privacy-policy.html');
+
   static const String _bio =
       'I am a software developer for Mobile Apps and Websites. This project '
       'is my contribution to help you develop a closer relationship with the '
@@ -149,10 +154,19 @@ class About extends StatelessWidget {
                           ),
                           _InfoRow(
                             label: 'Email',
-                            divider: false,
+                            divider: true,
                             value: _LinkValue(
                               text: 'rohan@exterbox.com',
                               onTap: () => launchUrl(_emailUrl),
+                            ),
+                          ),
+                          _InfoRow(
+                            label: 'Privacy',
+                            divider: false,
+                            value: _LinkValue(
+                              text: 'Privacy Policy',
+                              onTap: () => launchUrl(_privacyUrl,
+                                  mode: LaunchMode.externalApplication),
                             ),
                           ),
                         ],
