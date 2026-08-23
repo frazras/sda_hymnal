@@ -1,0 +1,3 @@
+Old Hymnal: verse numbers and chorus labels, the same as the New Hymnal.
+Island Reggae rebuilt from real reggae recordings, with a fix for the iPhone sound engine that was distorting the piano. Hymns in 3/4 now play in four.
+Keep the screen on while reading a hymn (Settings).
