@@ -92,6 +92,45 @@ void main() {
       }
     });
 
+    test('the Old Hymnal carries verse numbers and a styled chorus', () {
+      // The Old Hymnal's bodies inherited from the 2016 app were bare lyric
+      // lines — no verse markers, the refrain introduced by a line that just
+      // said "Refrain" — so the reader showed neither. The markup is now
+      // derived from the stanza structure (tool/old_hymnal_verse_markup.py)
+      // in the New Hymnal's own format. Single-stanza service music stays
+      // plain, as the New Hymnal's does.
+      final marker = RegExp(r'<font color="#0B6138"><b>\d+</b></font>');
+      final stanzaBreak = RegExp(r'<br>\s*\n\s*<br>');
+      for (final h in oldHymns) {
+        if (!stanzaBreak.hasMatch(h.body)) continue;
+        expect(marker.hasMatch(h.body), isTrue,
+            reason: 'old ${h.number} "${h.title}" has stanzas but no verse numbers');
+      }
+    });
+
+    test('no body keeps a bare "Refrain" or "Chorus" line', () {
+      final bare = RegExp(r'(^|<br>\s*\n?)\s*\(?(Refrain|Chorus)[:.]?\)?\s*(<br>|\n|$)');
+      for (final h in hymns) {
+        expect(bare.hasMatch(h.body), isFalse,
+            reason: '${h.version} ${h.number} "${h.title}" has an unstyled refrain label');
+      }
+    });
+
+    test('every chorus block is well formed', () {
+      const open = '<i><b><font color="#CD9B1D">CHORUS:</font></b><br>';
+      for (final h in hymns) {
+        var from = 0;
+        while (true) {
+          final i = h.body.indexOf(open, from);
+          if (i < 0) break;
+          final close = h.body.indexOf('</i>', i);
+          expect(close, greaterThan(i),
+              reason: '${h.version} ${h.number} chorus block never closes');
+          from = close + 4;
+        }
+      }
+    });
+
     test('no hymn body is a truncated copy of another', () {
       // The stub that caused this bug held only verse 1 of the hymn it
       // duplicated, so its body was a strict PREFIX of the full record's.
