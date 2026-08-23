@@ -570,6 +570,59 @@ void _steadyBeatTests(String path) {
   });
 }
 
+/// CC 7 values found at tick 0 of the first (conductor) track of [smf],
+/// keyed by channel. Meta events sort ahead of them there, so this walks
+/// every tick-0 event rather than assuming the controls come first.
+Map<int, int> _tickZeroVolumes(Uint8List smf) {
+  final seen = <int, int>{};
+  var i = 14 + 8; // past MThd and the first MTrk header
+  var running = 0;
+  while (i < smf.length) {
+    if (smf[i] != 0) break; // first non-zero delta: tick 0 is over
+    i++;
+    var status = smf[i];
+    if (status & 0x80 != 0) { i++; running = status; } else { status = running; }
+    if (status == 0xFF) {
+      i++; // type
+      var len = 0;
+      while (true) { final b = smf[i++]; len = (len << 7) | (b & 0x7F); if (b & 0x80 == 0) break; }
+      i += len;
+    } else if (status & 0xF0 == 0xB0) {
+      if (smf[i] == 7) seen[status & 0x0F] = smf[i + 1];
+      i += 2;
+    } else {
+      i += (status & 0xF0 == 0xC0 || status & 0xF0 == 0xD0) ? 1 : 2;
+    }
+  }
+  return seen;
+}
+
+/// The iOS engine correction: CC 7 on the conductor at tick 0, nothing else
+/// changed.
+void _channelVolumeTests() {
+  final input =
+      Uint8List.fromList(File('assets/midi/016.mid').readAsBytesSync());
+  final plain = arrangeStyle(input, ArrangeStyle.reggae);
+  final leveled = arrangeStyle(input, ArrangeStyle.reggae,
+      channelVolumes: reggaeVolumesForAppleSynth);
+
+  test('writes one CC 7 per channel at tick 0 and touches nothing else', () {
+    expect(_tickZeroVolumes(leveled), reggaeVolumesForAppleSynth);
+    expect(_tickZeroVolumes(plain), isEmpty);
+    final a = _scan(plain);
+    final b = _scan(leveled);
+    expect(b.ons.length, a.ons.length);
+    expect(b.tempi, a.tempi);
+    expect(b.lastOffTick, a.lastOffTick);
+    expect(detectChords(leveled)!.beatsPerBar, detectChords(plain)!.beatsPerBar);
+  });
+
+  test('the correction survives transposition', () {
+    expect(_tickZeroVolumes(transformMidi(leveled, semitones: 2)),
+        reggaeVolumesForAppleSynth);
+  });
+}
+
 void _rejectionTests(ArrangeStyle style) {
   test('throws FormatException when no harmony is detectable', () {
     // A valid SMF with a conductor track but no notes: parseable, yet
@@ -923,6 +976,8 @@ void main() {
       });
     }
   });
+
+  group('the iOS engine correction (reggae channel volumes)', _channelVolumeTests);
 
   group('arrangeStyle(reggae) rejects unusable input', () {
     _rejectionTests(ArrangeStyle.reggae);

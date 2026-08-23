@@ -239,7 +239,14 @@ class MidiPlayer {
         final (style, fallbackProgram) = _arrangedThemes[theme.value]!;
         Uint8List arranged;
         try {
-          arranged = arrangeStyle(bytes, style);
+          // The iOS engine plays GeneralUser's keyboards 11-17 dB hot (it
+          // ignores the soundfont's preset attenuation); the reggae render
+          // carries the measured CC 7 correction on that engine only. See
+          // reggaeVolumesForAppleSynth.
+          arranged = arrangeStyle(bytes, style,
+              channelVolumes: _useChannel && style == ArrangeStyle.reggae
+                  ? reggaeVolumesForAppleSynth
+                  : const {});
         } on FormatException {
           // No detectable harmony: degrade to a plain single-program remap.
           arranged = transformMidi(bytes, forceProgram: fallbackProgram);

@@ -219,6 +219,32 @@ _Song _stretchWaltz(_Song song) {
   return out;
 }
 
+/// Per-channel MIDI volume (CC 7) that makes Apple's AVMIDIPlayer engine
+/// reproduce the reggae balance GeneralUser GS actually specifies.
+///
+/// Measured 2026-08-23 by rendering the same hymn-15 file through both
+/// engines: Apple's AUMIDISynth ignores the soundfont's per-preset
+/// attenuation, so against a reference SF2 renderer its Grand Piano came out
+/// +17.0 dB, the Rhodes +12.5, the Tonewheel Organ +11.2, the finger bass
+/// -0.1 and the kit -2.6 — the piano chop alone clipping at +5 dBFS. The
+/// owner heard exactly that as "loud and obnoxious... not a regular piano"
+/// through a week of velocity changes that could never reach it. The engine's
+/// CC 7 follows 40·log10(v/127) to the decibel, so these values put every
+/// voice back where the reference renderer — which the owner approved — puts
+/// it, with the kit (which cannot be raised) as the anchor.
+///
+/// Applied by the iOS player only; Android's synth is a different engine with
+/// a different bank, and the gospel and calypso balances were set by ear on
+/// the phone and already absorb its gain.
+const Map<int, int> reggaeVolumesForAppleSynth = {
+  0: 53, // Rhodes lead:   -15.1 dB
+  4: 53, // descant, same voice
+  1: 41, // piano chop:    -19.6 dB
+  3: 57, // organ:         -13.8 dB
+  2: 109, // bass:          -2.6 dB
+  9: 127, // kit: the anchor
+};
+
 /// Rewrites the hymn SMF in [originalBytes] as a generated arrangement in
 /// [style]. All styles share the same skeleton:
 ///
@@ -236,7 +262,12 @@ _Song _stretchWaltz(_Song song) {
 ///
 /// Throws [FormatException] when [originalBytes] is not a well-formed SMF or
 /// contains no detectable harmony (the caller falls back to a plain remap).
-Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
+///
+/// [channelVolumes] — MIDI channel to CC 7 value — is written at tick 0 on the
+/// conductor track; see [reggaeVolumesForAppleSynth] for why a player would
+/// pass it.
+Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
+    {Map<int, int> channelVolumes = const {}}) {
   final original = _parseSong(originalBytes);
   var chordTrack = detectChords(originalBytes);
   if (chordTrack == null) {
@@ -304,6 +335,9 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
   // encode purely as tempo dips, so verse ends rushed and stuttered —
   // listening feedback). Time-signature and key metas are kept verbatim.
   final conductor = _Track();
+  for (final entry in channelVolumes.entries) {
+    conductor.control(0, entry.key, 7, entry.value);
+  }
   for (final (tick, us) in arrangedTempi) {
     conductor.meta(
         tick,
