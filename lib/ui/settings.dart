@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import 'package:sdahymnal/services/prefs.dart';
@@ -32,31 +33,48 @@ class Settings extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(
           t,
-          child: _SettingsRow(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-            leading: Text(
-              'Aa',
-              style: TextStyle(
-                fontFamily: kSerif,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: t.muted,
-              ),
-            ),
-            title: 'Font Size',
-            trailing: ValueListenableBuilder<double>(
-              valueListenable: FontSizeController.instance,
-              builder: (context, size, _) => Text(
-                '${size.round()} pt',
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 13,
-                  color: t.muted,
+          child: Column(
+            children: [
+              _SettingsRow(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                leading: Text(
+                  'Aa',
+                  style: TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: t.muted,
+                  ),
                 ),
+                title: 'Font Size',
+                divider: true,
+                trailing: ValueListenableBuilder<double>(
+                  valueListenable: FontSizeController.instance,
+                  builder: (context, size, _) => Text(
+                    '${size.round()} pt',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 13,
+                      color: t.muted,
+                    ),
+                  ),
+                ),
+                onTap: () =>
+                    Navigator.push(context, slideRoute(const FontSizer())),
               ),
-            ),
-            onTap: () =>
-                Navigator.push(context, slideRoute(const FontSizer())),
+              _SettingsRow(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+                leading: HymnalIcons.sun(t.muted),
+                title: 'Keep screen on',
+                subtitle: 'Stay awake while a hymn is open',
+                trailing: _MiniSwitch(KeepScreenOn.instance),
+                chevron: false,
+                onTap: () =>
+                    KeepScreenOn.instance.set(!KeepScreenOn.instance.value),
+              ),
+            ],
           ),
         ),
         const SectionLabel('SOUND',
@@ -100,7 +118,7 @@ class Settings extends StatelessWidget {
                       title: 'Chord tabs',
                       subtitle: 'Play-along chords for musicians',
                       divider: chordsOn,
-                      trailing: const _MiniSwitch(),
+                      trailing: _MiniSwitch(ChordTabs.instance),
                       chevron: false,
                       onTap: () =>
                           ChordTabs.instance.set(!ChordTabs.instance.value),
@@ -570,17 +588,19 @@ class _SettingsRow extends StatelessWidget {
   }
 }
 
-/// Flat mini switch for the Chord-tabs row (no Material Switch — wrong look):
+/// Flat mini switch for the toggle rows (no Material Switch — wrong look):
 /// 44×24 pill track, accent when on, thumb sliding via AnimatedAlign. Taps
-/// land on the enclosing row, which toggles [ChordTabs].
+/// land on the enclosing row, which flips [listenable].
 class _MiniSwitch extends StatelessWidget {
-  const _MiniSwitch();
+  final ValueListenable<bool> listenable;
+
+  const _MiniSwitch(this.listenable);
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
     return ValueListenableBuilder<bool>(
-      valueListenable: ChordTabs.instance,
+      valueListenable: listenable,
       builder: (context, on, _) => Container(
         width: 44,
         height: 24,

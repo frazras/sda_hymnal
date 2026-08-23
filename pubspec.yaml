@@ -33,6 +33,7 @@ dependencies:
   auto_size_text: ^3.0.0
   audioplayers: ^6.8.1
   path_provider: ^2.1.0
+  wakelock_plus: ^1.7.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -52,6 +53,7 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.14.0
   flutter_lints: ^5.0.0
+  wakelock_plus_platform_interface: ^1.6.0
 
 # The following section is specific to Flutter.
 flutter:

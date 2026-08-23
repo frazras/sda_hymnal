@@ -210,6 +210,13 @@ class HymnalIcons {
 <rect x="14.7" y="10.5" width="2.6" height="7" rx="1.3" fill="${_rgb(c)}" fill-opacity="${_op(c)}"/>
 </svg>''', size, size);
 
+  /// Sun (READING settings row: keep the screen awake).
+  static Widget sun(Color c, {double size = 20}) => _svg('''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none">
+<circle cx="11" cy="11" r="4" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6"/>
+<path d="M11 5V2.8M11 17v2.2M17 11h2.2M2.8 11H5M15.24 6.76l1.56-1.56M5.2 16.8l1.56-1.56M15.24 15.24l1.56 1.56M5.2 5.2l1.56 1.56" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6" stroke-linecap="round"/>
+</svg>''', size, size);
+
   static Widget grid2x2(Color c, {double size = 20}) => _svg('''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none">
 <rect x="4" y="4" width="6" height="6" rx="1.8" stroke="${_rgb(c)}" stroke-opacity="${_op(c)}" stroke-width="1.6"/>

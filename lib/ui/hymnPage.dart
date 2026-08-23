@@ -11,6 +11,7 @@ import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
+import 'package:sdahymnal/services/screen_wake.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
@@ -45,6 +46,9 @@ class _HymnPageState extends State<HymnPage> {
     // Publishes this hymn's written key for the key pill and resets the
     // transposition when the page moved to a different hymn.
     MidiPlayer.instance.prepareKey(widget.hymn);
+    // Reading is the one place worth fighting the lock timer: the phone is
+    // propped up and untouched for a whole hymn. Honours the setting.
+    ScreenWake.instance.acquire();
   }
 
   @override
@@ -52,6 +56,7 @@ class _HymnPageState extends State<HymnPage> {
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
     MidiPlayer.instance.stopIfCurrent(widget.hymn.number);
+    ScreenWake.instance.release();
     super.dispose();
   }
 

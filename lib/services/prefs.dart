@@ -52,6 +52,25 @@ class FontSizeController extends ValueNotifier<double> {
   }
 }
 
+/// Keep-screen-on toggle (SharedPreferences key 'keepScreenOn', default true):
+/// when on, the hymn reading page holds a wakelock so the phone does not lock
+/// mid-verse. Only the hymn page honours it — see [ScreenWake].
+class KeepScreenOn extends ValueNotifier<bool> {
+  KeepScreenOn._() : super(true);
+  static final KeepScreenOn instance = KeepScreenOn._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getBool('keepScreenOn') ?? true;
+  }
+
+  Future<void> set(bool on) async {
+    value = on;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('keepScreenOn', on);
+  }
+}
+
 /// Recently opened hymns (SharedPreferences key 'hymnalRecents'):
 /// JSON list of {n, v}, most recent first, deduped by (n,v), capped at 6.
 class Recents extends ValueNotifier<List<({int n, String v})>> {

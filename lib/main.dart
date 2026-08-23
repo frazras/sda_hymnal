@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeController.instance.load();
   await FontSizeController.instance.load();
+  await KeepScreenOn.instance.load();
   await Recents.instance.load();
   await Favorites.instance.load();
   await InstrumentTheme.instance.load();
