@@ -34,14 +34,15 @@ enum ArrangeStyle {
 
   /// Roots reggae, church register: one-drop drums (bar accent on beat 3,
   /// beat 1 kick-free), offbeat piano skank, drawbar-organ bubble, riff
-  /// bass with structural rests. Gentle global swing on the offbeats.
+  /// bass with structural rests. Gentle global swing on the offbeats, and
+  /// one flat tempo across the whole hymn (see [_arrangedTempi]).
   reggae,
 
   /// Trinidadian calypso: Rhodes lead (the same keyboard voice as the
   /// reggae lead) over an offbeat steel-pan strum, calypso bass on the
   /// 3+3+2 tresillo, kit plus an engine room of claves, maracas and
   /// cowbell — backing at the lead's own level. Straight sixteenths, no
-  /// swing.
+  /// swing, and one flat tempo across the whole hymn (see [_arrangedTempi]).
   calypso,
 }
 
@@ -61,16 +62,13 @@ const int _steelDrumsProgram = 114; // Steel Drums
 const int _vibraphoneProgram = 11; // Vibraphone
 
 // GM percussion keys.
-const int _kick = 36;
+const int _acousticKick = 35; // Acoustic Bass Drum — the deeper GM kick
+const int _kick = 36; // Bass Drum 1 — the tighter one
 const int _sidestick = 37;
 const int _snare = 38;
-const int _lowTom = 45;
-const int _lowMidTom = 47;
-const int _hiMidTom = 48;
 const int _hiBongo = 60;
 const int _loBongo = 61;
 const int _closedHat = 42;
-const int _pedalHat = 44;
 const int _openHat = 46;
 const int _crash = 49;
 const int _tambourine = 54;
@@ -114,6 +112,18 @@ const Map<String, List<int>> _triadIntervals = {
   'aug': [0, 4, 8],
 };
 
+/// The hollow root+fifth of Three Little Birds' organ dabs (A3+E4).
+const Map<String, List<int>> _rootFifth = {
+  '': [0, 7],
+  'm': [0, 7],
+  '7': [0, 7],
+  'maj7': [0, 7],
+  'm7': [0, 7],
+  'dim': [0, 6],
+  'sus4': [0, 7],
+  'aug': [0, 8],
+};
+
 /// Calypso pan-strum double stops (real double-seconds players double-stop,
 /// never full chords). Guide tones are 3rd+7th where the quality has a
 /// seventh; plain triads use 3rd+5th — the research's 3rd+6th option is
@@ -134,12 +144,15 @@ const Map<String, List<int>> _guideTones = {
 /// Comp stabs live in this octave band (around middle C).
 const int _stabLow = 60;
 
-/// Reggae skank band: the "piano bang" — root-position triads around middle
-/// C (60..71), the register the research gives for the piano chop.
-const int _skankLow = 60;
+/// Reggae chop band, G3–F#4: exactly where both reference charts put the
+/// chop — Over the Rainbow's piano voices C as G3 C4 E4, Three Little Birds'
+/// guitar voices A as A3 C#4 E4. Under the Rhodes melody, not above it.
+const int _skankLow = 55;
 
 /// Organ bubble right hand: triads C3–C4 (48..59).
-const int _bubbleRhLow = 48;
+const int _bubbleLow = 52; // organ dabs / bubble, C3–B3
+const int _reggaeBassLow = 31; // G1: the charts' bass sits A1–A2, an octave under the shared floor
+const int _organStabLow = 72; // organ stabs and the held chord, C5–B5
 
 /// Calypso strum band (60..71 ⊂ the researched G3–E5).
 const int _strumLow = 60;
@@ -150,20 +163,61 @@ const int _bassLow = 36;
 /// One detected chord as it governs a beat.
 typedef _Chord = ({int rootPc, String quality});
 
-/// The chord-quality-aware third and fifth (the "mini-NTT"): minor-family
-/// qualities flatten the third, sus4 raises it to the fourth, dim/aug bend
-/// the fifth.
-int _third(String quality) => switch (quality) {
-      'm' || 'm7' || 'dim' => 3,
-      'sus4' => 5,
-      _ => 4,
-    };
-
 int _fifth(String quality) => switch (quality) {
       'dim' => 6,
       'aug' => 8,
       _ => 7,
     };
+
+/// Whether [style] plays a 3/4 hymn in 4/4 by holding each bar's third beat
+/// through a fourth (see [_stretchWaltz]). Reggae only: its one-drop cycle
+/// is four pulses, and a three-pulse reading of it was heard as "does not
+/// work" on hymn 1; the calypso waltz stands.
+bool _playsWaltzInFour(ArrangeStyle style, int beatsPerBar) =>
+    style == ArrangeStyle.reggae && beatsPerBar == 3;
+
+/// Tick [t] of a 3/4 hymn moved onto a 4/4 grid: each bar's three beats
+/// keep their places and a fourth beat is opened after them. A tick ON a
+/// bar line maps to the next 4/4 bar line, so a note that runs to the end of
+/// its bar is HELD through the new fourth beat — the "Happy birth-day to
+/// yoooou" conversion — and a note that ends early keeps its rest.
+int _stretchTick(int t, int d) => (t ~/ (3 * d)) * 4 * d + t % (3 * d);
+
+/// Beat index [k] of a 3/4 hymn on the 4/4 grid.
+int _stretchBeat(int k) => (k ~/ 3) * 4 + k % 3;
+
+/// [song] (in 3/4) re-timed onto a 4/4 grid by [_stretchTick]: notes and
+/// metas move, the time-signature meta is rewritten to 4/4, and every note
+/// that reached its bar line now holds through the added beat.
+_Song _stretchWaltz(_Song song) {
+  final d = song.division;
+  final out = _Song(d);
+  for (final note in song.notes) {
+    final start = _stretchTick(note.startTick, d);
+    // Engraved hymn files end a note a tick or two before the next begins,
+    // so "reaches its bar line" means within a sixteenth of it; those are
+    // snapped to the line first so the hold takes.
+    final barLine = (note.endTick ~/ (3 * d) + 1) * 3 * d;
+    final reaches = note.endTick > barLine - d ~/ 4 && note.endTick <= barLine;
+    final end = _stretchTick(reaches ? barLine : note.endTick, d);
+    out.notes.add(
+        _NoteEvent(note.channel, note.pitch, note.velocity, start)
+          ..endTick = end > start ? end : start + 1);
+  }
+  for (final (tick, us) in song.tempi) {
+    out.tempi.add((_stretchTick(tick, d), us));
+  }
+  for (final (tick, bytes) in song.metas) {
+    if (bytes.length >= 4 && bytes[1] == 0x58) {
+      final four = Uint8List.fromList(bytes);
+      four[3] = 4; // numerator: the hymn now plays in four
+      out.metas.add((_stretchTick(tick, d), four));
+    } else {
+      out.metas.add((_stretchTick(tick, d), bytes));
+    }
+  }
+  return out;
+}
 
 /// Rewrites the hymn SMF in [originalBytes] as a generated arrangement in
 /// [style]. All styles share the same skeleton:
@@ -183,7 +237,7 @@ int _fifth(String quality) => switch (quality) {
 /// Throws [FormatException] when [originalBytes] is not a well-formed SMF or
 /// contains no detectable harmony (the caller falls back to a plain remap).
 Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
-  final song = _parseSong(originalBytes);
+  final original = _parseSong(originalBytes);
   var chordTrack = detectChords(originalBytes);
   if (chordTrack == null) {
     throw const FormatException('No detectable harmony to arrange');
@@ -197,9 +251,14 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
     chordTrack = simplifyTrack(chordTrack, ChordLevel.medium);
   }
 
-  final d = song.division; // ticks per beat (quarter note)
-  final n = chordTrack.beatsPerBar;
-  final tempo = _TempoMap(song.tempi, d);
+  final d = original.division; // ticks per beat (quarter note)
+  // A 3/4 hymn under reggae is played in four (see [_stretchWaltz]); the
+  // beat map below is built on the ORIGINAL timeline, where detection ran,
+  // and moved onto the 4/4 grid beat by beat.
+  final stretch = _playsWaltzInFour(style, chordTrack.beatsPerBar);
+  final song = stretch ? _stretchWaltz(original) : original;
+  final n = stretch ? 4 : chordTrack.beatsPerBar;
+  final tempo = _TempoMap(original.tempi, d);
 
   // Chord governing each beat index: detection windows start at k*division
   // ticks, so every beatMs maps back onto an exact beat via the tempo map.
@@ -207,7 +266,15 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
   for (final chord in chordTrack.chords) {
     for (final ms in chord.beatMs) {
       final beat = (tempo.tickOf(ms) / d).round();
-      beatChords[beat] = (rootPc: chord.rootPc, quality: chord.quality);
+      final chordAt = (rootPc: chord.rootPc, quality: chord.quality);
+      if (!stretch) {
+        beatChords[beat] = chordAt;
+        continue;
+      }
+      final moved = _stretchBeat(beat);
+      beatChords[moved] = chordAt;
+      // The held fourth beat carries its bar's last harmony.
+      if (beat % 3 == 2) beatChords[moved + 1] = chordAt;
     }
   }
   var firstBeat = beatChords.keys.first;
@@ -219,13 +286,11 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style) {
 
   // The half-time decision and the tempo clamp both key off the hymn's
   // DOMINANT tempo; see [_arrangedTempi].
-  final (usPerQuarter, arrangedTempi, dipTicks) = _arrangedTempi(song);
-  final holdBars = <int>{for (final tick in dipTicks) tick ~/ (n * d)};
+  final (usPerQuarter, arrangedTempi, _) = _arrangedTempi(original, style);
 
   final ctx = _Ctx(
     d: d,
     n: n,
-    holdBars: holdBars,
     beatChords: beatChords,
     firstBeat: firstBeat,
     lastBeat: lastBeat,
@@ -338,7 +403,6 @@ class _Ctx {
   _Ctx({
     required this.d,
     required this.n,
-    required this.holdBars,
     required this.beatChords,
     required this.firstBeat,
     required this.lastBeat,
@@ -349,10 +413,6 @@ class _Ctx {
   final int d; // ticks per beat
   final int n; // beats per bar
 
-  /// Bars containing a marked cadence hold (the original tempo map dipped
-  /// below the clamp floor there). Emitters mark these musically.
-  final Set<int> holdBars;
-
   final Map<int, _Chord> beatChords;
   final int firstBeat;
   final int lastBeat;
@@ -362,7 +422,20 @@ class _Ctx {
   int get firstBar => firstBeat ~/ n;
   int get lastBar => lastBeat ~/ n;
 
-  _Chord? chordAt(int beat) => beatChords[beat];
+  /// The chord governing [beat] — the one detected there, or failing that
+  /// the last one heard, up to two bars back. Detection currently marks
+  /// every beat of every hymn in the corpus, so the hold-over never fires
+  /// today; it is here so that a hymn which ever does leave a beat
+  /// unharmonized makes the comping repeat a chord rather than fall silent.
+  /// A skank with holes in it is not a skank.
+  _Chord? chordAt(int beat) {
+    if (!inSpan(beat)) return null;
+    for (var b = beat; b >= firstBeat && b > beat - 2 * n; b--) {
+      final chord = beatChords[b];
+      if (chord != null) return chord;
+    }
+    return null;
+  }
 
   bool inSpan(int beat) => beat >= firstBeat && beat <= lastBeat;
 
@@ -399,12 +472,7 @@ const int _rampSteps = 8; // in 8 micro-steps (≈2% each)
 /// breaths, never lurches — and every remaining transition is smoothed
 /// into a [_rampSteps]-step ramp across the [_rampBeats] preceding beats
 /// (the adaptive beat: hard tempo steps under a groove read as stutters).
-/// Ticks where the original map dipped below the floor come back as the
-/// third tuple member: those are the hymn's cadence holds, and the
-/// emitters mark them MUSICALLY (a drummer's fill and a re-entry crash)
-/// the way a player who has lived in the genre for fifty years marks a
-/// fermata — with the sticks, not the clock.
-(int, List<(int, int)>, List<int>) _arrangedTempi(_Song song) {
+(int, List<(int, int)>, List<int>) _arrangedTempi(_Song song, ArrangeStyle style) {
   var songEnd = 0;
   for (final note in song.notes) {
     if (note.endTick > songEnd) songEnd = note.endTick;
@@ -435,12 +503,20 @@ const int _rampSteps = 8; // in 8 micro-steps (≈2% each)
   final dipTicks = <int>[];
   for (final (tick, us) in ordered) {
     if (us > slowest) dipTicks.add(tick); // a marked hold — see doc above
+    if (style != ArrangeStyle.gospel) continue; // the island band plays flat
     final clamped = us.clamp(usPerQuarter, slowest);
     if (tick == 0) {
       tempi[0] = (0, clamped);
     } else if (clamped != tempi.last.$2) {
       tempi.add((tick, clamped));
     }
+  }
+  // The island styles take ONE tempo for the whole hymn and never bend it.
+  // A riddim is a riddim: the owner's call after hearing the drop arrive
+  // late at every verse end. The hymn's fermatas survive as [dipTicks], and
+  // the emitters still mark them — with the sticks, not the clock.
+  if (style != ArrangeStyle.gospel) {
+    return (usPerQuarter, [(0, usPerQuarter)], dipTicks);
   }
   // The ADAPTIVE beat: a clamped map that still stepped straight between
   // tempos read as a stutter under the groove (listening feedback). Every
@@ -480,12 +556,19 @@ const int _rampSteps = 8; // in 8 micro-steps (≈2% each)
 ///
 /// Throws [FormatException] when [originalBytes] is not a well-formed SMF.
 ChordTrack retimeTrackForArrangement(
-    Uint8List originalBytes, ChordTrack track) {
+    Uint8List originalBytes, ChordTrack track, ArrangeStyle style) {
   final song = _parseSong(originalBytes);
-  final (_, tempi, _) = _arrangedTempi(song);
+  final (_, tempi, _) = _arrangedTempi(song, style);
   final original = _TempoMap(song.tempi, song.division);
   final arranged = _TempoMap(tempi, song.division);
-  int remap(int ms) => arranged.msOf(original.tickOf(ms)).round();
+  // A 3/4 hymn played in four (see [_stretchWaltz]) has every bar a beat
+  // longer in the render; the ticker's positions follow the same map.
+  final stretch = _playsWaltzInFour(style, track.beatsPerBar);
+  final d = song.division;
+  double moveTick(double tick) => stretch
+      ? _stretchTick(tick.floor(), d) + (tick - tick.floor())
+      : tick;
+  int remap(int ms) => arranged.msOf(moveTick(original.tickOf(ms))).round();
   return ChordTrack(
     chords: [
       for (final e in track.chords)
@@ -498,7 +581,7 @@ ChordTrack retimeTrackForArrangement(
         ),
     ],
     key: track.key,
-    beatsPerBar: track.beatsPerBar,
+    beatsPerBar: stretch ? 4 : track.beatsPerBar,
     measureStartMs: [for (final ms in track.measureStartMs) remap(ms)],
   );
 }
@@ -600,51 +683,105 @@ void _emitGospel(_Ctx c, _Track comp, _Track bass, _Track drums) {
 // Reggae
 // ---------------------------------------------------------------------------
 
-/// Roots-reggae backing in the church register:
+/// Where the reggae pulse flips from a beat to an eighth. See [_emitReggae].
+const double _reggaeEighthsBelowBpm = 100;
+
+/// Roots-reggae backing, transcribed from the two reference charts the owner
+/// supplied — "Three Little Birds" (145 BPM) and a reggae "Over the Rainbow"
+/// (82 BPM), both GM backing-track files — rather than written from
+/// description. Read side by side they agree on something neither shows
+/// alone: the chop lands every 0.7–0.85 SECONDS whatever the notation. At
+/// 145 BPM that is beats 2 and 4; at 82 it is every "&". So the engine picks
+/// its PULSE by tempo — a beat at [_reggaeEighthsBelowBpm] and above (chop on
+/// 2 and 4, one drop a bar), an eighth below it (chop on every "&", the drop
+/// on 2 and 4) — and the same cycle runs on that pulse: pulse 1 bare, pulse 2
+/// chop, pulse 3 the drop, pulse 4 chop. The mid-tempo band (~96–115 BPM,
+/// a third of the hymnal) sits between the two charts and grooves heavy
+/// either way; see the note in the summary of this change.
 ///
-/// * channel 9 — the one drop: kick + sidestick together on beat 3 and
-///   nothing on beat 1 but a pedal hat; closed-hat eighths accented on the
-///   swung offbeats, open hat as the bar-end pickup; tambourine on the
-///   backbeats; an 8-bar fill rotating through side-stick build / tom run /
-///   snare ruff (with a light side-stick answer at bar 4), resolving to a
-///   crash on the NEXT bar's beat 3 (never beat 1 — that absence is the
-///   genre);
-/// * channel 1, piano — the skank as the "piano bang": staccato root-
-///   position triads around middle C on every swung offbeat eighth (the
-///   synth's clean-guitar patch reads as a buzzer, so the research's piano
-///   double carries the chop alone), with the "chack-a" double skank on
-///   the bar's last chop and on alternate 2&s;
-/// * channel 3, drawbar organ — the bubble: low left-hand root dabs on the
-///   beats, right-hand triads answering on the swung offbeats;
-/// * channel 2, finger bass — riff bass as a two-bar ostinato (the
-///   research's ideal): Pattern A bars play root long-short on beat 1,
-///   beat 2 structurally SILENT, fifth on 3, third on 4 with a chromatic
-///   walk into every chord change; harmonically stable answer bars play
-///   Pattern B — root, the fifth below, silent 2, root on 3, then a
-///   scale-plus-chromatic walk-up. Beat 1 is hottest (vel 112); the bass
-///   anchors the "one" the drums omit and sits forward of the comping.
+/// The parts, per the charts:
 ///
-/// Swing: every offbeat eighth (hats, skank, organ RH together — the swing
-/// is global) sits at 56.25% of the beat.
+/// * channel 1, piano — the skank: a close triad on pulses 2 and 4 in the
+///   charts' own chop band (G3–F#4), every bar, and nothing else. A chop on
+///   every "&" at 121 BPM is twice the charts' rate and was heard, correctly,
+///   as a double skank; a root octave on 1 and 3 (Three Little Birds' piano
+///   plays one in half its bars) was heard as a loud piano that "should have
+///   been a bass guitar" — so 1 and 3 belong to the bass alone. Nothing else
+///   sounds at the instant of a chop: the earlier organ-on-top-of-piano
+///   composite is what read as "not a regular piano".
+/// * channel 3, organ — the bubble. Beat reading: Three Little Birds'
+///   rhythmic organ — root+fifth dabs on the swung "&" of pulses 1 and 2
+///   and a HELD triad through pulse 3 under the drop (the chart's one long
+///   note); its stabs on 2 and 4 are left to the piano, which here IS the
+///   chop (the chart's chop is a guitar). Eighth reading: Over the
+///   Rainbow's electric piano — a triad on the triplet "&" of every pulse,
+///   never coinciding with the piano.
+/// * channel 2, finger bass — root on 1 and 3, fifth on 2 and 4, LONG
+///   (the charts' bass is legato, 0.75–1.0 of a pulse), in the charts'
+///   A1–A2 register; a chromatic walk-up into the next root at phrase ends
+///   only, and only where it does not rub the chord; the eighth reading
+///   adds the root on 2& as Over the Rainbow does.
+/// * channel 9 — the drop is kick 35 AND 36 layered under a loud side
+///   stick (the chart voices it exactly so: 120/109/115). Beat reading:
+///   quarter-note closed hats (the chart's open hat on 2 and 4 is a loud
+///   metallic ring on this soundfont and is left out), maracas on every
+///   eighth accented on the beat, tambourine on every beat with light
+///   "&"s, a side stick on the swung "&" of 1 every other bar. Eighth
+///   reading: hats on every "&" plus beats 3 and 4, tambourine sixteenths,
+///   a stick accent on the "e" of 3 every other bar. A quiet crash on
+///   section tops and a two-stroke answer at phrase ends; no snare in the
+///   groove, because neither chart has one there.
 ///
-/// Tempo mapping per the research: at or above ~96 BPM the full-density
-/// skank turns ska, so 4/4 hymns faster than that use the half-time reading
-/// — skank on beats 2 and 4, bubble on straight offbeats, halved bass — with
-/// the drop kept on beat 3. 3/4 hymns get the "reggae waltz": drop on the
-/// bar's last beat, skank on the three offbeats.
+/// 3/4 runs a three-pulse cycle: bare 1, chop 2, drop 3.
 void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) {
   final d = c.d;
   final n = c.n;
   final waltz = n == 3;
-  final halfTime = !waltz && c.bpm >= 96;
-  final beats = waltz ? 3 : 4;
+  final eighths = c.bpm < _reggaeEighthsBelowBpm;
+  final p = eighths ? d ~/ 2 : d; // ticks per pulse
+  final pulses = n * d ~/ p; // pulses per bar: 4 / 8 / 3 / 6
+  // Pulse roles within the bar (0-based pulse indices).
+  final List<int> chops, drops, dabs, holds;
+  // The organ never sounds at the instant of a piano chop: Three Little
+  // Birds' organ does stab on 2 and 4, but there the GUITAR is the chop and
+  // the piano comps; here the piano is the chop, and a tonewheel key-click
+  // landing on a piano attack is what turned the chop into the hybrid the
+  // owner heard as "not a regular piano". So the organ keeps its dabs
+  // between the beats and its held chord under the drop, and the chop
+  // stands alone.
+  if (!eighths && !waltz) {
+    chops = [1, 3]; drops = [2]; dabs = [0, 1]; holds = [2];
+  } else if (!eighths) {
+    // The waltz: one chop, on 2; the drop on 3 carries the bass and the
+    // organ's hold, not a second chop.
+    chops = [1]; drops = [2]; dabs = [0]; holds = [2];
+  } else if (!waltz) {
+    chops = [1, 3, 5, 7]; drops = [2, 6];
+    dabs = [0, 1, 2, 3, 4, 5, 6, 7]; holds = const [];
+  } else {
+    chops = [1, 3, 5]; drops = [2];
+    dabs = [0, 1, 2, 3, 4, 5]; holds = const [];
+  }
+  // The swung "&" of pulse [k]: 7/12 of the way in the beat reading (the
+  // chart's +0.58), 2/3 in the eighth reading (its triplet bubble).
+  int swung(int k) => k * p + (eighths ? 2 * p ~/ 3 : 7 * p ~/ 12);
+  int beatOf(int pulse) => pulse * p ~/ d;
+  // The chop: ~150 ms of real time at any tempo. Under ~100 ms a GM grand
+  // is cut off inside its attack and reads as a click (the 83 ms chop of
+  // the second cut); the charts' chops run 80–140 ms on guitar and piano.
+  final chopLen = (0.15 * c.bpm / 60 * d).round();
+  // Reggae bass register: each pitch class placed in [G1, G2).
+  int vb(int pc) => _reggaeBassLow + ((pc - _reggaeBassLow) % 12 + 12) % 12;
 
-  // Swung offbeat of beat [k]: 56.25% of the way to the next beat.
-  int sw(int k) => k * d + 9 * d ~/ 16;
-
-  for (var bar = c.firstBar; bar <= c.lastBar; bar++) {
+  // The band comes in on the first full bar: a hymn's pickup beats stay
+  // unaccompanied (as Three Little Birds' own intro bar is), rather than
+  // opening the song with a fifth, or the drop, on the anacrusis.
+  final entry = (c.firstBeat + n - 1) ~/ n;
+  for (var bar = entry; bar <= c.lastBar; bar++) {
     final barStart = bar * n * d;
-    final phase = (bar - c.firstBar) % 8;
+    final phase = (bar - entry) % 8;
+    final odd = (bar - entry).isOdd;
+    final last = bar == c.lastBar;
 
     void dnote(int offset, int key, int velocity, [int? length]) {
       if (!c.hit(bar, offset)) return;
@@ -652,207 +789,201 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
           length ?? d ~/ 4);
     }
 
-    // The button ending: the last bar drops the patterns for one held
-    // chord — crash on the downbeat, bass root and piano chord ringing a
-    // full bar past the bar line, one final drop on beat 3 — instead of the groove
-    // clattering through the melody's final note (listening feedback: the
-    // old close-out read as a staggered stop).
-    if (bar == c.lastBar) {
-      final chord = c.chordAt(bar * n) ?? c.chordAt(bar * n + 1);
-      dnote(0, _crash, 96, 2 * n * d);
-      if (chord != null) {
-        bass.note(barStart, 2, _voiceBass(chord.rootPc), 112, 2 * n * d);
-        for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
-          skank.note(barStart, 1, pitch, 84, 2 * n * d);
-        }
-      }
-      dnote(2 * d, _kick, 105);
-      dnote(2 * d, _sidestick, 98);
-      continue;
-    }
+    _Chord? chordAtPulse(int k) => c.chordAt(bar * n + beatOf(k));
 
-    // --- Drums: the one drop -------------------------------------------
-    const dropBeat = 2; // beat 3 in both meters (0-based index 2)
-    dnote(0, _pedalHat, c.vel(58, 2, bar, 1));
-    for (var k = 0; k < beats; k++) {
-      dnote(k * d, _closedHat, c.vel(56, 3, bar, 2 + 2 * k));
-      final isPickup = k == beats - 1;
-      if (isPickup) {
-        dnote(sw(k), _openHat, c.vel(84, 3, bar, 3 + 2 * k), d ~/ 3);
-      } else {
-        dnote(sw(k), _closedHat, c.vel(74, 3, bar, 3 + 2 * k));
-      }
-    }
-    dnote(dropBeat * d, _kick, 105);
-    dnote(dropBeat * d, _sidestick, 98);
-    // The cadence, played like a fifty-year drummer plays a fermata: a
-    // fill INTO the hold bar, lighter color ON it (no tambourine, no
-    // mini-fill — let it breathe), and a crash with the drop coming OUT.
-    final inHold = c.holdBars.contains(bar);
-    final beforeHold = !inHold && c.holdBars.contains(bar + 1);
-    final afterHold = !inHold && c.holdBars.contains(bar - 1);
-
-    // Tambourine backbeat, light — the church signature.
-    if (!inHold) {
-      if (waltz) {
-        dnote(d, _tambourine, c.vel(50, 4, bar, 30));
-      } else {
-        dnote(d, _tambourine, c.vel(50, 4, bar, 30));
-        dnote(3 * d, _tambourine, c.vel(50, 4, bar, 31));
-      }
-    }
-    // Fills on the last beat: the 8-bar fill rotates deterministically
-    // through three shapes — side-stick build, a tom run down the kit, a
-    // snare ruff (the open snare's one sanctioned appearance) — and bar 4
-    // gets a light side-stick answer. The crash still lands with the NEXT
-    // bar's drop, not its downbeat.
-    final fillBeat = (beats - 1) * d;
-    if (phase == 7 || beforeHold) {
-      switch (c.vel(1, 1, bar, 90)) {
-        case 0:
-          dnote(fillBeat + d ~/ 4, _sidestick, 60);
-          dnote(fillBeat + d ~/ 2, _sidestick, 74);
-          dnote(fillBeat + 3 * d ~/ 4, _sidestick, 86);
-        case 1:
-          dnote(fillBeat, _hiMidTom, 72, d ~/ 4);
-          dnote(fillBeat + d ~/ 4, _hiMidTom, 64, d ~/ 4);
-          dnote(fillBeat + d ~/ 2, _lowMidTom, 84, d ~/ 4);
-          dnote(fillBeat + 3 * d ~/ 4, _lowTom, 94, d ~/ 3);
-        default:
-          dnote(fillBeat + d ~/ 4, _snare, 58);
-          dnote(fillBeat + d ~/ 2, _snare, 76);
-          dnote(fillBeat + 3 * d ~/ 4, _snare, 90);
-      }
-    } else if (phase == 3 && !inHold) {
-      dnote(fillBeat + d ~/ 2, _sidestick, 62);
-      dnote(fillBeat + 3 * d ~/ 4, _sidestick, 72);
-    }
-    if ((phase == 0 || afterHold) && bar != c.firstBar) {
-      dnote(dropBeat * d, _crash, 95, d);
-    }
-
-    // --- Skank ----------------------------------------------------------
-    // (offset, beat index) pairs for the chop.
-    final skankHits = halfTime
-        ? [(d, 1), (3 * d, 3)] // half-time: beats 2 and 4, straight
-        : [for (var k = 0; k < beats; k++) (sw(k), k)];
-    for (final (i, (offset, beat)) in skankHits.indexed) {
-      final chord = c.chordAt(bar * n + beat);
-      if (chord == null || !c.hit(bar, offset)) continue;
-      final v = c.vel(76, 4, bar, 50 + i);
-      // The "chack-a" double skank (the research's double-skank colour):
-      // the bar's LAST chop always doubles at the following "a", and
-      // full-time 4/4 bars also double 2& on alternate bars — single and
-      // double chops in variation rather than a uniform chop.
-      final doubled = beat == beats - 1 ||
-          (!halfTime && beat == 1 && (bar - c.firstBar).isOdd);
-      final aOffset = halfTime ? offset + d ~/ 4 : beat * d + 4 * d ~/ 5;
+    // --- Piano: the chop, and only the chop -------------------------------
+    // Three Little Birds' piano also plays a root octave on 1 and 3; the
+    // first transcription copied that and the owner heard it as "the old
+    // loud piano sound... it should have been a bass guitar, it comes right
+    // before the skank and between each skank". The bass already owns 1 and
+    // 3, so the piano plays the chop on 2 and 4 and nothing else. On the
+    // last bar its final chop holds out with the band's chord — the piano's
+    // button — so the skank is the last thing to stop, not the first.
+    for (final k in chops) {
+      final chord = chordAtPulse(k);
+      if (chord == null || !c.hit(bar, k * p)) continue;
+      final v = c.vel(92, 3, bar, 20 + k);
+      final len = last && k == chops.last ? 2 * n * d : chopLen;
       for (final pitch in _voice(_triadIntervals, chord, _skankLow)) {
-        skank.note(barStart + offset, 1, pitch, v, d ~/ 8);
-        if (doubled) {
-          skank.note(barStart + aOffset, 1, pitch, v - 14, d ~/ 8);
-        }
+        skank.note(barStart + k * p, 1, pitch, v, len);
       }
     }
 
-    // --- Organ bubble ---------------------------------------------------
-    // LH: single low root dabs on the beats, felt more than heard.
-    final lhBeats = halfTime ? [0, 2] : [for (var k = 0; k < beats; k++) k];
-    for (final k in lhBeats) {
-      final chord = c.chordAt(bar * n + k);
-      if (chord == null) continue;
-      organ.note(barStart + k * d, 3, _voiceBass(chord.rootPc),
-          c.vel(55, 2, bar, 60 + k), d ~/ 4);
-    }
-    // RH: short triad dabs on the offbeats — swung with the skank, or
-    // straight eighth offbeats in the half-time reading. A fat sixteenth
-    // (d/3), not d/8: notes covering a quarter-beat or less are invisible
-    // to [detectChords], and the bubble is what keeps every harmonized
-    // beat window carrying full chord content — without it a melody breath
-    // lets the detector extend a neighboring chord across a bar line.
-    for (var k = 0; k < beats; k++) {
-      final offset = halfTime ? k * d + d ~/ 2 : sw(k);
-      final chord = c.chordAt(bar * n + k);
-      if (chord == null || !c.hit(bar, offset)) continue;
-      final v = c.vel(66, 3, bar, 70 + k);
-      for (final pitch in _voice(_triadIntervals, chord, _bubbleRhLow)) {
-        organ.note(barStart + offset, 3, pitch, v, d ~/ 3);
-      }
-    }
-
-    // --- Bass -----------------------------------------------------------
-    // Two-bar riff ostinato per the research ("busy bar, sparse answer bar
-    // ... are the ideal; when the hymn changes chords every bar, collapse
-    // to Pattern A"). Velocities sit at the researched 100–112 with beat 1
-    // hottest — the bass is the melody-carrier of the low end and mixes
-    // forward of the comping.
-    final c1 = c.chordAt(bar * n);
-    final nextChord = c.chordAt((bar + 1) * n);
-    if (waltz) {
-      if (c1 != null) {
-        // The "doo—doot" read for 3/4: long root plus a late-beat pickup.
-        bass.note(barStart, 2, _voiceBass(c1.rootPc), 110, 6 * d ~/ 5);
-        bass.note(barStart + 3 * d ~/ 4, 2, _voiceBass(c1.rootPc), 92, d ~/ 8);
-      }
-      final c3 = c.chordAt(bar * n + 2);
-      if (c3 != null) {
-        bass.note(barStart + 2 * d, 2,
-            _voiceBass(c3.rootPc + _fifth(c3.quality)), 98, d ~/ 2);
-        if (nextChord != null && nextChord != c3) {
-          bass.note(barStart + 2 * d + d ~/ 2, 2,
-              _voiceBass(nextChord.rootPc + 11), 92, 2 * d ~/ 5);
+    // --- Organ: the bubble -------------------------------------------------
+    if (last) {
+      // The button: the organ holds the final chord out past the bar line.
+      final chord = chordAtPulse(0) ?? chordAtPulse(1);
+      if (chord != null) {
+        for (final pitch in _voice(_triadIntervals, chord, _organStabLow)) {
+          organ.note(barStart, 3, pitch, 78, 2 * n * d);
         }
       }
     } else {
-      final c2 = c.chordAt(bar * n + 1);
-      final c3 = c.chordAt(bar * n + 2);
-      final c4 = c.chordAt(bar * n + 3);
-      final stable = c1 != null && c2 == c1 && c3 == c1 && c4 == c1;
-      final answerBar = stable && !halfTime && (bar - c.firstBar).isOdd;
-      if (answerBar) {
-        // Pattern B — the sparse answer bar: root, the fifth BELOW (the
-        // octave jump of the textbook shape would leave the E1–G2 band,
-        // the low fifth is the equally idiomatic substitute), silent 2,
-        // root again on 3, then the scale + chromatic walk-up into the
-        // next chord ("approach from below is idiomatic").
-        final root = _voiceBass(c1.rootPc);
-        bass.note(barStart, 2, root, 110, 2 * d ~/ 5);
-        bass.note(barStart + d ~/ 2, 2, root - 5, 100, 2 * d ~/ 5);
-        bass.note(barStart + 2 * d, 2, root, 102, 4 * d ~/ 5);
-        if (nextChord != null) {
-          bass.note(barStart + 3 * d, 2,
-              _voiceBass(nextChord.rootPc + 10), 96, 2 * d ~/ 5);
-          bass.note(barStart + 3 * d + d ~/ 2, 2,
-              _voiceBass(nextChord.rootPc + 11), 100, 2 * d ~/ 5);
+      for (final k in dabs) {
+        final chord = chordAtPulse(k);
+        final offset = swung(k);
+        if (chord == null || !c.hit(bar, offset)) continue;
+        final v = c.vel(eighths ? 66 : 70, 3, bar, 30 + k);
+        final table = eighths ? _triadIntervals : _rootFifth;
+        for (final pitch in _voice(table, chord, _bubbleLow)) {
+          organ.note(barStart + offset, 3, pitch, v, p ~/ 5);
         }
-      } else {
-        if (c1 != null) {
-          // The "doo—doot": dotted-eighth root plus a sixteenth at 1a.
-          bass.note(barStart, 2, _voiceBass(c1.rootPc), 112, 3 * d ~/ 5);
-          if (!halfTime) {
-            bass.note(
-                barStart + 3 * d ~/ 4, 2, _voiceBass(c1.rootPc), 96, d ~/ 8);
-          }
-        }
-        // Beat 2: structurally silent — continuous motion destroys the
-        // style.
-        if (c3 != null) {
-          bass.note(barStart + 2 * d, 2,
-              _voiceBass(c3.rootPc + _fifth(c3.quality)), 104, 4 * d ~/ 5);
-        }
-        if (c4 != null) {
-          if (!halfTime) {
-            bass.note(barStart + 3 * d, 2,
-                _voiceBass(c4.rootPc + _third(c4.quality)), 92, 2 * d ~/ 5);
-          }
-          if (nextChord != null && nextChord != c4) {
-            bass.note(barStart + 3 * d + d ~/ 2, 2,
-                _voiceBass(nextChord.rootPc + 11), 96, 2 * d ~/ 5);
-          }
+      }
+      for (final k in holds) {
+        final chord = chordAtPulse(k);
+        if (chord == null || !c.hit(bar, k * p)) continue;
+        for (final pitch in _voice(_triadIntervals, chord, _organStabLow)) {
+          organ.note(barStart + k * p, 3, pitch, c.vel(80, 2, bar, 50 + k),
+              17 * p ~/ 20);
         }
       }
     }
+
+    // --- Bass: root and fifth, legato -----------------------------------
+    if (last) {
+      final chord = chordAtPulse(0) ?? chordAtPulse(1);
+      if (chord != null) {
+        bass.note(barStart, 2, vb(chord.rootPc), 112, 2 * n * d);
+      }
+    } else {
+      final nextChord = c.chordAt((bar + 1) * n);
+      // (pulse, role): r root, f fifth, a fifth-or-approach, o root on 2&.
+      final shape = !eighths
+          ? (waltz ? const [(0, 'r'), (1, 'f'), (2, 'r')]
+                   : const [(0, 'r'), (1, 'f'), (2, 'r'), (3, 'a')])
+          : (waltz ? const [(0, 'r'), (2, 'f'), (4, 'r'), (5, 'a')]
+                   : const [(0, 'r'), (2, 'f'), (3, 'o'), (4, 'r'), (6, 'f'), (7, 'a')]);
+      for (final (k, role) in shape) {
+        final chord = chordAtPulse(k);
+        if (chord == null || !c.hit(bar, k * p)) continue;
+        final int pitch;
+        var v = 104;
+        var len = 3 * p ~/ 4;
+        switch (role) {
+          case 'r':
+            pitch = vb(chord.rootPc);
+            v = drops.contains(k) ? 104 : (k == 0 ? 108 : 106);
+            len = 17 * p ~/ 20;
+          case 'o':
+            pitch = vb(chord.rootPc);
+            v = 98;
+            len = 3 * p ~/ 5;
+          case 'a':
+            // The fifth on the pulse — and, at a phrase end where the
+            // harmony moves, a chromatic walk-up into the next root on the
+            // back half of the pulse. Rationed, and checked: the charts use
+            // the walk-in about once in seventeen bars, a hymn moves every
+            // bar or two, and a leading tone a semitone from a chord tone
+            // under a sustained melody (hymn 15, F# into G over a held F)
+            // is a wrong note, not an approach.
+            pitch = vb(chord.rootPc + _fifth(chord.quality));
+            v = 102;
+            len = 3 * p ~/ 4;
+            final moving = nextChord != null && nextChord != chord;
+            if (moving && (phase == 3 || phase == 7)) {
+              final approach = (nextChord.rootPc + 11) % 12;
+              final rubs = _voice(_triadIntervals, chord, 0).any((t) {
+                final gap = ((t - approach) % 12 + 12) % 12;
+                return gap == 1 || gap == 11;
+              });
+              if (!rubs) {
+                len = p ~/ 2;
+                bass.note(barStart + k * p + p ~/ 2, 2, vb(approach),
+                    c.vel(98, 2, bar, 68 + k), p ~/ 2);
+              }
+            }
+          default: // 'f'
+            pitch = vb(chord.rootPc + _fifth(chord.quality));
+            v = 104;
+            len = 3 * p ~/ 4;
+        }
+        bass.note(barStart + k * p, 2, pitch, c.vel(v, 2, bar, 60 + k), len);
+      }
+    }
+
+    // --- Drums ------------------------------------------------------------
+    for (final k in drops) {
+      _drop(dnote, k * p, d);
+    }
+    if (!eighths) {
+      // Three Little Birds' kit. Quarter-note closed hats; maracas on every
+      // eighth; tambourine on every beat, lighter under the chop. A swung
+      // side stick on 1& every other bar.
+      //
+      // The chart also opens the hat on 2 or 4 most bars. On this
+      // soundfont that is a long, bright cymbal landing on exactly half the
+      // chops, and the owner heard it as "a heavy metallic-sounding
+      // instrument that plays along with the skanks, but not on every
+      // interval... very loud and obnoxious". It is gone: the hat stays
+      // closed on every beat.
+      for (var k = 0; k < pulses; k++) {
+        final isDrop = drops.contains(k);
+        dnote(k * p, _closedHat, c.vel(isDrop ? 90 : 84, 3, bar, 70 + k), p ~/ 5);
+        dnote(k * p, _maracas, c.vel(k == 0 ? 58 : (isDrop ? 54 : 66), 3, bar, 80 + k), p ~/ 3);
+        dnote(swung(k), _maracas, c.vel(35, 3, bar, 90 + k), p ~/ 5);
+        dnote(k * p, _tambourine, c.vel(k == 0 ? 54 : (isDrop ? 60 : 56), 3, bar, 100 + k), p ~/ 4);
+        if (k == 1 || (k == pulses - 1 && !odd)) {
+          dnote(swung(k), _tambourine, c.vel(32, 3, bar, 110 + k), p ~/ 4);
+        }
+      }
+      if (odd) dnote(swung(0), _sidestick, 92);
+    } else {
+      // Over the Rainbow's kit. Tambourine sixteenths; hats on every "&"
+      // and on the beats after the drop; a stick accent on the "e" of the
+      // pulse after the first drop every other bar.
+      for (var s = 0; s < n * 4; s++) {
+        dnote(s * d ~/ 4, _tambourine, c.vel(s % 4 == 0 ? 58 : 52, 3, bar, 70 + s), d ~/ 8);
+      }
+      // Hats on every "&", and on the beats after the first drop — the
+      // chart's beat 3 at 58 and beat 4 (with the second drop) at 83.
+      for (var k = 0; k < pulses; k++) {
+        if (k.isOdd) {
+          dnote(k * p, _closedHat, c.vel(70, 3, bar, 100 + k), p ~/ 3);
+        } else if (k > 0 && k != drops.first) {
+          dnote(k * p, _closedHat, c.vel(k == pulses - 2 ? 82 : 60, 3, bar, 100 + k), p ~/ 3);
+        }
+      }
+      // The chart's stick accent on the "e" of the beat after the drop
+      // (v100, three bars in four), and its ghost on the "a" of the drop
+      // beat (v59) — alternated here bar by bar.
+      if (!odd) {
+        dnote(drops.first * p + 2 * p + p ~/ 2, _sidestick, 90);
+      } else {
+        dnote(drops.first * p + p + p ~/ 2, _sidestick, 56);
+      }
+    }
+    // Section tops and phrase ends, both quiet: the chart's crash sits at
+    // 70 and its fills are two timbale strokes.
+    if (phase == 0 && bar != entry && !last) {
+      dnote(0, _crash, 72, d);
+    }
+    if (phase == 7 && !last) {
+      final at = (pulses - 1) * p;
+      dnote(at + p ~/ 2, _sidestick, 66);
+      dnote(at + 3 * p ~/ 4, _sidestick, 82);
+    }
+    if (last) dnote(0, _crash, 96, 2 * n * d);
   }
+}
+
+/// The one drop's voice — kick 35 and 36 layered under a loud cross-stick,
+/// exactly as the reference chart plays it (120 / 109 / 115). The first cut
+/// had the stick on its own over a single tight kick and was heard as
+/// high-pitched; a later one pulled the stick down to a colour — the chart
+/// says no, the stick IS the drop's attack, and the depth comes from the two
+/// kicks together.
+///
+/// Levels: the chart's 120/109/115 are its own mix's numbers. Rendered
+/// through the app's soundfont with the bass and the organ hold landing on
+/// the same beat, that stack peaked at -0.1 to -1.2 dBFS on EVERY drop while
+/// the chop beats sat at -6 — a mix clipping once a bar, which on a phone
+/// speaker is heard as heavy and harsh. Velocity barely moves this
+/// soundfont's kick samples (118 to 104 bought 2 dB), so the layer is
+/// thinned instead: GM 35 carries the drop, GM 36 is a quiet body under it.
+void _drop(void Function(int, int, int, [int?]) dnote, int offset, int d) {
+  dnote(offset, _acousticKick, 100, d ~/ 2);
+  dnote(offset, _kick, 72, d ~/ 2);
+  dnote(offset, _sidestick, 94);
 }
 
 // ---------------------------------------------------------------------------
@@ -881,7 +1012,9 @@ void _emitReggae(_Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) 
 ///   held bass root, strum silent — the Rhodes lead carries the tune out.
 ///
 /// Everything is straight — the lilt comes from velocity shape and the
-/// rests on the downbeats, not timing offsets. 3/4 hymns get the Caribbean
+/// rests on the downbeats, not timing offsets — and everything is written
+/// on ONE flat tempo (see [_arrangedTempi]), so the strum's tick-a never
+/// speeds up or slows down anywhere in the hymn. 3/4 hymns get the Caribbean
 /// waltz: strum resting on beat 1 and filling beats 2–3, claves on the
 /// 1 / 2& hemiola, triangle color on 2 and 3.
 void _emitCalypso(
@@ -943,9 +1076,9 @@ void _emitCalypso(
         final pitches = _voice(_guideTones, chord, _strumLow);
         final stroke = sub.isEven ? pitches : pitches.reversed.toList();
         for (final (j, pitch) in stroke.indexed) {
-          final at = barStart + offset + j * spread;
-          strum.note(at, 1, pitch, v, length);
-          shimmer.note(at, 3, pitch, (v - 25).clamp(1, 127), length);
+          final tick = barStart + offset + j * spread;
+          strum.note(tick, 1, pitch, v, length);
+          shimmer.note(tick, 3, pitch, (v - 25).clamp(1, 127), length);
         }
       }
     }
@@ -1076,8 +1209,15 @@ void _emitCalypso(
 /// starting at [low] (low..low+11), deduplicated, low to high.
 List<int> _voice(Map<String, List<int>> table, _Chord chord, int low) {
   final tones = table[chord.quality] ?? table['']!;
+  // Each chord tone placed in the octave [low, low + 12). The floor need
+  // not be a C: the first version added pitch classes straight onto [low],
+  // which only works when low % 12 == 0 — moving the piano chop's floor to
+  // E4 then transposed every chop up a major third (a C chord came out E,
+  // A-flat, B), which is exactly the "weird, strange notes" the owner had
+  // been hearing.
   final pitches = <int>{
-    for (final interval in tones) low + (chord.rootPc + interval) % 12,
+    for (final interval in tones)
+      low + ((chord.rootPc + interval - low) % 12 + 12) % 12,
   };
   return pitches.toList()..sort();
 }
@@ -1168,6 +1308,9 @@ class _Track {
 
   void program(int tick, int channel, int program) =>
       _add(tick, 2, [0xC0 | channel, program]);
+
+  void control(int tick, int channel, int controller, int value) =>
+      _add(tick, 2, [0xB0 | channel, controller & 0x7F, value.clamp(0, 127)]);
 
   void note(int tick, int channel, int pitch, int velocity, int length) {
     _add(tick, 3, [0x90 | channel, pitch & 0x7F, velocity.clamp(1, 127)]);
@@ -1440,7 +1583,9 @@ class _TempoMap {
   }
 
   /// Fractional tick of media-time [ms]; the caller rounds to a beat index.
-  double tickOf(int ms) {
+  /// Takes a [num] so the steady percussion clock — which works in
+  /// fractional milliseconds — can invert the map without quantizing first.
+  double tickOf(num ms) {
     var lo = 0, hi = _ticks.length - 1, best = 0;
     while (lo <= hi) {
       final mid = (lo + hi) >> 1;

@@ -28,10 +28,12 @@ class _NoteOn {
   Map<int, Set<int>> programs,
   int tempoCount,
   List<int> tempi,
+  List<(int, int)> tempoMap,
 }) _scan(Uint8List bytes) {
   final ons = <_NoteOn>[];
   final programs = <int, Set<int>>{};
   final tempi = <int>[]; // FF51 values, microseconds per quarter
+  final tempoMap = <(int, int)>[]; // the same, with the tick each sits at
   var tempoCount = 0;
   var lastOff = 0;
   var seq = 0;
@@ -66,7 +68,9 @@ class _NoteOn {
           }
           if (type == 0x51 && len == 3) {
             tempoCount++;
-            tempi.add((bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]);
+            final us = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
+            tempi.add(us);
+            tempoMap.add((tick, us));
           }
           i += len;
           running = 0;
@@ -102,6 +106,55 @@ class _NoteOn {
     programs: programs,
     tempoCount: tempoCount,
     tempi: tempi,
+    tempoMap: tempoMap,
+  );
+}
+
+/// Tick to media-time milliseconds under a file's own tempo map — the clock
+/// a listener actually hears the arrangement on, and the only one in which
+/// "the beat is steady" means anything. The same piecewise construction the
+/// arranger uses internally.
+class _Clock {
+  _Clock(List<(int, int)> tempi, int division) {
+    _ticks.add(0);
+    _ms.add(0);
+    _rate.add(500000 / division / 1000);
+    for (final (tick, us) in [...tempi]..sort((a, b) => a.$1 - b.$1)) {
+      final rate = us / division / 1000;
+      if (tick == _ticks.last) {
+        _rate[_rate.length - 1] = rate;
+      } else {
+        _ms.add(_ms.last + (tick - _ticks.last) * _rate.last);
+        _ticks.add(tick);
+        _rate.add(rate);
+      }
+    }
+  }
+
+  final _ticks = <int>[];
+  final _ms = <double>[];
+  final _rate = <double>[];
+
+  double msOf(int tick) {
+    var best = 0;
+    for (var i = 0; i < _ticks.length && _ticks[i] <= tick; i++) {
+      best = i;
+    }
+    return _ms[best] + (tick - _ticks[best]) * _rate[best];
+  }
+}
+
+/// The reggae pulse of a render, read off its (flat) conductor tempo: the
+/// chop sits on beats 2 and 4 at 100 BPM and above, on every "&" below it
+/// (see the arranger's _emitReggae). Returns the drop offsets within a bar
+/// and the beat-index spacing from beat 1 to the first drop.
+({List<int> dropOffsets, double dropBeats}) _reggaePulse(
+    List<int> tempi, int d, int n) {
+  final bpm = 6e7 / tempi.first;
+  if (bpm >= 100) return (dropOffsets: [2 * d], dropBeats: 2);
+  return (
+    dropOffsets: n == 3 ? [d] : [d, 3 * d],
+    dropBeats: 1,
   );
 }
 
@@ -170,6 +223,7 @@ void _styleTests(
   required Set<int> percussionKeys,
   required Map<int, (int, int)> registerBands,
   bool fidelity = true,
+  bool playedInFour = false,
 }) {
   final input = Uint8List.fromList(File(path).readAsBytesSync());
   final output = arrangeStyle(input, style);
@@ -181,7 +235,8 @@ void _styleTests(
     final inTrack = detectChords(input)!;
     final outTrack = detectChords(output);
     expect(outTrack, isNotNull);
-    expect(outTrack!.beatsPerBar, inTrack.beatsPerBar);
+    // A 3/4 hymn under reggae is played in four (see _stretchWaltz).
+    expect(outTrack!.beatsPerBar, playedInFour ? 4 : inTrack.beatsPerBar);
   });
 
   test('preserves the key signature', () {
@@ -235,8 +290,10 @@ void _styleTests(
     // The button ending holds the final chord one bar past the last bar
     // line (the flattened tempo map no longer stretches it), so the
     // arrangement may end up to a bar late on top of the 5% tolerance.
-    final barTicks = detectChords(input)!.beatsPerBar * _division(output);
-    expect((outScan.lastOffTick - inScan.lastOffTick).abs(),
+    // Played in four, every 3/4 bar is a beat longer: 4/3 the length.
+    final barTicks = detectChords(output)!.beatsPerBar * _division(output);
+    final expected = playedInFour ? inScan.lastOffTick * 4 / 3 : inScan.lastOffTick;
+    expect((outScan.lastOffTick - expected).abs(),
         lessThanOrEqualTo(inScan.lastOffTick * 0.05 + barTicks));
   });
 
@@ -272,43 +329,99 @@ void _styleTests(
 }
 
 /// Reggae-only structural assertions: the one drop. Beat 1 of every bar is
-/// kick-free and sparser than beat 3, where kick and sidestick land together.
+/// kick-free, and the drop pulse carries both kicks and the cross-stick
+/// together, exactly as the reference chart voices it.
 void _oneDropTests(String path) {
   final input = Uint8List.fromList(File(path).readAsBytesSync());
   final output = arrangeStyle(input, ArrangeStyle.reggae);
   final outScan = _scan(output);
   final d = _division(output);
-  final n = detectChords(input)!.beatsPerBar;
+  final n = detectChords(output)!.beatsPerBar; // 4 for a 3/4 hymn played in four
   final barTicks = n * d;
+  final pulse = _reggaePulse(outScan.tempi, d, n);
   final drumOns = [
     for (final on in outScan.ons)
       if (on.channel == 9) on,
   ];
+  const deepKick = 35; // Acoustic Bass Drum
+  const kick = 36; // Bass Drum 1
+  const crossStick = 37; // Side Stick
 
-  test('one drop: every kick lands on beat 3, never beat 1', () {
-    final kicks = drumOns.where((on) => on.pitch == 36).toList();
+  test('one drop: every kick lands on a drop pulse, never beat 1', () {
+    final kicks = drumOns.where((on) => on.pitch == deepKick).toList();
     expect(kicks, isNotEmpty);
     for (final on in kicks) {
-      expect(on.tick % barTicks, 2 * d);
+      expect(pulse.dropOffsets, contains(on.tick % barTicks));
     }
   });
 
-  test('one drop: kick and sidestick strike beat 3 together', () {
-    final kickTicks = {
+  test('one drop: the drop is two kicks and a loud stick, together', () {
+    // Three Little Birds voices its drop as GM 35 + 36 layered (120 / 109)
+    // under a side stick at 115 — the stick is the attack, the two kicks
+    // the depth. Every drop here carries all three.
+    final drops = {
       for (final on in drumOns)
-        if (on.pitch == 36) on.tick,
+        if (on.pitch == deepKick) on.tick,
     };
-    final stickTicks = {
-      for (final on in drumOns)
-        if (on.pitch == 37) on.tick,
-    };
-    expect(stickTicks.containsAll(kickTicks), isTrue);
+    expect(drops, isNotEmpty);
+    for (final key in [kick, crossStick]) {
+      final ticks = {
+        for (final on in drumOns)
+          if (on.pitch == key) on.tick,
+      };
+      expect(ticks.containsAll(drops), isTrue,
+          reason: 'GM @D@key must strike with every drop');
+    }
+    for (final tick in drops) {
+      int velAt(int pitch) => drumOns
+          .firstWhere((o) => o.tick == tick && o.pitch == pitch)
+          .vel;
+      expect(velAt(crossStick), lessThan(velAt(deepKick)));
+      expect(velAt(kick), lessThan(velAt(deepKick)));
+    }
   });
 
-  test('one drop: beat 1 is structurally lighter than beat 3', () {
-    final beat1 = drumOns.where((on) => on.tick % barTicks == 0).length;
-    final beat3 = drumOns.where((on) => on.tick % barTicks == 2 * d).length;
-    expect(beat1, lessThan(beat3));
+  test('one drop: beat 1 is structurally lighter than the drop', () {
+    final beat1 = drumOns.where((on) => on.tick % barTicks == 0).toList();
+    expect(beat1, isNotEmpty);
+    expect(beat1.where((on) => on.pitch == deepKick || on.pitch == kick),
+        isEmpty,
+        reason: 'beat 1 is the beat the one drop drops');
+    final byTick = <int, int>{};
+    for (final on in drumOns) {
+      byTick[on.tick] = (byTick[on.tick] ?? 0) + 1;
+    }
+    final dropTick = drumOns.firstWhere((on) => on.pitch == deepKick).tick;
+    expect(byTick[dropTick]!, greaterThan(byTick[beat1.first.tick]!));
+  });
+
+  test('the piano never rests: every chop pulse of every bar is chopped', () {
+    // The owner's one hard requirement for the skank: it must not stop.
+    // The chop falls on beats 2 and 4 (every "&" below 100 BPM) in every
+    // bar from the band's entry to the last, and on nothing else — the
+    // beats between belong to the bass.
+    final chopOffsets = pulse.dropBeats == 2
+        ? (n == 3 ? [d] : [d, 3 * d])
+        : [for (var k = 1; k < 2 * n; k += 2) k * d ~/ 2];
+    final pianoTicks = {
+      for (final on in outScan.ons)
+        if (on.channel == 1) on.tick,
+    };
+    expect(pianoTicks, isNotEmpty);
+    for (final tick in pianoTicks) {
+      expect(chopOffsets, contains(tick % barTicks),
+          reason: 'piano off the chop at tick $tick');
+    }
+    // Every full bar from the band's entry to the bar before the button;
+    // the last bar chops only as far as the harmony runs, then rings out.
+    final firstBar = pianoTicks.reduce((a, b) => a < b ? a : b) ~/ barTicks;
+    final lastBar = pianoTicks.reduce((a, b) => a > b ? a : b) ~/ barTicks;
+    final missing = [
+      for (var bar = firstBar; bar < lastBar; bar++)
+        for (final off in chopOffsets)
+          if (!pianoTicks.contains(bar * barTicks + off)) bar * barTicks + off,
+    ];
+    expect(missing, isEmpty, reason: 'chop missing at ticks $missing');
   });
 }
 
@@ -340,7 +453,119 @@ void _calypsoStructureTests(String path) {
     ];
     expect(claveTicks, isNotEmpty);
     for (final t in claveTicks) {
-      expect(anchors, contains(t));
+      expect(anchors, contains(t),
+          reason: 'clave at $t is off every anchor $anchors');
+    }
+  });
+}
+
+/// The steady beat — the property the whole island rhythm section exists to
+/// hold. A hymn's tempo map is a long body at one marking punctuated by
+/// verse-end rits and fermatas; the backing must play THROUGH those at the
+/// dominant tempo rather than dragging with them, so these assertions are
+/// made in milliseconds (what a listener hears), never in ticks.
+void _steadyBeatTests(String path) {
+  final input = Uint8List.fromList(File(path).readAsBytesSync());
+  final hymnN = detectChords(input)!.beatsPerBar;
+  // Reggae plays a 3/4 hymn in four; calypso keeps the waltz.
+  final n = hymnN == 3 ? 4 : hymnN;
+
+  /// Every arranged tempo is the dominant one or SLOWER (dips clamp up to
+  /// the floor, flourishes clamp down), so the fastest marking in the
+  /// render is the dominant — the pulse the band is supposed to hold.
+  double beatMsOf(List<int> tempi) =>
+      tempi.reduce((a, b) => a < b ? a : b) / 1000;
+
+  test('reggae: beat 1 to the one drop is the same length in every bar', () {
+    final scan = _scan(arrangeStyle(input, ArrangeStyle.reggae));
+    final d = _division(arrangeStyle(input, ArrangeStyle.reggae));
+    final clock = _Clock(scan.tempoMap, d);
+    final barTicks = n * d;
+    final pulse = _reggaePulse(scan.tempi, d, n);
+    final first = <int, Map<int, int>>{};
+    for (final on in scan.ons) {
+      if (on.channel != 9) continue;
+      first
+          .putIfAbsent(on.tick ~/ barTicks, () => <int, int>{})
+          .putIfAbsent(on.pitch, () => on.tick);
+    }
+    // Beat 1 is marked by the bar's first maracas (beat reading) or
+    // tambourine (eighth reading) — both strike on the downbeat. A bar
+    // whose harmony starts late has no downbeat hit at all (the arranger
+    // drops hits outside the harmonised span), so it is left out.
+    final spans = <double>[
+      for (final bar in first.values)
+        if (bar.containsKey(35) && (bar.containsKey(70) || bar.containsKey(54)))
+          if ((bar[70] ?? bar[54]!) % barTicks == 0)
+            clock.msOf(bar[35]!) - clock.msOf(bar[70] ?? bar[54]!),
+    ];
+    expect(spans.length, greaterThan(8));
+    final lo = spans.reduce((a, b) => a < b ? a : b);
+    final hi = spans.reduce((a, b) => a > b ? a : b);
+    // Two beats of music in every bar of the hymn, cadences included: only
+    // tick quantization separates them. Before the steady clock this spread
+    // ran to the full cadence floor — 17.6% — and that drag is what made
+    // the one drop miss.
+    expect((hi - lo) / lo, lessThan(0.01),
+        reason: 'the drop drifts: $lo..$hi ms');
+    expect(lo, closeTo(pulse.dropBeats * beatMsOf(scan.tempi), 2));
+  });
+
+  test('calypso: the pan strum tick-a never speeds up or slows down', () {
+    final output = arrangeStyle(input, ArrangeStyle.calypso);
+    final scan = _scan(output);
+    final d = _division(output);
+    final clock = _Clock(scan.tempoMap, d);
+    final n = hymnN;
+    final barTicks = n * d;
+    // The engine room's claves span the bar's tresillo anchor: 1 to 4 in
+    // 4/4 (three beats), 1 to 2& in the waltz (a beat and a half).
+    final want = n == 3 ? 2 : 3;
+    final byBar = <int, List<int>>{};
+    for (final on in scan.ons) {
+      if (on.channel == 9 && on.pitch == 75) {
+        byBar.putIfAbsent(on.tick ~/ barTicks, () => <int>[]).add(on.tick);
+      }
+    }
+    final spans = <double>[
+      for (final ticks in byBar.values)
+        if (ticks.length == want)
+          clock.msOf(ticks.last) - clock.msOf(ticks.first),
+    ];
+    expect(spans.length, greaterThan(8));
+    final lo = spans.reduce((a, b) => a < b ? a : b);
+    final hi = spans.reduce((a, b) => a > b ? a : b);
+    expect((hi - lo) / lo, lessThan(0.01),
+        reason: 'the engine room sags: $lo..$hi ms');
+    expect(lo, closeTo((n == 3 ? 1.5 : 3) * beatMsOf(scan.tempi), 2));
+  });
+
+  test('the island conductor carries exactly one tempo, start to end', () {
+    // The owner's call after hearing the drop arrive late at every verse
+    // end: a riddim does not bend. Anything the hymn marks as a rit or a
+    // fermata is dropped from the CLOCK — the emitters still mark cadences
+    // with a fill in and a crash out — so every bar is the same length and
+    // the one drop cannot be late anywhere.
+    for (final style in [ArrangeStyle.reggae, ArrangeStyle.calypso]) {
+      final output = arrangeStyle(input, style);
+      final scan = _scan(output);
+      final d = _division(output);
+      expect(scan.tempi.toSet(), hasLength(1),
+          reason: '@D@style bends its tempo: @D@{scan.tempi.toSet()}');
+      final clock = _Clock(scan.tempoMap, d);
+      final barTicks = n * d;
+      final bars = {
+        for (final on in scan.ons)
+          if (on.channel == 9) on.tick ~/ barTicks,
+      }.toList()
+        ..sort();
+      final lengths = <double>[
+        for (final bar in bars)
+          clock.msOf((bar + 1) * barTicks) - clock.msOf(bar * barTicks),
+      ];
+      final lo = lengths.reduce((a, b) => a < b ? a : b);
+      final hi = lengths.reduce((a, b) => a > b ? a : b);
+      expect(hi - lo, lessThan(0.5), reason: '@D@style has uneven bars');
     }
   });
 }
@@ -367,30 +592,46 @@ void _rejectionTests(ArrangeStyle style) {
 
 void main() {
   const reggaeBands = {
-    1: (55, 80), // skank guitar: top-string voicings around middle C
-    3: (36, 64), // organ bubble: LH C2–B2, RH triads C3–C4
+    1: (55, 67), // piano: the chop alone, in the charts' G3–F#4
+    3: (52, 84), // organ: dabs C3–B3, the held chord C5–B5
   };
   const calypsoBands = {
     1: (55, 80), // pan strum double stops, researched G3–E5 band
     3: (55, 80), // vibraphone shimmer doubles the strum stroke for stroke
   };
-  const reggaeKeys = {36, 37, 42, 44, 46, 54}; // kick, rim, hats, tambourine
+  // The one drop is GM 35 + 36 layered under the cross-stick 37, as the
+  // reference chart voices it (see _drop); closed hats, tambourine and the
+  // maracas eighths make up the rest. No open hat: heard as "a heavy
+  // metallic-sounding instrument... very loud and obnoxious".
+  const reggaeKeys = {35, 36, 37, 42, 54, 70};
   const calypsoKeys = {36, 37, 42, 56, 70, 75}; // kit + cowbell/maracas/claves
 
   group('arrangeStyle(reggae) on assets/midi/016.mid (4/4)', () {
+    // fidelity off: in the beat reading a bar-start window holds the bass
+    // root, the piano's root octave, an organ root+fifth dab and the
+    // melody — beat 1 carrying no full chord IS the one drop (see
+    // _emitReggae) — which is under-determined for the detector even
+    // when the sounding harmony is right.
     _styleTests('assets/midi/016.mid', ArrangeStyle.reggae,
         pitchedChannels: {0, 1, 2, 3},
         percussionKeys: reggaeKeys,
-        registerBands: reggaeBands);
+        registerBands: reggaeBands,
+        fidelity: false);
     _oneDropTests('assets/midi/016.mid');
+    _steadyBeatTests('assets/midi/016.mid');
   });
 
-  group('arrangeStyle(reggae) on assets/midi/001.mid (3/4)', () {
+  group('arrangeStyle(reggae) on assets/midi/001.mid (3/4, played in four)', () {
+    // fidelity off: the render's bars are a beat longer than the hymn's,
+    // so bar-start sampling no longer lines up between the two.
     _styleTests('assets/midi/001.mid', ArrangeStyle.reggae,
         pitchedChannels: {0, 1, 2, 3},
         percussionKeys: reggaeKeys,
-        registerBands: reggaeBands);
+        registerBands: reggaeBands,
+        fidelity: false,
+        playedInFour: true);
     _oneDropTests('assets/midi/001.mid');
+    _steadyBeatTests('assets/midi/001.mid');
   });
 
   group('arrangeStyle(calypso) on assets/midi/016.mid (4/4)', () {
@@ -441,16 +682,18 @@ void main() {
       expect(calypsoScan.programs[3], {11});
     });
 
-    test('the skank varies single and double chops (the chack-a)', () {
+    test('the skank is single: one chop per off-pulse, never a double', () {
+      // The owner heard the "chack-a" double, applied to every bar, as the
+      // whole groove turning into a double skank. Every chop now lands
+      // squarely on its pulse and nothing follows it inside the pulse.
       final d = _division(reggae);
-      final offsets = {
-        for (final on in reggaeScan.ons)
-          if (on.channel == 1) on.tick % d,
-      };
-      // The double lands a sixteenth after the chop: at the straight "a"
-      // (d/4 past an on-beat chop) in half-time, at the swung "a" (4d/5
-      // into the beat) in full time.
-      expect(offsets.intersection({d ~/ 4, 4 * d ~/ 5}), isNotEmpty);
+      final n = detectChords(input)!.beatsPerBar;
+      final pulse = _reggaePulse(reggaeScan.tempi, d, n);
+      final p = pulse.dropBeats == 2 ? d : d ~/ 2;
+      for (final on in reggaeScan.ons) {
+        if (on.channel != 1) continue;
+        expect(on.tick % p, 0, reason: 'piano off the pulse grid');
+      }
     });
 
     test('the melody outweighs the comping in both styles', () {
@@ -492,15 +735,22 @@ void main() {
       // the map; the closing rits survive only down to the 70% floor.
       final h15 = Uint8List.fromList(
           File('assets/midi/015.mid').readAsBytesSync());
-      final scan = _scan(arrangeStyle(h15, ArrangeStyle.reggae));
-      final bpms = scan.tempi.map((us) => 6e7 / us).toList();
+      // Reggae takes the dominant and holds it — one marking, no rits.
+      final reggae = _scan(arrangeStyle(h15, ArrangeStyle.reggae));
+      final rBpms = reggae.tempi.map((us) => 6e7 / us).toList();
+      expect(rBpms.toSet(), hasLength(1));
+      expect(rBpms.first.round(), 121);
+      // Gospel still rides the hymn's rubato, clamped into the band and
+      // ramped: no single jump between adjacent tempo events may exceed
+      // ~15% (a hard step under the groove reads as a stutter).
+      final bpms = _scan(arrangeStyle(h15, ArrangeStyle.gospel))
+          .tempi
+          .map((us) => 6e7 / us)
+          .toList();
       expect(bpms.first.round(), 121);
       expect(bpms.reduce((a, b) => a > b ? a : b).round(), 121);
       expect(bpms.reduce((a, b) => a < b ? a : b),
           greaterThanOrEqualTo(121 * 0.7 - 0.5));
-      // The adaptive beat: transitions ramp in sub-steps — no single jump
-      // between adjacent tempo events may exceed ~15% (a hard step under
-      // the groove reads as a stutter).
       for (var i = 1; i < bpms.length; i++) {
         final ratio =
             bpms[i] > bpms[i - 1] ? bpms[i] / bpms[i - 1] : bpms[i - 1] / bpms[i];
@@ -512,13 +762,14 @@ void main() {
       // The ticker consumes positions of the PLAYING file. Hymn 15's
       // original map starts at 240 BPM (chords flew by early — "didn't
       // hear the first 2 chords") and ends in deep rits (the indicator
-      // outlived the audio). Retimed: the opening chords sit LATER than
-      // raw (slowed to 121) and the final measure lands EARLIER (rits
-      // clamped to the 70% floor).
+      // outlived the audio). Retimed onto the reggae render's FLAT map:
+      // the opening chords sit LATER than raw (slowed to 121) and the final
+      // measure lands EARLIER (the closing rits are gone from the clock).
       final h15 = Uint8List.fromList(
           File('assets/midi/015.mid').readAsBytesSync());
       final raw = detectChords(h15)!;
-      final retimed = retimeTrackForArrangement(h15, raw);
+      final retimed =
+          retimeTrackForArrangement(h15, raw, ArrangeStyle.reggae);
       expect(retimed.chords.length, raw.chords.length);
       expect(retimed.measureStartMs.length, raw.measureStartMs.length);
       expect(retimed.chords.first.startMs,
@@ -625,12 +876,16 @@ void main() {
         }
         final scan = _scan(output);
         final d = _division(output);
-        final barTicks = detectChords(input)!.beatsPerBar * d;
+        // Reggae plays a 3/4 hymn in four: read the meter off the render.
+        final barTicks = detectChords(output)!.beatsPerBar * d;
 
-        // The one drop's law: kick only ever on the drop beat.
+        // The one drop's law: the kicks only ever on a drop pulse.
+        final pulse =
+            _reggaePulse(scan.tempi, d, detectChords(output)!.beatsPerBar);
         for (final on in scan.ons) {
-          if (on.channel == 9 && on.pitch == 36) {
-            expect(on.tick % barTicks, 2 * d,
+          if (on.channel != 9) continue;
+          if (on.pitch == 35 || on.pitch == 36) {
+            expect(pulse.dropOffsets, contains(on.tick % barTicks),
                 reason: 'hymn $hymn: kick off the drop');
           }
         }

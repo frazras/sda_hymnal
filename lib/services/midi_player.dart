@@ -161,15 +161,18 @@ class MidiPlayer {
   }
 
   /// The chord track as the UI must time it. Raw detection is timed on the
-  /// hymn's ORIGINAL tempo map, but arranged themes play a render whose
-  /// map is reshaped (clamped) by the arranger — so their chords are
-  /// remapped onto the render's timeline, or the ticker runs ahead of the
-  /// audio at fast openers and outlives it through closing rits (#15).
+  /// hymn's ORIGINAL tempo map, but arranged themes play a render whose map
+  /// the arranger reshapes — clamped for gospel, flattened outright for the
+  /// island styles — so their chords are remapped onto the render's own
+  /// timeline, or the ticker runs ahead of the audio at fast openers and
+  /// outlives it through closing rits (#15). The remap must be told which
+  /// style is playing, because the two reshape the timeline differently.
   ChordTrack? _displayTrack(Uint8List bytes, ChordTrack? raw) {
     if (raw == null) return null;
-    if (_arrangedThemes[InstrumentTheme.instance.value] == null) return raw;
+    final arranged = _arrangedThemes[InstrumentTheme.instance.value];
+    if (arranged == null) return raw;
     try {
-      return retimeTrackForArrangement(bytes, raw);
+      return retimeTrackForArrangement(bytes, raw, arranged.$1);
     } on FormatException {
       return raw;
     }
@@ -205,7 +208,7 @@ class MidiPlayer {
   /// Bump when render output changes for the same (hymn, shift, theme) —
   /// e.g. theme program retunes or arranger revisions — so stale caches
   /// from earlier app versions are bypassed.
-  static const int _renderVersion = 10;
+  static const int _renderVersion = 22;
 
   /// Generated-arrangement themes: the [ArrangeStyle] behind each theme id,
   /// plus the GM program of the plain remap used when a file has no
