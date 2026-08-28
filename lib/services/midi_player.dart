@@ -9,6 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
+import 'package:sdahymnal/services/midi_cache.dart';
+import 'package:sdahymnal/services/midi_render.dart';
 import 'package:sdahymnal/services/style_arranger.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
@@ -169,7 +171,7 @@ class MidiPlayer {
   /// style is playing, because the two reshape the timeline differently.
   ChordTrack? _displayTrack(Uint8List bytes, ChordTrack? raw) {
     if (raw == null) return null;
-    final arranged = _arrangedThemes[InstrumentTheme.instance.value];
+    final arranged = arrangedMidiThemes[InstrumentTheme.instance.value];
     if (arranged == null) return raw;
     try {
       return retimeTrackForArrangement(bytes, raw, arranged.$1);
@@ -201,70 +203,20 @@ class MidiPlayer {
     return DeviceFileSource((await _renderFile(n)).path);
   }
 
-  /// File for hymn [n] under the current transpose + instrument theme,
-  /// cached in the temp dir per (hymn, shift, theme). At the defaults (no
-  /// shift, Classic) the raw asset bytes are materialized verbatim (e.g.
-  /// 001_t0_classic.mid) — the iOS channel engine can only load real files.
-  /// Bump when render output changes for the same (hymn, shift, theme) —
-  /// e.g. theme program retunes or arranger revisions — so stale caches
-  /// from earlier app versions are bypassed.
-  static const int _renderVersion = 22;
+  late final Future<MidiRenderCache> _renderCache = getTemporaryDirectory()
+      .then((dir) => MidiRenderCache(Directory('${dir.path}/midi_cache')));
 
-  /// Generated-arrangement themes: the [ArrangeStyle] behind each theme id,
-  /// plus the GM program of the plain remap used when a file has no
-  /// detectable harmony to arrange (gospel falls back to Rhodes; reggae to
-  /// drawbar organ, the church instrument of its palette; calypso to steel
-  /// drums — Trinidadian steel orchestras play hymns straight).
-  static const Map<String, (ArrangeStyle, int)> _arrangedThemes = {
-    'gospel': (ArrangeStyle.gospel, 4),
-    'reggae': (ArrangeStyle.reggae, 16),
-    'calypso': (ArrangeStyle.calypso, 114),
-  };
-
+  /// Snapshot options before awaiting storage so rapid theme/key changes
+  /// cannot save one arrangement under another arrangement's cache key.
   Future<File> _renderFile(int n) async {
     final semis = transpose.value;
-    final theme = InstrumentTheme.instance;
-    final dir = Directory('${(await getTemporaryDirectory()).path}/midi_cache');
-    final name =
-        '${n.toString().padLeft(3, '0')}_t${semis}_${theme.value}_v$_renderVersion.mid';
-    final file = File('${dir.path}/$name');
-    if (!await file.exists()) {
-      final bytes = await _assetBytes(n);
-      final Uint8List out;
-      if (semis == 0 && !theme.transforms) {
-        out = bytes;
-      } else if (_arrangedThemes[theme.value] != null) {
-        // Generated accompaniment: melody preserved, backing rearranged from
-        // the detected chords. Transposition composes on the arranged bytes.
-        final (style, fallbackProgram) = _arrangedThemes[theme.value]!;
-        Uint8List arranged;
-        try {
-          // The iOS engine plays GeneralUser's keyboards 11-17 dB hot (it
-          // ignores the soundfont's preset attenuation); the reggae render
-          // carries the measured CC 7 correction on that engine only. See
-          // reggaeVolumesForAppleSynth.
-          arranged = arrangeStyle(bytes, style,
-              channelVolumes: _useChannel && style == ArrangeStyle.reggae
-                  ? reggaeVolumesForAppleSynth
-                  : const {});
-        } on FormatException {
-          // No detectable harmony: degrade to a plain single-program remap.
-          arranged = transformMidi(bytes, forceProgram: fallbackProgram);
-        }
-        out = semis == 0
-            ? arranged
-            : transformMidi(arranged, semitones: semis);
-      } else {
-        out = transformMidi(
-          bytes,
-          semitones: semis,
-          forceProgram: theme.program,
-        );
-      }
-      await dir.create(recursive: true);
-      await file.writeAsBytes(out, flush: true);
-    }
-    return file;
+    final theme = InstrumentTheme.instance.value;
+    final program = InstrumentTheme.instance.program;
+    final name = MidiRenderCache.filename(hymn: n, semitones: semis,
+        theme: theme, forceProgram: program, forAppleSynth: _useChannel);
+    return (await _renderCache).getOrCreate(name, () async => renderHymnMidi(
+        await _assetBytes(n), theme: theme, semitones: semis,
+        forceProgram: program, forAppleSynth: _useChannel));
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.

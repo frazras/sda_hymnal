@@ -56,9 +56,10 @@ class FontSizer extends StatelessWidget {
                                   'body': Style(
                                     margin: Margins.zero,
                                     padding: HtmlPaddings.zero,
-                                    fontFamily: kSerif,
+                                    fontFamily: t.isClassic ? 'Roboto' : kSerif,
                                     fontSize: FontSize(fs),
-                                    lineHeight: const LineHeight(1.7),
+                                    lineHeight:
+                                        LineHeight(t.isClassic ? 1.45 : 1.7),
                                     color: t.ink,
                                   ),
                                 },

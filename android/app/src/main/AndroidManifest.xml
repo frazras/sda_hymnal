@@ -4,7 +4,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
-            android:name=".MainActivity"
+            android:name=".HymnalActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
@@ -20,11 +20,31 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+        </activity>
+        <!-- Preserve the existing launcher component name for upgrades and
+             pinned shortcuts. Only aliases switch; the target stays enabled. -->
+        <activity-alias
+            android:name=".MainActivity"
+            android:targetActivity=".HymnalActivity"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/launcher_icon">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
+        </activity-alias>
+        <activity-alias
+            android:name=".ClassicIcon"
+            android:targetActivity=".HymnalActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_classic">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

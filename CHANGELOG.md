@@ -4,7 +4,32 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
-## 4.1.0 (40100) — unreleased
+## 4.1.1 (40101) — 2026-08-28
+
+- Match the home-screen icon to the selected app design on iOS and Android:
+  original green/black icon for Classic, current icon for Modern. Modern
+  remains the default. Reconcile saved preferences on launch/resume and
+  offer an icon-only retry if the operating system rejects a change.
+- Add Settings → App design → Modern / Classic. Classic restores the
+  pre-redesign logo, top navigation, outlined number pad, search rows and
+  simple reader, while retaining current favorites, font settings and music.
+  The choice persists independently of light/dark mode and instruments.
+- Restore the missing Old Hymnal 533 text (On a Hill Far Away) from an
+  edition-specific web transcription; move the displaced Tell Me the Story
+  of Jesus text back to Old 534. Old 535 and New 533–535 are unchanged.
+  See `docs/classic-design-and-lyrics.md` for sources and verification limits.
+
+- Port the range-scoped piano soundbank from Caribbean Choruses to prevent
+  Apple's sampler from stacking unrelated long-release layers and dropping
+  chord tones. Pair it with the revised iOS reggae piano mix.
+- Share the playback/export renderer; add exact full and piano-only MIDI
+  exports, versioned atomic cache writes, and stale-cache detection.
+- Guard native completions across pause/resume, replacement and replay;
+  preserve a valid player on failed loads and reactivate audio on resume.
+- Add soundbank, cache/export and native lifecycle regression checks plus
+  release-only, data-preserving iPhone installation safeguards.
+
+## 4.1.0 (40100) — 2026-08-23
 
 ### Old Hymnal
 - Verse numbers and **CHORUS** labels, exactly as the New Hymnal shows them. The
@@ -37,11 +62,11 @@ file under `android/fastlane/metadata/android/en-US/changelogs/`.
 - The island styles assume 3- or 4-beat bars; hymns in 6/4, 9/4, 12/4 and
   2-beat meters are not yet handled.
 
-## 4.0.1 (40001) — 2026-08
+## 4.0.1 (40001) — 2026-08-21
 
 - App-specific privacy policy, linked from the About screen.
 
-## 4.0.0 (40000) — 2026-08
+## 4.0.0 (40000) — 2026-08-17
 
 - First release since 2020: the app rebuilt from its Cordova origins as a
   Flutter app, with audio playback, chord tools and generated accompaniment

@@ -4,6 +4,7 @@ import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 
 /// Numbers (home tab) — content-only: the shell renders the brand header
@@ -20,8 +21,7 @@ class Buttons extends StatefulWidget {
   State<Buttons> createState() => _ButtonsState();
 }
 
-class _ButtonsState extends State<Buttons>
-    with SingleTickerProviderStateMixin {
+class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
   static const int _oldMax = 703;
   static const int _newMax = 695;
 
@@ -66,7 +66,8 @@ class _ButtonsState extends State<Buttons>
   // Navigation
   // -------------------------------------------------------------------------
 
-  String _titleFor(List<Hymn> list, int n) => hymnByNumber(list, n)?.title ?? '';
+  String _titleFor(List<Hymn> list, int n) =>
+      hymnByNumber(list, n)?.title ?? '';
 
   void _openHymn({required bool isNew, required int n}) {
     final list = isNew ? widget.hymnsNew : widget.hymnsOld;
@@ -92,6 +93,27 @@ class _ButtonsState extends State<Buttons>
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    if (t.isClassic) {
+      final n = int.tryParse(_display) ?? 0;
+      return ValueListenableBuilder<double>(
+        valueListenable: FontSizeController.instance,
+        builder: (context, fontSize, _) => ClassicNumberPad(
+          display: _display,
+          oldTitle: _titleFor(widget.hymnsOld, n),
+          newTitle: _titleFor(widget.hymnsNew, n),
+          fontSize: fontSize,
+          onDigit: _press,
+          onClear: _clear,
+          onBackspace: _back,
+          onOld: hymnByNumber(widget.hymnsOld, n) == null
+              ? null
+              : () => _open(false),
+          onNew: hymnByNumber(widget.hymnsNew, n) == null
+              ? null
+              : () => _open(true),
+        ),
+      );
+    }
     final vh = MediaQuery.sizeOf(context).height / 100;
     final numSize = (8 * vh).clamp(46.0, 62.0);
     final keyHeight = (6.5 * vh).clamp(44.0, 56.0);
@@ -192,12 +214,11 @@ class _ButtonsState extends State<Buttons>
               for (final (i, r) in recents.take(3).indexed) ...[
                 if (i > 0) const SizedBox(width: 6),
                 Pressable(
-                  onTap: () =>
-                      _openHymn(isNew: r.v.contains('new'), n: r.n),
+                  onTap: () => _openHymn(isNew: r.v.contains('new'), n: r.n),
                   pressedScale: 0.94,
                   builder: (context, pressed) => Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
                       color: t.surface,
                       border: Border.all(color: t.line),

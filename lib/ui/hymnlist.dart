@@ -4,6 +4,7 @@ import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 
 /// Search tab (content-only: the shell renders the brand header above and
@@ -27,6 +28,18 @@ class _HymnListState extends State<HymnList> {
   late List<Hymn> _filteredHymns;
   String _filter = 'ALL';
   String _query = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _setQuery(String query) => setState(() {
+        _query = query;
+        _applyFilter();
+      });
 
   @override
   void initState() {
@@ -112,12 +125,8 @@ class _HymnListState extends State<HymnList> {
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
-              onChanged: (q) {
-                setState(() {
-                  _query = q;
-                  _applyFilter();
-                });
-              },
+              controller: _searchController,
+              onChanged: _setQuery,
               cursorColor: t.accentHi,
               style: TextStyle(
                 fontFamily: kSans,
@@ -194,6 +203,10 @@ class _HymnListState extends State<HymnList> {
     final t = context.tokens;
     final hymn = _filteredHymns[index];
 
+    if (t.isClassic) {
+      return ClassicSearchRow(hymn: hymn, onTap: () => _openHymn(hymn));
+    }
+
     return Pressable(
       onTap: () => _openHymn(hymn),
       pressedScale: 1.0,
@@ -263,8 +276,23 @@ class _HymnListState extends State<HymnList> {
     final t = context.tokens;
     return Column(
       children: [
-        _searchField(t),
-        _chipsRow(t),
+        if (t.isClassic)
+          ClassicSearchControls(
+              controller: _searchController,
+              filter: _filter,
+              onQuery: _setQuery,
+              onFilter: () => setState(() {
+                    _filter = switch (_filter) {
+                      'ALL' => 'OLD',
+                      'OLD' => 'NEW',
+                      _ => 'ALL'
+                    };
+                    _applyFilter();
+                  }))
+        else ...[
+          _searchField(t),
+          _chipsRow(t),
+        ],
         const SizedBox(height: 6),
         Expanded(
           child: ListView.builder(

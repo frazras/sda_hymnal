@@ -25,11 +25,19 @@
 > missing opening line; 234's missing closing line; 169's dropped couplet;
 > 440 is three stanzas, not four, and nothing was missing after all.
 >
-> **STILL OPEN — needs the 1941 Church Hymnal, a different book:** OLD 533
-> (The Old Rugged Cross text is absent entirely), OLD 576 (duplicate
-> stanza), OLD 160/161 (mislabeled cascade).
+> **28 August follow-up:** OLD 533's missing text was restored using a
+> 1941-specific web transcription; the displaced text was returned to OLD
+> 534. These were not verified against physical 1941 pages. See
+> [sources and limits](classic-design-and-lyrics.md#lyric-corrections).
+>
+> **STILL OPEN — needs the 1941 Church Hymnal, a different book:**
+> OLD 576 (duplicate stanza), OLD 160/161 (mislabeled cascade).
 
 ---
+
+The remaining checklist is the historical pre-correction triage, retained
+for context. Its descriptions of missing content are not current status;
+the dated status notes above take precedence.
 
 Everything below was triaged first: anything settleable from the app's own data or from SDA-specific sources **was** settled and is not on this list. What remains genuinely needs the printed page.
 

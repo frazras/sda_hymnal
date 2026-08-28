@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5DA000000000000000000011 /* AppIconBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA000000000000000000012 /* AppIconBridge.swift */; };
+		5DA000000000000000000001 /* GeneralUser-GS-LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5DA000000000000000000002 /* GeneralUser-GS-LICENSE.txt */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -44,6 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5DA000000000000000000012 /* AppIconBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconBridge.swift; sourceTree = "<group>"; };
+		5DA000000000000000000002 /* GeneralUser-GS-LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GeneralUser-GS-LICENSE.txt"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
@@ -62,7 +66,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD186FF20C0F3780DD64E30A /* MidiPlayerBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MidiPlayerBridge.swift; sourceTree = "<group>"; };
-		C1D745CC3CABAE38621E39F4 /* GeneralUser-GS.sf2 */ = {isa = PBXFileReference; includeInIndex = 1; path = "GeneralUser-GS.sf2"; sourceTree = "<group>"; };
+		C1D745CC3CABAE38621E39F4 /* GeneralUser-GS.sf2 */ = {isa = PBXFileReference; includeInIndex = 1; path = "ios-compatible/GeneralUser-GS.sf2"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +134,7 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				9D8731DD651BB58B4B63E6ED /* Resources */,
 				BD186FF20C0F3780DD64E30A /* MidiPlayerBridge.swift */,
+				5DA000000000000000000012 /* AppIconBridge.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -138,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				C1D745CC3CABAE38621E39F4 /* GeneralUser-GS.sf2 */,
+				5DA000000000000000000002 /* GeneralUser-GS-LICENSE.txt */,
 			);
 			name = Resources;
 			path = Resources;
@@ -245,6 +251,7 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				F39BAAE8E56BFBA474CD9989 /* GeneralUser-GS.sf2 in Resources */,
+				5DA000000000000000000001 /* GeneralUser-GS-LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +308,7 @@
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
 				90C75F43C05D73A251608EB2 /* MidiPlayerBridge.swift in Sources */,
+				5DA000000000000000000011 /* AppIconBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +399,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = ClassicIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 8YU2MPH99S;
@@ -571,6 +580,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = ClassicIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 8YU2MPH99S;
@@ -594,6 +604,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = ClassicIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = 8YU2MPH99S;

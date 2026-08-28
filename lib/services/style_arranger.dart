@@ -223,15 +223,20 @@ _Song _stretchWaltz(_Song song) {
 /// reproduce the reggae balance GeneralUser GS actually specifies.
 ///
 /// Measured 2026-08-23 by rendering the same hymn-15 file through both
-/// engines: Apple's AUMIDISynth ignores the soundfont's per-preset
-/// attenuation, so against a reference SF2 renderer its Grand Piano came out
+/// engines: against a reference SF2 renderer the original Grand Piano came out
 /// +17.0 dB, the Rhodes +12.5, the Tonewheel Organ +11.2, the finger bass
 /// -0.1 and the kit -2.6 — the piano chop alone clipping at +5 dBFS. The
 /// owner heard exactly that as "loud and obnoxious... not a regular piano"
 /// through a week of velocity changes that could never reach it. The engine's
-/// CC 7 follows 40·log10(v/127) to the decibel, so these values put every
-/// voice back where the reference renderer — which the owner approved — puts
-/// it, with the kit (which cannot be raised) as the anchor.
+/// CC 7 follows 40·log10(v/127), with the kit as the mix anchor.
+///
+/// The Caribbean Choruses investigation (2026-08-27) isolated an additional
+/// cause: Apple's importer expands disjoint piano sample ranges, stacking
+/// long-release voices until notes drop. The compatible bank fixes those
+/// ranges without changing samples or envelopes. Removing the excess layers
+/// reduces piano power by about 12 dB, so its former CC7=41 becomes 82
+/// (+12.04 dB). Do not apply this value with the old bank. Other corrections
+/// remain as measured; see docs/midi-playback.md for evidence and scope.
 ///
 /// Applied by the iOS player only; Android's synth is a different engine with
 /// a different bank, and the gospel and calypso balances were set by ear on
@@ -239,7 +244,7 @@ _Song _stretchWaltz(_Song song) {
 const Map<int, int> reggaeVolumesForAppleSynth = {
   0: 53, // Rhodes lead:   -15.1 dB
   4: 53, // descant, same voice
-  1: 41, // piano chop:    -19.6 dB
+  1: 82, // piano chop:     -7.6 dB, with the compatible piano bank
   3: 57, // organ:         -13.8 dB
   2: 109, // bass:          -2.6 dB
   9: 127, // kit: the anchor

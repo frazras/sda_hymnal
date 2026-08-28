@@ -4,6 +4,7 @@ import UIKit
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   private var midiPlayerBridge: MidiPlayerBridge?
+  private var appIconBridge: AppIconBridge?
 
   override func application(
     _ application: UIApplication,
@@ -15,6 +16,8 @@ import UIKit
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     midiPlayerBridge = MidiPlayerBridge(
+      messenger: engineBridge.applicationRegistrar.messenger())
+    appIconBridge = AppIconBridge(
       messenger: engineBridge.applicationRegistrar.messenger())
   }
 }

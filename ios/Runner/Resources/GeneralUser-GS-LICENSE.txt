@@ -1,0 +1,57 @@
+GeneralUser GS 2.0.3 BETA - License v2.0
+Copyright 1997-2025 S. Christian Collins
+
+License of the complete work
+
+You may use GeneralUser GS without restriction for your own music creation,
+private or commercial. This SoundFont bank is provided to the community free
+of charge. Please feel free to use it in your software projects, and to modify
+the SoundFont bank or its packaging to suit your needs.
+
+License of contained samples
+
+GeneralUser GS inherits the usage rights of the samples contained within, all
+of which allow full use in music production, including the ability to make
+profit from musical recordings created with GeneralUser GS.
+
+Many of the samples are original, but some were taken from other banks freely
+(and legally) available on the Internet from various SoundFont websites.
+Because GeneralUser GS originated as a personal project with no intention for
+publication, the author cannot be 100% sure where all of the samples
+originated, although none are known to have come from commercially published
+SoundFont packages or sample CDs. The author's understanding of the copyrights
+of all samples is only as good as the information provided by the original
+sources. If you become aware of any restricted samples being used in
+GeneralUser GS, please contact the author so they can be replaced.
+
+This uncertainty may concern you if you intend to use GeneralUser GS in a
+commercial software product. The author has never received any complaint
+regarding sample ownership since publishing the original GeneralUser GS in
+2000 and is not aware of any such complaints received by companies creating
+commercial software products using GeneralUser GS.
+
+More information
+
+If you plan to feature GeneralUser GS on your own website, do not link directly
+to the author's download files. Link to the website or provide your own local
+copy instead.
+
+https://www.schristiancollins.com
+https://www.schristiancollins.com/contact
+
+This readable notice transcribes the license metadata embedded in the bundled
+SoundFont.
+
+Original source: Resources/GeneralUser-GS.sf2
+SHA-256: 9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe
+The original remains unchanged from the owner-provided SDA Hymnal resource.
+
+Bundled derivative: Resources/ios-compatible/GeneralUser-GS.sf2
+SHA-256: 4a51f4cb5919ed9f552d9cb2c6f6b925bf8dcefc07828323ea2f5bf17fb4bc99
+It is bundled in the app under the filename GeneralUser-GS.sf2.
+
+The derivative scopes each Grand Piano preset zone to its own range-clipped
+instrument, preventing Apple's importer from activating unrelated samples.
+All original sample audio, sample headers, envelopes, modulators, other presets,
+and embedded author/license metadata are preserved. It is reproducibly generated
+and checked by tool/prepare_ios_soundfont.py; no samples have been added.

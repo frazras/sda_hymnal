@@ -35,6 +35,7 @@ class HymnPage extends StatefulWidget {
 class _HymnPageState extends State<HymnPage> {
   /// Accumulated horizontal drag distance for the swipe gesture.
   double _dragDx = 0;
+  bool _classicPlayerExpanded = false;
 
   @override
   void initState() {
@@ -42,10 +43,16 @@ class _HymnPageState extends State<HymnPage> {
     // Single recents recording point: every open (keypad, search, chip) and
     // every prev/next/swipe move constructs a new HymnPage, so this covers
     // them all.
-    Recents.instance.push(widget.hymn);
+    // The outgoing Numbers screen may still be building during navigation.
+    // Publish after the frame, not while its recents builder is being built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Recents.instance.push(widget.hymn);
+    });
     // Publishes this hymn's written key for the key pill and resets the
     // transposition when the page moved to a different hymn.
-    MidiPlayer.instance.prepareKey(widget.hymn);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) MidiPlayer.instance.prepareKey(widget.hymn);
+    });
     // Reading is the one place worth fighting the lock timer: the phone is
     // propped up and untouched for a whole hymn. Honours the setting.
     ScreenWake.instance.acquire();
@@ -92,7 +99,10 @@ class _HymnPageState extends State<HymnPage> {
           child: SafeArea(
             child: Column(
               children: [
-                SubPageHeader(
+                if (t.isClassic)
+                  _classicHeader(t)
+                else
+                  SubPageHeader(
                   center: _headerCenter(t),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -102,7 +112,11 @@ class _HymnPageState extends State<HymnPage> {
                     ],
                   ),
                 ),
-                Expanded(
+                if (t.isClassic) ...[
+                  Expanded(child: _scrollArea(t)),
+                  if (MidiPlayer.hasMidi(widget.hymn))
+                    _classicPlayback(t),
+                ] else Expanded(
                   child: Stack(
                     children: [
                       Positioned.fill(child: _scrollArea(t)),
@@ -126,6 +140,37 @@ class _HymnPageState extends State<HymnPage> {
   // -------------------------------------------------------------------------
   // Header
   // -------------------------------------------------------------------------
+
+  Widget _classicHeader(HymnalTokens t) => Container(
+    key: const ValueKey('classic-reader-header'),
+    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: t.line))),
+    child: Row(children: [
+      const BackButton(),
+      Expanded(child: Text(
+        '${widget.hymn.number} ${widget.hymn.title}',
+        textAlign: TextAlign.center,
+        style: TextStyle(color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
+      )),
+      _favoriteButton(t),
+      _fontSizeButton(t),
+    ]),
+  );
+
+  /// Keep the historical uncluttered reader; expose the same working player
+  /// on demand. Old Hymnal lyrics never masquerade as playable New hymns.
+  Widget _classicPlayback(HymnalTokens t) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      TextButton.icon(
+        key: const ValueKey('classic-playback-toggle'),
+        onPressed: () => setState(() => _classicPlayerExpanded = !_classicPlayerExpanded),
+        icon: Icon(_classicPlayerExpanded ? Icons.expand_more : Icons.music_note),
+        label: Text(_classicPlayerExpanded ? 'Hide music controls' : 'Music & playback'),
+      ),
+      if (_classicPlayerExpanded)
+        Padding(padding: const EdgeInsets.fromLTRB(8, 0, 8, 8), child: _playerBar(t)),
+    ],
+  );
 
   Widget _headerCenter(HymnalTokens t) {
     final crumb =
@@ -255,16 +300,18 @@ class _HymnPageState extends State<HymnPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 26, 24, 150),
+              padding: t.isClassic
+                  ? const EdgeInsets.all(16)
+                  : const EdgeInsets.fromLTRB(24, 26, 24, 150),
               child: ValueListenableBuilder<double>(
                 valueListenable: FontSizeController.instance,
                 builder: (context, fontSize, _) => Html(
                   data: styleHymnBody(widget.hymn.body, t, fontSize),
                   style: {
                     'html': Style(
-                      fontFamily: kSerif,
+                      fontFamily: t.isClassic ? 'Roboto' : kSerif,
                       fontSize: FontSize(fontSize),
-                      lineHeight: const LineHeight(1.7),
+                      lineHeight: LineHeight(t.isClassic ? 1.45 : 1.7),
                       color: t.ink,
                     ),
                     'body': Style(
@@ -1107,9 +1154,14 @@ class _HymnPageState extends State<HymnPage> {
             cur != null &&
             cur.n == widget.hymn.number &&
             !cur.paused;
-        return Opacity(
+        return Semantics(
+          button: true,
+          enabled: canPlay,
+          label: isPlaying ? 'Pause hymn' : 'Play hymn',
+          child: Opacity(
           opacity: canPlay ? 1.0 : 0.45,
           child: Pressable(
+            key: const ValueKey('hymn-play-pause'),
             onTap: canPlay
                 ? () => MidiPlayer.instance.toggle(widget.hymn)
                 : null,
@@ -1127,6 +1179,7 @@ class _HymnPageState extends State<HymnPage> {
                   ? HymnalIcons.pauseBars(t.onAccent)
                   : HymnalIcons.playTriangle(t.onAccent),
             ),
+          ),
           ),
         );
       },

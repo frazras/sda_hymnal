@@ -5,6 +5,7 @@ import 'package:sdahymnal/services/api.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/buttons.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/settings.dart';
@@ -23,16 +24,21 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymnsNew = [];
   List<Hymn> _hymnsOld = [];
   int _tab = 0;
+  bool _loadingStarted = false;
 
   @override
-  void initState() {
-    super.initState();
-    _loadHymns();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loadingStarted) {
+      _loadingStarted = true;
+      _loadHymns();
+    }
   }
 
   _loadHymns() async {
     String fileData =
         await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
+    if (!mounted) return;
     setState(() {
       _hymns = HymnApi.allHymnsFromJson(fileData);
       _hymnsNew = _hymns.where((f) => f.version.contains('new')).toList();
@@ -48,7 +54,7 @@ class _TabsState extends State<Tabs> {
         children: [
           // Dark-mode radial glow behind the top of the Numbers screen:
           // radial-gradient(560px 300px at 50% -90px, rgba(30,138,99,0.18), 70%)
-          if (t.isDark && _tab == 0)
+          if (t.isDark && !t.isClassic && _tab == 0)
             Positioned(
               top: -90,
               left: 0,
@@ -75,8 +81,16 @@ class _TabsState extends State<Tabs> {
             bottom: false,
             child: Column(
               children: [
-                BrandHeader(onLogoTap: () => setState(() => _tab = 0)),
+                if (t.isClassic)
+                  ClassicHeader(active: _tab,
+                    onSelect: (i) => setState(() => _tab = i),
+                    onFavorites: () => setState(() => _tab = 2))
+                else
+                  BrandHeader(onLogoTap: () => setState(() => _tab = 0)),
                 Expanded(
+                  // Both surrounding navigation widgets change with design.
+                  // Keep the shared tab subtree when Flutter reconciles them.
+                  key: const ValueKey('shared-tab-content'),
                   child: IndexedStack(
                     index: _tab,
                     children: [
@@ -90,10 +104,13 @@ class _TabsState extends State<Tabs> {
                     ],
                   ),
                 ),
-                HymnalBottomNav(
-                  active: _tab,
-                  onSelect: (i) => setState(() => _tab = i),
-                ),
+                if (t.isClassic)
+                  SizedBox(height: MediaQuery.paddingOf(context).bottom)
+                else
+                  HymnalBottomNav(
+                    active: _tab,
+                    onSelect: (i) => setState(() => _tab = i),
+                  ),
               ],
             ),
           ),

@@ -1,0 +1,4 @@
+Added an optional Classic design that restores the original app layout.
+The app icon now matches your selected design. Modern remains the default.
+Corrected the lyrics for Old Hymnal 533 and 534.
+Improved music caching and playback reliability.

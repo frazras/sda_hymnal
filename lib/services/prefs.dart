@@ -4,7 +4,65 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/services/app_icon.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
+
+/// Layout is independent of brightness and of the MIDI instrument named
+/// "Classic". Existing installs keep Modern until they explicitly opt in.
+enum AppDesign { modern, classic }
+
+class AppDesignController extends ValueNotifier<AppDesign> {
+  AppDesignController._() : super(AppDesign.modern);
+  static final AppDesignController instance = AppDesignController._();
+  final iconBusy = ValueNotifier(false);
+  final iconError = ValueNotifier<String?>(null);
+  Future<void>? _iconSync;
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getString('appDesign') == 'classic'
+        ? AppDesign.classic
+        : AppDesign.modern;
+    iconError.value = null;
+  }
+
+  Future<void> set(AppDesign design) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('appDesign', design.name);
+    value = design;
+    await syncIcon();
+  }
+
+  /// Reconcile after startup/resume too: an existing Classic preference may
+  /// predate alternate icons, or the OS may have refused a previous change.
+  /// Serialize/coalesce requests so a late completion cannot win over the
+  /// latest design. The saved layout remains usable if the launcher fails.
+  Future<void> syncIcon() =>
+      _iconSync ??= _updateIcon().whenComplete(() => _iconSync = null);
+
+  Future<void> _updateIcon() async {
+    iconBusy.value = true;
+    iconError.value = null;
+    try {
+      AppDesign requested;
+      do {
+        requested = value;
+        try {
+          await AppIcon.setDesign(requested.name);
+          if (requested == value) iconError.value = null;
+        } catch (_) {
+          if (requested == value) {
+            iconError.value =
+                'The layout is saved, but the home-screen icon could not be '
+                'updated. Keep the app open and try again.';
+          }
+        }
+      } while (requested != value);
+    } finally {
+      iconBusy.value = false;
+    }
+  }
+}
 
 /// App-wide theme preference: 'light' | 'dark' | 'system'
 /// (SharedPreferences key 'theme', default 'light' to match the mockups).

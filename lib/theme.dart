@@ -25,6 +25,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
   final Color markPipe;
   final Color markPipe2;
   final bool isDark;
+  final bool isClassic;
 
   const HymnalTokens({
     required this.bg,
@@ -48,7 +49,40 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
     required this.markPipe,
     required this.markPipe2,
     required this.isDark,
+    this.isClassic = false,
   });
+
+  /// Original high-contrast, monochrome layout, with an accessible dark
+  /// counterpart. Keep the same semantic tokens for shared playback tools.
+  static HymnalTokens classic(bool dark) {
+    final source = dark ? HymnalTokens.dark : HymnalTokens.light;
+    final ink = dark ? Colors.white : Colors.black;
+    final bg = dark ? const Color(0xFF121212) : Colors.white;
+    return HymnalTokens(
+      isDark: dark,
+      isClassic: true,
+      bg: bg,
+      surface: dark ? const Color(0xFF202020) : Colors.white,
+      surface2: dark ? const Color(0xFF303030) : const Color(0xFFE0E0E0),
+      ink: ink,
+      muted: dark ? Colors.white70 : Colors.black87,
+      faint: dark ? Colors.white60 : Colors.black54,
+      line: dark ? Colors.white54 : Colors.black54,
+      line2: dark ? Colors.white24 : Colors.black12,
+      accent: dark ? source.accent : const Color(0xFF0B6138),
+      accentHi: source.accentHi,
+      deep: source.deep,
+      tint: source.tint,
+      gold: source.gold,
+      goldBg: source.goldBg,
+      key: bg,
+      onAccent: source.onAccent,
+      barBg: bg,
+      markTile: source.markTile,
+      markPipe: source.markPipe,
+      markPipe2: source.markPipe2,
+    );
+  }
 
   static const light = HymnalTokens(
     bg: Color(0xFFFAFAF7),
@@ -103,9 +137,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
       ? const []
       : const [
           BoxShadow(
-              color: Color(0x0A10150F),
-              offset: Offset(0, 1),
-              blurRadius: 2),
+              color: Color(0x0A10150F), offset: Offset(0, 1), blurRadius: 2),
         ];
 
   /// Floating player bar: `0 8px 24px rgba(16,21,15,0.1)`, light only.
@@ -113,9 +145,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
       ? const []
       : const [
           BoxShadow(
-              color: Color(0x1A10150F),
-              offset: Offset(0, 8),
-              blurRadius: 24),
+              color: Color(0x1A10150F), offset: Offset(0, 8), blurRadius: 24),
         ];
 
   /// Primary CTA button: `0 4px 14px rgba(23,106,80,0.3)`, light only.
@@ -123,9 +153,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
       ? const []
       : const [
           BoxShadow(
-              color: Color(0x4D176A50),
-              offset: Offset(0, 4),
-              blurRadius: 14),
+              color: Color(0x4D176A50), offset: Offset(0, 4), blurRadius: 14),
         ];
 
   /// Accent play button: `0 4px 12px rgba(23,106,80,0.35)`, light only.
@@ -133,9 +161,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
       ? const []
       : const [
           BoxShadow(
-              color: Color(0x59176A50),
-              offset: Offset(0, 4),
-              blurRadius: 12),
+              color: Color(0x59176A50), offset: Offset(0, 4), blurRadius: 12),
         ];
 
   /// Slider thumb: `0 2px 6px rgba(16,21,15,0.18)`, light only.
@@ -143,9 +169,7 @@ class HymnalTokens extends ThemeExtension<HymnalTokens> {
       ? const []
       : const [
           BoxShadow(
-              color: Color(0x2E10150F),
-              offset: Offset(0, 2),
-              blurRadius: 6),
+              color: Color(0x2E10150F), offset: Offset(0, 2), blurRadius: 6),
         ];
 
   @override
@@ -163,8 +187,11 @@ const kSerif = 'Literata';
 /// CSS letter-spacing `em` → Flutter logical px for the given font size.
 double trackingEm(double em, double fontSize) => em * fontSize;
 
-ThemeData buildHymnalTheme(HymnalTokens t) {
-  final base = t.isDark ? ThemeData.dark() : ThemeData.light();
+ThemeData buildHymnalTheme(HymnalTokens t, {bool classic = false}) {
+  if (classic) t = HymnalTokens.classic(t.isDark);
+  final base = t.isDark
+      ? ThemeData.dark(useMaterial3: !classic)
+      : ThemeData.light(useMaterial3: !classic);
   return base.copyWith(
     scaffoldBackgroundColor: t.bg,
     splashFactory: NoSplash.splashFactory,
@@ -178,7 +205,7 @@ ThemeData buildHymnalTheme(HymnalTokens t) {
       onSurface: t.ink,
     ),
     textTheme: base.textTheme.apply(
-      fontFamily: kSans,
+      fontFamily: classic ? 'Roboto' : kSans,
       bodyColor: t.ink,
       displayColor: t.ink,
     ),

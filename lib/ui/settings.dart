@@ -24,6 +24,9 @@ class Settings extends StatelessWidget {
       children: [
         const SectionLabel('APPEARANCE',
             padding: EdgeInsets.fromLTRB(24, 18, 24, 8)),
+        _card(t, padding: const EdgeInsets.all(16),
+          child: const _DesignSelector()),
+        const SizedBox(height: 10),
         _card(
           t,
           padding: const EdgeInsets.all(12),
@@ -237,7 +240,7 @@ class Settings extends StatelessWidget {
       decoration: BoxDecoration(
         color: t.surface,
         border: Border.all(color: t.line),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(t.isClassic ? 4 : 16),
         boxShadow: t.cardShadow,
       ),
       child: child,
@@ -423,6 +426,48 @@ class Settings extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Layout choice is separate from brightness and the instrument theme.
+class _DesignSelector extends StatelessWidget {
+  const _DesignSelector();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return ValueListenableBuilder<AppDesign>(
+      valueListenable: AppDesignController.instance,
+      builder: (context, selected, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('App design', style: TextStyle(color: t.ink,
+            fontWeight: FontWeight.w600, fontSize: 16)),
+          const SizedBox(height: 6),
+          Text('Choose the new look or the familiar original layout.\n'
+            'Your hymns, favorites and music settings stay the same.',
+            style: TextStyle(color: t.muted, fontSize: 13)),
+          const SizedBox(height: 12),
+          Row(children: [
+            for (final design in AppDesign.values) ...[
+              if (design == AppDesign.classic) const SizedBox(width: 12),
+              Expanded(child: Semantics(selected: selected == design,
+                child: OutlinedButton(
+                  key: ValueKey('design-${design.name}'),
+                  onPressed: () => AppDesignController.instance.set(design),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: selected == design ? t.onAccent : t.ink,
+                    backgroundColor: selected == design ? t.accent : t.surface,
+                    minimumSize: const Size(0, 48),
+                  ),
+                  child: Text(design == AppDesign.modern ? 'Modern' : 'Classic'),
+                ),
+              )),
+            ],
+          ]),
+        ],
       ),
     );
   }

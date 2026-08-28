@@ -28,6 +28,29 @@ void main() {
   ];
 
   group('hymns.json integrity', () {
+    test('Old 533–535 have their own correct lyrics, not shifted bodies', () {
+      final cross = hymnByNumber(oldHymns, 533)!;
+      final story = hymnByNumber(oldHymns, 534)!;
+      final finished = hymnByNumber(oldHymns, 535)!;
+      expect(cross.title, 'On a Hill Far Away');
+      expect(cross.body, contains('On a hill far away'));
+      expect(RegExp(r'<b>(\d+)</b>').allMatches(cross.body), hasLength(4));
+      expect(cross.body, contains('CHORUS:'));
+      expect(cross.body, isNot(contains('Tell me the story')));
+      expect(story.body, contains('Tell me the story of Jesus'));
+      expect(RegExp(r'<b>(\d+)</b>').allMatches(story.body), hasLength(3));
+      expect(story.body, isNot(contains("'Tis finished!")));
+      expect(finished.body, contains("'Tis finished!"));
+      expect({cross.body, story.body, finished.body}, hasLength(3));
+    });
+
+    test('New 533–535 retain their separate edition numbering', () {
+      expect(hymnByNumber(newHymns, 533)!.title, 'O for a Faith');
+      expect(hymnByNumber(newHymns, 534)!.title, 'Will Your Anchor Hold');
+      expect(hymnByNumber(newHymns, 535)!.title,
+          'I Am Trusting Thee, Lord Jesus');
+    });
+
     test('no hymnal repeats a number', () {
       for (final (label, list) in [('new', newHymns), ('old', oldHymns)]) {
         final seen = <int>{};
