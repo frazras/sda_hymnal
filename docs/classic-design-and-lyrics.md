@@ -16,8 +16,9 @@ Search / Settings navigation, rectangular outlined keypad with OLD / NEW
 buttons, dark search field with cycling hymnal filter, bordered list rows,
 and a plain lyric reader. Favorites remain accessible from the header.
 Light and dark mode both work. Swipe and keyboard previous/next navigation
-are retained. On New Hymnal pages, “Music & playback” expands the same
-current playback controls; Old Hymnal pages do not claim to have tunes.
+are retained. On New Hymnal pages, the header music-note icon shows or hides
+the current playback controls without stopping the music; Classic starts
+with the player hidden. Old Hymnal pages do not claim to have tunes.
 
 This restores the familiar layout, not the old application's dependencies
 or defects. The current settings, accessible touch targets, data, bounds

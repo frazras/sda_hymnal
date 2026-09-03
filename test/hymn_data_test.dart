@@ -47,8 +47,8 @@ void main() {
     test('New 533–535 retain their separate edition numbering', () {
       expect(hymnByNumber(newHymns, 533)!.title, 'O for a Faith');
       expect(hymnByNumber(newHymns, 534)!.title, 'Will Your Anchor Hold');
-      expect(hymnByNumber(newHymns, 535)!.title,
-          'I Am Trusting Thee, Lord Jesus');
+      expect(
+          hymnByNumber(newHymns, 535)!.title, 'I Am Trusting Thee, Lord Jesus');
     });
 
     test('no hymnal repeats a number', () {
@@ -64,8 +64,10 @@ void main() {
 
     test('the Old Hymnal is complete, 1..703', () {
       final nums = {for (final h in oldHymns) h.number};
-      expect([for (var n = 1; n <= 703; n++) if (!nums.contains(n)) n],
-          isEmpty);
+      expect([
+        for (var n = 1; n <= 703; n++)
+          if (!nums.contains(n)) n
+      ], isEmpty);
     });
 
     test('the New Hymnal is complete, 1..695', () {
@@ -75,8 +77,10 @@ void main() {
       // second setting of "Just as I Am", ending "I come, I come".
       // Restored 2026-08-17 from a photograph of the page.
       final nums = {for (final h in newHymns) h.number};
-      expect([for (var n = 1; n <= 695; n++) if (!nums.contains(n)) n],
-          isEmpty);
+      expect([
+        for (var n = 1; n <= 695; n++)
+          if (!nums.contains(n)) n
+      ], isEmpty);
     });
 
     test('every hymn carries a title and a body', () {
@@ -127,15 +131,18 @@ void main() {
       for (final h in oldHymns) {
         if (!stanzaBreak.hasMatch(h.body)) continue;
         expect(marker.hasMatch(h.body), isTrue,
-            reason: 'old ${h.number} "${h.title}" has stanzas but no verse numbers');
+            reason:
+                'old ${h.number} "${h.title}" has stanzas but no verse numbers');
       }
     });
 
     test('no body keeps a bare "Refrain" or "Chorus" line', () {
-      final bare = RegExp(r'(^|<br>\s*\n?)\s*\(?(Refrain|Chorus)[:.]?\)?\s*(<br>|\n|$)');
+      final bare =
+          RegExp(r'(^|<br>\s*\n?)\s*\(?(Refrain|Chorus)[:.]?\)?\s*(<br>|\n|$)');
       for (final h in hymns) {
         expect(bare.hasMatch(h.body), isFalse,
-            reason: '${h.version} ${h.number} "${h.title}" has an unstyled refrain label');
+            reason:
+                '${h.version} ${h.number} "${h.title}" has an unstyled refrain label');
       }
     });
 
@@ -179,6 +186,67 @@ void main() {
                     'truncated copy of ${b.number}');
           }
         }
+      }
+    });
+  });
+
+  group('reading order', () {
+    final chorus = RegExp(
+        r'<i>\s*<b><font[^>]*>CHORUS:</font></b><br>(?:<i>.*?</i>|(?!</?i>).)*</i>',
+        caseSensitive: false,
+        dotAll: true);
+    final verse = RegExp(r'<font[^>]*><b>\d+</b></font>');
+
+    test('every chorus hymn alternates verse/chorus and ends on a chorus', () {
+      var checked = 0;
+      for (final hymn in hymns) {
+        final sourceChoruses = chorus.allMatches(hymn.body).toList();
+        if (sourceChoruses.isEmpty) {
+          expect(hymn.readingBody, hymn.body);
+          continue;
+        }
+        checked++;
+        final output = hymn.readingBody;
+        final markers = verse.allMatches(output).toList();
+        expect(markers.length, verse.allMatches(hymn.body).length);
+        for (var i = 0; i < markers.length; i++) {
+          final end =
+              i + 1 < markers.length ? markers[i + 1].start : output.length;
+          final stanza = output.substring(markers[i].start, end);
+          expect(chorus.allMatches(stanza), hasLength(1),
+              reason: '${hymn.version} ${hymn.number} verse ${i + 1}');
+        }
+        expect(output.trim(), endsWith('</i>'));
+        expect(repeatChoruses(output), output, reason: 'must be idempotent');
+        // Every source verse survives intact apart from empty separators.
+        String lyricsOnly(String html) => html.replaceAllMapped(chorus, (m) {
+              final block = m.group(0)!;
+              final nextVerse = verse.firstMatch(block);
+              return nextVerse == null ? '' : block.substring(nextVerse.start);
+            }).replaceAll(RegExp(r'<[^>]*>|\s'), '');
+        expect(lyricsOnly(output), lyricsOnly(hymn.body));
+      }
+      expect(checked, greaterThan(350));
+    });
+
+    test('Old 103 retains its different final refrain', () {
+      final output = hymnByNumber(oldHymns, 103)!.readingBody;
+      expect('O come to my heart, Lord Jesus'.allMatches(output), hasLength(4));
+      expect('My heart shall rejoice, Lord Jesus'.allMatches(output),
+          hasLength(1));
+      expect(
+          output, endsWith('When Thou comest and callest for me.<br>\n</i>'));
+    });
+
+    test(
+        'inline italics, unnumbered songs and malformed choruses are untouched',
+        () {
+      for (final body in [
+        'A single verse<br><i>softly</i>',
+        '<font color="#0B6138"><b>1</b></font><br><i>CHORUS: unfinished',
+        '<i><b><font color="#CD9B1D">CHORUS:</font></b><br>Response</i>',
+      ]) {
+        expect(repeatChoruses(body), body);
       }
     });
   });

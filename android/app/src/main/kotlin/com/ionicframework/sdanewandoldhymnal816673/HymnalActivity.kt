@@ -56,8 +56,7 @@ class HymnalActivity : FlutterActivity() {
                 PackageManager.ComponentEnabledSetting(other, disabled, flags),
             ))
         } else {
-            // Never leave the app without an enabled launcher entry, even
-            // during the two calls required on Android 12 and earlier.
+            // Keep a launcher entry enabled throughout the switch.
             try {
                 packageManager.setComponentEnabledSetting(selected, enabled, flags)
                 packageManager.setComponentEnabledSetting(other, disabled, flags)

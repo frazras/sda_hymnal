@@ -15,10 +15,13 @@ import 'package:sdahymnal/services/screen_wake.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
+import 'package:sdahymnal/ui/hymn_story_page.dart';
+import 'package:sdahymnal/ui/hymn_video_overlay.dart';
 
 /// Hymn reading page (full-screen sub-page, pushed with slideRoute).
 ///
-/// Header: crumb + number/title stack, favorite heart, "Aa" shortcut.
+/// Header: crumb + number/title stack, player visibility, favorite, "Aa".
 /// Body: hymn HTML at the user's font size, max-width 560, centered.
 /// Floating player bar: prev/next, key pill (transpose sheet), seek ±10,
 /// play/pause, speed pill — key/play/speed dimmed on Old-Hymnal pages.
@@ -32,10 +35,15 @@ class HymnPage extends StatefulWidget {
   State<HymnPage> createState() => _HymnPageState();
 }
 
+enum _ReaderAction { video, player, scrollSpeed, favorite, fontSize }
+
 class _HymnPageState extends State<HymnPage> {
   /// Accumulated horizontal drag distance for the swipe gesture.
   double _dragDx = 0;
-  bool _classicPlayerExpanded = false;
+  bool _videoVisible = false;
+  final _autoScrollController = HymnAutoScrollController();
+
+  bool get _showPlayer => MusicPlayerVisible.instance.value;
 
   @override
   void initState() {
@@ -62,10 +70,18 @@ class _HymnPageState extends State<HymnPage> {
   void dispose() {
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
-    MidiPlayer.instance.stopIfCurrent(widget.hymn.number);
+    MidiPlayer.instance.stopIfCurrent(widget.hymn);
     ScreenWake.instance.release();
     super.dispose();
   }
+
+  void _showVideo() {
+    if (widget.hymn.video == null) return;
+    MidiPlayer.instance.stopIfCurrent(widget.hymn);
+    setState(() => _videoVisible = true);
+  }
+
+  void _closeVideo() => setState(() => _videoVisible = false);
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
   /// Silently no-ops at the ends of the hymnal (new <= 695, old <= 703).
@@ -103,28 +119,61 @@ class _HymnPageState extends State<HymnPage> {
                   _classicHeader(t)
                 else
                   SubPageHeader(
-                  center: _headerCenter(t),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _favoriteButton(t),
-                      _fontSizeButton(t),
-                    ],
+                    center: _headerCenter(t),
+                    trailing: _headerActions(t),
                   ),
-                ),
-                if (t.isClassic) ...[
-                  Expanded(child: _scrollArea(t)),
-                  if (MidiPlayer.hasMidi(widget.hymn))
-                    _classicPlayback(t),
-                ] else Expanded(
-                  child: Stack(
+                Expanded(
+                  child: Column(
                     children: [
-                      Positioned.fill(child: _scrollArea(t)),
-                      Positioned(
-                        left: 16,
-                        right: 16,
-                        bottom: 18,
-                        child: _playerBar(t),
+                      if (_videoVisible && widget.hymn.video != null)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 360),
+                              child: HymnVideoOverlay(
+                                video: widget.hymn.video!,
+                                onClose: _closeVideo,
+                              ),
+                            ),
+                          ),
+                        ),
+                      Expanded(
+                        child: HymnAutoScroll(
+                          key: ValueKey(
+                              '${widget.hymn.version}-${widget.hymn.number}'),
+                          hymn: widget.hymn,
+                          controller: _autoScrollController,
+                          builder: (controller, scrollControls) => t.isClassic
+                              ? Column(children: [
+                                  Expanded(
+                                      child: _scrollArea(
+                                          t, controller, scrollControls)),
+                                  if (MidiPlayer.hasMidi(widget.hymn) &&
+                                      _showPlayer &&
+                                      !_videoVisible)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                      child: _playerBar(t),
+                                    ),
+                                ])
+                              : Stack(
+                                  children: [
+                                    Positioned.fill(
+                                        child: _scrollArea(
+                                            t, controller, scrollControls)),
+                                    if (_showPlayer && !_videoVisible)
+                                      Positioned(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 18,
+                                        child: _playerBar(t),
+                                      ),
+                                  ],
+                                ),
+                        ),
                       ),
                     ],
                   ),
@@ -142,39 +191,142 @@ class _HymnPageState extends State<HymnPage> {
   // -------------------------------------------------------------------------
 
   Widget _classicHeader(HymnalTokens t) => Container(
-    key: const ValueKey('classic-reader-header'),
-    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: t.line))),
-    child: Row(children: [
-      const BackButton(),
-      Expanded(child: Text(
-        '${widget.hymn.number} ${widget.hymn.title}',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
-      )),
-      _favoriteButton(t),
-      _fontSizeButton(t),
-    ]),
-  );
+        key: const ValueKey('classic-reader-header'),
+        decoration:
+            BoxDecoration(border: Border(bottom: BorderSide(color: t.line))),
+        child: Row(children: [
+          const BackButton(),
+          Expanded(
+              child: Text(
+            '${widget.hymn.number} ${widget.hymn.title}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
+          )),
+          _headerActions(t),
+        ]),
+      );
 
-  /// Keep the historical uncluttered reader; expose the same working player
-  /// on demand. Old Hymnal lyrics never masquerade as playable New hymns.
-  Widget _classicPlayback(HymnalTokens t) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      TextButton.icon(
-        key: const ValueKey('classic-playback-toggle'),
-        onPressed: () => setState(() => _classicPlayerExpanded = !_classicPlayerExpanded),
-        icon: Icon(_classicPlayerExpanded ? Icons.expand_more : Icons.music_note),
-        label: Text(_classicPlayerExpanded ? 'Hide music controls' : 'Music & playback'),
-      ),
-      if (_classicPlayerExpanded)
-        Padding(padding: const EdgeInsets.fromLTRB(8, 0, 8, 8), child: _playerBar(t)),
-    ],
-  );
+  Widget _headerActions(HymnalTokens t) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [_favoriteHeaderButton(t), _readerMenu(t)],
+      );
+
+  Widget _favoriteHeaderButton(HymnalTokens t) =>
+      ValueListenableBuilder<List<({int n, String v})>>(
+        valueListenable: Favorites.instance,
+        builder: (context, _, __) {
+          final favorite = Favorites.instance
+              .contains(widget.hymn.number, widget.hymn.version);
+          return IconButton(
+            key: const ValueKey('hymn-favorite-header-button'),
+            tooltip: favorite ? 'Remove favorite' : 'Add favorite',
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              favorite ? Icons.favorite : Icons.favorite_border,
+              color: favorite ? t.accent : t.ink,
+            ),
+            onPressed: () => Favorites.instance.toggle(widget.hymn),
+          );
+        },
+      );
+
+  Widget _readerMenu(HymnalTokens t) {
+    return ValueListenableBuilder<List<({int n, String v})>>(
+      valueListenable: Favorites.instance,
+      builder: (context, _, __) {
+        final favorite = Favorites.instance
+            .contains(widget.hymn.number, widget.hymn.version);
+        return PopupMenuButton<_ReaderAction>(
+          key: const ValueKey('hymn-reader-options'),
+          tooltip: 'Reader options',
+          color: t.surface,
+          icon: Icon(Icons.more_vert, color: t.ink),
+          onSelected: (action) {
+            switch (action) {
+              case _ReaderAction.video:
+                _showVideo();
+              case _ReaderAction.player:
+                MusicPlayerVisible.instance.set(!_showPlayer);
+                setState(() {});
+              case _ReaderAction.scrollSpeed:
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) _autoScrollController.showControls();
+                });
+              case _ReaderAction.favorite:
+                Favorites.instance.toggle(widget.hymn);
+              case _ReaderAction.fontSize:
+                Navigator.push(context, slideRoute(const FontSizer()));
+            }
+          },
+          itemBuilder: (context) => [
+            if (widget.hymn.video != null)
+              PopupMenuItem(
+                key: const ValueKey('hymn-youtube-button'),
+                value: _ReaderAction.video,
+                child: _menuLabel(
+                  t,
+                  _videoVisible
+                      ? Icons.smart_display
+                      : Icons.smart_display_outlined,
+                  _videoVisible ? 'Restart hymn video' : 'Play hymn video',
+                ),
+              ),
+            if (MidiPlayer.hasMidi(widget.hymn))
+              PopupMenuItem(
+                key: const ValueKey('hymn-player-visibility'),
+                value: _ReaderAction.player,
+                child: _menuLabel(
+                  t,
+                  _showPlayer
+                      ? Icons.music_off_outlined
+                      : Icons.music_note_outlined,
+                  _showPlayer ? 'Hide music player' : 'Show music player',
+                ),
+              ),
+            if (AutoScroll.instance.value && MidiPlayer.hasMidi(widget.hymn))
+              PopupMenuItem(
+                key: const ValueKey('hymn-scroll-speed-menu-item'),
+                value: _ReaderAction.scrollSpeed,
+                child: _menuLabel(t, Icons.speed, 'Scroll speed'),
+              ),
+            PopupMenuItem(
+              key: const ValueKey('hymn-favorite-button'),
+              value: _ReaderAction.favorite,
+              child: _menuLabel(
+                t,
+                favorite ? Icons.favorite : Icons.favorite_border,
+                favorite ? 'Remove favorite' : 'Add favorite',
+              ),
+            ),
+            PopupMenuItem(
+              key: const ValueKey('hymn-font-size-button'),
+              value: _ReaderAction.fontSize,
+              child: _menuLabel(t, Icons.text_fields, 'Text size'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _menuLabel(HymnalTokens t, IconData icon, String label) => Row(
+        children: [
+          Icon(icon, size: 20, color: t.accent),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: t.ink, fontFamily: kSans),
+            ),
+          ),
+        ],
+      );
 
   Widget _headerCenter(HymnalTokens t) {
-    final crumb =
-        widget.hymn.version == 'new' ? 'NEW HYMNAL' : 'OLD HYMNAL';
+    final crumb = widget.hymn.version == 'new' ? 'NEW HYMNAL' : 'OLD HYMNAL';
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -207,9 +359,7 @@ class _HymnPageState extends State<HymnPage> {
             Flexible(
               child: Text(
                 widget.hymn.title,
-                maxLines: 2,
                 textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: kSerif,
                   fontSize: 16.5,
@@ -225,65 +375,12 @@ class _HymnPageState extends State<HymnPage> {
     );
   }
 
-  /// Heart toggle: accent + filled while this hymn is favorited, muted
-  /// outline otherwise. Re-renders via the Favorites notifier.
-  Widget _favoriteButton(HymnalTokens t) {
-    return ValueListenableBuilder<List<({int n, String v})>>(
-      valueListenable: Favorites.instance,
-      builder: (context, _, __) {
-        final favorited = Favorites.instance
-            .contains(widget.hymn.number, widget.hymn.version);
-        return Pressable(
-          onTap: () => Favorites.instance.toggle(widget.hymn),
-          pressedScale: 1.0,
-          builder: (context, pressed) => Container(
-            width: 42,
-            height: 42,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: pressed ? t.surface2 : null,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: HymnalIcons.heart(
-              favorited ? t.accent : t.muted,
-              filled: favorited,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _fontSizeButton(HymnalTokens t) {
-    return Pressable(
-      onTap: () => Navigator.push(context, slideRoute(const FontSizer())),
-      pressedScale: 1.0,
-      builder: (context, pressed) => Container(
-        width: 42,
-        height: 42,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: pressed ? t.surface2 : null,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          'Aa',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: t.muted,
-          ),
-        ),
-      ),
-    );
-  }
-
   // -------------------------------------------------------------------------
   // Body
   // -------------------------------------------------------------------------
 
-  Widget _scrollArea(HymnalTokens t) {
+  Widget _scrollArea(
+      HymnalTokens t, ScrollController controller, Widget scrollControls) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onHorizontalDragStart: (_) => _dragDx = 0,
@@ -296,34 +393,117 @@ class _HymnPageState extends State<HymnPage> {
         }
       },
       child: SingleChildScrollView(
+        key: const ValueKey('hymn-lyrics-scroll'),
+        controller: controller,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: Padding(
               padding: t.isClassic
                   ? const EdgeInsets.all(16)
-                  : const EdgeInsets.fromLTRB(24, 26, 24, 150),
+                  : EdgeInsets.fromLTRB(
+                      24,
+                      16,
+                      24,
+                      _showPlayer && !_videoVisible ? 150 : 26,
+                    ),
               child: ValueListenableBuilder<double>(
                 valueListenable: FontSizeController.instance,
-                builder: (context, fontSize, _) => Html(
-                  data: styleHymnBody(widget.hymn.body, t, fontSize),
-                  style: {
-                    'html': Style(
-                      fontFamily: t.isClassic ? 'Roboto' : kSerif,
-                      fontSize: FontSize(fontSize),
-                      lineHeight: LineHeight(t.isClassic ? 1.45 : 1.7),
-                      color: t.ink,
+                builder: (context, fontSize, _) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: _hymnInfo(t)),
+                        if (AutoScroll.instance.value) ...[
+                          const SizedBox(width: 6),
+                          scrollControls,
+                        ],
+                      ],
                     ),
-                    'body': Style(
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
+                    Html(
+                      data: styleHymnBody(widget.hymn.readingBody, t, fontSize),
+                      style: {
+                        'html': Style(
+                          fontFamily: t.isClassic ? 'Roboto' : kSerif,
+                          fontSize: FontSize(fontSize),
+                          lineHeight: LineHeight(t.isClassic ? 1.45 : 1.7),
+                          color: t.ink,
+                        ),
+                        'body': Style(
+                          margin: Margins.zero,
+                          padding: HtmlPaddings.zero,
+                        ),
+                      },
                     ),
-                  },
+                  ],
                 ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _hymnInfo(HymnalTokens t) {
+    final metadata = widget.hymn.metadata;
+    if (metadata == null) return const SizedBox.shrink();
+    final authors = metadata.authorsFor(
+      widget.hymn.version,
+      widget.hymn.number,
+    );
+    final composers = metadata.composersFor(
+      widget.hymn.version,
+      widget.hymn.number,
+    );
+    final textStyle = TextStyle(
+      fontFamily: kSans,
+      fontSize: 11,
+      height: 1.25,
+      color: t.muted,
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 7),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 5,
+        runSpacing: 0,
+        children: [
+          Text(
+            authors.isEmpty
+                ? 'Words: Not documented'
+                : 'Words: ${authors.join(', ')}',
+            style: textStyle,
+          ),
+          if (composers.isNotEmpty) Text('•', style: textStyle),
+          if (composers.isNotEmpty)
+            Text('Music: ${composers.join(', ')}', style: textStyle),
+          if (metadata.stories.isNotEmpty) Text('•', style: textStyle),
+          if (metadata.stories.isNotEmpty)
+            Semantics(
+              button: true,
+              child: InkWell(
+                key: const ValueKey('hymn-story-link'),
+                onTap: () => Navigator.push(
+                  context,
+                  slideRoute(HymnStoryPage(hymn: widget.hymn)),
+                ),
+                child: Text(
+                  metadata.stories.length == 1
+                      ? 'Read story'
+                      : 'Read ${metadata.stories.length} stories',
+                  style: textStyle.copyWith(
+                    color: t.accent,
+                    decoration: TextDecoration.underline,
+                    decorationColor: t.accent,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -334,6 +514,7 @@ class _HymnPageState extends State<HymnPage> {
 
   Widget _playerBar(HymnalTokens t) {
     return Container(
+      key: const ValueKey('hymn-music-player'),
       // Shadow lives outside the clip so it is not cut off by ClipRRect.
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
@@ -396,10 +577,10 @@ class _HymnPageState extends State<HymnPage> {
 
   /// Thin progress line across the bar while this hymn's MIDI is loaded.
   Widget _progressLine(HymnalTokens t) {
-    return ValueListenableBuilder<({int n, bool paused})?>(
+    return ValueListenableBuilder<MidiPlayback?>(
       valueListenable: MidiPlayer.instance.current,
       builder: (context, cur, _) {
-        if (cur == null || cur.n != widget.hymn.number) {
+        if (!MidiPlayer.isCurrent(cur, widget.hymn)) {
           return const SizedBox.shrink();
         }
         return Padding(
@@ -455,9 +636,8 @@ class _HymnPageState extends State<HymnPage> {
               builder: (context, _, __) {
                 // Simplified once per track/level change (not per position
                 // tick); slots, indexAt sync and beat dots all read it.
-                final track =
-                    simplifyTrack(raw, ChordLevelPref.instance.level);
-                return ValueListenableBuilder<({int n, bool paused})?>(
+                final track = simplifyTrack(raw, ChordLevelPref.instance.level);
+                return ValueListenableBuilder<MidiPlayback?>(
                   valueListenable: MidiPlayer.instance.current,
                   builder: (context, cur, _) => ValueListenableBuilder<int>(
                     valueListenable: MidiPlayer.instance.transpose,
@@ -465,8 +645,7 @@ class _HymnPageState extends State<HymnPage> {
                         ValueListenableBuilder<Duration>(
                       valueListenable: MidiPlayer.instance.position,
                       builder: (context, pos, _) {
-                        final loaded =
-                            cur != null && cur.n == widget.hymn.number;
+                        final loaded = MidiPlayer.isCurrent(cur, widget.hymn);
                         final at =
                             loaded ? track.indexAt(pos.inMilliseconds) : 0;
                         final index = at < 0 ? 0 : at;
@@ -487,8 +666,7 @@ class _HymnPageState extends State<HymnPage> {
                                   final incoming =
                                       child.key == ValueKey<int>(index);
                                   final slide = Tween<Offset>(
-                                    begin:
-                                        Offset(incoming ? 0.35 : -0.35, 0),
+                                    begin: Offset(incoming ? 0.35 : -0.35, 0),
                                     end: Offset.zero,
                                   );
                                   return FadeTransition(
@@ -510,9 +688,7 @@ class _HymnPageState extends State<HymnPage> {
                                             index + slot,
                                             slot,
                                             semis,
-                                            loaded
-                                                ? pos.inMilliseconds
-                                                : -1),
+                                            loaded ? pos.inMilliseconds : -1),
                                       ),
                                   ],
                                 ),
@@ -695,8 +871,8 @@ class _HymnPageState extends State<HymnPage> {
   /// add up to the bar's beats. The measure under the playhead is highlighted
   /// while this hymn is loaded and pulses beat by beat.
   Widget _measureGrid(HymnalTokens t, ChordTrack track, int semis) {
-    final measures = List.generate(
-        track.measureStartMs.length, (_) => <_MeasureBeat>[]);
+    final measures =
+        List.generate(track.measureStartMs.length, (_) => <_MeasureBeat>[]);
     if (measures.isNotEmpty) {
       for (final e in track.chords) {
         for (final b in e.beatMs) {
@@ -709,12 +885,12 @@ class _HymnPageState extends State<HymnPage> {
         beats.sort((a, b) => a.ms - b.ms);
       }
     }
-    return ValueListenableBuilder<({int n, bool paused})?>(
+    return ValueListenableBuilder<MidiPlayback?>(
       valueListenable: MidiPlayer.instance.current,
       builder: (context, cur, _) => ValueListenableBuilder<Duration>(
         valueListenable: MidiPlayer.instance.position,
         builder: (context, pos, _) {
-          final loaded = cur != null && cur.n == widget.hymn.number;
+          final loaded = MidiPlayer.isCurrent(cur, widget.hymn);
           final at = loaded ? track.measureAt(pos.inMilliseconds) : -1;
           return GridView.builder(
             shrinkWrap: true,
@@ -726,8 +902,7 @@ class _HymnPageState extends State<HymnPage> {
             itemCount: measures.length,
             itemBuilder: (context, i) => _measureCell(
                 t, measures[i], track.key, semis,
-                current: i == at,
-                positionMs: loaded ? pos.inMilliseconds : -1),
+                current: i == at, positionMs: loaded ? pos.inMilliseconds : -1),
           );
         },
       ),
@@ -748,9 +923,7 @@ class _HymnPageState extends State<HymnPage> {
   }) {
     Color tone(int ms, {required bool dot}) {
       if (current) {
-        return ms <= positionMs
-            ? t.accent
-            : t.accent.withValues(alpha: 0.35);
+        return ms <= positionMs ? t.accent : t.accent.withValues(alpha: 0.35);
       }
       return dot ? t.ink.withValues(alpha: 0.35) : t.ink;
     }
@@ -808,8 +981,7 @@ class _HymnPageState extends State<HymnPage> {
           width: 38,
           height: 38,
           alignment: Alignment.center,
-          decoration:
-              BoxDecoration(color: t.surface2, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: t.surface2, shape: BoxShape.circle),
           child: HymnalIcons.seek10(t.ink, forward: forward, size: 20),
         ),
       ),
@@ -1105,8 +1277,7 @@ class _HymnPageState extends State<HymnPage> {
     return Opacity(
       opacity: enabled ? 1.0 : 0.45,
       child: Pressable(
-        onTap:
-            enabled ? () => MidiPlayer.instance.setTranspose(target) : null,
+        onTap: enabled ? () => MidiPlayer.instance.setTranspose(target) : null,
         pressedScale: 0.92,
         builder: (context, pressed) => Container(
           width: 42,
@@ -1144,48 +1315,46 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   Widget _playButton(HymnalTokens t) {
-    // MIDI exists for the New Hymnal only; Old-Hymnal pages show the button
+    // Both bundled editions have MIDI; malformed/out-of-range records remain
     // dimmed and inert.
     final canPlay = MidiPlayer.hasMidi(widget.hymn);
-    return ValueListenableBuilder<({int n, bool paused})?>(
+    return ValueListenableBuilder<MidiPlayback?>(
       valueListenable: MidiPlayer.instance.current,
       builder: (context, cur, _) {
         final isPlaying = canPlay &&
-            cur != null &&
-            cur.n == widget.hymn.number &&
-            !cur.paused;
+            MidiPlayer.isCurrent(cur, widget.hymn) &&
+            cur?.paused == false;
         return Semantics(
           button: true,
           enabled: canPlay,
           label: isPlaying ? 'Pause hymn' : 'Play hymn',
           child: Opacity(
-          opacity: canPlay ? 1.0 : 0.45,
-          child: Pressable(
-            key: const ValueKey('hymn-play-pause'),
-            onTap: canPlay
-                ? () => MidiPlayer.instance.toggle(widget.hymn)
-                : null,
-            pressedScale: 0.92,
-            builder: (context, pressed) => Container(
-              width: 44,
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: t.accent,
-                shape: BoxShape.circle,
-                boxShadow: t.playShadow,
+            opacity: canPlay ? 1.0 : 0.45,
+            child: Pressable(
+              key: const ValueKey('hymn-play-pause'),
+              onTap: canPlay
+                  ? () => MidiPlayer.instance.toggle(widget.hymn)
+                  : null,
+              pressedScale: 0.92,
+              builder: (context, pressed) => Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: t.accent,
+                  shape: BoxShape.circle,
+                  boxShadow: t.playShadow,
+                ),
+                child: isPlaying
+                    ? HymnalIcons.pauseBars(t.onAccent)
+                    : HymnalIcons.playTriangle(t.onAccent),
               ),
-              child: isPlaying
-                  ? HymnalIcons.pauseBars(t.onAccent)
-                  : HymnalIcons.playTriangle(t.onAccent),
             ),
-          ),
           ),
         );
       },
     );
   }
-
 }
 
 /// One beat slot of a chord-chart measure cell: the beat's media-time ms,

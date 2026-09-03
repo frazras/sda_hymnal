@@ -55,6 +55,62 @@ MidiKey? readKeySignature(Uint8List bytes) {
   return null;
 }
 
+/// Full format-0/1 MIDI timeline at 1x speed, including trailing rests and
+/// percussion. Integrates every tempo change across all tracks; absent tempo
+/// events use the SMF default of 120 BPM. This does not require an audio engine.
+/// Unsupported timing/formats and malformed data throw [FormatException].
+Duration readMidiDuration(Uint8List bytes) {
+  final chunks = _readChunks(bytes);
+  final header = chunks.first.data;
+  if (header.length < 6) throw const FormatException('Short MIDI header');
+  final format = (header[0] << 8) | header[1];
+  final count = (header[2] << 8) | header[3];
+  final division = (header[4] << 8) | header[5];
+  final tracks = chunks.where((c) => c.id == 'MTrk').toList();
+  if (format > 1 ||
+      count == 0 ||
+      tracks.length != count ||
+      (format == 0 && count != 1)) {
+    throw const FormatException('Unsupported MIDI format or track count');
+  }
+  if (division == 0 || division & 0x8000 != 0) {
+    throw const FormatException('Unsupported MIDI timing division');
+  }
+  final tempi = <({int tick, int micros, int order})>[];
+  var endTick = 0;
+  for (final track in tracks) {
+    var tick = 0;
+    for (final event in _trackEvents(track.data)) {
+      tick += _readVarLen(event.delta, 0).$1;
+      if (event.status != 0xff) continue;
+      if (event.body[0] == 0x2f) break;
+      if (event.body[0] != 0x51) continue;
+      final (length, at) = _readVarLen(event.body, 1);
+      if (length != 3) throw const FormatException('Invalid MIDI tempo');
+      final micros = (event.body[at] << 16) |
+          (event.body[at + 1] << 8) |
+          event.body[at + 2];
+      if (micros == 0) throw const FormatException('Zero MIDI tempo');
+      tempi.add((tick: tick, micros: micros, order: tempi.length));
+    }
+    if (tick > endTick) endTick = tick;
+  }
+  tempi.sort((a, b) =>
+      a.tick != b.tick ? a.tick.compareTo(b.tick) : a.order.compareTo(b.order));
+  var tick = 0;
+  var microsPerQuarter = 500000;
+  // Accumulate integer tick*tempo products before dividing, avoiding drift
+  // from rounding each tempo segment separately.
+  var elapsed = 0;
+  for (final tempo in tempi) {
+    elapsed += (tempo.tick - tick) * microsPerQuarter;
+    tick = tempo.tick;
+    microsPerQuarter = tempo.micros;
+  }
+  elapsed += (endTick - tick) * microsPerQuarter;
+  return Duration(microseconds: (elapsed / division).round());
+}
+
 /// Name of the key [semitones] above [original]. Transposed tonics prefer
 /// flat spellings ([_flatNames]); [semitones] == 0 keeps the original name.
 String transposedKeyLabel(MidiKey original, int semitones) {
@@ -128,7 +184,8 @@ Uint8List transformMidi(
   for (final chunk in chunks) {
     var data = chunk.data;
     if (chunk.id == 'MTrk') {
-      data = _rewriteTrack(data, semitones, programFor, insertions[t] ?? const []);
+      data =
+          _rewriteTrack(data, semitones, programFor, insertions[t] ?? const []);
       t++;
     }
     out.add(_chunkHeader(chunk.id, data.length));
@@ -154,7 +211,9 @@ Uint8List _rewriteTrack(
     final ch = e.status & 0x0F;
     final percussion = ch == _percussionChannel;
     var body = e.body;
-    if ((hi == 0x80 || hi == 0x90 || hi == 0xA0) && !percussion && semitones != 0) {
+    if ((hi == 0x80 || hi == 0x90 || hi == 0xA0) &&
+        !percussion &&
+        semitones != 0) {
       body = Uint8List.fromList(body);
       body[0] = (body[0] + semitones).clamp(0, 127);
     } else if (hi == 0xC0 && !percussion && programFor(ch) != null) {
@@ -283,8 +342,8 @@ Iterable<_MidiEvent> _trackEvents(Uint8List data) sync* {
           'Unexpected status byte 0x${status.toRadixString(16)}');
     }
     if (i > data.length) throw const FormatException('Event overruns track');
-    yield _MidiEvent(
-        delta, hasStatusByte, status, Uint8List.sublistView(data, bodyStart, i));
+    yield _MidiEvent(delta, hasStatusByte, status,
+        Uint8List.sublistView(data, bodyStart, i));
   }
 }
 

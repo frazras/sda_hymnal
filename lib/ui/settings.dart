@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
+import 'package:sdahymnal/models/release_notes.dart';
 import 'package:sdahymnal/services/prefs.dart';
+import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/about.dart';
 import 'package:sdahymnal/ui/common.dart';
-import 'package:sdahymnal/ui/donate.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
 import 'package:sdahymnal/ui/sp.dart';
 
 /// Settings tab — content only (the shell renders the brand header above and
-/// the bottom nav below). Sections: APPEARANCE (theme segmented control),
-/// READING (font size row), SOUND (instrument theme row + picker sheet),
-/// MORE (about / donate / other projects), footer.
+/// the bottom nav below). Sections: READING, SOUND, APPEARANCE, MORE, footer.
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
@@ -20,20 +19,11 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return ListView(
+      key: const ValueKey('settings-list'),
       padding: const EdgeInsets.only(bottom: 20),
       children: [
-        const SectionLabel('APPEARANCE',
-            padding: EdgeInsets.fromLTRB(24, 18, 24, 8)),
-        _card(t, padding: const EdgeInsets.all(16),
-          child: const _DesignSelector()),
-        const SizedBox(height: 10),
-        _card(
-          t,
-          padding: const EdgeInsets.all(12),
-          child: const _ThemeSegmentedControl(),
-        ),
         const SectionLabel('READING',
-            padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+            padding: EdgeInsets.fromLTRB(24, 18, 24, 8)),
         _card(
           t,
           child: Column(
@@ -72,10 +62,21 @@ class Settings extends StatelessWidget {
                 leading: HymnalIcons.sun(t.muted),
                 title: 'Keep screen on',
                 subtitle: 'Stay awake while a hymn is open',
+                divider: true,
                 trailing: _MiniSwitch(KeepScreenOn.instance),
                 chevron: false,
                 onTap: () =>
                     KeepScreenOn.instance.set(!KeepScreenOn.instance.value),
+              ),
+              _SettingsRow(
+                leading: Icon(Icons.vertical_align_bottom, color: t.muted),
+                title: 'Auto-scroll',
+                subtitle:
+                    'Follow the hymn automatically, with or without music',
+                trailing: _MiniSwitch(AutoScroll.instance),
+                chevron: false,
+                onTap: () =>
+                    AutoScroll.instance.set(!AutoScroll.instance.value),
               ),
             ],
           ),
@@ -160,8 +161,17 @@ class Settings extends StatelessWidget {
             ],
           ),
         ),
-        const SectionLabel('MORE',
+        const SectionLabel('APPEARANCE',
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        _card(t,
+            padding: const EdgeInsets.all(16), child: const _DesignSelector()),
+        const SizedBox(height: 10),
+        _card(
+          t,
+          padding: const EdgeInsets.all(12),
+          child: const _ThemeSegmentedControl(),
+        ),
+        const SectionLabel('MORE', padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(
           t,
           child: Column(
@@ -171,16 +181,14 @@ class Settings extends StatelessWidget {
                 title: 'About Us',
                 subtitle: 'Who made this app?',
                 divider: true,
-                onTap: () =>
-                    Navigator.push(context, slideRoute(const About())),
+                onTap: () => Navigator.push(context, slideRoute(const About())),
               ),
               _SettingsRow(
-                leading: HymnalIcons.heart(t.muted),
-                title: 'Donate',
-                subtitle: 'Support the development',
+                leading: Icon(Icons.new_releases_outlined, color: t.muted),
+                title: 'What’s new',
+                subtitle: 'Features added in each version',
                 divider: true,
-                onTap: () =>
-                    Navigator.push(context, slideRoute(const Donate())),
+                onTap: () => ReleaseNotesService.instance.showHistory(context),
               ),
               _SettingsRow(
                 leading: HymnalIcons.grid2x2(t.muted),
@@ -215,8 +223,7 @@ class Settings extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                // Keep in step with `version:` in pubspec.yaml.
-                'Version 4.0',
+                'Version $appReleaseVersion',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
@@ -341,8 +348,7 @@ class Settings extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
         decoration: BoxDecoration(
           color: pressed ? t.surface2 : Colors.transparent,
-          border:
-              divider ? Border(bottom: BorderSide(color: t.line2)) : null,
+          border: divider ? Border(bottom: BorderSide(color: t.line2)) : null,
         ),
         child: Row(
           children: [
@@ -401,8 +407,7 @@ class Settings extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
         decoration: BoxDecoration(
           color: pressed ? t.surface2 : Colors.transparent,
-          border:
-              divider ? Border(bottom: BorderSide(color: t.line2)) : null,
+          border: divider ? Border(bottom: BorderSide(color: t.line2)) : null,
         ),
         child: Row(
           children: [
@@ -438,35 +443,64 @@ class _DesignSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return ValueListenableBuilder<AppDesign>(
-      valueListenable: AppDesignController.instance,
-      builder: (context, selected, _) => Column(
+    final controller = AppDesignController.instance;
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        controller,
+        controller.iconBusy,
+        controller.iconError,
+      ]),
+      builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('App design', style: TextStyle(color: t.ink,
-            fontWeight: FontWeight.w600, fontSize: 16)),
+          Text('App design',
+              style: TextStyle(
+                  color: t.ink, fontWeight: FontWeight.w600, fontSize: 16)),
           const SizedBox(height: 6),
-          Text('Choose the new look or the familiar original layout.\n'
-            'Your hymns, favorites and music settings stay the same.',
-            style: TextStyle(color: t.muted, fontSize: 13)),
+          Text(
+              'Choose the new look or the familiar original layout.\n'
+              'The home-screen icon changes to match. Your hymns, favorites '
+              'and music settings stay the same.',
+              style: TextStyle(color: t.muted, fontSize: 13)),
           const SizedBox(height: 12),
           Row(children: [
             for (final design in AppDesign.values) ...[
               if (design == AppDesign.classic) const SizedBox(width: 12),
-              Expanded(child: Semantics(selected: selected == design,
+              Expanded(
+                  child: Semantics(
+                selected: controller.value == design,
                 child: OutlinedButton(
                   key: ValueKey('design-${design.name}'),
-                  onPressed: () => AppDesignController.instance.set(design),
+                  onPressed: controller.iconBusy.value
+                      ? null
+                      : () => controller.set(design),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: selected == design ? t.onAccent : t.ink,
-                    backgroundColor: selected == design ? t.accent : t.surface,
+                    foregroundColor:
+                        controller.value == design ? t.onAccent : t.ink,
+                    backgroundColor:
+                        controller.value == design ? t.accent : t.surface,
                     minimumSize: const Size(0, 48),
                   ),
-                  child: Text(design == AppDesign.modern ? 'Modern' : 'Classic'),
+                  child:
+                      Text(design == AppDesign.modern ? 'Modern' : 'Classic'),
                 ),
               )),
             ],
           ]),
+          if (controller.iconBusy.value)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text('Updating home-screen icon…'),
+            ),
+          if (controller.iconError.value case final String message) ...[
+            const SizedBox(height: 8),
+            Text(message, style: TextStyle(color: t.ink, fontSize: 13)),
+            TextButton(
+              key: const ValueKey('retry-app-icon'),
+              onPressed: controller.iconBusy.value ? null : controller.syncIcon,
+              child: const Text('Retry icon change'),
+            ),
+          ],
         ],
       ),
     );
@@ -591,9 +625,7 @@ class _SettingsRow extends StatelessWidget {
         padding: padding,
         decoration: BoxDecoration(
           color: pressed ? t.surface2 : Colors.transparent,
-          border: divider
-              ? Border(bottom: BorderSide(color: t.line2))
-              : null,
+          border: divider ? Border(bottom: BorderSide(color: t.line2)) : null,
         ),
         child: Row(
           children: [

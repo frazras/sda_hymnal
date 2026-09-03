@@ -1,0 +1,53 @@
+{
+  "current": "4.2.0",
+  "releases": [
+    {
+      "version": "4.2.0",
+      "date": "September 2, 2026",
+      "features": [
+        "Read the background story of a hymn and see its writer and composer.",
+        "Watch a matching hymn video while following the words in the app.",
+        "Play music for all 703 Old Hymnal songs, with the correct number of verses and choruses.",
+        "Hear and read each chorus after every verse in both hymnals.",
+        "Use auto-scroll while reading, adjust its speed with a slider, and reposition the words without stopping it.",
+        "Keep the music player hidden across songs and app launches when you prefer more reading space.",
+        "Keep favorite hymns close at hand with the restored heart button in the hymn header.",
+        "Review what changed in this and earlier versions from the What’s New screen."
+      ]
+    },
+    {
+      "version": "4.1.1",
+      "date": "August 28, 2026",
+      "features": [
+        "Choose the Modern or Classic app design, with a matching home-screen icon.",
+        "Read corrected lyrics for Old Hymnal 533 and 534.",
+        "Enjoy more reliable music playback."
+      ]
+    },
+    {
+      "version": "4.1.0",
+      "date": "August 23, 2026",
+      "features": [
+        "Added verse numbers and clear chorus labels throughout the Old Hymnal.",
+        "Improved the Island Reggae accompaniment and its sound on iPhone.",
+        "Added an option to keep the screen awake while a hymn is open."
+      ]
+    },
+    {
+      "version": "4.0.1",
+      "date": "August 21, 2026",
+      "features": [
+        "Added a privacy policy written specifically for the hymnal app."
+      ]
+    },
+    {
+      "version": "4.0.0",
+      "date": "August 17, 2026",
+      "features": [
+        "Introduced the rebuilt app with a cleaner reading experience.",
+        "Added music playback, chords, Gospel, Island Reggae, and Steel Pan Calypso accompaniment.",
+        "Corrected dozens of reported lyric problems and restored New Hymnal 314."
+      ]
+    }
+  ]
+}

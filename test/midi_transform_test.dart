@@ -18,7 +18,8 @@ List<int> _chunk(String id, List<int> data) => [
 
 /// Format-1 SMF, division 96 ticks/quarter.
 Uint8List _smf(List<List<int>> tracks) => Uint8List.fromList([
-      ..._chunk('MThd', [0x00, 0x01, tracks.length >> 8, tracks.length & 0xFF, 0x00, 0x60]),
+      ..._chunk('MThd',
+          [0x00, 0x01, tracks.length >> 8, tracks.length & 0xFF, 0x00, 0x60]),
       for (final t in tracks) ..._chunk('MTrk', t),
     ]);
 
@@ -89,6 +90,68 @@ const _notesDown100 = <int>[
 
 void main() {
   final input = _smf([_conductor, _notes]);
+
+  group('MIDI duration', () {
+    test('counts all tracks including percussion and running status', () {
+      expect(readMidiDuration(input), const Duration(seconds: 2));
+    });
+
+    test('uses default tempo and includes the trailing rest at end of track',
+        () {
+      expect(
+          readMidiDuration(_smf([
+            [0x60, 0xff, 0x2f, 0],
+            [0x81, 0x40, 0xff, 0x2f, 0], // 192 ticks, no notes
+          ])),
+          const Duration(seconds: 1));
+    });
+
+    test('integrates tempo changes in absolute time across tracks', () {
+      final bytes = _smf([
+        [0x60, 0xff, 0x51, 3, 0x0f, 0x42, 0x40, 0, 0xff, 0x2f, 0],
+        [0, 0xff, 0x51, 3, 0x07, 0xa1, 0x20, 0x81, 0x40, 0xff, 0x2f, 0],
+      ]);
+      // First quarter at 120 BPM, second at 60 BPM.
+      expect(readMidiDuration(bytes), const Duration(milliseconds: 1500));
+    });
+
+    test('supports format 0 and rejects malformed/unsupported timing', () {
+      final single = _smf([_notes])..[9] = 0;
+      expect(readMidiDuration(single), const Duration(seconds: 2));
+      for (final bytes in [
+        Uint8List(0),
+        Uint8List.fromList(input.sublist(0, input.length - 1)),
+        Uint8List.fromList(input)..[9] = 2,
+        Uint8List.fromList(input)..[12] = 0xe7,
+        Uint8List.fromList(input)..[13] = 0,
+        Uint8List.fromList(input)..[11] = 3,
+        _smf([
+          [0, 0xff, 0x51, 3, 0, 0, 0]
+        ]),
+      ]) {
+        expect(() => readMidiDuration(bytes), throwsFormatException);
+      }
+    });
+
+    test('both complete hymnals have a usable full-song duration', () {
+      final files = Directory('assets/midi')
+          .listSync()
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.mid'))
+          .toList();
+      final names = {for (final file in files) file.uri.pathSegments.last};
+      final expected = {
+        for (var n = 1; n <= 695; n++) '${n.toString().padLeft(3, '0')}.mid',
+        for (var n = 1; n <= 703; n++) 'C${n.toString().padLeft(3, '0')}.mid',
+      };
+      expect(names, expected);
+      for (final file in files) {
+        expect(readMidiDuration(file.readAsBytesSync()),
+            greaterThan(Duration.zero),
+            reason: file.path);
+      }
+    });
+  });
 
   group('MidiKey.label', () {
     test('major keys map sf to circle-of-fifths names', () {
@@ -174,8 +237,8 @@ void main() {
   });
 
   group('real hymn assets/midi/001.mid', () {
-    final bytes = Uint8List.fromList(
-        File('assets/midi/001.mid').readAsBytesSync());
+    final bytes =
+        Uint8List.fromList(File('assets/midi/001.mid').readAsBytesSync());
 
     test('key signature reads as F major', () {
       final key = readKeySignature(bytes);
@@ -224,20 +287,18 @@ void main() {
       final mapped = transformMidi(input, channelPrograms: const {4: 33});
       expect(mapped, isNot(equals(input)));
       // Note content is untouched: stats identical before and after.
-      expect(channelStats(mapped).toString(),
-          channelStats(input).toString());
+      expect(channelStats(mapped).toString(), channelStats(input).toString());
       // Unmapped transform at defaults stays byte-identical.
       expect(transformMidi(input), equals(input));
     });
 
     test('channelPrograms combines with a forceProgram fallback', () {
       final input = Uint8List.fromList(bytes);
-      final combined = transformMidi(input,
-          forceProgram: 4, channelPrograms: const {4: 33});
+      final combined =
+          transformMidi(input, forceProgram: 4, channelPrograms: const {4: 33});
       final blanket = transformMidi(input, forceProgram: 4);
       expect(combined, isNot(equals(blanket)));
-      expect(channelStats(combined).toString(),
-          channelStats(input).toString());
+      expect(channelStats(combined).toString(), channelStats(input).toString());
     });
   });
 }

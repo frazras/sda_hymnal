@@ -1,0 +1,6 @@
+Added music to all 703 Old Hymnal songs, with every verse and chorus.
+Choruses now repeat after each verse in both hymnals.
+Added hymn stories, writer and composer details, and matching videos.
+Improved auto-scroll with a speed slider that stays available and keeps scrolling after manual adjustments.
+Music player visibility now stays across songs and app launches.
+Added a version-by-version What's New history and simplified Settings.

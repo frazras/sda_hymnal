@@ -13,7 +13,8 @@ const arrangedMidiThemes = <String, (ArrangeStyle, int)>{
 /// The app's render pipeline, independent of Flutter, storage and playback.
 /// The iOS mix must be paired with the bundled range-scoped piano soundbank.
 /// Portable exports and Android keep the original arrangement mix.
-Uint8List renderHymnMidi(Uint8List source, {
+Uint8List renderHymnMidi(
+  Uint8List source, {
   String theme = 'classic',
   int semitones = 0,
   int? forceProgram,
@@ -21,16 +22,20 @@ Uint8List renderHymnMidi(Uint8List source, {
 }) {
   final arrangement = arrangedMidiThemes[theme];
   if (arrangement == null) {
-    return transformMidi(source, semitones: semitones, forceProgram: forceProgram);
+    return transformMidi(source,
+        semitones: semitones, forceProgram: forceProgram);
   }
   final (style, fallback) = arrangement;
   Uint8List arranged;
   try {
     arranged = arrangeStyle(source, style,
         channelVolumes: forAppleSynth && style == ArrangeStyle.reggae
-            ? reggaeVolumesForAppleSynth : const {});
+            ? reggaeVolumesForAppleSynth
+            : const {});
   } on FormatException {
     arranged = transformMidi(source, forceProgram: fallback);
   }
-  return semitones == 0 ? arranged : transformMidi(arranged, semitones: semitones);
+  return semitones == 0
+      ? arranged
+      : transformMidi(arranged, semitones: semitones);
 }

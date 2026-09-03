@@ -14,9 +14,9 @@ import 'package:sdahymnal/services/midi_render.dart';
 import 'package:sdahymnal/services/style_arranger.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
-/// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid).
-/// One hymn at a time; play/pause toggles. Old-Hymnal hymns have no MIDI, so
-/// [hasMidi] gates the UI.
+/// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid)
+/// and Old-Hymnal files (assets/midi/C001.mid … C703.mid). One hymn at a
+/// time; play/pause toggles. [hasMidi] gates invalid/out-of-range records.
 ///
 /// Two engines behind one API:
 ///  * Android (and host test runs): the platform media player via
@@ -30,6 +30,8 @@ import 'package:sdahymnal/services/prefs.dart';
 /// temp-dir cache file and playing that; at the defaults (no shift, Classic)
 /// the untouched asset plays directly (audioplayers) or is materialized
 /// verbatim into the same cache (iOS).
+typedef MidiPlayback = ({String version, int n, bool paused});
+
 class MidiPlayer {
   MidiPlayer._() {
     if (_useChannel) {
@@ -60,8 +62,8 @@ class MidiPlayer {
   /// Polls getPosition while the channel engine is audibly playing.
   Timer? _posTimer;
 
-  /// Hymn number currently loaded (+ paused flag); null when stopped.
-  final ValueNotifier<({int n, bool paused})?> current = ValueNotifier(null);
+  /// Hymnal edition + number currently loaded (+ paused flag); null stopped.
+  final ValueNotifier<MidiPlayback?> current = ValueNotifier(null);
 
   /// Playback progress of the current hymn (zero when stopped).
   final ValueNotifier<Duration> position = ValueNotifier(Duration.zero);
@@ -72,30 +74,56 @@ class MidiPlayer {
   final ValueNotifier<double> speed = ValueNotifier(1.0);
 
   /// Semitone shift (-6..+6) applied to the current hymn. Per-hymn: it
-  /// resets to 0 automatically when a different hymn number comes up.
+  /// resets to 0 when the edition or hymn number changes.
   final ValueNotifier<int> transpose = ValueNotifier(0);
 
   /// Key signature of the hymn page's tune as written ([prepareKey]); null
-  /// for Old-Hymnal hymns and files without one.
+  /// for files without one.
   final ValueNotifier<MidiKey?> originalKey = ValueNotifier(null);
 
-  /// Chords detected in the hymn page's tune ([prepareKey]); null for
-  /// Old-Hymnal hymns and files where detection finds nothing.
+  /// Chords detected in the hymn page's tune ([prepareKey]); null for files
+  /// where detection finds nothing.
   final ValueNotifier<ChordTrack?> chordTrack = ValueNotifier(null);
 
-  /// Detection results per hymn number, so revisiting a page skips the parse.
-  final Map<int, ChordTrack?> _chordCache = {};
+  /// Detection results per edition and number, so revisiting skips the parse.
+  final Map<(String, int), ChordTrack?> _chordCache = {};
 
-  /// Last hymn number prepared or played — the anchor for the automatic
-  /// transpose reset.
-  int? _lastN;
+  final Map<(String, int, String), Future<Duration?>> _durationCache = {};
 
-  static bool hasMidi(Hymn hymn) => hymn.version == 'new';
+  /// The entire selected arrangement at 1x, without starting audio. Cache
+  /// per theme because arranged styles can change the source's tempo map.
+  /// Transposition/instrument remapping do not alter event timing.
+  Future<Duration?> readingDuration(Hymn hymn) async {
+    if (!hasMidi(hymn)) return null;
+    final theme = InstrumentTheme.instance.value;
+    return _durationCache.putIfAbsent((hymn.version, hymn.number, theme),
+        () async {
+      try {
+        final bytes = await _assetBytes(hymn.version, hymn.number);
+        return await compute(_readingDuration, (bytes, theme));
+      } catch (_) {
+        return null;
+      }
+    });
+  }
 
-  static String _asset(int n) => 'midi/${n.toString().padLeft(3, '0')}.mid';
+  /// Last hymn prepared or played — the anchor for automatic transpose reset.
+  (String, int)? _lastHymn;
 
-  static Future<Uint8List> _assetBytes(int n) async {
-    final data = await rootBundle.load('assets/${_asset(n)}');
+  static bool hasMidi(Hymn hymn) =>
+      hymn.version == 'new' && hymn.number >= 1 && hymn.number <= 695 ||
+      hymn.version == 'old' && hymn.number >= 1 && hymn.number <= 703;
+
+  static bool isCurrent(MidiPlayback? playback, Hymn hymn) =>
+      playback?.version == hymn.version && playback?.n == hymn.number;
+
+  static String _asset(String version, int n) {
+    final prefix = version == 'old' ? 'C' : '';
+    return 'midi/$prefix${n.toString().padLeft(3, '0')}.mid';
+  }
+
+  static Future<Uint8List> _assetBytes(String version, int n) async {
+    final data = await rootBundle.load('assets/${_asset(version, n)}');
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
@@ -107,6 +135,9 @@ class MidiPlayer {
   /// Natural end of the tune: same reset on both engines.
   void _onComplete() {
     _stopPositionPolling();
+    // Publish the exact endpoint before clearing playback. Readers following
+    // the timeline reach the final chorus even if the last native poll was early.
+    if (duration.value > Duration.zero) position.value = duration.value;
     current.value = null;
     position.value = Duration.zero;
     duration.value = Duration.zero;
@@ -132,10 +163,11 @@ class MidiPlayer {
     _posTimer = null;
   }
 
-  /// Reset the per-hymn transposition when [n] is a new hymn number.
-  void _trackHymn(int n) {
-    if (_lastN == n) return;
-    _lastN = n;
+  /// Reset transposition when either the edition or hymn number changes.
+  void _trackHymn(Hymn hymn) {
+    final id = (hymn.version, hymn.number);
+    if (_lastHymn == id) return;
+    _lastHymn = id;
     if (transpose.value != 0) transpose.value = 0;
   }
 
@@ -144,17 +176,17 @@ class MidiPlayer {
   /// there is no MIDI) and resets [transpose] when the page shows a new hymn
   /// number.
   Future<void> prepareKey(Hymn hymn) async {
-    _trackHymn(hymn.number);
+    _trackHymn(hymn);
     if (!hasMidi(hymn)) {
       originalKey.value = null;
       chordTrack.value = null;
       return;
     }
     try {
-      final bytes = await _assetBytes(hymn.number);
+      final bytes = await _assetBytes(hymn.version, hymn.number);
       originalKey.value = readKeySignature(bytes);
-      final raw =
-          _chordCache.putIfAbsent(hymn.number, () => detectChords(bytes));
+      final id = (hymn.version, hymn.number);
+      final raw = _chordCache.putIfAbsent(id, () => detectChords(bytes));
       chordTrack.value = _displayTrack(bytes, raw);
     } catch (_) {
       originalKey.value = null;
@@ -184,23 +216,24 @@ class MidiPlayer {
   /// every instrument change — switching between a passthrough theme and
   /// an arranged one changes the playing file's timeline).
   Future<void> _republishChords() async {
-    final n = _lastN;
-    if (n == null || chordTrack.value == null) return;
+    final id = _lastHymn;
+    if (id == null || chordTrack.value == null) return;
+    final (version, n) = id;
     try {
-      final bytes = await _assetBytes(n);
-      chordTrack.value = _displayTrack(
-          bytes, _chordCache.putIfAbsent(n, () => detectChords(bytes)));
+      final bytes = await _assetBytes(version, n);
+      chordTrack.value = _displayTrack(bytes,
+          _chordCache.putIfAbsent((version, n), () => detectChords(bytes)));
     } catch (_) {}
   }
 
   /// Source for hymn [n] under the current transpose + instrument theme
   /// (audioplayers engine only): the bare asset when both are at their
   /// defaults, otherwise the cached render from [_renderFile].
-  Future<Source> _source(int n) async {
+  Future<Source> _source(String version, int n) async {
     if (transpose.value == 0 && !InstrumentTheme.instance.transforms) {
-      return AssetSource(_asset(n));
+      return AssetSource(_asset(version, n));
     }
-    return DeviceFileSource((await _renderFile(n)).path);
+    return DeviceFileSource((await _renderFile(version, n)).path);
   }
 
   late final Future<MidiRenderCache> _renderCache = getTemporaryDirectory()
@@ -208,15 +241,24 @@ class MidiPlayer {
 
   /// Snapshot options before awaiting storage so rapid theme/key changes
   /// cannot save one arrangement under another arrangement's cache key.
-  Future<File> _renderFile(int n) async {
+  Future<File> _renderFile(String version, int n) async {
     final semis = transpose.value;
     final theme = InstrumentTheme.instance.value;
     final program = InstrumentTheme.instance.program;
-    final name = MidiRenderCache.filename(hymn: n, semitones: semis,
-        theme: theme, forceProgram: program, forAppleSynth: _useChannel);
-    return (await _renderCache).getOrCreate(name, () async => renderHymnMidi(
-        await _assetBytes(n), theme: theme, semitones: semis,
-        forceProgram: program, forAppleSynth: _useChannel));
+    final name = MidiRenderCache.filename(
+        hymnal: version,
+        hymn: n,
+        semitones: semis,
+        theme: theme,
+        forceProgram: program,
+        forAppleSynth: _useChannel);
+    return (await _renderCache).getOrCreate(
+        name,
+        () async => renderHymnMidi(await _assetBytes(version, n),
+            theme: theme,
+            semitones: semis,
+            forceProgram: program,
+            forAppleSynth: _useChannel));
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
@@ -224,22 +266,24 @@ class MidiPlayer {
     if (!hasMidi(hymn)) return;
     if (_useChannel) return _channelToggle(hymn);
     final cur = current.value;
-    if (cur != null && cur.n == hymn.number) {
-      if (cur.paused) {
+    if (isCurrent(cur, hymn)) {
+      if (cur!.paused) {
         await _player.resume();
-        current.value = (n: hymn.number, paused: false);
+        current.value = (version: hymn.version, n: hymn.number, paused: false);
         await _applySpeed();
       } else {
         await _player.pause();
-        current.value = (n: hymn.number, paused: true);
+        current.value = (version: hymn.version, n: hymn.number, paused: true);
       }
       return;
     }
-    _trackHymn(hymn.number);
+    _trackHymn(hymn);
     await _player.stop();
-    current.value = (n: hymn.number, paused: false);
+    position.value = Duration.zero;
+    duration.value = Duration.zero;
+    current.value = (version: hymn.version, n: hymn.number, paused: false);
     try {
-      await _player.play(await _source(hymn.number));
+      await _player.play(await _source(hymn.version, hymn.number));
       await _applySpeed();
     } catch (_) {
       current.value = null;
@@ -248,17 +292,18 @@ class MidiPlayer {
 
   Future<void> _channelToggle(Hymn hymn) async {
     final cur = current.value;
-    if (cur != null && cur.n == hymn.number) {
+    if (isCurrent(cur, hymn)) {
       try {
-        if (cur.paused) {
+        if (cur!.paused) {
           await _channel.invokeMethod('play');
-          current.value = (n: hymn.number, paused: false);
+          current.value =
+              (version: hymn.version, n: hymn.number, paused: false);
           await _applySpeed();
           _startPositionPolling();
         } else {
           _stopPositionPolling();
           await _channel.invokeMethod('pause');
-          current.value = (n: hymn.number, paused: true);
+          current.value = (version: hymn.version, n: hymn.number, paused: true);
           // Snap to the exact paused position (the last poll can be stale).
           final secs = await _channel.invokeMethod<double>('getPosition');
           if (secs != null) position.value = _toDuration(secs);
@@ -269,15 +314,17 @@ class MidiPlayer {
       }
       return;
     }
-    _trackHymn(hymn.number);
+    _trackHymn(hymn);
     _stopPositionPolling();
     // A failed stop (e.g. nothing loaded yet) must not block the new tune.
     try {
       await _channel.invokeMethod('stop');
     } catch (_) {}
-    current.value = (n: hymn.number, paused: false);
+    position.value = Duration.zero;
+    duration.value = Duration.zero;
+    current.value = (version: hymn.version, n: hymn.number, paused: false);
     try {
-      final path = (await _renderFile(hymn.number)).path;
+      final path = (await _renderFile(hymn.version, hymn.number)).path;
       final secs = await _channel.invokeMethod<double>('load', path);
       duration.value = _toDuration(secs ?? 0);
       position.value = Duration.zero;
@@ -307,15 +354,15 @@ class MidiPlayer {
     if (cur == null) return;
     final pos = position.value;
     await _player.stop();
-    current.value = (n: cur.n, paused: false);
+    current.value = (version: cur.version, n: cur.n, paused: false);
     try {
-      await _player.play(await _source(cur.n));
+      await _player.play(await _source(cur.version, cur.n));
       await _applySpeed();
       await _player.seek(pos);
       position.value = pos;
       if (cur.paused) {
         await _player.pause();
-        current.value = (n: cur.n, paused: true);
+        current.value = (version: cur.version, n: cur.n, paused: true);
       }
     } catch (_) {
       current.value = null;
@@ -332,9 +379,9 @@ class MidiPlayer {
     try {
       await _channel.invokeMethod('stop');
     } catch (_) {}
-    current.value = (n: cur.n, paused: false);
+    current.value = (version: cur.version, n: cur.n, paused: false);
     try {
-      final path = (await _renderFile(cur.n)).path;
+      final path = (await _renderFile(cur.version, cur.n)).path;
       final secs = await _channel.invokeMethod<double>('load', path);
       duration.value = _toDuration(secs ?? 0);
       await _applySpeed();
@@ -342,7 +389,7 @@ class MidiPlayer {
       position.value = pos;
       if (cur.paused) {
         // No need to start-then-pause: play() later resumes from the seek.
-        current.value = (n: cur.n, paused: true);
+        current.value = (version: cur.version, n: cur.n, paused: true);
       } else {
         await _channel.invokeMethod('play');
         _startPositionPolling();
@@ -408,9 +455,16 @@ class MidiPlayer {
     duration.value = Duration.zero;
   }
 
-  /// Stop only if [number] is the hymn currently loaded — lets a disposed
+  /// Stop only if [hymn] is currently loaded — lets a disposed
   /// hymn page clean up without cutting off a newer page's playback.
-  Future<void> stopIfCurrent(int number) async {
-    if (current.value?.n == number) await stop();
+  Future<void> stopIfCurrent(Hymn hymn) async {
+    if (isCurrent(current.value, hymn)) await stop();
   }
+}
+
+Duration _readingDuration((Uint8List, String) input) {
+  final (bytes, theme) = input;
+  return readMidiDuration(arrangedMidiThemes.containsKey(theme)
+      ? renderHymnMidi(bytes, theme: theme)
+      : bytes);
 }

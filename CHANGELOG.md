@@ -4,6 +4,23 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
+## 4.2.0 (40200) — unreleased (2026-09-02)
+
+- Add hymn stories, writer and composer details, and matching hymn videos.
+- Add music playback, transposition, chords and auto-scroll to all 703 Old
+  Hymnal songs, with the correct verse and chorus counts.
+- Repeat each hymn's chorus after every verse, including the final verse, in
+  both the Old and New Hymnals.
+- Keep auto-scroll running after manual reading adjustments, add a speed
+  slider, and make speed controls available from anywhere in the hymn.
+- Let the music player stay hidden across songs and app launches, and restore
+  the favorite button to the hymn header.
+- Keep the lyrics visible below an in-app hymn video while it plays.
+- Add an in-app, version-by-version update history and show it once when a
+  user first opens each new version.
+- Move Appearance near the bottom of Settings, immediately before More.
+- Remove the external donation flow to comply with app-store payment rules.
+
 ## 4.1.1 (40101) — 2026-08-28
 
 - Match the home-screen icon to the selected app design on iOS and Android:

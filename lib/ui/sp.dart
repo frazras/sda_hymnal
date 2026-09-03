@@ -7,9 +7,8 @@ import 'package:sdahymnal/ui/common.dart';
 /// "Our Other Projects" sub-page (mockup: Other Projects v2.dc.html).
 ///
 /// Pushed full-screen with [slideRoute]; no brand header, no bottom nav.
-/// Same pattern as Donate: white logo card (pure #FFFFFF even in dark mode),
-/// serif title + paragraph, bottom-pinned CTA that scrolls with content on
-/// short screens.
+/// White logo card (pure #FFFFFF even in dark mode), serif title + paragraph,
+/// and a bottom-pinned CTA that scrolls with content on short screens.
 class Sp extends StatelessWidget {
   const Sp({super.key});
 

@@ -8,17 +8,26 @@ import '../tool/export_midi.dart' as exporter;
 
 void main() {
   late Directory directory;
-  setUp(() async { directory = await Directory.systemTemp.createTemp('hymnal-export-test-'); });
+  setUp(() async {
+    directory = await Directory.systemTemp.createTemp('hymnal-export-test-');
+  });
   tearDown(() async => directory.delete(recursive: true));
 
-  test('export is byte-identical to the app renderer and refuses overwrites', () {
+  test('export is byte-identical to the app renderer and refuses overwrites',
+      () {
     final output = File('${directory.path}/hymn.mid');
-    final args = ['assets/midi/016.mid', output.path, '--ios-mix', '--transpose=2'];
+    final args = [
+      'assets/midi/016.mid',
+      output.path,
+      '--ios-mix',
+      '--transpose=2'
+    ];
     exporter.exportMidi(args);
     final expected = renderHymnMidi(File(args[0]).readAsBytesSync(),
         theme: 'reggae', forAppleSynth: true, semitones: 2);
     expect(output.readAsBytesSync(), expected);
-    expect(() => exporter.exportMidi(args), throwsA(isA<FileSystemException>()));
+    expect(
+        () => exporter.exportMidi(args), throwsA(isA<FileSystemException>()));
     expect(output.readAsBytesSync(), expected);
   });
 
@@ -27,10 +36,18 @@ void main() {
     final solo = File('${directory.path}/piano.mid');
     exporter.exportMidi(['assets/midi/190.mid', full.path]);
     exporter.exportMidi(['assets/midi/190.mid', solo.path, '--piano-only']);
-    expect(full.readAsBytesSync(), renderHymnMidi(
-        File('assets/midi/190.mid').readAsBytesSync(), theme: 'reggae'));
+    expect(
+        full.readAsBytesSync(),
+        renderHymnMidi(File('assets/midi/190.mid').readAsBytesSync(),
+            theme: 'reggae'));
     expect(solo.readAsBytesSync(), reggaePianoOnlyMidi(full.readAsBytesSync()));
-    expect(() => exporter.exportMidi(['assets/midi/190.mid', '${directory.path}/bad.mid',
-      '--style=calypso', '--piano-only']), throwsArgumentError);
+    expect(
+        () => exporter.exportMidi([
+              'assets/midi/190.mid',
+              '${directory.path}/bad.mid',
+              '--style=calypso',
+              '--piano-only'
+            ]),
+        throwsArgumentError);
   });
 }

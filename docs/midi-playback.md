@@ -77,7 +77,8 @@ normal handoffs. Reserve panic/silencing for stop, disposal and final completion
 - `renderHymnMidi` is shared by playback and the diagnostic exporter. Portable
   and iOS mixes are explicit; no export-only musical approximation is used.
 - Cache revision 23 bypasses old CC7=41 files without erasing them. Keys include
-  platform/bank mix, hymn, theme, transposition and forced program.
+  platform/bank mix, hymnal edition, hymn, theme, transposition and forced
+  program.
 - Render options are captured before asynchronous file access. Concurrent
   requests for one cache key share a render; a flushed staging file is renamed
   atomically. Truncated generated cache entries are regenerated.

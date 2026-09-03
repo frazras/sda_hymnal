@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/hymn_metadata.dart';
+import 'package:sdahymnal/models/hymn_video.dart';
 import 'package:sdahymnal/services/api.dart';
+import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/buttons.dart';
 import 'package:sdahymnal/ui/common.dart';
@@ -25,6 +28,7 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymnsOld = [];
   int _tab = 0;
   bool _loadingStarted = false;
+  bool _releaseCheckStarted = false;
 
   @override
   void didChangeDependencies() {
@@ -33,14 +37,42 @@ class _TabsState extends State<Tabs> {
       _loadingStarted = true;
       _loadHymns();
     }
+    if (!_releaseCheckStarted) {
+      _releaseCheckStarted = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ReleaseNotesService.instance.showIfNeeded(context);
+      });
+    }
   }
 
   _loadHymns() async {
-    String fileData =
-        await DefaultAssetBundle.of(context).loadString("assets/hymns.json");
+    final bundle = DefaultAssetBundle.of(context);
+    final hymnData = await bundle.loadString('assets/hymns.json');
+    HymnMetadataCatalog? metadata;
+    HymnVideoCatalog? videos;
+    try {
+      final metadataData = await bundle.loadString('assets/hymn_metadata.json');
+      metadata = HymnMetadataCatalog.fromJson(metadataData);
+    } on FlutterError {
+      // Some embedders and lightweight widget-test bundles provide only the
+      // legacy hymn asset. Lyrics remain usable while metadata is optional.
+      metadata = null;
+    }
+    try {
+      final videoData = await bundle.loadString('assets/hymn_videos.json');
+      videos = HymnVideoCatalog.fromJson(videoData);
+    } on FlutterError {
+      // Playback remains optional for lightweight test bundles and offline
+      // builds that intentionally ship only the lyrics asset.
+      videos = null;
+    }
     if (!mounted) return;
     setState(() {
-      _hymns = HymnApi.allHymnsFromJson(fileData);
+      _hymns = HymnApi.allHymnsFromJson(
+        hymnData,
+        metadata: metadata,
+        videos: videos,
+      );
       _hymnsNew = _hymns.where((f) => f.version.contains('new')).toList();
       _hymnsOld = _hymns.where((f) => f.version.contains('old')).toList();
     });
@@ -82,9 +114,10 @@ class _TabsState extends State<Tabs> {
             child: Column(
               children: [
                 if (t.isClassic)
-                  ClassicHeader(active: _tab,
-                    onSelect: (i) => setState(() => _tab = i),
-                    onFavorites: () => setState(() => _tab = 2))
+                  ClassicHeader(
+                      active: _tab,
+                      onSelect: (i) => setState(() => _tab = i),
+                      onFavorites: () => setState(() => _tab = 2))
                 else
                   BrandHeader(onLogoTap: () => setState(() => _tab = 0)),
                 Expanded(

@@ -129,6 +129,41 @@ class KeepScreenOn extends ValueNotifier<bool> {
   }
 }
 
+/// Opt-in MIDI-timed lyric scrolling, shared by both reader designs.
+class AutoScroll extends ValueNotifier<bool> {
+  AutoScroll._() : super(false);
+  static final AutoScroll instance = AutoScroll._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getBool('autoScroll') ?? false;
+  }
+
+  Future<void> set(bool on) async {
+    value = on;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('autoScroll', on);
+  }
+}
+
+/// Whether the hymn-page music player is visible. This is shared by both
+/// designs and every hymn (SharedPreferences key 'musicPlayerVisible').
+class MusicPlayerVisible extends ValueNotifier<bool> {
+  MusicPlayerVisible._() : super(true);
+  static final MusicPlayerVisible instance = MusicPlayerVisible._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getBool('musicPlayerVisible') ?? true;
+  }
+
+  Future<void> set(bool visible) async {
+    value = visible;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('musicPlayerVisible', visible);
+  }
+}
+
 /// Recently opened hymns (SharedPreferences key 'hymnalRecents'):
 /// JSON list of {n, v}, most recent first, deduped by (n,v), capped at 6.
 class Recents extends ValueNotifier<List<({int n, String v})>> {
@@ -139,9 +174,7 @@ class Recents extends ValueNotifier<List<({int n, String v})>> {
     final prefs = await SharedPreferences.getInstance();
     try {
       final raw = jsonDecode(prefs.getString('hymnalRecents') ?? '[]') as List;
-      value = [
-        for (final e in raw) (n: e['n'] as int, v: e['v'] as String)
-      ];
+      value = [for (final e in raw) (n: e['n'] as int, v: e['v'] as String)];
     } catch (_) {
       value = const [];
     }
@@ -272,9 +305,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
     try {
       final raw =
           jsonDecode(prefs.getString('hymnalFavorites') ?? '[]') as List;
-      value = [
-        for (final e in raw) (n: e['n'] as int, v: e['v'] as String)
-      ];
+      value = [for (final e in raw) (n: e['n'] as int, v: e['v'] as String)];
     } catch (_) {
       value = const [];
     }

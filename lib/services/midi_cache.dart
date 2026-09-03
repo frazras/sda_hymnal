@@ -13,17 +13,27 @@ class MidiRenderCache {
   final Directory directory;
   final _pending = <String, Future<File>>{};
 
-  static String filename({required int hymn, required int semitones,
-      required String theme, required bool forAppleSynth, int? forceProgram}) {
+  static String filename(
+      {required String hymnal,
+      required int hymn,
+      required int semitones,
+      required String theme,
+      required bool forAppleSynth,
+      int? forceProgram}) {
+    if (hymnal != 'new' && hymnal != 'old') {
+      throw ArgumentError.value(hymnal, 'hymnal', 'Unsupported hymnal');
+    }
     final engine = forAppleSynth ? 'apple-scoped' : 'portable';
     final program = forceProgram == null ? '' : '_p$forceProgram';
-    return '${hymn.toString().padLeft(3, '0')}_t${semitones}_$theme'
+    final edition = hymnal == 'old' ? 'old_' : '';
+    return '$edition${hymn.toString().padLeft(3, '0')}_t${semitones}_$theme'
         '${program}_${engine}_v$renderVersion.mid';
   }
 
   Future<File> getOrCreate(String name, Future<Uint8List> Function() render) {
     if (!RegExp(r'^[A-Za-z0-9_-]+\.mid$').hasMatch(name)) {
-      return Future.error(ArgumentError.value(name, 'name', 'Invalid cache key'));
+      return Future.error(
+          ArgumentError.value(name, 'name', 'Invalid cache key'));
     }
     return _pending.putIfAbsent(name, () async {
       try {
@@ -34,7 +44,8 @@ class MidiRenderCache {
     });
   }
 
-  Future<File> _materialize(String name, Future<Uint8List> Function() render) async {
+  Future<File> _materialize(
+      String name, Future<Uint8List> Function() render) async {
     final destination = File('${directory.path}/$name');
     if (await destination.exists()) {
       try {

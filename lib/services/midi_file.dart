@@ -42,11 +42,14 @@ Uint8List reggaePianoOnlyMidi(Uint8List bytes) {
   if (data.getUint16(8) != 1) {
     throw const FormatException('Expected a generated format-1 arrangement');
   }
-  final piano = tracks.skip(1).where((track) =>
-      track.length >= 11 &&
-      track[8] == 0 && // tick-zero program change emitted by arrangeStyle
-      track[9] == 0xc1 &&
-      track[10] == 0).toList();
+  final piano = tracks
+      .skip(1)
+      .where((track) =>
+          track.length >= 11 &&
+          track[8] == 0 && // tick-zero program change emitted by arrangeStyle
+          track[9] == 0xc1 &&
+          track[10] == 0)
+      .toList();
   if (piano.length != 1) {
     throw const FormatException('Expected one SDA reggae piano track');
   }

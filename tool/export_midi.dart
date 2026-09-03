@@ -41,16 +41,19 @@ void exportMidi(List<String> args) {
   }
   if (paths.length != 2 ||
       !{'classic', ...arrangedMidiThemes.keys}.contains(theme) ||
-      semitones < -6 || semitones > 6 || (pianoOnly && theme != 'reggae')) {
+      semitones < -6 ||
+      semitones > 6 ||
+      (pianoOnly && theme != 'reggae')) {
     throw ArgumentError('Invalid paths, style, transposition, or solo option');
   }
   final output = File(paths[1]);
   if (output.existsSync()) {
-    throw FileSystemException('Refusing to overwrite an existing file', output.path);
+    throw FileSystemException(
+        'Refusing to overwrite an existing file', output.path);
   }
   final source = File(paths[0]).readAsBytesSync();
-  final full = renderHymnMidi(source, theme: theme,
-      semitones: semitones, forAppleSynth: apple);
+  final full = renderHymnMidi(source,
+      theme: theme, semitones: semitones, forAppleSynth: apple);
   final bytes = pianoOnly ? reggaePianoOnlyMidi(full) : full;
   midiTrackChunks(bytes);
   output.parent.createSync(recursive: true);

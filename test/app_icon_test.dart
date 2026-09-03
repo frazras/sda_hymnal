@@ -9,7 +9,8 @@ import 'package:sdahymnal/services/prefs.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const channel = MethodChannel('sdahymnal/app_icon');
-  final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+  final messenger =
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   final controller = AppDesignController.instance;
   final calls = <MethodCall>[];
 
@@ -17,7 +18,10 @@ void main() {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     SharedPreferences.setMockInitialValues({});
     calls.clear();
-    messenger.setMockMethodCallHandler(channel, (call) async { calls.add(call); return null; });
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      calls.add(call);
+      return null;
+    });
     await controller.load();
   });
 
@@ -26,19 +30,24 @@ void main() {
     messenger.setMockMethodCallHandler(channel, null);
   });
 
-  test('fresh installs default to Modern and do not opt into Classic', () async {
+  test('fresh installs default to Modern and do not opt into Classic',
+      () async {
     expect(controller.value, AppDesign.modern);
-    expect(calls, isEmpty, reason: 'loading preferences must not invoke UIKit before launch');
+    expect(calls, isEmpty,
+        reason: 'loading preferences must not invoke UIKit before launch');
     await controller.syncIcon();
     expect(calls.single.method, 'setDesign');
     expect(calls.single.arguments, 'modern');
-    expect((await SharedPreferences.getInstance()).getString('appDesign'), isNull);
+    expect(
+        (await SharedPreferences.getInstance()).getString('appDesign'), isNull);
   });
 
-  test('Classic and Modern persist before invoking the matching native icon', () async {
+  test('Classic and Modern persist before invoking the matching native icon',
+      () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       calls.add(call);
-      expect((await SharedPreferences.getInstance()).getString('appDesign'), call.arguments);
+      expect((await SharedPreferences.getInstance()).getString('appDesign'),
+          call.arguments);
       return null;
     });
     await controller.set(AppDesign.classic);
@@ -48,7 +57,9 @@ void main() {
     expect(controller.iconBusy.value, isFalse);
   });
 
-  test('saved Classic migrates its icon after launch, not during preference load', () async {
+  test(
+      'saved Classic migrates its icon after launch, not during preference load',
+      () async {
     SharedPreferences.setMockInitialValues({'appDesign': 'classic'});
     await controller.load();
     expect(calls, isEmpty);
@@ -62,16 +73,21 @@ void main() {
     });
     await controller.set(AppDesign.classic);
     expect(controller.value, AppDesign.classic);
-    expect((await SharedPreferences.getInstance()).getString('appDesign'), 'classic');
+    expect((await SharedPreferences.getInstance()).getString('appDesign'),
+        'classic');
     expect(controller.iconError.value, contains('layout is saved'));
     expect(controller.iconBusy.value, isFalse);
-    messenger.setMockMethodCallHandler(channel, (call) async { calls.add(call); return null; });
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      calls.add(call);
+      return null;
+    });
     await controller.syncIcon();
     expect(calls.single.arguments, 'classic');
     expect(controller.iconError.value, isNull);
   });
 
-  test('concurrent requests serialize and finish with the latest design', () async {
+  test('concurrent requests serialize and finish with the latest design',
+      () async {
     final firstStarted = Completer<void>();
     final releaseFirst = Completer<void>();
     messenger.setMockMethodCallHandler(channel, (call) async {
@@ -98,7 +114,8 @@ void main() {
     expect(controller.iconBusy.value, isFalse);
   });
 
-  test('unsupported desktop targets keep the layout without native calls', () async {
+  test('unsupported desktop targets keep the layout without native calls',
+      () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     await controller.set(AppDesign.classic);
     expect(controller.value, AppDesign.classic);

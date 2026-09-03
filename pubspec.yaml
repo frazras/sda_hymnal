@@ -14,7 +14,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # The pre-2026 releases were Cordova builds whose codes were single digits, so
 # this scheme clears them by a wide margin and stays monotonic forever. Play
 # rejects a versionCode it has seen before — always bump before uploading.
-version: 4.1.1+40101
+version: 4.2.0+40200
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -34,6 +34,7 @@ dependencies:
   audioplayers: ^6.8.1
   path_provider: ^2.1.0
   wakelock_plus: ^1.7.0
+  youtube_player_iframe: ^6.0.2
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -61,6 +62,8 @@ flutter:
 
   assets:
     - assets/hymns.json
+    - assets/hymn_metadata.json
+    - assets/hymn_videos.json
     - assets/logo.svg
     - assets/logo-mark.svg
     - assets/logo-mark-dark.svg
@@ -70,7 +73,7 @@ flutter:
     - assets/flag.png
     - assets/sp.png
     - assets/rohan.jpg
-    - assets/donate.jpg
+    - assets/release_notes.json
     - assets/brand/
     - assets/midi/
 
