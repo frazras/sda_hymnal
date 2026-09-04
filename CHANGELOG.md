@@ -11,6 +11,8 @@ file under `android/fastlane/metadata/android/en-US/changelogs/`.
   Hymnal songs, with the correct verse and chorus counts.
 - Repeat each hymn's chorus after every verse, including the final verse, in
   both the Old and New Hymnals.
+- Keep all 3/4 hymns in their written meter, with continuous offbeat reggae
+  skanks and continuous steelpan responses in Calypso.
 - Keep auto-scroll running after manual reading adjustments, add a speed
   slider, and make speed controls available from anywhere in the hymn.
 - Let the music player stay hidden across songs and app launches, and restore

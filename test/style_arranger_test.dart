@@ -37,7 +37,8 @@ class _NoteOn {
   var tempoCount = 0;
   var lastOff = 0;
   var seq = 0;
-  var i = 8 + ((bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7]);
+  var i =
+      8 + ((bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7]);
   while (i < bytes.length) {
     final id = String.fromCharCodes(bytes, i, i + 4);
     final len = (bytes[i + 4] << 24) |
@@ -87,7 +88,8 @@ class _NoteOn {
           running = status;
           final hi = status & 0xF0;
           if (hi == 0x90 && bytes[i + 1] > 0) {
-            ons.add(_NoteOn(tick, status & 0x0F, bytes[i], bytes[i + 1], seq++));
+            ons.add(
+                _NoteOn(tick, status & 0x0F, bytes[i], bytes[i + 1], seq++));
           } else if (hi == 0x80 || hi == 0x90) {
             if (tick > lastOff) lastOff = tick;
           } else if (hi == 0xC0) {
@@ -150,6 +152,7 @@ class _Clock {
 /// and the beat-index spacing from beat 1 to the first drop.
 ({List<int> dropOffsets, double dropBeats}) _reggaePulse(
     List<int> tempi, int d, int n) {
+  if (n == 3) return (dropOffsets: [2 * d], dropBeats: 2);
   final bpm = 6e7 / tempi.first;
   if (bpm >= 100) return (dropOffsets: [2 * d], dropBeats: 2);
   return (
@@ -179,7 +182,8 @@ int _melodyChannel(Uint8List bytes) {
 
 /// The chord root governing each of the first [count] measure starts that
 /// carry harmony, sampled at the same media-time instants for both tracks.
-List<int> _barStartRoots(ChordTrack track, List<int> measureStartMs, int count) {
+List<int> _barStartRoots(
+    ChordTrack track, List<int> measureStartMs, int count) {
   final roots = <int>[];
   for (final ms in measureStartMs) {
     if (roots.length >= count) break;
@@ -235,7 +239,7 @@ void _styleTests(
     final inTrack = detectChords(input)!;
     final outTrack = detectChords(output);
     expect(outTrack, isNotNull);
-    // A 3/4 hymn under reggae is played in four (see _stretchWaltz).
+    // Both island styles retain the hymn's written meter.
     expect(outTrack!.beatsPerBar, playedInFour ? 4 : inTrack.beatsPerBar);
   });
 
@@ -292,32 +296,32 @@ void _styleTests(
     // arrangement may end up to a bar late on top of the 5% tolerance.
     // Played in four, every 3/4 bar is a beat longer: 4/3 the length.
     final barTicks = detectChords(output)!.beatsPerBar * _division(output);
-    final expected = playedInFour ? inScan.lastOffTick * 4 / 3 : inScan.lastOffTick;
+    final expected =
+        playedInFour ? inScan.lastOffTick * 4 / 3 : inScan.lastOffTick;
     expect((outScan.lastOffTick - expected).abs(),
         lessThanOrEqualTo(inScan.lastOffTick * 0.05 + barTicks));
   });
 
   if (fidelity) {
-    test('re-detects the hymn\'s own roots on the first 8 harmonized bars',
-        () {
-    // Colors added by the arrangement may split or relabel chord spans
-    // (qualities differ), so fidelity is judged where the groove states the
-    // harmony: the chord governing each measure start, at the same
-    // media-time instants in both files.
-    // Each track is sampled at its OWN measure starts: the arranger
-    // flattens the tempo map (bands keep time through the hymn's verse-end
-    // ritardandos), so identical measure indices — not identical
-    // media-time instants — are the common frame. Reggae and calypso comp
-    // from the MEDIUM-simplified harmony (the diatonic filter kills the
-    // phantom out-of-key chords raw detection reads from inversions), so
-    // that is the reference for them; gospel comps from raw detection.
-    final inTrack = detectChords(input)!;
-    final source = style == ArrangeStyle.gospel
-        ? inTrack
-        : simplifyTrack(inTrack, ChordLevel.medium);
-    final outTrack = detectChords(output)!;
-    final inRoots = _barStartRoots(source, source.measureStartMs, 8);
-    final outRoots = _barStartRoots(outTrack, outTrack.measureStartMs, 8);
+    test('re-detects the hymn\'s own roots on the first 8 harmonized bars', () {
+      // Colors added by the arrangement may split or relabel chord spans
+      // (qualities differ), so fidelity is judged where the groove states the
+      // harmony: the chord governing each measure start, at the same
+      // media-time instants in both files.
+      // Each track is sampled at its OWN measure starts: the arranger
+      // flattens the tempo map (bands keep time through the hymn's verse-end
+      // ritardandos), so identical measure indices — not identical
+      // media-time instants — are the common frame. Reggae and calypso comp
+      // from the MEDIUM-simplified harmony (the diatonic filter kills the
+      // phantom out-of-key chords raw detection reads from inversions), so
+      // that is the reference for them; gospel comps from raw detection.
+      final inTrack = detectChords(input)!;
+      final source = style == ArrangeStyle.gospel
+          ? inTrack
+          : simplifyTrack(inTrack, ChordLevel.medium);
+      final outTrack = detectChords(output)!;
+      final inRoots = _barStartRoots(source, source.measureStartMs, 8);
+      final outRoots = _barStartRoots(outTrack, outTrack.measureStartMs, 8);
       expect(inRoots, hasLength(8));
       expect(outRoots, inRoots);
     });
@@ -336,7 +340,7 @@ void _oneDropTests(String path) {
   final output = arrangeStyle(input, ArrangeStyle.reggae);
   final outScan = _scan(output);
   final d = _division(output);
-  final n = detectChords(output)!.beatsPerBar; // 4 for a 3/4 hymn played in four
+  final n = detectChords(output)!.beatsPerBar;
   final barTicks = n * d;
   final pulse = _reggaePulse(outScan.tempi, d, n);
   final drumOns = [
@@ -373,9 +377,8 @@ void _oneDropTests(String path) {
           reason: 'GM @D@key must strike with every drop');
     }
     for (final tick in drops) {
-      int velAt(int pitch) => drumOns
-          .firstWhere((o) => o.tick == tick && o.pitch == pitch)
-          .vel;
+      int velAt(int pitch) =>
+          drumOns.firstWhere((o) => o.tick == tick && o.pitch == pitch).vel;
       expect(velAt(crossStick), lessThan(velAt(deepKick)));
       expect(velAt(kick), lessThan(velAt(deepKick)));
     }
@@ -384,8 +387,8 @@ void _oneDropTests(String path) {
   test('one drop: beat 1 is structurally lighter than the drop', () {
     final beat1 = drumOns.where((on) => on.tick % barTicks == 0).toList();
     expect(beat1, isNotEmpty);
-    expect(beat1.where((on) => on.pitch == deepKick || on.pitch == kick),
-        isEmpty,
+    expect(
+        beat1.where((on) => on.pitch == deepKick || on.pitch == kick), isEmpty,
         reason: 'beat 1 is the beat the one drop drops');
     final byTick = <int, int>{};
     for (final on in drumOns) {
@@ -397,11 +400,10 @@ void _oneDropTests(String path) {
 
   test('the piano never rests: every chop pulse of every bar is chopped', () {
     // The owner's one hard requirement for the skank: it must not stop.
-    // The chop falls on beats 2 and 4 (every "&" below 100 BPM) in every
-    // bar from the band's entry to the last, and on nothing else — the
-    // beats between belong to the bass.
+    // A 3/4 hymn chops on 1&, 2&, and 3&. Other meters retain the established
+    // tempo-dependent beat/eighth reading.
     final chopOffsets = pulse.dropBeats == 2
-        ? (n == 3 ? [d] : [d, 3 * d])
+        ? (n == 3 ? [d ~/ 2, 3 * d ~/ 2, 5 * d ~/ 2] : [d, 3 * d])
         : [for (var k = 1; k < 2 * n; k += 2) k * d ~/ 2];
     final pianoTicks = {
       for (final on in outScan.ons)
@@ -443,6 +445,16 @@ void _calypsoStructureTests(String path) {
     }
   });
 
+  if (n == 3) {
+    test('the steelpan keeps answering through all three beats', () {
+      final beats = {
+        for (final on in outScan.ons.where((on) => on.channel == 1))
+          (on.tick % barTicks) ~/ d,
+      };
+      expect(beats, containsAll(<int>[0, 1, 2]));
+    });
+  }
+
   test('claves hold the tresillo anchor', () {
     final anchors = n == 3
         ? {0, 3 * d ~/ 2} // 1, 2& — the 3+3 hemiola of the Caribbean waltz
@@ -467,8 +479,7 @@ void _calypsoStructureTests(String path) {
 void _steadyBeatTests(String path) {
   final input = Uint8List.fromList(File(path).readAsBytesSync());
   final hymnN = detectChords(input)!.beatsPerBar;
-  // Reggae plays a 3/4 hymn in four; calypso keeps the waltz.
-  final n = hymnN == 3 ? 4 : hymnN;
+  final n = hymnN;
 
   /// Every arranged tempo is the dominant one or SLOWER (dips clamp up to
   /// the floor, flourishes clamp down), so the fastest marking in the
@@ -581,11 +592,20 @@ Map<int, int> _tickZeroVolumes(Uint8List smf) {
     if (smf[i] != 0) break; // first non-zero delta: tick 0 is over
     i++;
     var status = smf[i];
-    if (status & 0x80 != 0) { i++; running = status; } else { status = running; }
+    if (status & 0x80 != 0) {
+      i++;
+      running = status;
+    } else {
+      status = running;
+    }
     if (status == 0xFF) {
       i++; // type
       var len = 0;
-      while (true) { final b = smf[i++]; len = (len << 7) | (b & 0x7F); if (b & 0x80 == 0) break; }
+      while (true) {
+        final b = smf[i++];
+        len = (len << 7) | (b & 0x7F);
+        if (b & 0x80 == 0) break;
+      }
       i += len;
     } else if (status & 0xF0 == 0xB0) {
       if (smf[i] == 7) seen[status & 0x0F] = smf[i + 1];
@@ -614,7 +634,8 @@ void _channelVolumeTests() {
     expect(b.ons.length, a.ons.length);
     expect(b.tempi, a.tempi);
     expect(b.lastOffTick, a.lastOffTick);
-    expect(detectChords(leveled)!.beatsPerBar, detectChords(plain)!.beatsPerBar);
+    expect(
+        detectChords(leveled)!.beatsPerBar, detectChords(plain)!.beatsPerBar);
   });
 
   test('the correction survives transposition', () {
@@ -674,15 +695,14 @@ void main() {
     _steadyBeatTests('assets/midi/016.mid');
   });
 
-  group('arrangeStyle(reggae) on assets/midi/001.mid (3/4, played in four)', () {
-    // fidelity off: the render's bars are a beat longer than the hymn's,
-    // so bar-start sampling no longer lines up between the two.
+  group(
+      'arrangeStyle(reggae) on assets/midi/001.mid '
+      '(3/4, continuous offbeat skank)', () {
     _styleTests('assets/midi/001.mid', ArrangeStyle.reggae,
         pitchedChannels: {0, 1, 2, 3},
         percussionKeys: reggaeKeys,
         registerBands: reggaeBands,
-        fidelity: false,
-        playedInFour: true);
+        fidelity: false);
     _oneDropTests('assets/midi/001.mid');
     _steadyBeatTests('assets/midi/001.mid');
   });
@@ -728,7 +748,8 @@ void main() {
       }
     });
 
-    test('calypso lead is Rhodes — same voice as the reggae lead — over '
+    test(
+        'calypso lead is Rhodes — same voice as the reggae lead — over '
         'the steel-pan strum with its vibraphone attack layer', () {
       expect(calypsoScan.programs[0], {4});
       expect(calypsoScan.programs[1], {114});
@@ -786,8 +807,8 @@ void main() {
       // double-speed (heard as the one drop "removed... a stifled
       // one-note fill"). The dominant tempo — most governed ticks — caps
       // the map; the closing rits survive only down to the 70% floor.
-      final h15 = Uint8List.fromList(
-          File('assets/midi/015.mid').readAsBytesSync());
+      final h15 =
+          Uint8List.fromList(File('assets/midi/015.mid').readAsBytesSync());
       // Reggae takes the dominant and holds it — one marking, no rits.
       final reggae = _scan(arrangeStyle(h15, ArrangeStyle.reggae));
       final rBpms = reggae.tempi.map((us) => 6e7 / us).toList();
@@ -805,8 +826,9 @@ void main() {
       expect(bpms.reduce((a, b) => a < b ? a : b),
           greaterThanOrEqualTo(121 * 0.7 - 0.5));
       for (var i = 1; i < bpms.length; i++) {
-        final ratio =
-            bpms[i] > bpms[i - 1] ? bpms[i] / bpms[i - 1] : bpms[i - 1] / bpms[i];
+        final ratio = bpms[i] > bpms[i - 1]
+            ? bpms[i] / bpms[i - 1]
+            : bpms[i - 1] / bpms[i];
         expect(ratio, lessThanOrEqualTo(1.15));
       }
     });
@@ -818,15 +840,14 @@ void main() {
       // outlived the audio). Retimed onto the reggae render's FLAT map:
       // the opening chords sit LATER than raw (slowed to 121) and the final
       // measure lands EARLIER (the closing rits are gone from the clock).
-      final h15 = Uint8List.fromList(
-          File('assets/midi/015.mid').readAsBytesSync());
+      final h15 =
+          Uint8List.fromList(File('assets/midi/015.mid').readAsBytesSync());
       final raw = detectChords(h15)!;
-      final retimed =
-          retimeTrackForArrangement(h15, raw, ArrangeStyle.reggae);
+      final retimed = retimeTrackForArrangement(h15, raw, ArrangeStyle.reggae);
       expect(retimed.chords.length, raw.chords.length);
       expect(retimed.measureStartMs.length, raw.measureStartMs.length);
-      expect(retimed.chords.first.startMs,
-          greaterThan(raw.chords.first.startMs));
+      expect(
+          retimed.chords.first.startMs, greaterThan(raw.chords.first.startMs));
       expect(retimed.measureStartMs.last, lessThan(raw.measureStartMs.last));
       // Beat counts are conserved chord by chord.
       for (var i = 0; i < raw.chords.length; i++) {
@@ -841,7 +862,8 @@ void main() {
       ];
       final lastCrash = crashTicks.reduce((a, b) => a > b ? a : b);
       expect(
-          calypsoScan.ons.where((on) => on.channel == 1 && on.tick >= lastCrash),
+          calypsoScan.ons
+              .where((on) => on.channel == 1 && on.tick >= lastCrash),
           isEmpty);
     });
 
@@ -857,7 +879,8 @@ void main() {
     });
   });
 
-  group('arrangeStyle(reggae) on assets/midi/456.mid (reported phantom '
+  group(
+      'arrangeStyle(reggae) on assets/midi/456.mid (reported phantom '
       'chords; 132 BPM half-time reading)', () {
     _styleTests('assets/midi/456.mid', ArrangeStyle.reggae,
         pitchedChannels: {0, 1, 2, 3},
@@ -880,10 +903,11 @@ void main() {
     final barTicks = detectChords(input)!.beatsPerBar * _division(output);
 
     test('the lead never falls silent for more than a bar mid-song', () {
-      final leadBars =
-          {for (final on in scan.ons) if (on.channel == 0) on.tick ~/ barTicks}
-              .toList()
-            ..sort();
+      final leadBars = {
+        for (final on in scan.ons)
+          if (on.channel == 0) on.tick ~/ barTicks
+      }.toList()
+        ..sort();
       var worstGap = 0;
       for (var i = 1; i < leadBars.length; i++) {
         final gap = leadBars[i] - leadBars[i - 1] - 1;
@@ -893,8 +917,14 @@ void main() {
     });
 
     test('the descant is kept, quiet, above the lead, on channel 4', () {
-      final leads = [for (final on in scan.ons) if (on.channel == 0) on];
-      final descants = [for (final on in scan.ons) if (on.channel == 4) on];
+      final leads = [
+        for (final on in scan.ons)
+          if (on.channel == 0) on
+      ];
+      final descants = [
+        for (final on in scan.ons)
+          if (on.channel == 4) on
+      ];
       expect(descants, isNotEmpty);
       expect(descants.length, lessThan(leads.length));
       double avgPitch(List<_NoteOn> ons) =>
@@ -929,7 +959,7 @@ void main() {
         }
         final scan = _scan(output);
         final d = _division(output);
-        // Reggae plays a 3/4 hymn in four: read the meter off the render.
+        // Read the written meter back from the render.
         final barTicks = detectChords(output)!.beatsPerBar * d;
 
         // The one drop's law: the kicks only ever on a drop pulse.
@@ -971,13 +1001,73 @@ void main() {
           ];
           return vels.reduce((a, b) => a + b) / vels.length;
         }
+
         expect(avgVel(0), greaterThan(avgVel(1)),
             reason: 'hymn $hymn: skank overpowers the lead');
       });
     }
   });
 
-  group('the iOS engine correction (reggae channel volumes)', _channelVolumeTests);
+  test('every 3/4 hymn keeps its meter and continuous island rhythm', () {
+    final paths = Directory('assets/midi')
+        .listSync()
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.mid'))
+        .toList()
+      ..sort((a, b) => a.path.compareTo(b.path));
+    var threeFourHymns = 0;
+
+    for (final file in paths) {
+      final input = Uint8List.fromList(file.readAsBytesSync());
+      final source = detectChords(input);
+      if (source?.beatsPerBar != 3) continue;
+      threeFourHymns++;
+
+      for (final style in [ArrangeStyle.reggae, ArrangeStyle.calypso]) {
+        final output = arrangeStyle(input, style);
+        final arranged = detectChords(output);
+        expect(arranged, isNotNull,
+            reason: '${file.path}: $style has no meter');
+        expect(arranged!.beatsPerBar, 3,
+            reason: '${file.path}: $style changed the written meter');
+
+        final scan = _scan(output);
+        final d = _division(output);
+        final barTicks = 3 * d;
+        final backing = scan.ons.where((on) => on.channel == 1).toList();
+        expect(backing, isNotEmpty,
+            reason: '${file.path}: $style has no rhythmic backing');
+        final soundingBeats = {
+          for (final on in backing) (on.tick % barTicks) ~/ d,
+        };
+        expect(soundingBeats, containsAll(<int>[0, 1, 2]),
+            reason: '${file.path}: $style does not cover all three beats');
+
+        if (style == ArrangeStyle.reggae) {
+          for (final on in backing) {
+            expect(on.tick % d, d ~/ 2,
+                reason: '${file.path}: reggae skank is not on an offbeat');
+          }
+          for (final on
+              in scan.ons.where((on) => on.channel == 9 && on.pitch == 35)) {
+            expect(on.tick % barTicks, 2 * d,
+                reason: '${file.path}: reggae one-drop is not on beat 3');
+          }
+        } else {
+          for (final on in backing) {
+            expect(on.tick % d, isNot(0),
+                reason: '${file.path}: steelpan landed on a downbeat');
+          }
+        }
+      }
+    }
+
+    expect(threeFourHymns, 388,
+        reason: 'update this count when the bundled MIDI corpus changes');
+  });
+
+  group('the iOS engine correction (reggae channel volumes)',
+      _channelVolumeTests);
 
   group('arrangeStyle(reggae) rejects unusable input', () {
     _rejectionTests(ArrangeStyle.reggae);
