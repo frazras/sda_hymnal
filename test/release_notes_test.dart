@@ -42,12 +42,15 @@ void main() {
     }
   });
 
-  test('Play Store notes keep 4.1.1 and 4.2.0 changes separate', () {
+  test('Play Store notes keep published and current changes separate', () {
     final notes411 = File(
       'android/fastlane/metadata/android/en-US/changelogs/40101.txt',
     ).readAsStringSync();
     final notes420 = File(
       'android/fastlane/metadata/android/en-US/changelogs/40200.txt',
+    ).readAsStringSync();
+    final notes430 = File(
+      'android/fastlane/metadata/android/en-US/changelogs/40300.txt',
     ).readAsStringSync();
 
     expect(notes411, contains('Classic design'));
@@ -63,6 +66,16 @@ void main() {
       expect(notes420, isNot(contains(alreadyPublished)));
     }
     expect(notes420.length, lessThanOrEqualTo(500));
+    expect(notes430, contains('225 New Hymnal readings'));
+    for (final alreadyPublished in [
+      'music to all 703 Old Hymnal songs',
+      'Choruses now repeat after each verse',
+      '3/4 reggae',
+      'music player visibility',
+    ]) {
+      expect(notes430, isNot(contains(alreadyPublished)));
+    }
+    expect(notes430.length, lessThanOrEqualTo(500));
   });
 
   testWidgets(

@@ -1,0 +1,4 @@
+Added all 225 New Hymnal readings with categories, Scripture references, search, keypad lookup, swiping, and auto-scroll.
+Browse hymns and readings by topic or occasion.
+Restored missing passages in hymn stories.
+Added offline community statistics and optional weekly usage summaries, with sharing controls in Settings.

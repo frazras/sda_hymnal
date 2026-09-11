@@ -4,7 +4,38 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
-## 4.2.0 (40200) — unreleased (2026-09-02)
+## 4.3.0 (40300) — unreleased (2026-09-11)
+
+### Additional readings and topics
+- Add all 225 New Hymnal readings, numbered 696–920, with category and
+  Scripture-reference metadata.
+- Give readings a dedicated non-musical reader with the printed responsive
+  typography, search and category filters, a reading-speed auto-scroll, and
+  previous/next swipe navigation.
+- Resolve reading numbers from the main keypad and label their result and
+  category. Place the occasion and additional-reading browsers together below
+  hymn search.
+- Transcribe and integrate the New Hymnal topical index. Topic pages combine
+  hymns with their referenced Scripture readings while keeping Old and New
+  Hymnal numbering separate.
+
+### Stories
+- Restore inline titles, quotations, and passages omitted from the original
+  ShareFaith import. Join the split “Because He Lives” account into one story
+  and retain a reproducible archive-recovery tool.
+
+### Community statistics and privacy
+- Add privacy-conscious, offline-first usage summaries with a persistent
+  Settings opt-out, bounded local storage, weekly uploads, retry-safe counting,
+  and predefined diagnostic categories.
+- Add an offline-capable Community Statistics page for popular hymns, repeat
+  visits, favorite additions, days, broad times, and country highlights.
+- Add the deployed aggregate collector, public suppressed reports, private
+  administrator dashboard, operational verification, and updated privacy
+  policy. No search text, advertising identifier, contact data, or raw event
+  history is collected.
+
+## 4.2.0 (40200) — 2026-09-05
 
 - Add hymn stories, writer and composer details, and matching hymn videos.
 - Add music playback, transposition, chords and auto-scroll to all 703 Old
