@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
@@ -29,6 +30,8 @@ class AppDesignController extends ValueNotifier<AppDesign> {
   Future<void> set(AppDesign design) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('appDesign', design.name);
+    AppAnalytics.instance.setDesign(design.name);
+    AppAnalytics.instance.event('setting_design', variant: design.name);
     value = design;
     await syncIcon();
   }
@@ -51,6 +54,7 @@ class AppDesignController extends ValueNotifier<AppDesign> {
           await AppIcon.setDesign(requested.name);
           if (requested == value) iconError.value = null;
         } catch (_) {
+          AppAnalytics.instance.event('diagnostic', variant: 'icon');
           if (requested == value) {
             iconError.value =
                 'The layout is saved, but the home-screen icon could not be '
@@ -88,6 +92,7 @@ class ThemeController extends ValueNotifier<ThemeMode> {
     if (save) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('theme', pref);
+      AppAnalytics.instance.event('setting_theme', variant: pref);
     }
   }
 }
@@ -107,6 +112,12 @@ class FontSizeController extends ValueNotifier<double> {
     value = size;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('fontSize', size);
+    AppAnalytics.instance.event('setting_font',
+        variant: size < 20
+            ? 'small'
+            : size < 25
+                ? 'medium'
+                : 'large');
   }
 }
 
@@ -126,6 +137,8 @@ class KeepScreenOn extends ValueNotifier<bool> {
     value = on;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('keepScreenOn', on);
+    AppAnalytics.instance
+        .event('setting_keep_awake', variant: on ? 'on' : 'off');
   }
 }
 
@@ -143,6 +156,8 @@ class AutoScroll extends ValueNotifier<bool> {
     value = on;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('autoScroll', on);
+    AppAnalytics.instance
+        .event('setting_auto_scroll', variant: on ? 'on' : 'off');
   }
 }
 
@@ -161,6 +176,8 @@ class MusicPlayerVisible extends ValueNotifier<bool> {
     value = visible;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('musicPlayerVisible', visible);
+    AppAnalytics.instance
+        .event('setting_player', variant: visible ? 'on' : 'off');
   }
 }
 
@@ -239,6 +256,7 @@ class InstrumentTheme extends ValueNotifier<String> {
     value = id;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('midiTheme', id);
+    AppAnalytics.instance.event('setting_instrument', variant: id);
   }
 }
 
@@ -258,6 +276,7 @@ class ChordTabs extends ValueNotifier<bool> {
     value = on;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('chordTabs', on);
+    AppAnalytics.instance.event('setting_chords', variant: on ? 'on' : 'off');
   }
 }
 
@@ -291,6 +310,7 @@ class ChordLevelPref extends ValueNotifier<String> {
     value = level;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('chordLevel', level);
+    AppAnalytics.instance.event('setting_chord_level', variant: level);
   }
 }
 
@@ -316,6 +336,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
   /// Adds the hymn (to the front) if absent, removes it otherwise.
   Future<void> toggle(Hymn hymn) async {
     final entry = (n: hymn.number, v: hymn.version);
+    final removing = contains(entry.n, entry.v);
     value = contains(entry.n, entry.v)
         ? value.where((e) => !(e.n == entry.n && e.v == entry.v)).toList()
         : [entry, ...value];
@@ -325,5 +346,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
         jsonEncode([
           for (final e in value) {'n': e.n, 'v': e.v}
         ]));
+    AppAnalytics.instance.event(removing ? 'favorite_remove' : 'favorite_add',
+        hymn: hymn.number, edition: hymn.version);
   }
 }

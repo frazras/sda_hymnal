@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics_endpoint.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sdahymnal/theme.dart';
@@ -12,12 +13,12 @@ class About extends StatelessWidget {
   const About({super.key});
 
   static final Uri _twitterUrl = Uri.parse('https://twitter.com/frazras');
-  static final Uri _emailUrl = Uri(scheme: 'mailto', path: 'rohan@exterbox.com');
+  static final Uri _emailUrl =
+      Uri(scheme: 'mailto', path: 'rohan@exterbox.com');
 
   /// Google Play requires a privacy policy link inside the app itself, not
   /// only in the Play Console listing field.
-  static final Uri _privacyUrl =
-      Uri.parse('https://frazras.github.io/sda_hymnal/privacy-policy.html');
+  static final Uri _privacyUrl = Uri.parse('$analyticsEndpoint/privacy-policy');
 
   static const String _bio =
       'I am a software developer for Mobile Apps and Websites. This project '

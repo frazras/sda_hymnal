@@ -5,7 +5,8 @@ import 'midi_file.dart';
 
 /// Generated files only; source assets and user preferences are never changed.
 class MidiRenderCache {
-  MidiRenderCache(this.directory);
+  MidiRenderCache(this.directory, {this.onRepair});
+  final void Function()? onRepair;
 
   // v22's Apple piano CC7=41 belongs to the original bank. Bypass it rather
   // than deleting old caches, which another running player may still use.
@@ -52,6 +53,7 @@ class MidiRenderCache {
         midiTrackChunks(await destination.readAsBytes());
         return destination;
       } on FormatException {
+        onRepair?.call();
         // Interrupted/invalid generated cache entry: replace atomically below.
       }
     }

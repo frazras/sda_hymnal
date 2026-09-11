@@ -23,7 +23,8 @@ class _NoteOn {
   final ons = <_NoteOn>[];
   var lastOff = 0;
   var seq = 0;
-  var i = 8 + ((bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7]);
+  var i =
+      8 + ((bytes[4] << 24) | (bytes[5] << 16) | (bytes[6] << 8) | bytes[7]);
   while (i < bytes.length) {
     final id = String.fromCharCodes(bytes, i, i + 4);
     final len = (bytes[i + 4] << 24) |
@@ -99,7 +100,8 @@ int _melodyChannel(Uint8List bytes) {
 
 /// The chord root governing each of the first [count] measure starts that
 /// carry harmony, sampled at the same media-time instants for both tracks.
-List<int> _barStartRoots(ChordTrack track, List<int> measureStartMs, int count) {
+List<int> _barStartRoots(
+    ChordTrack track, List<int> measureStartMs, int count) {
   final roots = <int>[];
   for (final ms in measureStartMs) {
     if (roots.length >= count) break;

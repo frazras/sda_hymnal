@@ -14,7 +14,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # The pre-2026 releases were Cordova builds whose codes were single digits, so
 # this scheme clears them by a wide margin and stays monotonic forever. Play
 # rejects a versionCode it has seen before — always bump before uploading.
-version: 4.2.0+40200
+version: 4.3.0+40300
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -35,6 +35,9 @@ dependencies:
   path_provider: ^2.1.0
   wakelock_plus: ^1.7.0
   youtube_player_iframe: ^6.0.2
+  sqflite: ^2.4.3
+  crypto: ^3.0.7
+  sqflite_common: ^2.5.11
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -55,6 +58,9 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.0
   flutter_lints: ^5.0.0
   wakelock_plus_platform_interface: ^1.6.0
+  sqflite_common_ffi: ^2.4.2+1
+  integration_test:
+    sdk: flutter
 
 # The following section is specific to Flutter.
 flutter:
@@ -64,6 +70,7 @@ flutter:
     - assets/hymns.json
     - assets/hymn_metadata.json
     - assets/hymn_videos.json
+    - assets/additional_readings.json
     - assets/logo.svg
     - assets/logo-mark.svg
     - assets/logo-mark-dark.svg

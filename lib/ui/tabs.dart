@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
 import 'package:sdahymnal/services/api.dart';
@@ -26,9 +30,17 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymns = [];
   List<Hymn> _hymnsNew = [];
   List<Hymn> _hymnsOld = [];
+  AdditionalReadingCatalog _readings = const AdditionalReadingCatalog([]);
   int _tab = 0;
   bool _loadingStarted = false;
   bool _releaseCheckStarted = false;
+
+  void _selectTab(int tab) {
+    if (tab == _tab) return;
+    AppAnalytics.instance
+        .screen(['numbers', 'search', 'favorites', 'settings'][tab]);
+    setState(() => _tab = tab);
+  }
 
   @override
   void didChangeDependencies() {
@@ -48,12 +60,21 @@ class _TabsState extends State<Tabs> {
   _loadHymns() async {
     final bundle = DefaultAssetBundle.of(context);
     final hymnData = await bundle.loadString('assets/hymns.json');
+    try {
+      final readingsData =
+          await bundle.loadString('assets/additional_readings.json');
+      _readings = AdditionalReadingCatalog.fromJson(
+          jsonDecode(readingsData) as Map<String, dynamic>);
+    } on FlutterError {
+      _readings = const AdditionalReadingCatalog([]);
+    }
     HymnMetadataCatalog? metadata;
     HymnVideoCatalog? videos;
     try {
       final metadataData = await bundle.loadString('assets/hymn_metadata.json');
       metadata = HymnMetadataCatalog.fromJson(metadataData);
     } on FlutterError {
+      AppAnalytics.instance.event('diagnostic', variant: 'content_load');
       // Some embedders and lightweight widget-test bundles provide only the
       // legacy hymn asset. Lyrics remain usable while metadata is optional.
       metadata = null;
@@ -62,6 +83,7 @@ class _TabsState extends State<Tabs> {
       final videoData = await bundle.loadString('assets/hymn_videos.json');
       videos = HymnVideoCatalog.fromJson(videoData);
     } on FlutterError {
+      AppAnalytics.instance.event('diagnostic', variant: 'content_load');
       // Playback remains optional for lightweight test bundles and offline
       // builds that intentionally ship only the lyrics asset.
       videos = null;
@@ -116,10 +138,10 @@ class _TabsState extends State<Tabs> {
                 if (t.isClassic)
                   ClassicHeader(
                       active: _tab,
-                      onSelect: (i) => setState(() => _tab = i),
-                      onFavorites: () => setState(() => _tab = 2))
+                      onSelect: _selectTab,
+                      onFavorites: () => _selectTab(2))
                 else
-                  BrandHeader(onLogoTap: () => setState(() => _tab = 0)),
+                  BrandHeader(onLogoTap: () => _selectTab(0)),
                 Expanded(
                   // Both surrounding navigation widgets change with design.
                   // Keep the shared tab subtree when Flutter reconciles them.
@@ -127,13 +149,18 @@ class _TabsState extends State<Tabs> {
                   child: IndexedStack(
                     index: _tab,
                     children: [
-                      Buttons(hymnsOld: _hymnsOld, hymnsNew: _hymnsNew),
+                      Buttons(
+                          hymnsOld: _hymnsOld,
+                          hymnsNew: _hymnsNew,
+                          additionalReadings: _readings),
                       HymnList(
+                          active: _tab == 1,
+                          additionalReadings: _readings,
                           hymns: _hymns,
                           hymnsOld: _hymnsOld,
                           hymnsNew: _hymnsNew),
                       FavoritesTab(hymnsNew: _hymnsNew, hymnsOld: _hymnsOld),
-                      const Settings(),
+                      Settings(hymns: _hymns),
                     ],
                   ),
                 ),
@@ -142,7 +169,7 @@ class _TabsState extends State<Tabs> {
                 else
                   HymnalBottomNav(
                     active: _tab,
-                    onSelect: (i) => setState(() => _tab = i),
+                    onSelect: _selectTab,
                   ),
               ],
             ),

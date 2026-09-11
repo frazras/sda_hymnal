@@ -9,9 +9,18 @@ import io.flutter.plugin.common.MethodChannel
 
 class HymnalActivity : FlutterActivity() {
     private var iconChannel: MethodChannel? = null
+    private var analyticsChannel: MethodChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        analyticsChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sdahymnal/analytics_storage")
+        analyticsChannel?.setMethodCallHandler { call, result ->
+            if (call.method == "directory") {
+                val directory = java.io.File(noBackupFilesDir, "analytics")
+                if (directory.exists() || directory.mkdirs()) result.success(directory.absolutePath)
+                else result.error("STORAGE", "Analytics storage unavailable", null)
+            } else result.notImplemented()
+        }
         iconChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sdahymnal/app_icon")
         iconChannel?.setMethodCallHandler { call, result ->
             if (call.method != "setDesign") {
@@ -30,6 +39,8 @@ class HymnalActivity : FlutterActivity() {
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        analyticsChannel?.setMethodCallHandler(null)
+        analyticsChannel = null
         iconChannel?.setMethodCallHandler(null)
         iconChannel = null
         super.cleanUpFlutterEngine(flutterEngine)

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import 'package:sdahymnal/models/hymn_video.dart';
@@ -21,6 +24,8 @@ class HymnVideoOverlay extends StatefulWidget {
 
 class _HymnVideoOverlayState extends State<HymnVideoOverlay> {
   late final YoutubePlayerController _controller;
+  StreamSubscription<YoutubePlayerValue>? _subscription;
+  bool _reportedError = false;
 
   @override
   void initState() {
@@ -36,10 +41,17 @@ class _HymnVideoOverlayState extends State<HymnVideoOverlay> {
         strictRelatedVideos: true,
       ),
     );
+    _subscription = _controller.listen((value) {
+      if (value.hasError && !_reportedError) {
+        _reportedError = true;
+        AppAnalytics.instance.event('video_error');
+      }
+    });
   }
 
   @override
   void dispose() {
+    _subscription?.cancel();
     _controller.close();
     super.dispose();
   }

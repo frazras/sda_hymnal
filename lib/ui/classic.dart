@@ -91,18 +91,26 @@ class ClassicNumberPad extends StatelessWidget {
       required this.display,
       required this.oldTitle,
       required this.newTitle,
+      this.readingTitle = '',
+      this.readingCategory = '',
       required this.fontSize,
       required this.onDigit,
       required this.onClear,
       required this.onBackspace,
       required this.onOld,
-      required this.onNew});
+      required this.onNew,
+      this.onReading,
+      this.onOccasions,
+      this.onReadings});
 
-  final String display, oldTitle, newTitle;
+  final String display, oldTitle, newTitle, readingTitle, readingCategory;
   final double fontSize;
   final ValueChanged<String> onDigit;
   final VoidCallback onClear, onBackspace;
   final VoidCallback? onOld, onNew;
+  final VoidCallback? onReading;
+  final VoidCallback? onOccasions;
+  final VoidCallback? onReadings;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +145,7 @@ class ClassicNumberPad extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
-              display.isEmpty ? 'Enter hymn number' : display,
+              display.isEmpty ? 'Enter hymn or reading number' : display,
               key: const ValueKey('classic-number-display'),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -163,6 +171,52 @@ class ClassicNumberPad extends StatelessWidget {
           button(const Text('OLD»'), onOld),
           button(const Text('NEW»'), onNew)
         ]),
+        if (onReading != null)
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: OutlinedButton(
+              onPressed: onReading,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    Text('READING: $display  $readingTitle',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 3),
+                    Text(readingCategory, textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        if (onOccasions != null || onReadings != null)
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: OutlinedButton.icon(
+                    onPressed: onOccasions,
+                    icon: const Icon(Icons.library_music_outlined, size: 18),
+                    label: const Text('Hymns by occasion',
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: OutlinedButton.icon(
+                    onPressed: onReadings,
+                    icon: const Icon(Icons.menu_book_outlined, size: 18),
+                    label: const Text('Additional readings',
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                ),
+              ),
+            ],
+          ),
         Padding(
             padding: const EdgeInsets.all(6),
             child: Text('NEW: $display $newTitle',

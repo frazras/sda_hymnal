@@ -3,6 +3,7 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -28,8 +29,13 @@ import 'package:sdahymnal/ui/hymn_video_overlay.dart';
 class HymnPage extends StatefulWidget {
   final Hymn hymn;
   final List<Hymn> hymns;
+  final String analyticsSource;
 
-  const HymnPage({super.key, required this.hymn, required this.hymns});
+  const HymnPage(
+      {super.key,
+      required this.hymn,
+      required this.hymns,
+      this.analyticsSource = 'unknown'});
 
   @override
   State<HymnPage> createState() => _HymnPageState();
@@ -48,6 +54,8 @@ class _HymnPageState extends State<HymnPage> {
   @override
   void initState() {
     super.initState();
+    AppAnalytics.instance.openHymn(
+        widget.hymn.number, widget.hymn.version, widget.analyticsSource);
     // Single recents recording point: every open (keypad, search, chip) and
     // every prev/next/swipe move constructs a new HymnPage, so this covers
     // them all.
@@ -68,6 +76,7 @@ class _HymnPageState extends State<HymnPage> {
 
   @override
   void dispose() {
+    AppAnalytics.instance.closeHymn(widget.hymn.number, widget.hymn.version);
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
     MidiPlayer.instance.stopIfCurrent(widget.hymn);
@@ -77,11 +86,17 @@ class _HymnPageState extends State<HymnPage> {
 
   void _showVideo() {
     if (widget.hymn.video == null) return;
+    AppAnalytics.instance.event('video_open',
+        hymn: widget.hymn.number, edition: widget.hymn.version);
     MidiPlayer.instance.stopIfCurrent(widget.hymn);
     setState(() => _videoVisible = true);
   }
 
-  void _closeVideo() => setState(() => _videoVisible = false);
+  void _closeVideo() {
+    AppAnalytics.instance.event('video_close',
+        hymn: widget.hymn.number, edition: widget.hymn.version);
+    setState(() => _videoVisible = false);
+  }
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
   /// Silently no-ops at the ends of the hymnal (new <= 695, old <= 703).
@@ -94,7 +109,8 @@ class _HymnPageState extends State<HymnPage> {
     Navigator.pushReplacement(
       context,
       slideRoute(
-        HymnPage(hymn: target, hymns: widget.hymns),
+        HymnPage(
+            hymn: target, hymns: widget.hymns, analyticsSource: 'adjacent'),
         fromLeft: dir < 0,
       ),
     );
@@ -487,10 +503,14 @@ class _HymnPageState extends State<HymnPage> {
               button: true,
               child: InkWell(
                 key: const ValueKey('hymn-story-link'),
-                onTap: () => Navigator.push(
-                  context,
-                  slideRoute(HymnStoryPage(hymn: widget.hymn)),
-                ),
+                onTap: () {
+                  AppAnalytics.instance.event('story_open',
+                      hymn: widget.hymn.number, edition: widget.hymn.version);
+                  Navigator.push(
+                    context,
+                    slideRoute(HymnStoryPage(hymn: widget.hymn)),
+                  );
+                },
                 child: Text(
                   metadata.stories.length == 1
                       ? 'Read story'
@@ -794,6 +814,7 @@ class _HymnPageState extends State<HymnPage> {
   /// and scrollable): the whole tune as a measure grid, four bars per row,
   /// with the playing measure highlighted live. Relabels on transpose.
   void _showChordSheet(HymnalTokens t) {
+    AppAnalytics.instance.event('chord_chart_open');
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

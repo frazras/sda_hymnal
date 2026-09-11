@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:path_provider/path_provider.dart';
 
@@ -102,6 +103,7 @@ class MidiPlayer {
         final bytes = await _assetBytes(hymn.version, hymn.number);
         return await compute(_readingDuration, (bytes, theme));
       } catch (_) {
+        AppAnalytics.instance.event('play_error', variant: 'timing');
         return null;
       }
     });
@@ -134,6 +136,11 @@ class MidiPlayer {
 
   /// Natural end of the tune: same reset on both engines.
   void _onComplete() {
+    final finished = current.value;
+    if (finished != null) {
+      AppAnalytics.instance
+          .event('play_complete', hymn: finished.n, edition: finished.version);
+    }
     _stopPositionPolling();
     // Publish the exact endpoint before clearing playback. Readers following
     // the timeline reach the final chorus even if the last native poll was early.
@@ -189,6 +196,7 @@ class MidiPlayer {
       final raw = _chordCache.putIfAbsent(id, () => detectChords(bytes));
       chordTrack.value = _displayTrack(bytes, raw);
     } catch (_) {
+      AppAnalytics.instance.event('play_error', variant: 'decode');
       originalKey.value = null;
       chordTrack.value = null;
     }
@@ -237,7 +245,9 @@ class MidiPlayer {
   }
 
   late final Future<MidiRenderCache> _renderCache = getTemporaryDirectory()
-      .then((dir) => MidiRenderCache(Directory('${dir.path}/midi_cache')));
+      .then((dir) => MidiRenderCache(Directory('${dir.path}/midi_cache'),
+          onRepair: () => AppAnalytics.instance
+              .event('diagnostic', variant: 'cache_repaired')));
 
   /// Snapshot options before awaiting storage so rapid theme/key changes
   /// cannot save one arrangement under another arrangement's cache key.
@@ -263,6 +273,43 @@ class MidiPlayer {
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
   Future<void> toggle(Hymn hymn) async {
+    if (!hasMidi(hymn)) return;
+    final before = current.value;
+    final starting = !isCurrent(before, hymn);
+    final watch = Stopwatch()..start();
+    if (starting) {
+      AppAnalytics.instance.event('play_attempt',
+          hymn: hymn.number,
+          edition: hymn.version,
+          variant: InstrumentTheme.instance.value);
+    }
+    try {
+      await _toggle(hymn);
+      final after = current.value;
+      if (isCurrent(after, hymn)) {
+        AppAnalytics.instance.event(
+            starting
+                ? 'play_start'
+                : after!.paused
+                    ? 'play_pause'
+                    : 'play_resume',
+            hymn: hymn.number,
+            edition: hymn.version);
+        if (starting) {
+          AppAnalytics.instance.event('play_start_ms',
+              total: watch.elapsedMilliseconds.clamp(0, 3600000));
+        }
+      } else {
+        AppAnalytics.instance
+            .event('play_error', variant: starting ? 'start' : 'toggle');
+      }
+    } catch (_) {
+      AppAnalytics.instance.event('play_error', variant: 'toggle');
+      rethrow;
+    }
+  }
+
+  Future<void> _toggle(Hymn hymn) async {
     if (!hasMidi(hymn)) return;
     if (_useChannel) return _channelToggle(hymn);
     final cur = current.value;
@@ -341,6 +388,12 @@ class MidiPlayer {
   Future<void> setTranspose(int semitones) async {
     final s = semitones.clamp(-6, 6);
     if (s == transpose.value) return;
+    AppAnalytics.instance.event('play_transpose',
+        variant: s < 0
+            ? 'down'
+            : s == 0
+                ? 'original'
+                : 'up');
     transpose.value = s;
     await _restartWithTransform();
   }
@@ -365,6 +418,7 @@ class MidiPlayer {
         current.value = (version: cur.version, n: cur.n, paused: true);
       }
     } catch (_) {
+      AppAnalytics.instance.event('play_error', variant: 'restart');
       current.value = null;
       position.value = Duration.zero;
       duration.value = Duration.zero;
@@ -395,6 +449,7 @@ class MidiPlayer {
         _startPositionPolling();
       }
     } catch (_) {
+      AppAnalytics.instance.event('play_error', variant: 'restart');
       current.value = null;
       position.value = Duration.zero;
       duration.value = Duration.zero;
@@ -402,6 +457,12 @@ class MidiPlayer {
   }
 
   Future<void> setSpeed(double s) async {
+    AppAnalytics.instance.event('play_speed',
+        variant: s < 1
+            ? 'slow'
+            : s == 1
+                ? 'normal'
+                : 'fast');
     speed.value = s;
     await _applySpeed();
   }
@@ -418,12 +479,16 @@ class MidiPlayer {
       } else {
         await _player.setPlaybackRate(speed.value);
       }
-    } catch (_) {}
+    } catch (_) {
+      AppAnalytics.instance.event('play_error', variant: 'rate');
+    }
   }
 
   /// Jump forward/back by [delta], clamped to the track bounds.
   Future<void> seekBy(Duration delta) async {
     if (current.value == null) return;
+    AppAnalytics.instance
+        .event('play_seek', variant: delta.isNegative ? 'back' : 'forward');
     final target = position.value + delta;
     final max = duration.value;
     final clamped = target < Duration.zero
@@ -434,14 +499,26 @@ class MidiPlayer {
     if (_useChannel) {
       try {
         await _channel.invokeMethod('seek', _toSeconds(clamped));
-      } catch (_) {}
+      } catch (_) {
+        AppAnalytics.instance.event('play_error', variant: 'seek');
+      }
     } else {
-      await _player.seek(clamped);
+      try {
+        await _player.seek(clamped);
+      } catch (_) {
+        AppAnalytics.instance.event('play_error', variant: 'seek');
+        rethrow;
+      }
     }
     position.value = clamped;
   }
 
   Future<void> stop() async {
+    final stopped = current.value;
+    if (stopped != null) {
+      AppAnalytics.instance
+          .event('play_stop', hymn: stopped.n, edition: stopped.version);
+    }
     if (_useChannel) {
       _stopPositionPolling();
       try {

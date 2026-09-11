@@ -19,6 +19,6 @@ void main() {
     expect(find.text('Numbers'), findsOneWidget);
     expect(find.text('Search'), findsOneWidget);
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('HYMN NUMBER'), findsOneWidget);
+    expect(find.text('HYMN OR READING NUMBER'), findsOneWidget);
   });
 }

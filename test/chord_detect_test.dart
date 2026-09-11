@@ -19,7 +19,8 @@ List<int> _chunk(String id, List<int> data) => [
 
 /// Format-1 SMF, division 96 ticks/quarter.
 Uint8List _smf(List<List<int>> tracks) => Uint8List.fromList([
-      ..._chunk('MThd', [0x00, 0x01, tracks.length >> 8, tracks.length & 0xFF, 0x00, 0x60]),
+      ..._chunk('MThd',
+          [0x00, 0x01, tracks.length >> 8, tracks.length & 0xFF, 0x00, 0x60]),
       for (final t in tracks) ..._chunk('MTrk', t),
     ]);
 
@@ -34,9 +35,15 @@ const _conductor = <int>[
 /// One block chord: [pitches] on at delta 0, all off a whole note (384 ticks,
 /// varlen 0x83 0x00) later, via running status with vel-0 note-ons.
 List<int> _wholeNoteChord(List<int> pitches) => [
-      0x00, 0x90, pitches.first, 0x64,
+      0x00,
+      0x90,
+      pitches.first,
+      0x64,
       for (final p in pitches.skip(1)) ...[0x00, p, 0x64],
-      0x83, 0x00, pitches.first, 0x00,
+      0x83,
+      0x00,
+      pitches.first,
+      0x00,
       for (final p in pitches.skip(1)) ...[0x00, p, 0x00],
     ];
 
@@ -51,7 +58,8 @@ final _notes = <int>[
 
 /// The track's chords as printed labels in the file's own key.
 List<String> _labels(ChordTrack track) => [
-      for (final c in track.chords) chordLabel(c.rootPc, c.quality, track.key, 0),
+      for (final c in track.chords)
+        chordLabel(c.rootPc, c.quality, track.key, 0),
     ];
 
 /// Hand-made [beats]-beat chord at 500ms/beat.
@@ -107,7 +115,9 @@ void main() {
     test('carries every beat onset of each held chord', () {
       // Whole-note chords at 120bpm: four 500ms beats each, the first onset
       // being the chord's own startMs.
-      expect([for (final c in track.chords) c.beatMs], [
+      expect([
+        for (final c in track.chords) c.beatMs
+      ], [
         [0, 500, 1000, 1500],
         [2000, 2500, 3000, 3500],
         [4000, 4500, 5000, 5500],
@@ -180,7 +190,9 @@ void main() {
 
     test('reduces every quality to major or minor and merges the runs', () {
       final simple = simplifyTrack(track, ChordLevel.simple);
-      expect([for (final c in simple.chords) (c.rootPc, c.quality)], [
+      expect([
+        for (final c in simple.chords) (c.rootPc, c.quality)
+      ], [
         (0, ''), // C..Caug: one C spanning all five
         (9, 'm'), // Am + Am7
         (7, ''), // Bdim stands for the G it implies
@@ -242,10 +254,9 @@ void main() {
       simplifyTrack(track, ChordLevel.medium);
       expect([for (final c in track.chords) c.quality],
           ['', 'maj7', '7', 'sus4', 'aug', 'm', 'm7', 'dim']);
-      expect([for (final c in track.chords) c.rootPc],
-          [0, 0, 0, 0, 0, 9, 9, 11]);
-      expect([for (final c in track.chords) c.beatMs.length],
-          everyElement(2));
+      expect(
+          [for (final c in track.chords) c.rootPc], [0, 0, 0, 0, 0, 9, 9, 11]);
+      expect([for (final c in track.chords) c.beatMs.length], everyElement(2));
     });
   });
 
@@ -261,8 +272,7 @@ void main() {
       ], key: _cMajor);
       for (final level in reducedLevels) {
         final out = simplifyTrack(track, level);
-        expect([for (final c in out.chords) (c.rootPc, c.quality)],
-            [(0, '')]);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)], [(0, '')]);
         expect(out.chords.single.startMs, 0);
         expect(out.chords.single.durationMs, 2000);
         expect(out.chords.single.beatMs, [0, 500, 1000, 1500]);
@@ -291,8 +301,7 @@ void main() {
       ], key: _cMajor);
       for (final level in reducedLevels) {
         final out = simplifyTrack(track, level);
-        expect([for (final c in out.chords) (c.rootPc, c.quality)],
-            [(0, '')]);
+        expect([for (final c in out.chords) (c.rootPc, c.quality)], [(0, '')]);
         expect(out.chords.single.beatMs, [0, 500, 1000, 1500]);
       }
     });
@@ -322,8 +331,8 @@ void main() {
 
       final simple =
           simplifyTrack(_handTrack([_ev(0, 4, 11, '')]), ChordLevel.simple);
-      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
-          [(11, '')]);
+      expect(
+          [for (final c in simple.chords) (c.rootPc, c.quality)], [(11, '')]);
     });
   });
 
@@ -338,8 +347,7 @@ void main() {
         _ev(1500, 1, 0, ''), // C
       ], key: _cMajor);
       final simple = simplifyTrack(track, ChordLevel.simple);
-      expect([for (final c in simple.chords) (c.rootPc, c.quality)],
-          [(7, '')]);
+      expect([for (final c in simple.chords) (c.rootPc, c.quality)], [(7, '')]);
       expect(simple.chords.single.startMs, 0);
       expect(simple.chords.single.durationMs, 2000);
       expect(simple.chords.single.beatMs, [0, 500, 1000, 1500]);
@@ -357,7 +365,9 @@ void main() {
       final simple = simplifyTrack(track, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(7, ''), (0, '')]);
-      expect([for (final c in simple.chords) c.beatMs], [
+      expect([
+        for (final c in simple.chords) c.beatMs
+      ], [
         [0, 500],
         [1000, 1500],
       ]);
@@ -368,7 +378,9 @@ void main() {
       final medium = simplifyTrack(track, ChordLevel.medium);
       expect([for (final c in medium.chords) (c.rootPc, c.quality)],
           [(7, ''), (0, '')]);
-      expect([for (final c in medium.chords) c.beatMs], [
+      expect([
+        for (final c in medium.chords) c.beatMs
+      ], [
         [0, 500],
         [1000, 1500],
       ]);
@@ -380,14 +392,18 @@ void main() {
         _ev(500, 3, 0, ''), // C for the rest of the bar
       ], key: _cMajor);
       final medium = simplifyTrack(track, ChordLevel.medium);
-      expect([for (final c in medium.chords) c.beatMs], [
+      expect([
+        for (final c in medium.chords) c.beatMs
+      ], [
         [0],
         [500, 1000, 1500],
       ]);
       final simple = simplifyTrack(track, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(7, ''), (0, '')]);
-      expect([for (final c in simple.chords) c.beatMs], [
+      expect([
+        for (final c in simple.chords) c.beatMs
+      ], [
         [0, 500],
         [1000, 1500],
       ]);
@@ -409,7 +425,9 @@ void main() {
       final simple = simplifyTrack(track, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(7, ''), (5, '')]);
-      expect([for (final c in simple.chords) c.beatMs], [
+      expect([
+        for (final c in simple.chords) c.beatMs
+      ], [
         [0, 500, 1000],
         [1500, 2000, 2500],
       ]);
@@ -430,7 +448,9 @@ void main() {
       final simple = simplifyTrack(track, ChordLevel.simple);
       expect([for (final c in simple.chords) (c.rootPc, c.quality)],
           [(7, ''), (0, ''), (7, '')]);
-      expect([for (final c in simple.chords) c.beatMs], [
+      expect([
+        for (final c in simple.chords) c.beatMs
+      ], [
         [0, 500],
         [1000, 1500],
         [2000, 2500],
@@ -547,8 +567,7 @@ void main() {
       expect(_beatCount(simple), _beatCount(track));
     });
 
-    test('simplified to medium: sits strictly between simple and original',
-        () {
+    test('simplified to medium: sits strictly between simple and original', () {
       final simple = simplifyTrack(track, ChordLevel.simple);
       final medium = simplifyTrack(track, ChordLevel.medium);
       // Medium is a real level of its own: it drops colour tones the
@@ -669,8 +688,7 @@ void main() {
         () {
       for (var i = 0; i < medium.chords.length; i++) {
         final c = medium.chords[i];
-        expect(gScale, contains(c.rootPc),
-            reason: 'out-of-scale root at $i');
+        expect(gScale, contains(c.rootPc), reason: 'out-of-scale root at $i');
         expect({'', 'm', '7'}, contains(c.quality));
         if (c.quality == 'm') {
           expect(gMinorDegrees, contains(c.rootPc),

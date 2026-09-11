@@ -383,7 +383,8 @@ class HymnalBottomNav extends StatelessWidget {
           item(1, 'Search', HymnalIcons.magnifier(c(1), stroke: s(1))),
           item(2, 'Favorites',
               HymnalIcons.heart(c(2), size: 22, filled: active == 2)),
-          item(3, 'Settings', HymnalIcons.navSettings(c(3), t.bg, stroke: s(3))),
+          item(
+              3, 'Settings', HymnalIcons.navSettings(c(3), t.bg, stroke: s(3))),
         ],
       ),
     );
@@ -441,8 +442,7 @@ class VersionBadge extends StatelessWidget {
 class SectionLabel extends StatelessWidget {
   final String text;
   final EdgeInsets padding;
-  const SectionLabel(this.text,
-      {super.key, this.padding = EdgeInsets.zero});
+  const SectionLabel(this.text, {super.key, this.padding = EdgeInsets.zero});
 
   @override
   Widget build(BuildContext context) {
@@ -506,13 +506,12 @@ String styleHymnBody(String html, HymnalTokens t, double fontSize) {
         '<span style="font-family:$kSans;font-size:${chorusPx.toStringAsFixed(1)}px;font-weight:700;letter-spacing:${trackingEm(0.14, chorusPx).toStringAsFixed(2)}px;color:$gold;font-style:normal">CHORUS</span>',
       )
       .replaceAllMapped(RegExp(r'<font color="([^"]*)"[^>]*>'), (m) {
-        final lc = m[1]!.toLowerCase();
-        final col = lc == '#0b6138'
-            ? accent
-            : lc == '#cd9b1d'
-                ? gold
-                : 'inherit';
-        return '<span style="color:$col">';
-      })
-      .replaceAll('</font>', '</span>');
+    final lc = m[1]!.toLowerCase();
+    final col = lc == '#0b6138'
+        ? accent
+        : lc == '#cd9b1d'
+            ? gold
+            : 'inherit';
+    return '<span style="color:$col">';
+  }).replaceAll('</font>', '</span>');
 }

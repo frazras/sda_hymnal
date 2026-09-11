@@ -32,6 +32,7 @@ class FavoritesTab extends StatelessWidget {
       context,
       slideRoute(HymnPage(
         hymn: hymn,
+        analyticsSource: 'favorites',
         hymns: hymn.version == 'new' ? hymnsNew : hymnsOld,
       )),
     );

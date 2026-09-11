@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/hymn_occasions.dart';
+import 'package:sdahymnal/ui/additional_readings.dart';
 
 /// Search tab (content-only: the shell renders the brand header above and
 /// the bottom nav below). Mockup: Search v2.dc.html.
@@ -13,9 +18,13 @@ class HymnList extends StatefulWidget {
   final List<Hymn> hymns;
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
+  final bool active;
+  final AdditionalReadingCatalog additionalReadings;
 
   const HymnList(
       {super.key,
+      this.active = true,
+      this.additionalReadings = const AdditionalReadingCatalog([]),
       required this.hymns,
       required this.hymnsOld,
       required this.hymnsNew});
@@ -29,17 +38,55 @@ class _HymnListState extends State<HymnList> {
   String _filter = 'ALL';
   String _query = '';
   final _searchController = TextEditingController();
+  Timer? _searchTimer;
+  final Stopwatch _searchWatch = Stopwatch();
+  bool _pendingSearch = false;
+
+  void _recordSearch() {
+    _searchTimer?.cancel();
+    if (!widget.active || _query.trim().isEmpty) return;
+    final count = _filteredHymns.length;
+    AppAnalytics.instance.event('search_results',
+        variant: count == 0
+            ? 'zero'
+            : count <= 5
+                ? '1_5'
+                : count <= 20
+                    ? '6_20'
+                    : '21_plus');
+  }
+
+  void _abandonSearch() {
+    _searchTimer?.cancel();
+    if (_pendingSearch) AppAnalytics.instance.event('search_abandon');
+    _pendingSearch = false;
+    _searchWatch.stop();
+  }
 
   @override
   void dispose() {
+    _abandonSearch();
     _searchController.dispose();
     super.dispose();
   }
 
-  void _setQuery(String query) => setState(() {
-        _query = query;
-        _applyFilter();
-      });
+  void _setQuery(String query) {
+    if (!_searchWatch.isRunning && query.trim().isNotEmpty) {
+      _searchWatch
+        ..reset()
+        ..start();
+    }
+    if (_pendingSearch && !(_searchTimer?.isActive ?? false)) {
+      AppAnalytics.instance.event('search_refine');
+    }
+    _pendingSearch = query.trim().isNotEmpty;
+    _searchTimer?.cancel();
+    _searchTimer = Timer(const Duration(milliseconds: 700), _recordSearch);
+    setState(() {
+      _query = query;
+      _applyFilter();
+    });
+  }
 
   @override
   void initState() {
@@ -50,6 +97,7 @@ class _HymnListState extends State<HymnList> {
   @override
   void didUpdateWidget(HymnList oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.active && !widget.active) _abandonSearch();
     if (oldWidget.hymns != widget.hymns) {
       _applyFilter();
     }
@@ -100,10 +148,27 @@ class _HymnListState extends State<HymnList> {
   }
 
   void _openHymn(Hymn hymn) {
+    if (_searchTimer?.isActive ?? false) _recordSearch();
+    if (_query.trim().isNotEmpty) {
+      final rank = _filteredHymns.indexOf(hymn) + 1;
+      AppAnalytics.instance.event('search_select',
+          variant: rank == 1
+              ? '1'
+              : rank <= 5
+                  ? '2_5'
+                  : '6_plus');
+      if (_searchWatch.isRunning) {
+        AppAnalytics.instance.event('search_select_ms',
+            total: _searchWatch.elapsedMilliseconds.clamp(0, 3600000));
+      }
+    }
+    _pendingSearch = false;
+    _searchWatch.stop();
     Navigator.push(
       context,
       slideRoute(HymnPage(
         hymn: hymn,
+        analyticsSource: 'search',
         hymns: hymn.version == 'new' ? widget.hymnsNew : widget.hymnsOld,
       )),
     );
@@ -156,6 +221,7 @@ class _HymnListState extends State<HymnList> {
       onTap: () {
         setState(() {
           _filter = key;
+          AppAnalytics.instance.event('search_filter', variant: key);
           _applyFilter();
         });
       },
@@ -293,6 +359,46 @@ class _HymnListState extends State<HymnList> {
           _searchField(t),
           _chipsRow(t),
         ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: widget.hymns.isEmpty
+                      ? null
+                      : () {
+                          FocusScope.of(context).unfocus();
+                          Navigator.push(
+                              context,
+                              slideRoute(
+                                  HymnOccasionsPage(hymns: widget.hymns)));
+                        },
+                  icon: const Icon(Icons.library_music_outlined, size: 18),
+                  label: const Text('Hymns by occasion',
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
+              ),
+              Expanded(
+                child: TextButton.icon(
+                  onPressed: widget.additionalReadings.readings.isEmpty
+                      ? null
+                      : () {
+                          FocusScope.of(context).unfocus();
+                          Navigator.push(
+                            context,
+                            slideRoute(AdditionalReadingsPage(
+                                catalog: widget.additionalReadings)),
+                          );
+                        },
+                  icon: const Icon(Icons.menu_book_outlined, size: 18),
+                  label: const Text('Additional readings',
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 6),
         Expanded(
           child: ListView.builder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,6 +42,7 @@ class ReleaseNotesService {
     ReleaseNotesCatalog catalog, {
     required bool updated,
   }) {
+    AppAnalytics.instance.event('screen_view', variant: 'release_notes');
     return showDialog<void>(
       context: context,
       builder: (context) => _ReleaseHistoryDialog(

@@ -90,8 +90,8 @@ class ChordTrack {
 
   /// Index of the last measure starting at or before [positionMs]; -1 before
   /// the first.
-  int measureAt(int positionMs) =>
-      _lastAtOrBefore(measureStartMs.length, (i) => measureStartMs[i], positionMs);
+  int measureAt(int positionMs) => _lastAtOrBefore(
+      measureStartMs.length, (i) => measureStartMs[i], positionMs);
 }
 
 /// Binary search: greatest `i < length` with `startOf(i) <= positionMs`, or
@@ -114,7 +114,8 @@ int _lastAtOrBefore(int length, int Function(int) startOf, int positionMs) {
 /// 'Em', 'D7', 'Bb', 'F#m7'. The root is shifted by [transposeSemitones];
 /// spelling prefers flats when the (transposed) key is a flat key, sharps
 /// when it is a sharp key, and sharps when [key] is null.
-String chordLabel(int rootPc, String quality, MidiKey? key, int transposeSemitones) {
+String chordLabel(
+    int rootPc, String quality, MidiKey? key, int transposeSemitones) {
   final pc = ((rootPc + transposeSemitones) % 12 + 12) % 12;
   var flats = false;
   if (key != null) {
@@ -294,7 +295,8 @@ List<ChordEvent> _substituteNonDiatonic(List<ChordEvent> events, MidiKey key) {
 /// the bucket's earliest beat), while pickup beats before the first measure
 /// keep their own chord. Returns beat-level events for [_mergeAdjacent] to
 /// fuse; the total beat count and duration are conserved exactly.
-List<ChordEvent> _quantizeToHalfBars(List<ChordEvent> events, ChordTrack track) {
+List<ChordEvent> _quantizeToHalfBars(
+    List<ChordEvent> events, ChordTrack track) {
   if (track.measureStartMs.isEmpty) return events;
 
   // One slice per beat onset; the last slice of an event runs to the
@@ -472,7 +474,8 @@ List<ChordEvent> _detect(_Score score, _TempoMap tempo) {
         for (final interval in intervals) {
           inChord += weights[(root + interval) % 12];
         }
-        var s = inChord - 1.5 * (total - inChord) - 0.02 * intervals.length * step;
+        var s =
+            inChord - 1.5 * (total - inChord) - 0.02 * intervals.length * step;
         if (bassPc == root) s += 0.3 * step;
         if (s > best) {
           best = s;
@@ -482,7 +485,9 @@ List<ChordEvent> _detect(_Score score, _TempoMap tempo) {
       }
     }
 
-    if (spans.isNotEmpty && spans.last.$3 == bestRoot && spans.last.$4 == bestQuality) {
+    if (spans.isNotEmpty &&
+        spans.last.$3 == bestRoot &&
+        spans.last.$4 == bestQuality) {
       final last = spans.last;
       spans[spans.length - 1] = (last.$1, wEnd, last.$3, last.$4);
     } else {
@@ -570,7 +575,8 @@ _Score _extract(Uint8List bytes) {
         final type = e.body[0];
         final (len, at) = _readVarLen(e.body, 1);
         if (type == 0x51 && len >= 3) {
-          final us = (e.body[at] << 16) | (e.body[at + 1] << 8) | e.body[at + 2];
+          final us =
+              (e.body[at] << 16) | (e.body[at + 1] << 8) | e.body[at + 2];
           score.tempi.add((tick, us));
         } else if (type == 0x59 && len >= 2 && score.key == null) {
           score.key =

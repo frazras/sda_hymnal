@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:sdahymnal/services/analytics.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'package:sdahymnal/services/prefs.dart';
@@ -76,6 +77,7 @@ class ScreenWake with WidgetsBindingObserver {
     try {
       await WakelockPlus.toggle(enable: want);
     } catch (_) {
+      AppAnalytics.instance.event('diagnostic', variant: 'screen_wake');
       // No plugin under `flutter test`, and not every platform supports a
       // wakelock; the screen timeout just stays at the system default.
     }

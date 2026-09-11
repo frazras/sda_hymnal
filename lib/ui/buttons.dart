@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/hymn_occasions.dart';
+import 'package:sdahymnal/ui/additional_readings.dart';
 
 /// Numbers (home tab) — content-only: the shell renders the brand header
 /// above and the bottom nav below. Layout: scrollable display zone (label,
@@ -14,16 +18,22 @@ import 'package:sdahymnal/ui/hymnPage.dart';
 class Buttons extends StatefulWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
+  final AdditionalReadingCatalog additionalReadings;
 
-  const Buttons({super.key, required this.hymnsOld, required this.hymnsNew});
+  const Buttons({
+    super.key,
+    required this.hymnsOld,
+    required this.hymnsNew,
+    this.additionalReadings = const AdditionalReadingCatalog([]),
+  });
 
   @override
   State<Buttons> createState() => _ButtonsState();
 }
 
 class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
-  static const int _oldMax = 703;
   static const int _newMax = 695;
+  static const int _readingMax = 920;
 
   String _display = '';
   late final AnimationController _caret;
@@ -49,9 +59,15 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
   // -------------------------------------------------------------------------
 
   void _press(String digit) {
-    if (_display.length >= 3) return;
+    if (_display.length >= 3) {
+      AppAnalytics.instance.event('keypad_reject');
+      return;
+    }
     final nn = int.tryParse(_display + digit) ?? 0;
-    if (nn > _oldMax || nn < 1) return;
+    if (nn > _readingMax || nn < 1) {
+      AppAnalytics.instance.event('keypad_reject');
+      return;
+    }
     setState(() => _display += digit);
   }
 
@@ -59,6 +75,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
 
   void _back() {
     if (_display.isEmpty) return;
+    AppAnalytics.instance.event('keypad_correct');
     setState(() => _display = _display.substring(0, _display.length - 1));
   }
 
@@ -69,13 +86,21 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
   String _titleFor(List<Hymn> list, int n) =>
       hymnByNumber(list, n)?.title ?? '';
 
-  void _openHymn({required bool isNew, required int n}) {
+  AdditionalReading? _readingByNumber(int number) {
+    for (final reading in widget.additionalReadings.readings) {
+      if (reading.number == number) return reading;
+    }
+    return null;
+  }
+
+  void _openHymn(
+      {required bool isNew, required int n, String source = 'keypad'}) {
     final list = isNew ? widget.hymnsNew : widget.hymnsOld;
     final hymn = hymnByNumber(list, n);
     if (hymn == null) return;
     Navigator.push(
       context,
-      slideRoute(HymnPage(hymn: hymn, hymns: list)),
+      slideRoute(HymnPage(hymn: hymn, hymns: list, analyticsSource: source)),
     );
   }
 
@@ -84,6 +109,16 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     if (n < 1) return;
     if (isNew && n > _newMax) return;
     _openHymn(isNew: isNew, n: n);
+  }
+
+  void _openReading(AdditionalReading reading) {
+    Navigator.push(
+      context,
+      slideRoute(AdditionalReadingPage(
+        reading: reading,
+        readings: widget.additionalReadings.readings,
+      )),
+    );
   }
 
   // -------------------------------------------------------------------------
@@ -95,12 +130,15 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     final t = context.tokens;
     if (t.isClassic) {
       final n = int.tryParse(_display) ?? 0;
+      final reading = _readingByNumber(n);
       return ValueListenableBuilder<double>(
         valueListenable: FontSizeController.instance,
         builder: (context, fontSize, _) => ClassicNumberPad(
           display: _display,
           oldTitle: _titleFor(widget.hymnsOld, n),
           newTitle: _titleFor(widget.hymnsNew, n),
+          readingTitle: reading?.title ?? '',
+          readingCategory: reading?.category ?? '',
           fontSize: fontSize,
           onDigit: _press,
           onClear: _clear,
@@ -111,6 +149,22 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
           onNew: hymnByNumber(widget.hymnsNew, n) == null
               ? null
               : () => _open(true),
+          onReading: reading == null ? null : () => _openReading(reading),
+          onOccasions: widget.hymnsNew.isEmpty && widget.hymnsOld.isEmpty
+              ? null
+              : () => Navigator.push(
+                    context,
+                    slideRoute(HymnOccasionsPage(
+                      hymns: [...widget.hymnsNew, ...widget.hymnsOld],
+                    )),
+                  ),
+          onReadings: widget.additionalReadings.readings.isEmpty
+              ? null
+              : () => Navigator.push(
+                    context,
+                    slideRoute(AdditionalReadingsPage(
+                        catalog: widget.additionalReadings)),
+                  ),
         ),
       );
     }
@@ -127,6 +181,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
               children: [
                 SizedBox(height: displayTop),
                 _displayZone(t, numSize),
+                _browseLinks(t),
                 _recentsRow(t),
                 _previewZone(t),
               ],
@@ -138,12 +193,67 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _browseLinks(HymnalTokens t) {
+    final linkStyle = TextStyle(
+      fontFamily: kSans,
+      fontSize: 11.5,
+      fontWeight: FontWeight.w600,
+      color: t.accent,
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 2, 12, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 6)),
+              onPressed: widget.hymnsNew.isEmpty && widget.hymnsOld.isEmpty
+                  ? null
+                  : () => Navigator.push(
+                        context,
+                        slideRoute(HymnOccasionsPage(
+                          hymns: [...widget.hymnsNew, ...widget.hymnsOld],
+                        )),
+                      ),
+              icon:
+                  Icon(Icons.library_music_outlined, size: 17, color: t.accent),
+              label: Text('Hymns by occasion',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: linkStyle),
+            ),
+          ),
+          Flexible(
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 6)),
+              onPressed: widget.additionalReadings.readings.isEmpty
+                  ? null
+                  : () => Navigator.push(
+                        context,
+                        slideRoute(AdditionalReadingsPage(
+                            catalog: widget.additionalReadings)),
+                      ),
+              icon: Icon(Icons.menu_book_outlined, size: 17, color: t.accent),
+              label: Text('Additional readings',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: linkStyle),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // ---- Display zone: HYMN NUMBER label + giant number with blinking caret
 
   Widget _displayZone(HymnalTokens t, double numSize) {
     return Column(
       children: [
-        const Center(child: SectionLabel('HYMN NUMBER')),
+        const Center(child: SectionLabel('HYMN OR READING NUMBER')),
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: numSize * 1.15),
           child: Row(
@@ -214,7 +324,8 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
               for (final (i, r) in recents.take(3).indexed) ...[
                 if (i > 0) const SizedBox(width: 6),
                 Pressable(
-                  onTap: () => _openHymn(isNew: r.v.contains('new'), n: r.n),
+                  onTap: () => _openHymn(
+                      isNew: r.v.contains('new'), n: r.n, source: 'recent'),
                   pressedScale: 0.94,
                   builder: (context, pressed) => Container(
                     padding:
@@ -249,6 +360,8 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     final n = int.tryParse(_display) ?? 0;
     final hasNum = n >= 1;
     final newOk = hasNum && n <= _newMax;
+    final reading = hasNum ? _readingByNumber(n) : null;
+    final oldHymn = hasNum ? hymnByNumber(widget.hymnsOld, n) : null;
 
     return Container(
       constraints: const BoxConstraints(minHeight: 112),
@@ -257,31 +370,39 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.center,
         children: hasNum
             ? [
-                _previewCard(
-                  t,
-                  isNew: true,
-                  title: newOk
-                      ? _titleFor(widget.hymnsNew, n)
-                      : 'Not in the New Hymnal',
-                  invalid: !newOk,
-                  onTap: newOk ? () => _open(true) : null,
-                ),
-                const SizedBox(height: 8),
-                _previewCard(
-                  t,
-                  isNew: false,
-                  title: _titleFor(widget.hymnsOld, n),
-                  invalid: false,
-                  onTap: () => _open(false),
-                ),
+                if (reading != null) ...[
+                  _readingPreviewCard(t, reading),
+                  if (oldHymn != null) const SizedBox(height: 8),
+                ] else ...[
+                  _previewCard(
+                    t,
+                    isNew: true,
+                    title: newOk
+                        ? _titleFor(widget.hymnsNew, n)
+                        : 'Not in the New Hymnal',
+                    invalid: !newOk,
+                    onTap: newOk ? () => _open(true) : null,
+                  ),
+                  if (oldHymn != null) const SizedBox(height: 8),
+                ],
+                if (oldHymn != null)
+                  _previewCard(
+                    t,
+                    isNew: false,
+                    title: oldHymn.title,
+                    invalid: false,
+                    onTap: () => _open(false),
+                  ),
               ]
             : [
                 Text.rich(
                   TextSpan(children: [
                     const TextSpan(
-                        text: 'Type a hymn number to preview it here\n'),
+                        text:
+                            'Type a hymn or reading number to preview it here\n'),
                     TextSpan(
-                      text: 'New Hymnal 1–695 · Old Hymnal 1–703',
+                      text:
+                          'New Hymnal 1–695 · Readings 696–920 · Old Hymnal 1–703',
                       style: const TextStyle(fontSize: 11.5),
                     ),
                   ]),
@@ -293,6 +414,69 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                   ),
                 ),
               ],
+      ),
+    );
+  }
+
+  Widget _readingPreviewCard(HymnalTokens t, AdditionalReading reading) {
+    return Pressable(
+      onTap: () => _openReading(reading),
+      pressedScale: 0.985,
+      builder: (context, pressed) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+        decoration: BoxDecoration(
+          color: t.surface,
+          border: Border.all(color: t.line),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: t.cardShadow,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              decoration: BoxDecoration(
+                color: t.tint,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text('READING',
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: .7,
+                    color: t.accent,
+                  )),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(reading.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600,
+                        color: t.ink,
+                      )),
+                  const SizedBox(height: 2),
+                  Text(reading.category,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 11.5,
+                        color: t.muted,
+                      )),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            HymnalIcons.rowChevron(t.faint),
+          ],
+        ),
       ),
     );
   }

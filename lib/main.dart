@@ -1,10 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/tabs.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeController.instance.load();
   await AppDesignController.instance.load();
@@ -17,6 +20,18 @@ void main() async {
   await InstrumentTheme.instance.load();
   await ChordTabs.instance.load();
   await ChordLevelPref.instance.load();
+  await AppAnalytics.instance
+      .initialize(design: AppDesignController.instance.value.name);
+  final previousError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    AppAnalytics.instance.event('diagnostic', variant: 'flutter_error');
+    previousError?.call(details);
+  };
+  final previousPlatformError = PlatformDispatcher.instance.onError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    AppAnalytics.instance.event('diagnostic', variant: 'platform_error');
+    return previousPlatformError?.call(error, stack) ?? false;
+  };
   runApp(const Hymnal());
 }
 
@@ -42,6 +57,7 @@ class _HymnalState extends State<Hymnal> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    AppAnalytics.instance.lifecycle(state == AppLifecycleState.resumed);
     if (state == AppLifecycleState.resumed) {
       AppDesignController.instance.syncIcon();
     }

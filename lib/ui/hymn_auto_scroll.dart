@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/midi_player.dart';
@@ -291,6 +292,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   }
 
   void _pause({bool rebuild = true, bool preserveFraction = false}) {
+    if (_requested) AppAnalytics.instance.event('auto_scroll_pause');
     if (_requested && preserveFraction) {
       _pendingLayoutFraction = _progress.value;
     }
@@ -302,6 +304,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
 
   void _beginManualScroll() {
     if (!_requested || _manualScrolling) return;
+    AppAnalytics.instance.event('auto_scroll_correct');
     _manualScrolling = true;
     _progress.stop();
   }
@@ -366,6 +369,12 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   }
 
   void _changeScrollSpeed(int tenths) {
+    AppAnalytics.instance.event('auto_scroll_speed',
+        variant: tenths < 10
+            ? 'slow'
+            : tenths == 10
+                ? 'normal'
+                : 'fast');
     final next = tenths.clamp(5, 20);
     if (next == _speedTenths) return;
     // Anchor a new slope at the current reading position, rather than
@@ -418,6 +427,8 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
 
   void _start() {
     if (!_canRun || !_scroll.hasClients) return;
+    AppAnalytics.instance
+        .event('auto_scroll_start', variant: _loaded ? 'music' : 'silent');
     _followingMusic = _loaded;
     _requested = true;
     if (_followingMusic) {
@@ -438,6 +449,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
     if (status == AnimationStatus.completed &&
         !_followingMusic &&
         !_reanchoringManual) {
+      AppAnalytics.instance.event('auto_scroll_complete');
       _pendingLayoutFraction = 1;
       _requested = false;
       if (mounted) setState(() {});

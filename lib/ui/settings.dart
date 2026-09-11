@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/analytics.dart';
+import 'package:sdahymnal/services/analytics_endpoint.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sdahymnal/models/release_notes.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -9,11 +12,14 @@ import 'package:sdahymnal/ui/about.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
 import 'package:sdahymnal/ui/sp.dart';
+import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/ui/statistics.dart';
 
 /// Settings tab — content only (the shell renders the brand header above and
 /// the bottom nav below). Sections: READING, SOUND, APPEARANCE, MORE, footer.
 class Settings extends StatelessWidget {
-  const Settings({super.key});
+  const Settings({super.key, this.hymns = const []});
+  final List<Hymn> hymns;
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +187,10 @@ class Settings extends StatelessWidget {
                 title: 'About Us',
                 subtitle: 'Who made this app?',
                 divider: true,
-                onTap: () => Navigator.push(context, slideRoute(const About())),
+                onTap: () {
+                  AppAnalytics.instance.event('screen_view', variant: 'about');
+                  Navigator.push(context, slideRoute(const About()));
+                },
               ),
               _SettingsRow(
                 leading: Icon(Icons.new_releases_outlined, color: t.muted),
@@ -194,11 +203,62 @@ class Settings extends StatelessWidget {
                 leading: HymnalIcons.grid2x2(t.muted),
                 title: 'Our Other Projects',
                 subtitle: 'Like this app? You will love our ministry!',
-                onTap: () => Navigator.push(context, slideRoute(const Sp())),
+                onTap: () {
+                  AppAnalytics.instance
+                      .event('screen_view', variant: 'projects');
+                  Navigator.push(context, slideRoute(const Sp()));
+                },
               ),
             ],
           ),
         ),
+        const SectionLabel('PRIVACY & STATISTICS',
+            padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        _card(t,
+            child: _SettingsRow(
+              leading: Icon(Icons.bar_chart_rounded, color: t.accent),
+              title: 'Community statistics',
+              subtitle: 'Popular hymns, repeat visits, and times of worship',
+              onTap: () => Navigator.push(
+                  context, slideRoute(StatisticsPage(hymns: hymns))),
+            )),
+        const SizedBox(height: 10),
+        _card(t,
+            child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+                clipBehavior: Clip.antiAlias,
+                child: AnimatedBuilder(
+                  animation: AppAnalytics.instance,
+                  builder: (context, _) => Column(children: [
+                    SwitchListTile.adaptive(
+                      key: const ValueKey('analytics-toggle'),
+                      title: const Text('Share usage statistics'),
+                      subtitle: const Text(
+                          'Help improve the hymnal and community trends. '
+                          'Enabled by default; you can turn this off anytime. '
+                          'Usage and error summaries are sent about weekly. '
+                          'Country is estimated from the upload connection. No names, '
+                          'search text, advertising, or personalized content.'),
+                      value: AppAnalytics.instance.enabled,
+                      onChanged: AppAnalytics.instance.available
+                          ? AppAnalytics.instance.setEnabled
+                          : null,
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                        child: Text(
+                            '${AppAnalytics.instance.status}. Turning this off '
+                            'clears queued statistics and local analytics identifiers. '
+                            'Previously combined statistics follow the privacy policy retention periods.',
+                            style: TextStyle(fontSize: 12, color: t.muted))),
+                    TextButton(
+                        onPressed: () => launchUrl(
+                            Uri.parse('$analyticsEndpoint/privacy-policy'),
+                            mode: LaunchMode.externalApplication),
+                        child: const Text('Privacy policy')),
+                  ]),
+                ))),
         // Footer
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 32, 0, 8),
