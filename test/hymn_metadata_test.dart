@@ -66,14 +66,14 @@ void main() {
         for (final story in data['supplementalStories'] as List<dynamic>)
           story as Map<String, dynamic>,
       ];
-      expect(allStories, hasLength(265));
+      expect(allStories, hasLength(264));
       expect(
         allStories.where((story) => story['sourceId'] == 'sharefaith'),
         hasLength(70),
       );
       expect(
         allStories.where((story) => story['sourceId'] == 'tanbible'),
-        hasLength(195),
+        hasLength(194),
       );
       for (final story in allStories) {
         expect(story['title'].toString(), isNot(contains('~')));
@@ -98,6 +98,101 @@ void main() {
       expect(story.text, contains('something lasting and beautiful'));
       expect(story.text, isNot(contains('Swift to its close ebbs')));
       expect(abide.stories, hasLength(2));
+    });
+
+    test('retains inline text recovered from every attached ShareFaith story',
+        () {
+      final shareFaithStories = <String, String>{
+        for (final hymn in data['hymns'] as List<dynamic>)
+          for (final story
+              in (hymn as Map<String, dynamic>)['stories'] as List<dynamic>? ??
+                  const [])
+            if ((story as Map<String, dynamic>)['sourceId'] == 'sharefaith')
+              story['id'] as String: story['text'] as String,
+      };
+      const recoveredText = <String, String>{
+        'sharefaith-12-all-creatures-of-our-god-and-king':
+            'The heavens declare the glory of God',
+        'sharefaith-1-abide-with-me': 'written copy of Abide With Me',
+        'sharefaith-47-o-worship-the-king': 'book titled Sacred Poems',
+        'sharefaith-67-great-is-thy-faithfulness':
+            'They are new every morning: great is Thy faithfulness.',
+        'sharefaith-21-when-i-survey-the-wondrous-cross':
+            'When I Survey the Wondrous Cross',
+        'sharefaith-56-jesus-paid-it-all':
+            'The words to the song Jesus Paid It All',
+        'sharefaith-70-face-to-face': 'All for me the Savior suffered',
+        'sharefaith-11-all-hail-the-power-of-jesus':
+            'began to play and sing All Hail',
+        'sharefaith-46-o-for-a-thousand-tongues-to-sing':
+            'Christ the Lord is Risen Today',
+        'sharefaith-24-turn-your-eyes-upon-jesus': 'Seattle Post',
+        'sharefaith-53-lord-im-coming-home': "new song Lord I'm Coming Home",
+        'sharefaith-54-just-as-i-am': 'Just As I Am has been around since 1835',
+        'sharefaith-51-my-jesus-i-love-thee':
+            "Featherson's poem My Jesus I Love Thee",
+        'sharefaith-14-id-rather-have-jesus': "I'd Rather Have Jesus",
+        'sharefaith-33-take-my-life-and-let-it-be':
+            'I Gave My Life for Thee and God Will Take Care of You',
+        'sharefaith-2-come-thou-fount-of-every-blessing':
+            'wrote Come Thou Fount of Every Blessing',
+        'sharefaith-15-i-will-sing-of-my-redeemer':
+            'Almost Persuaded, Let the Lower Lights Be Burning',
+        'sharefaith-42-shall-we-gather-at-the-river':
+            'I Need Thee Every Hour and Low in the Grave He Lay',
+        'sharefaith-5-blessed-assurance': 'tune was called Assurance',
+        'sharefaith-34-sunshine-in-my-soul': 'hymn Sunshine in My Soul',
+        'sharefaith-50-nearer-my-god-to-thee':
+            'Nearer My God to Thee was written',
+        'sharefaith-60-in-the-garden': 'lyrics to In The Garden',
+        'sharefaith-55-jesus-lover-of-my-soul':
+            'prayer of trust in God as his refuge',
+        'sharefaith-22-what-a-friend-we-have-in-jesus':
+            'poems entitled What a Friend We Have in Jesus',
+        'sharefaith-25-tis-so-sweet-to-trust-in-jesus':
+            'prompted the lyrics of Tis So Sweet to Trust in Jesus',
+        'sharefaith-23-under-his-wings':
+            'including Hiding in Thee, and Ring the Bells of Heaven',
+        'sharefaith-7-be-thou-my-vision': 'words to Be Thou My Vision',
+        'sharefaith-69-for-the-beauty-of-the-earth':
+            'first published as The Sacrifice of Praise',
+        'sharefaith-26-this-little-light-of-mine':
+            'song This Little Light of Mine in 1920',
+        'sharefaith-9-am-i-a-soldier-of-the-cross':
+            '“Watch ye, stand fast in the faith',
+        'sharefaith-41-stand-up-stand-up-for-jesus':
+            '“Go now ye that are men and serve the Lord”',
+        'sharefaith-13-alas-and-did-my-savior-bleed':
+            'including Joy to the World and Alas and Did My Savior Bleed',
+        'sharefaith-10-almost-persuaded':
+            'including The Light of the World is Jesus and Dare to Be a Daniel',
+        'sharefaith-48-o-happy-day-that-fixed-my-choice':
+            'including the very popular O Happy Day',
+        'sharefaith-59-it-is-well-with-my-soul':
+            'those now famous words, When sorrow like sea billows roll',
+      };
+
+      expect(shareFaithStories, hasLength(recoveredText.length));
+      for (final entry in recoveredText.entries) {
+        expect(
+          shareFaithStories[entry.key],
+          contains(entry.value),
+          reason: entry.key,
+        );
+      }
+    });
+
+    test('keeps the Because He Lives lead-in with its continuation', () {
+      final metadata = catalog.forHymn('new', 526)!;
+      final story = metadata.stories.singleWhere(
+        (item) => item.id == 'tanbible-191-because-he-lives',
+      );
+      final storyText = story.text!;
+      expect(storyText,
+          contains('came out of their personal bout with darkness:'));
+      expect(storyText, contains('I knew I could have that baby'));
+      expect(storyText.trim(), endsWith('—Gloria Gaither'));
+      expect(storyText, isNot(contains('In\nthe late 1960s')));
     });
 
     test('retains edition-specific credit and tune metadata', () {

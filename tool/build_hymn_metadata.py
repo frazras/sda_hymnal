@@ -84,13 +84,18 @@ def slug(value: str) -> str:
 
 
 def clean_story(value: str) -> str:
+    value = value.replace("&ldquo", "“").replace("&rdquo", "”")
     value = html.unescape(value or "")
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     value = value.split(re.search(r"\+{5,}", value).group(0), 1)[0] if re.search(r"\+{5,}", value) else value
     value = value.replace("~", " ").replace("\u00a0", " ")
-    lines = [compact_space(line) for line in value.splitlines()]
-    value = "\n".join(lines)
-    return re.sub(r"\n{3,}", "\n\n", value).strip(" \n+")
+    value = re.sub(r"(?m)^\s*br/?>\s*", "", value)
+    paragraphs = [
+        compact_space(paragraph)
+        for paragraph in re.split(r"\n\s*\n", value)
+        if compact_space(paragraph)
+    ]
+    return "\n\n".join(paragraphs).strip(" \n+")
 
 
 def plain_lyric_lines(body: str) -> list[str]:
@@ -108,12 +113,21 @@ def strip_faith_lyrics(story: str, title: str, lyric_lines: list[str]) -> str:
     lines = story.splitlines()
     source_title = normalize_title(title)
     lyric_set = set(lyric_lines)
-    start_at = max(4, len(lines) // 4)
+    # The archived pages place a standalone hymn title between the article
+    # prose and the appended lyrics.  Search from the first few lines rather
+    # than a fraction of the document: recovered <br> elements make the lyric
+    # section much taller than the prose and would otherwise move the cutoff
+    # into the first stanza.
+    start_at = min(2, len(lines))
     for index in range(start_at, len(lines)):
         current = normalize_title(lines[index])
         if not current:
             continue
-        heading = current == source_title and index > len(lines) // 3
+        heading = current == source_title or (
+            len(current.split()) >= 2
+            and len(current) >= 8
+            and source_title.startswith(current)
+        )
         lyric = current in lyric_set
         if not lyric and len(current) >= 18:
             lyric = any(SequenceMatcher(None, current, candidate).ratio() >= 0.94 for candidate in lyric_lines)
@@ -229,17 +243,23 @@ def tan_stories(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     serial = 0
     for source_index, record in enumerate(records):
+        story = clean_story(record.get("story", ""))
+        behind = clean_story(record.get("story_behind", ""))
+        # This source stores Because He Lives as a lead-in ending with a colon
+        # and its continuation in story_behind. Keep that account together.
+        if behind and story.endswith(":"):
+            story = f"{story}\n\n{behind}"
+            behind = ""
         result.append(
             story_record(
                 "tanbible",
                 serial,
                 record.get("title", ""),
-                record.get("story", ""),
+                story,
                 sourceRecord=source_index + 1,
             )
         )
         serial += 1
-        behind = clean_story(record.get("story_behind", ""))
         if not behind:
             continue
         chunks = re.split(r"\s+~\s*(?=[A-Za-z])", record.get("story_behind", ""))
