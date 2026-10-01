@@ -1,0 +1,5 @@
+Enable Choir Practice in Settings to rename, mute, or solo available vocal parts.
+Choose instruments and adjust volume for individual choir tracks.
+Customize ensemble instruments with volume, solo, and preview controls.
+Browse 111 instruments by category, including Steelpan with rolls on sustained notes.
+Choir Practice overrides the selected ensemble style. Optional music controls stay hidden until enabled.

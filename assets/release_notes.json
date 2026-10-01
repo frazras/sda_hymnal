@@ -1,6 +1,33 @@
 {
-  "current": "4.3.0",
+  "current": "4.5.0",
   "releases": [
+    {
+      "version": "4.5.0",
+      "date": "September 25, 2026",
+      "features": [
+        "Correct 6/8 timing across musical styles and improve number-screen spacing, dark menus, and page turns.",
+        "Enable Autoplay under Sound to continue music or videos through your current hymn list after pressing Play.",
+        "Play hymns in Jazz style with piano chords, walking acoustic bass, and swung drums.",
+        "Enjoy Jamaican Gospel accompaniment with its original synchronized rhythm and a 15% faster default tempo.",
+        "Change musical style and toggle Choir Practice directly from the hymn menu.",
+        "Reach every musical style in the scrolling picker, with Caribbean choices grouped together.",
+        "Adjust drum-kit volume or solo the drums in all five backing styles; soloing another part now silences the kit.",
+        "Find musical-style instrument controls below Sound in Settings and preview your ensemble with Amazing Grace.",
+        "Find hymns more easily with search that prioritizes titles and opening lyric lines.",
+        "Save favorites with refreshed heart feedback and a gentle reminder at the end of a hymn."
+      ]
+    },
+    {
+      "version": "4.4.0",
+      "date": "September 18, 2026",
+      "features": [
+        "Enable Choir Practice in Settings to hear available vocal parts separately, rename tracks, and mute or solo them.",
+        "Choose an instrument and adjust the volume for each choir track using compact controls.",
+        "Customize ensemble instruments in Settings, adjust their levels, solo individual roles, and preview your mix.",
+        "Choose from 111 instruments organized into 11 categories. Find Steelpan under Percussion, with automatic rolls on sustained notes.",
+        "Choir Practice uses the original parts and overrides the selected ensemble style. These optional controls stay hidden until enabled."
+      ]
+    },
     {
       "version": "4.3.0",
       "date": "September 11, 2026",

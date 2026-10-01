@@ -152,3 +152,132 @@ compare it to the committed derivative before changing the bundled resource.
   bank, license, signature and absence of debug artifacts were verified.
 - The original bank and MIDI assets have no Git changes. No physical iPhone
   installation, uninstall, or user-data reset was performed for this port.
+
+
+## Optional ensemble instruments and choir practice
+
+Settings → Musicians & Choir contains two independent switches, off by default.
+“Customize ensemble instruments” opens a Settings-only editor for the selected
+style's melodic roles (percussion stays unchanged). Choices persist separately
+for each style. “Style default” clears a role override. The preview plays New
+Hymnal 1 through the same engine as hymn playback, replacing existing audio;
+it stops when the editor closes. Preview always uses the ensemble, even when
+choir practice is enabled.
+
+“Choir practice” adds a part-mixer button to the hymn player. Practice renders
+the original MIDI, bypassing ensemble styles and ensemble instrument choices, while retaining
+transpose, speed, and seek. The source's sounding track names are used, with common SATB spellings normalized;
+unnamed tracks use their track number. Names can be edited and persist per hymn.
+There is no automatic assignment of soprano/alto/tenor/bass to ambiguous tracks.
+Files with fewer than two sounding tracks report that separate parts are
+unavailable. Multiple voices combined within one track cannot be separated.
+
+Mute silences a track; Solo plays only the selected tracks (multiple solos are
+allowed, and mute wins). Reset restores all tracks. Mix selections reset on hymn
+changes. Disabling practice restores the saved ensemble style. Re-rendering keeps
+the playback position and pause state; engine reloads are serialized to prevent
+rapid mix changes from loading out of order. Render cache keys include the
+practice flag, muted track indices, and per-channel program overrides. Muting
+replaces note events with empty sequencer metadata at identical deltas, retaining
+conductor events, rests, and unmuted tracks byte-for-byte.
+
+
+### Instruments in the choir mixer
+
+Every source-track card now has an Instrument selector alongside Mute and Solo.
+Choose, for example, Grand piano for Tenor and Cello for Bass. These choices are
+saved by hymnal edition, hymn number, and source track index, and apply to actual
+choir playback, including Play parts and the main hymn player. They do not require
+the separate full-ensemble customization switch. Original instrument clears that
+track's override; Reset mix clears the choir track's mute, solo, and volume choices. Switching off choir
+practice restores full-ensemble playback and retains the saved track choices.
+
+Before saving an override, the player validates that the MIDI has a melodic
+channel for that track and enough free channels to isolate shared-channel tracks.
+Selected programs use the GM base bank. Shared control events are copied at their
+original times to isolated channels; note timing, speed, key changes, and the
+other tracks' instruments are preserved. Cache keys include the saved track
+programs, so a previous render cannot hide an instrument change.
+
+## Volume and solo in ensemble customization
+
+The full-ensemble instrument editor also exposes a compact level slider and a
+Solo chip for each style role. Levels are 0–100 percent and are applied to the
+role's note velocities during regular style playback; Solo temporarily silences
+the other melodic roles so a listener can check one arrangement part. These
+settings persist per musical style and are independent of the choir-practice
+track mix. Choir practice continues to use its own per-track instrument and
+volume controls and overrides the selected style.
+
+## Instrument categories and steelpan rolls
+
+Both instrument selectors open a category sheet, then the instruments in that
+family. The 111 base-bank musical presets use 11 common categories; Steelpan is
+in Percussion. The chooser stays outside the track card, preserving its compact
+height. Original instrument and Style default clear the corresponding override.
+
+After instrument assignment and mixing, steelpan (GM program 114, zero-based)
+notes lasting at least 240 ms receive 6 strikes per second, with slight
+velocity variation. Tempo changes determine spacing. Short notes and all other
+instruments retain their existing articulation. Rolls stop within the written
+note duration, preserving hymn timing and rests. Ambiguous overlapping unisons
+on a shared MIDI channel and notes crossing program changes are left unchanged
+to avoid cutting off another voice. Render cache version 27 refreshes old audio.
+
+### Jamaican Gospel
+
+`jamaican_gospel` ports Caribbean Choruses' Jamaican church gospel backing:
+swung organ chords at 7/12 of each beat, quarter-note finger bass, kick-led
+drums, backbeat claps, offbeat tambourine, and an eight-bar tom fill. It keeps
+the hymnal melody and descants on Rhodes, the written meter, and a steady
+tempo 15% faster than the hymn's dominant tempo. The original organ groove
+plays one chord per swung offbeat; every part speeds up together on the shared
+MIDI clock, preserving pitch, meter and rhythmic relationships. The player's
+1× setting uses this faster default, and the chord display follows the same
+clock. Cache version 30 refreshes previous renders.
+The source organ/bass/kit CC7 levels are 84/104/127. Playback,
+MIDI export, transposition, and instrument controls share the same renderer;
+choir practice continues to use the original parts.
+
+The displayed name **Jamaican Gospel** is descriptive, not a claim of an
+official genre designation. It distinguishes this church-chorus arrangement
+from Modern Gospel without implying the specific Jamaican Revivalist tradition.
+
+### Musical style and practice controls
+
+The song menu opens the same scrollable musical-style picker as Settings and
+can toggle Choir practice. Choir practice uses original parts and temporarily
+overrides the chosen style. Settings places Musicians & Choir after Sound.
+The musical-style instrument editor previews Amazing Grace (New Hymnal 108).
+All four generated styles include a Drum kit volume and solo control; percussion
+participates in volume/mute operations but is never transposed or remapped to a
+melodic instrument. Cache version 31 refreshes previous ensemble mixes.
+
+### Jazz accompaniment
+
+Jazz plans conservative melodic variations over multi-bar phrases, following
+opening contour and returning to the written closing phrase. It keeps all written attacks and adds at most two spacious answer notes in
+long holds or roomy gaps, separated by at least four bars. Each new note lasts
+at least a beat and 400 ms; the original note keeps at least one full beat. Answers
+use the same melody channel, instrument, and velocity and follow its 50% mix. New pitches must fit every detected chord throughout the note; short
+phrases or uncertain harmony retain the original tune. This is a rule-based
+interpretation, not a trained improvisation model.
+
+Piano comping, acoustic walking bass, and swung ride cymbal provide the backing.
+Melody defaults to 50% in the ensemble mixer. Instrument, volume and solo choices
+remain available; Choir Practice uses the original tracks. Render cache v34 refreshes previously played hymns for the added answers.
+
+### List autoplay
+
+Settings > Sound > Autoplay video and music is off by default. Enabling it
+does not start playback: press Play or Play hymn video first. A natural ending
+opens and plays the next supported hymn using the same medium, in the current
+list's order, wrapping at its end. Main favorites, named favorites and official
+categories retain their list, including mixed editions. Missing videos are
+skipped within the list. Pause, close, leaving the reader, or disabling autoplay
+prevents further automatic advancement. Media loading and YouTube buffering may
+add a short gap; there is no deliberate inter-song delay.
+
+### Compound time
+
+6/8, 9/8, and 12/8 accompaniment uses an eighth-note harmony grid with dotted-quarter pulses, preserving the source MIDI division and time signature. Each style groups its backing rhythm in threes; melody notes retain their original timing. The generated MIDI cache version is advanced so previously mistimed arrangements are rebuilt.

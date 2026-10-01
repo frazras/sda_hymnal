@@ -15,10 +15,29 @@ Hymnal app. The items are not yet ordered by release or priority.
 
 ## Music and Choir Features
 
-- [ ] Add more musical styles.
-- [ ] Allow listeners to choose the instruments used for a musical style.
-- [ ] Allow individual vocal parts to be played: soprano, alto, tenor, and
-      bass, especially for choir practice.
+- [x] Add Jazz with piano chords, walking acoustic bass, swung ride cymbal,
+      and customizable ensemble instruments and mix.
+- [x] Allow listeners to choose the instruments used for a musical style.
+      Opt-in Settings controls save instruments per style and preview the ensemble.
+- [x] Allow individual vocal parts to be played: soprano, alto, tenor, and
+      bass, especially for choir practice. Opt-in original-MIDI track controls
+      support naming, per-track instruments, mute, solo, and reset wherever separate tracks exist;
+      musical styles are bypassed during practice.
+
+## Browsing and Favorites
+
+- [x] Keep hymn and reading swipes within the selected category or topic,
+      wrapping in both directions and displaying the category and position.
+- [x] Add interactive page turns for hymns and readings, with top and bottom
+      corner folds, a middle page roll, full-page previews, and hymnal logos
+      on the reverse near the turning edge.
+- [x] Add named favorite categories above the main favorites list. Songs can
+      belong to a category independently of the main list; the favorite picker
+      supports choosing lists, and category readers support swipe navigation.
+- [x] Add a Popular row to the number pad with five random selections from
+      the top 20 hymns, refreshed each time the number pad is revisited.
+- [x] Keep hymn selection buttons above the number pad for two-line titles,
+      and add a hymn-menu option to show or hide chord tabs.
 
 ## Usage Insights
 
@@ -49,10 +68,16 @@ Hymnal app. The items are not yet ordered by release or priority.
 
 - [x] Publish the updated privacy policy from the live analytics endpoint and
       link it from Settings and About.
-- [ ] Update Google Play Data Safety and Apple App Privacy declarations before
-      shipping an analytics-enabled app release.
-- [ ] Publish the repository-hosted copy of the privacy policy so older links
-      and external references remain consistent.
+- [ ] Verify Google Play Data Safety and Apple App Privacy declarations;
+      update them if needed to match the current app. The earlier analytics
+      handoff recorded no store-console changes; current console answers have
+      not been verified, so this is a verification follow-up, not a confirmed
+      missing submission.
+- [x] Update the older GitHub Pages privacy-policy copy so older links and
+      external references match the current policy. Published and verified
+      29 September 2026: https://frazras.github.io/sda_hymnal/privacy-policy.html
+      returns the same policy as https://dx289srf77tpf.cloudfront.net/privacy-policy,
+      including usage statistics and optional error reports.
 - [x] Add release notes explaining default-on statistics, the Settings opt-out,
       offline batching, and the Statistics page.
 - [x] Prepare version 4.3.0 source, in-app update history, store notes, and

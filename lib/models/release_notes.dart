@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-const appReleaseVersion = '4.3.0';
+const appReleaseVersion = '4.5.0';
 
 class AppRelease {
   const AppRelease({

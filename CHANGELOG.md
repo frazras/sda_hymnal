@@ -4,6 +4,36 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
+## 4.5.0 (40500) — prepared (2026-09-25)
+
+- Keep the actual melody in front when source voices share MIDI channels, including New 388.
+- Correct 6/8 accompaniment timing across all musical styles, including Old 653 and New 388.
+- Keep popular hymn shortcuts visible and improve dark-mode menu opacity and page-turn shading.
+- Add optional autoplay for music and videos, continuing through the current hymn list after a manual start.
+
+- Add Jazz accompaniment with piano chords, walking acoustic bass, and swung drums.
+
+- Enjoy Jamaican Gospel accompaniment with its original synchronized rhythm and a 15% faster default tempo.
+- Change musical style and toggle Choir Practice directly from the hymn menu.
+- Reach every musical style in the scrolling picker, with Caribbean choices grouped together.
+- Adjust drum-kit volume or solo the drums in all five backing styles; soloing another part now silences the kit.
+- Find musical-style instrument controls below Sound in Settings and preview your ensemble with Amazing Grace.
+- Find hymns more easily with search that prioritizes titles and opening lyric lines.
+- Save favorites with refreshed heart feedback and a gentle reminder at the end of a hymn.
+- Refresh generated MIDI caches for the corrected percussion mix.
+
+## 4.4.0 (40400) — published
+
+- Add opt-in Choir Practice with source-track names, mute, solo, instrument
+  selection, and compact per-track volume controls.
+- Add ensemble instrument customization, volume, solo, and previews in Settings.
+- Expand the instrument picker to 111 presets in 11 common categories.
+- Add automatic sustained-note steelpan rolls at six strikes per second.
+- Explain that choir practice overrides the ensemble style; preserve original
+  part timing and keep optional controls hidden until enabled.
+- Make zero ensemble volume silent and honor volume-only adjustments during
+  original-style Android playback.
+
 ## 4.3.0 (40300) — unreleased (2026-09-11)
 
 ### Additional readings and topics
