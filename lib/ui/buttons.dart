@@ -216,9 +216,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
       );
     }
     final vh = MediaQuery.sizeOf(context).height / 100;
-    final numSize = (8 * vh).clamp(46.0, 62.0);
-    final keyHeight = (6.5 * vh).clamp(44.0, 56.0);
-    final displayTop = (2 * vh).clamp(6.0, 20.0);
+    final numSize = (7 * vh).clamp(46.0, 56.0);
+    final keyHeight = (6 * vh).clamp(44.0, 50.0);
+    const displayTop = 4.0;
 
     return Column(
       children: [
@@ -459,7 +459,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
 
     return Container(
       constraints: const BoxConstraints(minHeight: 112),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: hasNum

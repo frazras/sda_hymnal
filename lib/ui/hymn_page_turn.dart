@@ -347,9 +347,17 @@ class PageCurlPainter extends CustomPainter {
           ..color = Colors.black.withValues(alpha: .28)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
     canvas.restore();
-    final light = Color.lerp(paper, Colors.white, .20)!;
-    final mid = Color.lerp(paper, Colors.black, .10)!;
-    final shade = Color.lerp(paper, Colors.black, .34)!;
+    final dark = paper.computeLuminance() < .15;
+    // Dark paper needs a visible matte reverse, not a white specular stripe
+    // between near-black edges. Keep the broad flap evenly lit and confine
+    // the soft highlight/contact shadow to the fold itself.
+    final reverse =
+        dark ? Color.lerp(paper, const Color(0xFF344039), .48)! : paper;
+    final light = dark
+        ? Color.lerp(reverse, const Color(0xFF46534B), .22)!
+        : Color.lerp(paper, Colors.white, .20)!;
+    final mid = dark ? reverse : Color.lerp(paper, Colors.black, .10)!;
+    final shade = Color.lerp(paper, Colors.black, dark ? .12 : .34)!;
     // Lighting runs perpendicular to the crease. Most of the broad flap
     // remains paper-white; the darker roll is confined to its curved edge.
     canvas.drawPath(
@@ -358,8 +366,10 @@ class PageCurlPainter extends CustomPainter {
           ..shader = ui.Gradient.linear(
             curl.creasePoint - curl.normal * math.max(1, curl.radius * 2.4),
             curl.creasePoint,
-            [paper, light, mid, shade],
-            const [0, .32, .78, 1],
+            dark
+                ? [reverse, reverse, light, mid, shade]
+                : [paper, light, mid, shade],
+            dark ? const [0, .50, .76, .88, 1] : const [0, .32, .78, 1],
           ));
     if (logo != null) {
       final width = math.min(150.0, size.width * .38);
@@ -391,7 +401,9 @@ class PageCurlPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = .65
-          ..color = Colors.black.withValues(alpha: .15));
+          ..color = dark
+              ? light.withValues(alpha: .35)
+              : Colors.black.withValues(alpha: .15));
     canvas.restore();
   }
 

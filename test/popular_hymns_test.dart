@@ -100,6 +100,12 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('1').last);
     await tester.pump();
+    final popular = find.byKey(const ValueKey('popular-hymns'));
+    expect(
+        tester.getBottomLeft(popular).dy,
+        lessThan(tester
+            .getTopLeft(find.byKey(const ValueKey('number-preview-new')))
+            .dy));
     final keypadTop = tester.getTopLeft(find.text('2')).dy;
     for (final version in ['new', 'old']) {
       final preview = find.byKey(ValueKey('number-preview-$version'));

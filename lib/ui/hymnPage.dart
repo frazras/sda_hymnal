@@ -429,7 +429,9 @@ class _HymnPageState extends State<HymnPage> {
         return PopupMenuButton<_ReaderAction>(
           key: const ValueKey('hymn-reader-options'),
           tooltip: 'Reader options',
-          color: t.surface,
+          color: t.isDark ? const Color(0xFF1C2721) : t.surface,
+          surfaceTintColor: Colors.transparent,
+          elevation: 8,
           icon: Icon(Icons.more_vert, color: t.ink),
           onSelected: (action) {
             switch (action) {
