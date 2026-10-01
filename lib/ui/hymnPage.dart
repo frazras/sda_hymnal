@@ -1,3 +1,5 @@
+import '../services/error_reports.dart';
+import 'report_error.dart';
 // ignore_for_file: file_names
 
 import 'dart:ui' show ImageFilter;
@@ -41,7 +43,7 @@ class HymnPage extends StatefulWidget {
   State<HymnPage> createState() => _HymnPageState();
 }
 
-enum _ReaderAction { video, player, scrollSpeed, favorite, fontSize }
+enum _ReaderAction { reportError, video, player, scrollSpeed, favorite, fontSize }
 
 class _HymnPageState extends State<HymnPage> {
   /// Accumulated horizontal drag distance for the swipe gesture.
@@ -260,6 +262,18 @@ class _HymnPageState extends State<HymnPage> {
           icon: Icon(Icons.more_vert, color: t.ink),
           onSelected: (action) {
             switch (action) {
+              case _ReaderAction.reportError:
+                Navigator.push(
+                    context,
+                    slideRoute(ReportErrorPage(
+                        subject: ErrorReportSubject(
+                      kind: 'hymn',
+                      title: widget.hymn.title,
+                      edition: widget.hymn.version,
+                      number: widget.hymn.number,
+                      itemId: '${widget.hymn.version}:${widget.hymn.number}',
+                    ))));
+
               case _ReaderAction.video:
                 _showVideo();
               case _ReaderAction.player:
@@ -276,6 +290,11 @@ class _HymnPageState extends State<HymnPage> {
             }
           },
           itemBuilder: (context) => [
+            PopupMenuItem(
+                value: _ReaderAction.reportError,
+                child: _menuLabel(
+                    t, Icons.report_problem_outlined, 'Report Errors')),
+
             if (widget.hymn.video != null)
               PopupMenuItem(
                 key: const ValueKey('hymn-youtube-button'),

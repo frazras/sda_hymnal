@@ -19,6 +19,9 @@ def handler(event, context):
     headers = {'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff'}
     if not allowed:
         return {'statusCode': 403, 'headers': headers, 'body': '{"error":"forbidden"}'}
+    if event.get('routeKey') == 'GET /v1/admin/error-reports':
+        from error_reports import list_reports
+        return list_reports(event)
     try:
         report = boto3.client('s3').get_object(Bucket=os.environ['BUCKET'], Key='admin/overview.json')['Body'].read()
         return {'statusCode': 200, 'headers': headers, 'body': report.decode()}

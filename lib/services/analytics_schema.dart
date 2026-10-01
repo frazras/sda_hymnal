@@ -1,7 +1,11 @@
 // Generated from analytics/schema.json by analytics/deploy.py --schema-only.
-const analyticsVariants = <String, List<String>>{
-  "app_session": [""],
-  "app_active_seconds": [""],
+const analyticsVariants = <String, List<String>> {
+  "app_session": [
+    ""
+  ],
+  "app_active_seconds": [
+    ""
+  ],
   "screen_view": [
     "numbers",
     "search",
@@ -28,34 +32,79 @@ const analyticsVariants = <String, List<String>>{
     "unknown",
     "statistics"
   ],
-  "hymn_repeat": [""],
-  "hymn_read_seconds": [""],
-  "search_results": ["zero", "1_5", "6_20", "21_plus"],
-  "search_select": ["1", "2_5", "6_plus"],
-  "search_select_ms": [""],
-  "search_abandon": [""],
-  "search_refine": [""],
-  "search_filter": ["ALL", "OLD", "NEW"],
-  "keypad_reject": [""],
-  "keypad_correct": [""],
-  "favorite_add": [""],
-  "favorite_remove": [""],
+  "hymn_repeat": [
+    ""
+  ],
+  "hymn_read_seconds": [
+    ""
+  ],
+  "search_results": [
+    "zero",
+    "1_5",
+    "6_20",
+    "21_plus"
+  ],
+  "search_select": [
+    "1",
+    "2_5",
+    "6_plus"
+  ],
+  "search_select_ms": [
+    ""
+  ],
+  "search_abandon": [
+    ""
+  ],
+  "search_refine": [
+    ""
+  ],
+  "search_filter": [
+    "ALL",
+    "OLD",
+    "NEW"
+  ],
+  "keypad_reject": [
+    ""
+  ],
+  "keypad_correct": [
+    ""
+  ],
+  "favorite_add": [
+    ""
+  ],
+  "favorite_remove": [
+    ""
+  ],
   "play_attempt": [
     "classic",
     "gospel",
     "reggae",
     "calypso",
+    "jamaican_gospel",
+    "jazz",
     "organ",
     "strings",
     "choir",
     "musicbox"
   ],
-  "play_start": [""],
-  "play_start_ms": [""],
-  "play_pause": [""],
-  "play_resume": [""],
-  "play_complete": [""],
-  "play_stop": [""],
+  "play_start": [
+    ""
+  ],
+  "play_start_ms": [
+    ""
+  ],
+  "play_pause": [
+    ""
+  ],
+  "play_resume": [
+    ""
+  ],
+  "play_complete": [
+    ""
+  ],
+  "play_stop": [
+    ""
+  ],
   "play_error": [
     "start",
     "toggle",
@@ -65,37 +114,100 @@ const analyticsVariants = <String, List<String>>{
     "decode",
     "timing"
   ],
-  "play_seek": ["forward", "back"],
-  "play_speed": ["slow", "normal", "fast"],
-  "play_transpose": ["down", "original", "up"],
-  "auto_scroll_start": ["music", "silent"],
-  "auto_scroll_pause": [""],
-  "auto_scroll_correct": [""],
-  "auto_scroll_speed": ["slow", "normal", "fast"],
-  "auto_scroll_complete": [""],
-  "story_open": [""],
-  "video_open": [""],
-  "video_close": [""],
-  "video_error": [""],
-  "chord_chart_open": [""],
-  "setting_design": ["modern", "classic"],
-  "setting_theme": ["light", "dark", "system"],
-  "setting_font": ["small", "medium", "large"],
-  "setting_keep_awake": ["on", "off"],
-  "setting_auto_scroll": ["on", "off"],
-  "setting_player": ["on", "off"],
+  "play_seek": [
+    "forward",
+    "back"
+  ],
+  "play_speed": [
+    "slow",
+    "normal",
+    "fast"
+  ],
+  "play_transpose": [
+    "down",
+    "original",
+    "up"
+  ],
+  "auto_scroll_start": [
+    "music",
+    "silent"
+  ],
+  "auto_scroll_pause": [
+    ""
+  ],
+  "auto_scroll_correct": [
+    ""
+  ],
+  "auto_scroll_speed": [
+    "slow",
+    "normal",
+    "fast"
+  ],
+  "auto_scroll_complete": [
+    ""
+  ],
+  "story_open": [
+    ""
+  ],
+  "video_open": [
+    ""
+  ],
+  "video_close": [
+    ""
+  ],
+  "video_error": [
+    ""
+  ],
+  "chord_chart_open": [
+    ""
+  ],
+  "setting_design": [
+    "modern",
+    "classic"
+  ],
+  "setting_theme": [
+    "light",
+    "dark",
+    "system"
+  ],
+  "setting_font": [
+    "small",
+    "medium",
+    "large"
+  ],
+  "setting_keep_awake": [
+    "on",
+    "off"
+  ],
+  "setting_auto_scroll": [
+    "on",
+    "off"
+  ],
+  "setting_player": [
+    "on",
+    "off"
+  ],
   "setting_instrument": [
     "classic",
     "gospel",
     "reggae",
     "calypso",
+    "jamaican_gospel",
+    "jazz",
     "organ",
     "strings",
     "choir",
     "musicbox"
   ],
-  "setting_chords": ["on", "off"],
-  "setting_chord_level": ["simple", "medium", "original"],
+  "setting_chords": [
+    "on",
+    "off"
+  ],
+  "setting_chord_level": [
+    "simple",
+    "medium",
+    "original"
+  ],
   "diagnostic": [
     "flutter_error",
     "platform_error",

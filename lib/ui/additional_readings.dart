@@ -1,3 +1,5 @@
+import '../services/error_reports.dart';
+import 'report_error.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/theme.dart';
@@ -34,6 +36,24 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Additional Readings'),
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Reading options',
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'report', child: Text('Report Errors'))
+            ],
+            onSelected: (_) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ReportErrorPage(
+                        subject: ErrorReportSubject(
+                            kind: 'reading',
+                            title: widget.reading.title,
+                            edition: widget.reading.edition,
+                            number: widget.reading.number,
+                            itemId: widget.reading.id)))),
+          )
+        ],
         leading: IconButton(
           icon: HymnalIcons.backChevron(t.ink),
           onPressed: () => Navigator.pop(context),

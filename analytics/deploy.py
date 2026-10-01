@@ -39,12 +39,12 @@ def template(code=None):
         "OutputFormat": "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat",
         "SerdeInfo": {"SerializationLibrary": "org.openx.data.jsonserde.JsonSerDe"}}
     resources = {}
-    for name, keys in (("Aggregates", ["pk", "sk"]), ("Ledger", ["pk"])):
+    for name, keys in (("Aggregates", ["pk", "sk"]), ("Ledger", ["pk"]), ("ErrorReports", ["pk", "sk"])):
         resources[name] = {"Type": "AWS::DynamoDB::Table", "DeletionPolicy": "RetainExceptOnCreate", "UpdateReplacePolicy": "Retain",
             "Properties": {"BillingMode": "PAY_PER_REQUEST", "AttributeDefinitions": [{"AttributeName": k, "AttributeType": "S"} for k in keys],
                 "KeySchema": [{"AttributeName": k, "KeyType": "HASH" if k == "pk" else "RANGE"} for k in keys],
                 "TimeToLiveSpecification": {"AttributeName": "expires", "Enabled": True},
-                "SSESpecification": {"SSEEnabled": True},
+                "SSESpecification": {"SSEEnabled": False},
                 "OnDemandThroughput": {"MaxReadRequestUnits": 100, "MaxWriteRequestUnits": 200}}}
     resources["Reports"] = {"Type": "AWS::S3::Bucket", "DeletionPolicy": "RetainExceptOnCreate", "UpdateReplacePolicy": "Retain", "Properties": {
         "PublicAccessBlockConfiguration": {k: True for k in ("BlockPublicAcls", "IgnorePublicAcls", "BlockPublicPolicy", "RestrictPublicBuckets")},
@@ -62,6 +62,7 @@ def template(code=None):
         "EnforceWorkGroupConfiguration": True, "BytesScannedCutoffPerQuery": 100000000,
         "ResultConfiguration": {"OutputLocation": sub("s3://${Reports}/queries/"), "EncryptionConfiguration": {"EncryptionOption": "SSE_S3"}}}}}
     for role, statements in (("CollectorRole", [
+        {"Effect": "Allow", "Action": ["dynamodb:PutItem"], "Resource": attr("ErrorReports", "Arn")},
         {"Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:BatchGetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"], "Resource": [attr("Aggregates", "Arn"), attr("Ledger", "Arn")]},
         {"Effect": "Allow", "Action": ["s3:GetObject"], "Resource": sub("${Reports.Arn}/public/*")},
         {"Effect": "Allow", "Action": ["s3:ListBucket"], "Resource": attr("Reports", "Arn")}]),
@@ -76,7 +77,7 @@ def template(code=None):
         resources[role] = {"Type": "AWS::IAM::Role", "Properties": {"AssumeRolePolicyDocument": {"Version": "2012-10-17", "Statement": [
             {"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]},
             "Policies": [{"PolicyName": "analytics", "PolicyDocument": {"Version": "2012-10-17", "Statement": statements}}]}}
-    env = {"AGGREGATES": ref("Aggregates"), "LEDGER": ref("Ledger"), "BUCKET": ref("Reports"),
+    env = {"ERROR_REPORTS": ref("ErrorReports"), "AGGREGATES": ref("Aggregates"), "LEDGER": ref("Ledger"), "BUCKET": ref("Reports"),
         "ORIGIN_SECRET": ref("OriginSecret"), "TEST_SECRET": ref("TestSecret"), "GLUE_DATABASE": ref("Database"), "GLUE_DESCRIPTOR": json.dumps(descriptor)}
     for name, handler, timeout in (("Collector", "handler", 25), ("Exporter", "export_handler", 300)):
         resources[name + "Logs"] = {"Type": "AWS::Logs::LogGroup", "Properties": {"LogGroupName": sub("/aws/lambda/${AWS::StackName}-" + name.lower()), "RetentionInDays": 7}}
@@ -86,7 +87,7 @@ def template(code=None):
             "Environment": {"Variables": env}}}
     resources["Api"] = {"Type": "AWS::ApiGatewayV2::Api", "Properties": {"Name": "sdahymnal-analytics", "ProtocolType": "HTTP"}}
     resources["Integration"] = {"Type": "AWS::ApiGatewayV2::Integration", "Properties": {"ApiId": ref("Api"), "IntegrationType": "AWS_PROXY", "IntegrationUri": attr("Collector", "Arn"), "PayloadFormatVersion": "2.0"}}
-    for name, route in (("Batches", "POST /v1/batches"), ("Trends", "GET /v1/trends"), ("Health", "GET /v1/health"), ("Privacy", "GET /privacy-policy")):
+    for name, route in (("ErrorReports", "POST /v1/error-reports"), ("Batches", "POST /v1/batches"), ("Trends", "GET /v1/trends"), ("Health", "GET /v1/health"), ("Privacy", "GET /privacy-policy")):
         resources[name + "Route"] = {"Type": "AWS::ApiGatewayV2::Route", "Properties": {"ApiId": ref("Api"), "RouteKey": route, "Target": sub("integrations/${Integration}")}}
     resources["Stage"] = {"Type": "AWS::ApiGatewayV2::Stage", "Properties": {"ApiId": ref("Api"), "StageName": "$default", "AutoDeploy": True,
         "DefaultRouteSettings": {"ThrottlingBurstLimit": 10, "ThrottlingRateLimit": 5}}}
@@ -114,7 +115,7 @@ def template(code=None):
             "Statistic": "Sum", "Period": 300, "EvaluationPeriods": 1, "Threshold": 1, "ComparisonOperator": "GreaterThanOrEqualToThreshold", "TreatMissingData": "notBreaching"}}
     return {"AWSTemplateFormatVersion": "2010-09-09", "Description": "SDA Hymnal aggregate-only analytics",
         "Parameters": {k: {"Type": "String", "NoEcho": True, "MinLength": 32} for k in ("OriginSecret", "TestSecret")}, "Resources": resources,
-        "Outputs": {"Endpoint": {"Value": sub("https://${Distribution.DomainName}")}, **{k: {"Value": ref(k)} for k in ("Aggregates", "Ledger", "Reports", "Collector", "Exporter", "Workgroup", "Database", "Api", "Distribution")}}}
+        "Outputs": {"Endpoint": {"Value": sub("https://${Distribution.DomainName}")}, **{k: {"Value": ref(k)} for k in ("Aggregates", "Ledger", "ErrorReports", "Reports", "Collector", "Exporter", "Workgroup", "Database", "Api", "Distribution")}}}
 
 
 def main():

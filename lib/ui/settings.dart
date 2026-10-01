@@ -1,3 +1,4 @@
+import 'report_error.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -182,6 +183,14 @@ class Settings extends StatelessWidget {
           t,
           child: Column(
             children: [
+              _SettingsRow(
+                leading: Icon(Icons.report_problem_outlined, color: t.muted),
+                title: 'Report Errors',
+                subtitle: 'Report a general app issue',
+                divider: true,
+                onTap: () => Navigator.push(
+                    context, slideRoute(const ReportErrorPage())),
+              ),
               _SettingsRow(
                 leading: HymnalIcons.person(t.muted),
                 title: 'About Us',

@@ -19,6 +19,14 @@
       <p class="fine">Access is limited to approved administrators. Sign-in is provided by Amazon Cognito.</p>
     </section>
     <p id="status" role="status" aria-live="polite">Connecting…</p>
+    <section id="fixes" class="card" hidden aria-label="Error reports">
+      <h2>Fixes required</h2>
+      <p>Errors submitted by readers, including general app issues. This list covers all dates and platforms.</p>
+      <button id="refresh-fixes" class="quiet">Refresh error reports</button>
+      <button id="download-fixes" disabled>Download all reports (CSV)</button>
+      <p id="fixes-status" role="status" aria-live="polite"></p>
+      <div class="table-scroll"><table><thead><tr><th>Received</th><th>Type</th><th>Edition / number</th><th>Title</th><th>Error description</th><th>App version</th></tr></thead><tbody id="fixes-rows"></tbody></table></div>
+    </section>
     <section id="dashboard" hidden aria-label="Analytics dashboard">
       <div class="intro"><div><span class="eyebrow">THE BIG PICTURE</span><h1>Community overview</h1><p>Shared activity. Useful signals. A better hymnal.</p></div><button id="refresh" class="quiet">↻ Refresh report</button></div>
       <div class="toolbar card"><label>Reporting period<select id="period"><option value="current">This week · incomplete</option><option value="1">Last completed week</option><option value="4" selected>Last 4 completed weeks</option><option value="8">Last 8 completed weeks</option></select></label><label>Platform<select id="platform"><option value="all">All platforms</option><option value="android">Android</option><option value="ios">iOS</option></select></label><div class="report-date"><strong id="range"></strong><small id="generated"></small></div></div>

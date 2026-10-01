@@ -19,7 +19,7 @@ from deployment import ROOT, deploy_stack, package_code
 from deploy import ref, attr, sub
 
 
-def template(bucket, code):
+def template(bucket, code, error_reports=None):
     origin = sub('https://main.${App.DefaultDomain}')
     issuer = sub('https://cognito-idp.${AWS::Region}.amazonaws.com/${Pool}')
     r = {
@@ -71,6 +71,16 @@ def template(bucket, code):
             'Dimensions': [{'Name': 'FunctionName', 'Value': ref('Report')}], 'Statistic': 'Sum', 'Period': 300,
             'EvaluationPeriods': 1, 'Threshold': 1, 'ComparisonOperator': 'GreaterThanOrEqualToThreshold', 'TreatMissingData': 'notBreaching'}},
     }
+    if error_reports:
+        r['Report']['Properties']['Environment']['Variables']['ERROR_REPORTS'] = error_reports
+        r['Role']['Properties']['Policies'][0]['PolicyDocument']['Statement'].append({
+            'Effect': 'Allow', 'Action': 'dynamodb:Query',
+            'Resource': sub('arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/' + error_reports)})
+        r['ErrorReportsRoute'] = {'Type': 'AWS::ApiGatewayV2::Route', 'Properties': {
+            **r['Route']['Properties'], 'RouteKey': 'GET /v1/admin/error-reports'}}
+        r['ErrorReportsPermission'] = {'Type': 'AWS::Lambda::Permission', 'Properties': {
+            **r['Permission']['Properties'], 'SourceArn': sub(
+                'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/GET/v1/admin/error-reports')}}
     return {'Description': 'Private SDA Hymnal analytics dashboard', 'Resources': r, 'Outputs': {
         'Site': {'Value': origin}, 'AppId': {'Value': attr('App', 'AppId')}, 'PoolId': {'Value': ref('Pool')},
         'ClientId': {'Value': ref('Client')}, 'AuthDomain': {'Value': sub('https://${Domain}.auth.${AWS::Region}.amazoncognito.com')},
@@ -92,7 +102,7 @@ def main():
     session = boto3.Session(profile_name=args.profile, region_name=args.region)
     directory = ROOT / 'build/analytics'
     state = json.loads((directory / 'deployment.json').read_text())
-    outputs = deploy_stack(session, 'sdahymnal-analytics-admin', template(state['Reports'], package_code(session)))
+    outputs = deploy_stack(session, 'sdahymnal-analytics-admin', template(state['Reports'], package_code(session), state['ErrorReports']))
     private_json(directory / 'admin-deployment.json', outputs)
     cognito = session.client('cognito-idp')
     try:

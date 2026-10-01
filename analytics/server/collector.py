@@ -182,6 +182,9 @@ def handler(event, context):
     if not hmac.compare_digest(headers.get("x-origin-verify", ""), os.environ["ORIGIN_SECRET"]):
         return response(403, {"error": "forbidden"})
     route = event.get("routeKey")
+    if route == "POST /v1/error-reports":
+        from error_reports import submit
+        return submit(event)
     if route == "GET /v1/health":
         return response(200, {"schema": 1, "status": "ok"})
     if route == "GET /privacy-policy":

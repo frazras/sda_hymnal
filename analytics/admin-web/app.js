@@ -1,3 +1,4 @@
+import {fetchReports, reportsCsv} from './error-reports.mjs';
 const $ = id => document.getElementById(id);
 const format = new Intl.NumberFormat('en-US', {maximumFractionDigits: 1});
 const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
@@ -49,7 +50,7 @@ async function callback() {
   const result = await response.json();
   token = result.access_token;
   // Tokens live only in this page's memory. Reloading uses the Cognito session.
-  await loadReport();
+  await Promise.all([loadReport(), loadFixes()]);
 }
 
 async function loadReport() {
@@ -154,9 +155,40 @@ function render() {
 $('signin').disabled = true;
 $('signin').addEventListener('click', () => login().catch(() => status('Sign-in is unavailable. Please try again.')));
 $('logout').addEventListener('click', () => {
-  token = null; report = null; sessionStorage.removeItem(stateKey);
+  token = null; report = null; fixes = []; $('fixes').hidden = true; $('fixes-rows').replaceChildren(); sessionStorage.removeItem(stateKey);
   $('dashboard').hidden = true; $('login').hidden = false;
   location.assign(config.authDomain + '/logout?' + new URLSearchParams({client_id: config.clientId, logout_uri: config.redirect}));
+});
+let fixes = [];
+async function loadFixes() {
+  if (!token) return;
+  $('fixes').hidden = false;
+  $('refresh-fixes').disabled = true;
+  $('download-fixes').disabled = true;
+  $('fixes-status').textContent = 'Loading error reports…';
+  $('fixes-rows').replaceChildren();
+  fixes = [];
+  try {
+    fixes = await fetchReports(config.api, token);
+    for (const report of fixes) {
+      const row = element('tr');
+      for (const value of [report.created_at, report.kind,
+        report.kind === 'general' ? '—' : `${report.edition} / ${report.number}`,
+        report.title, report.description, report.version]) row.append(element('td', value));
+      $('fixes-rows').append(row);
+    }
+    $('fixes-status').textContent = fixes.length ? `${fixes.length} error reports` : 'No error reports yet.';
+    $('download-fixes').disabled = false;
+  } catch (error) {
+    $('fixes-status').textContent = error.message;
+  } finally { $('refresh-fixes').disabled = false; }
+}
+$('refresh-fixes').addEventListener('click', loadFixes);
+$('download-fixes').addEventListener('click', () => {
+  const url = URL.createObjectURL(new Blob([reportsCsv(fixes)], {type: 'text/csv;charset=utf-8'}));
+  const link = element('a'); link.href = url;
+  link.download = `hymnal-error-reports-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 $('refresh').addEventListener('click', () => loadReport().catch(e => status(e.message)));
 for (const id of ['period', 'platform']) $(id).addEventListener('change', render);
