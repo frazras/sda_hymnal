@@ -217,7 +217,7 @@ _Song _stretchWaltz(_Song song) {
     final reaches = note.endTick > barLine - d ~/ 4 && note.endTick <= barLine;
     final end = _stretchTick(reaches ? barLine : note.endTick, d);
     out.notes.add(
-        _NoteEvent(note.channel, note.pitch, note.velocity, start)
+        _NoteEvent(note.channel, note.pitch, note.velocity, start, note.part)
           ..endTick = end > start ? end : start + 1);
   }
   for (final (tick, us) in song.tempi) {
@@ -395,10 +395,10 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   };
   final gospel = style == ArrangeStyle.gospel;
   final melodyCap = gospel ? 112 : 120;
-  final (leadChannel, descantChannels) = _leadAndDescants(song, n * rhythmDivision);
+  final (leadPart, descantParts) = _leadAndDescants(song, n * rhythmDivision);
   final melodyNotes = [
     for (final note in song.notes)
-      if (note.channel == leadChannel) note,
+      if (note.part == leadPart) note,
   ];
   var lastMelodyStart = 0;
   var velocitySum = 0;
@@ -468,12 +468,12 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   // rather than discarded.
   final descant = _Track()..program(0, 4, melodyProgram);
   for (final note in song.notes) {
-    if (!descantChannels.contains(note.channel)) continue;
+    if (!descantParts.contains(note.part)) continue;
     final velocity = (note.velocity * norm * 0.7).round().clamp(1, 96);
     descant.note(
         note.startTick, 4, note.pitch, velocity, note.endTick - note.startTick);
   }
-  final lead = descantChannels.isEmpty ? [melody] : [melody, descant];
+  final lead = descantParts.isEmpty ? [melody] : [melody, descant];
 
   switch (style) {
     case ArrangeStyle.jazz:
@@ -1764,17 +1764,19 @@ List<int> _voice(Map<String, List<int>> table, _Chord chord, int low) {
 /// [pitchOrPc] transposed by octaves into the bass band (36..47 ⊂ 36..50).
 int _voiceBass(int pitchOrPc) => _bassLow + ((pitchOrPc % 12) + 12) % 12;
 
-/// The lead channel and any descant channels of [song].
+/// The lead part and any descant parts of [song].
+/// A part is a source track/channel pair, never a merged channel: New 388
+/// shares channels across separate soprano and alto tracks.
 ///
-/// The lead is the sounding non-percussion channel with the highest average
-/// pitch AMONG channels that carry the tune the whole way through — bar
+/// The lead is the sounding non-percussion part with the highest average
+/// pitch AMONG parts that carry the tune the whole way through — bar
 /// coverage within 70% of the best-covered channel (ties: most notes, then
 /// lowest channel number). Coverage matters: hymn 190 carries a part-time
 /// descant pitched ABOVE the soprano (an intro flourish plus refrains,
 /// silence through whole verses); picking by pitch alone led with it and
 /// the melody fell silent for the entire first verse.
 ///
-/// Channels pitched above the chosen lead come back as the descants: a
+/// Parts pitched above the chosen lead come back as the descants: a
 /// choir doesn't discard its descant, it lets it ride quietly above the
 /// tune — so the arrangement layers those instead of dropping (or leading
 /// with) them.
@@ -1784,9 +1786,9 @@ int _voiceBass(int pitchOrPc) => _bassLow + ((pitchOrPc % 12) + 12) % 12;
   final bars = <int, Set<int>>{};
   for (final note in song.notes) {
     if (note.channel == _percussionChannel) continue;
-    counts[note.channel] = (counts[note.channel] ?? 0) + 1;
-    sums[note.channel] = (sums[note.channel] ?? 0) + note.pitch;
-    (bars[note.channel] ??= {}).add(note.startTick ~/ barTicks);
+    counts[note.part] = (counts[note.part] ?? 0) + 1;
+    sums[note.part] = (sums[note.part] ?? 0) + note.pitch;
+    (bars[note.part] ??= {}).add(note.startTick ~/ barTicks);
   }
   if (counts.isEmpty) {
     throw const FormatException('No melody notes to arrange');
@@ -1915,7 +1917,11 @@ void _writeVarLen(BytesBuilder out, int value) {
 
 /// One matched note with absolute ticks.
 class _NoteEvent {
-  _NoteEvent(this.channel, this.pitch, this.velocity, this.startTick);
+  _NoteEvent(
+      this.channel, this.pitch, this.velocity, this.startTick, this.part);
+
+  // Tracks can carry separate voices even when they share a MIDI channel.
+  final int part;
 
   final int channel;
   final int pitch;
@@ -1950,8 +1956,10 @@ _Song _parseSong(Uint8List bytes) {
   }
 
   final song = _Song(division);
+  var track = -1;
   for (final chunk in chunks) {
     if (chunk.id != 'MTrk') continue;
+    track++;
     var tick = 0;
     final open = <int, List<_NoteEvent>>{}; // channel<<8 | pitch -> open notes
     for (final e in _trackEvents(chunk.data)) {
@@ -1960,7 +1968,7 @@ _Song _parseSong(Uint8List bytes) {
       final ch = e.status & 0x0F;
       if (hi == 0x90 && e.body[1] > 0) {
         final note =
-            _NoteEvent(ch, e.body[0], e.body[1], tick);
+            _NoteEvent(ch, e.body[0], e.body[1], tick, track * 16 + ch);
         (open[ch << 8 | e.body[0]] ??= []).add(note);
         song.notes.add(note);
       } else if (hi == 0x80 || hi == 0x90) {

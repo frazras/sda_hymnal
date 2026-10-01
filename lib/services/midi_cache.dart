@@ -16,7 +16,8 @@ class MidiRenderCache {
   // v33 replaces Jazz note-tail ornaments with multi-bar phrase planning.
   // v34 adds spacious answers on the Jazz melody channel.
   // v35 fixes the compound-meter backing grid and harmony windows.
-  static const renderVersion = 35;
+  // v36 selects melody parts independently of shared MIDI channels.
+  static const renderVersion = 36;
   final Directory directory;
   final _pending = <String, Future<File>>{};
 

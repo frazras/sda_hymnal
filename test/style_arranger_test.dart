@@ -168,22 +168,6 @@ class _Clock {
 /// SMF division (ticks per quarter note) straight from the header.
 int _division(Uint8List bytes) => (bytes[12] << 8) | bytes[13];
 
-/// The input channel the arranger treats as the melody: highest average
-/// pitch, ties broken by note count, then by lowest channel number.
-int _melodyChannel(Uint8List bytes) {
-  final stats = channelStats(bytes);
-  var best = -1;
-  for (final ch in stats.keys.toList()..sort()) {
-    if (best < 0 ||
-        stats[ch]!.avgPitch > stats[best]!.avgPitch ||
-        (stats[ch]!.avgPitch == stats[best]!.avgPitch &&
-            stats[ch]!.notes > stats[best]!.notes)) {
-      best = ch;
-    }
-  }
-  return best;
-}
-
 /// The chord root governing each of the first [count] measure starts that
 /// carry harmony, sampled at the same media-time instants for both tracks.
 List<int> _barStartRoots(
@@ -260,18 +244,17 @@ void _styleTests(
   });
 
   test('copies the melody onto channel 0', () {
-    final melodyCh = _melodyChannel(input);
-    expect(outStats[0]!.notes, channelStats(input)[melodyCh]!.notes);
-    final inMelody = [
-      for (final on in inScan.ons)
-        if (on.channel == melodyCh) on.pitch,
-    ];
-    final outMelody = [
-      for (final on in outScan.ons)
-        if (on.channel == 0) on.pitch,
-    ];
-    expect(outMelody.first, inMelody.first);
-    expect(outMelody.last, inMelody.last);
+    // These fixtures store the soprano in track 1 and alto in track 2,
+    // sharing one channel. Only the soprano belongs on the lead channel.
+    final inMelody = _scan(mixMidiParts(input, {
+      for (final part in midiParts(input))
+        if (part.index != 1) part.index,
+    })).ons.map((n) => (n.tick, n.pitch)).toList();
+    final outMelody = outScan.ons
+        .where((n) => n.channel == 0)
+        .map((n) => (n.tick, n.pitch))
+        .toList();
+    expect(outMelody, inMelody);
   });
 
   test('keeps every backing part in its register band', () {
@@ -669,6 +652,31 @@ void _rejectionTests(ArrangeStyle style) {
 }
 
 void main() {
+  for (final style in ArrangeStyle.values) {
+    test('New 388 $style leads with the soprano source track', () {
+      final source = File('assets/midi/388.mid').readAsBytesSync();
+      // Track 2 is the tune. Track 3 is alto on the SAME channel;
+      // channel 7 is a busy chordal accompaniment, not the melody.
+      final soprano = _scan(mixMidiParts(source, {
+        for (final part in midiParts(source))
+          if (part.index != 2) part.index,
+      })).ons;
+      final lead = _scan(arrangeStyle(source, style))
+          .ons
+          .where((note) => note.channel == 0)
+          .toList();
+      expect(soprano.length, 262);
+      expect(lead.first.pitch, 74);
+      if (style == ArrangeStyle.jazz) {
+        expect(
+            lead.map((n) => n.tick), containsAll(soprano.map((n) => n.tick)));
+      } else {
+        expect(lead.map((n) => (n.tick, n.pitch)).toList(),
+            soprano.map((n) => (n.tick, n.pitch)).toList());
+      }
+    });
+  }
+
   for (final id in ['C653', '388']) {
     for (final style in ArrangeStyle.values) {
       test('6/8 $id $style keeps two dotted-quarter pulses per measure', () {
