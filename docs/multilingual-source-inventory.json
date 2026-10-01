@@ -1,0 +1,1338 @@
+{
+  "auditedOn": "2026-10-01",
+  "scope": "Source inventory for planning; counts are records, not editorial certification or unique songs across repositories. No upstream programs were executed.",
+  "repositories": [
+    {
+      "repository": "GoGoShift/Hymnal-Flutter",
+      "url": "https://github.com/GoGoShift/Hymnal-Flutter",
+      "revision": "42e1263684ddd756841f11581611b9c9c6cc574f",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "assets/hymns/new_hymnal_en.json",
+          "sha256": "769e439b57b701729449e59ace1f38db5b60fd4ba5d37f6edebd2fcc619fc614",
+          "bytes": 534386,
+          "parse": "single-json-document",
+          "records": 695,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            695
+          ],
+          "uniqueNumbers": 695
+        },
+        {
+          "path": "assets/hymns/new_hymnal_es.json",
+          "sha256": "eaf57157e03751e15e90665542ca2163b28faa6b1456cec499a2fcc902db2aa5",
+          "bytes": 456297,
+          "parse": "single-json-document",
+          "records": 614,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            614
+          ],
+          "uniqueNumbers": 614
+        },
+        {
+          "path": "assets/hymns/new_hymnal_pt.json",
+          "sha256": "b10a20cb09c3ec5cd8882e5f039a0bdc2d324601a573993641b3438dd9aee48c",
+          "bytes": 388926,
+          "parse": "single-json-document",
+          "records": 610,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            610
+          ],
+          "uniqueNumbers": 610
+        },
+        {
+          "path": "assets/hymns/new_hymnal_ru.json",
+          "sha256": "cee4bdf52b2d3a932b075429fdba7410cb6ce1df157fa93ec86b1b4bc3b2f66d",
+          "bytes": 417922,
+          "parse": "single-json-document",
+          "records": 385,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            385
+          ],
+          "uniqueNumbers": 385
+        },
+        {
+          "path": "assets/hymns/new_hymnal_thematic_list_en.json",
+          "sha256": "7069c09d7bf71b3f7f57691d8ef3fbae31b22d2c4d645a7763603b84c11c7e76",
+          "bytes": 8814,
+          "parse": "single-json-document",
+          "records": 13
+        },
+        {
+          "path": "assets/hymns/new_hymnal_thematic_list_es.json",
+          "sha256": "2b3cecb634b966eb597e524ac092e23546e8c25e85d4d6f049288f023e748eb4",
+          "bytes": 6661,
+          "parse": "single-json-document",
+          "records": 9
+        },
+        {
+          "path": "assets/hymns/new_hymnal_thematic_list_pt.json",
+          "sha256": "6de9378ff5813eebc75af5f28cd556a30917ea09f29886c279d05cedf5e03b65",
+          "bytes": 6416,
+          "parse": "single-json-document",
+          "records": 11
+        },
+        {
+          "path": "assets/hymns/new_hymnal_thematic_list_ru.json",
+          "sha256": "9f03f5ba2f0340da1cf5ee6e4b0dc2e7bb556cfbe7489485cc6247c761d2e914",
+          "bytes": 9652,
+          "parse": "single-json-document",
+          "records": 16
+        },
+        {
+          "path": "assets/hymns/old_hymnal_en.json",
+          "sha256": "7caa496c0695b5fa54b04d41246cd9c9e5eaa32f138c0f60357e19f8d436cecc",
+          "bytes": 558252,
+          "parse": "single-json-document",
+          "records": 703,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            703
+          ],
+          "uniqueNumbers": 703
+        },
+        {
+          "path": "assets/hymns/old_hymnal_es.json",
+          "sha256": "2476b687347a58df3ea429194970eef6f04611129fc36188a4ce64799f190f2e",
+          "bytes": 344457,
+          "parse": "single-json-document",
+          "records": 527,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            527
+          ],
+          "uniqueNumbers": 527
+        },
+        {
+          "path": "assets/hymns/old_hymnal_thematic_list_en.json",
+          "sha256": "2636e999b46f7792f23c4cd26d6bdaa2b1bb3a11f0d4d34d6e5f4d04553b8f95",
+          "bytes": 11734,
+          "parse": "single-json-document",
+          "records": 15
+        },
+        {
+          "path": "assets/hymns/old_hymnal_thematic_list_es.json",
+          "sha256": "8efcf41c15d8f385f83a7cdb8ceb2ff60142d29be0205a5419e3b900a7e9ac8f",
+          "bytes": 7541,
+          "parse": "single-json-document",
+          "records": 10
+        },
+        {
+          "path": "assets/info_constants.json",
+          "sha256": "28e298cee4fdf4d57a889fd77537e499b4456e2cc546ac7fec51991cb72845a3",
+          "bytes": 1733,
+          "parse": "single-json-document",
+          "records": 6
+        }
+      ],
+      "sheetMusic": {
+        "en": {
+          "pages": 723,
+          "hymnNumbers": 695,
+          "bytes": 13116224,
+          "missingHymnNumbers": []
+        },
+        "es": {
+          "pages": 614,
+          "hymnNumbers": 614,
+          "bytes": 16680543,
+          "missingHymnNumbers": []
+        },
+        "ru": {
+          "pages": 506,
+          "hymnNumbers": 384,
+          "bytes": 15188755,
+          "missingHymnNumbers": [
+            244
+          ]
+        }
+      }
+    },
+    {
+      "repository": "GoGoShift/Hymnal-Xamarin",
+      "url": "https://github.com/GoGoShift/Hymnal-Xamarin",
+      "revision": "b8d9e551f2526492f5651146dccb5034fd55ebe5",
+      "branch": "master",
+      "archived": true,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-en.json",
+          "sha256": "87724229e0b7ecd27b5abb7f94ad71f5c4bc5f4165d279e539724ade4f614986",
+          "bytes": 534387,
+          "parse": "single-json-document",
+          "records": 695,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            695
+          ],
+          "uniqueNumbers": 695
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-es.json",
+          "sha256": "14d13be76ae907f1046fa104068b423087b7c667a4503d1c7eb49a4d54b0df60",
+          "bytes": 453845,
+          "parse": "single-json-document",
+          "records": 614,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            614
+          ],
+          "uniqueNumbers": 614
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-pt.json",
+          "sha256": "0c281b6be029924eda66a33efce5705aa0bfd7a9746a50d0b06826972a847110",
+          "bytes": 387096,
+          "parse": "single-json-document",
+          "records": 610,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            610
+          ],
+          "uniqueNumbers": 610
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-ru.json",
+          "sha256": "4b04d406125113d2c188ae20267fbab4bf56f20e1cf60ba23fb590aaab071a7e",
+          "bytes": 417922,
+          "parse": "single-json-document",
+          "records": 385,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            385
+          ],
+          "uniqueNumbers": 385
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-thematic-list-en.json",
+          "sha256": "7069c09d7bf71b3f7f57691d8ef3fbae31b22d2c4d645a7763603b84c11c7e76",
+          "bytes": 8814,
+          "parse": "single-json-document",
+          "records": 13
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-thematic-list-es.json",
+          "sha256": "2b3cecb634b966eb597e524ac092e23546e8c25e85d4d6f049288f023e748eb4",
+          "bytes": 6661,
+          "parse": "single-json-document",
+          "records": 9
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-thematic-list-pt.json",
+          "sha256": "6de9378ff5813eebc75af5f28cd556a30917ea09f29886c279d05cedf5e03b65",
+          "bytes": 6416,
+          "parse": "single-json-document",
+          "records": 11
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/new-hymnal-thematic-list-ru.json",
+          "sha256": "9f03f5ba2f0340da1cf5ee6e4b0dc2e7bb556cfbe7489485cc6247c761d2e914",
+          "bytes": 9652,
+          "parse": "single-json-document",
+          "records": 16
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/old-hymnal-en.json",
+          "sha256": "7caa496c0695b5fa54b04d41246cd9c9e5eaa32f138c0f60357e19f8d436cecc",
+          "bytes": 558252,
+          "parse": "single-json-document",
+          "records": 703,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            703
+          ],
+          "uniqueNumbers": 703
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/old-hymnal-es.json",
+          "sha256": "2476b687347a58df3ea429194970eef6f04611129fc36188a4ce64799f190f2e",
+          "bytes": 344457,
+          "parse": "single-json-document",
+          "records": 527,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            527
+          ],
+          "uniqueNumbers": 527
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/old-hymnal-thematic-list-en.json",
+          "sha256": "2636e999b46f7792f23c4cd26d6bdaa2b1bb3a11f0d4d34d6e5f4d04553b8f95",
+          "bytes": 11734,
+          "parse": "single-json-document",
+          "records": 15
+        },
+        {
+          "path": "src/Hymnal.XF/Resources/Assets/old-hymnal-thematic-list-es.json",
+          "sha256": "7b1713f1699266ae7f37bffdd4d49cf1e8042be6d5a543fe71cb40ebaf3bb1b6",
+          "bytes": 7457,
+          "parse": "single-json-document",
+          "records": 10
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/chichewa-hymnal",
+      "url": "https://github.com/rejnac/chichewa-hymnal",
+      "revision": "690b953ec1426e04b5e2ebe7eddfcb2db878c754",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Khristu Mu Nyimbo Lyrics.json",
+          "sha256": "589f17d953075e3a16410bdb73a2025702f35ee8499081054d004d6eeec1abcd",
+          "bytes": 396281,
+          "parse": "single-json-document",
+          "records": 350,
+          "uniqueNumbers": 350,
+          "numberRange": [
+            1,
+            350
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/compiled-hymnal",
+      "url": "https://github.com/rejnac/compiled-hymnal",
+      "revision": "03398dc2c597c10bba29a1e8db48934cbce75b82",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": []
+    },
+    {
+      "repository": "rejnac/dholuo-hymnal",
+      "url": "https://github.com/rejnac/dholuo-hymnal",
+      "revision": "dffa6f74d32a794d7ddba0202d224b5c6f4a6b81",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Wende Nyasaye Lyrics.json",
+          "sha256": "b1b6cfa9ee080cb98630ce290151e4bca17d3ac806b1f92cc23529b37595689a",
+          "bytes": 397334,
+          "parse": "single-json-document",
+          "records": 332,
+          "uniqueNumbers": 332,
+          "numberRange": [
+            1,
+            332
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/ekegusii-hymnal",
+      "url": "https://github.com/rejnac/ekegusii-hymnal",
+      "revision": "1f9d6b6b9eb9e6f996b9b6dd3f8d5b981003e69e",
+      "branch": "Master",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Ogotera Kwa Nyasae Lyrics.json",
+          "sha256": "4715b8ccdac560198c0da4940557da378881b1ba43ef20eaae946fb204325727",
+          "bytes": 426525,
+          "parse": "single-json-document",
+          "records": 371,
+          "uniqueNumbers": 370,
+          "numberRange": [
+            1,
+            370
+          ],
+          "duplicateNumbers": [
+            86
+          ],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": [
+            13,
+            309,
+            327,
+            329,
+            343
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/french-hymnal",
+      "url": "https://github.com/rejnac/french-hymnal",
+      "revision": "cc3d76f6a1a10074d1666702ba23cead5d3eff83",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Hymnes et Louanges Lyrics.json",
+          "sha256": "86990157f34a298b4dabbbc4c754d5fd453d91c0beee217b2c826c41be758f9c",
+          "bytes": 530543,
+          "parse": "single-json-document",
+          "records": 520,
+          "uniqueNumbers": 520,
+          "numberRange": [
+            1,
+            520
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/icibemba-hymnal",
+      "url": "https://github.com/rejnac/icibemba-hymnal",
+      "revision": "3574f03112fef5a2a738dd0882e14d7f1512063f",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Klistu Mu Nyimbo Lyrics.json",
+          "sha256": "077eecd8704b97ba0b6b9eed6554ba8a093001b82777fb50daa830a647c5cff5",
+          "bytes": 352166,
+          "parse": "single-json-document",
+          "records": 311,
+          "uniqueNumbers": 311,
+          "numberRange": [
+            1,
+            311
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/isiZulu-ndebele-hymnal",
+      "url": "https://github.com/rejnac/isiZulu-ndebele-hymnal",
+      "revision": "4e943e107456ada5917832a844e4f169866a853a",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "UKrestu Esihlabelelweni Lyrics.json",
+          "sha256": "c0e2066ce22f522ba75412281e67f33ab73415dbeaa778420614143ec64a3efa",
+          "bytes": 355897,
+          "parse": "single-json-document",
+          "records": 300,
+          "uniqueNumbers": 300,
+          "numberRange": [
+            1,
+            300
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/kalenjin-hymnal",
+      "url": "https://github.com/rejnac/kalenjin-hymnal",
+      "revision": "2a8aec8a7fba0cc9fd84c2f7adf49748a4838e24",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Tienwogik che Kilosune Jehovah Lyrics.json",
+          "sha256": "b24b2220456cc7e2273b903c6b944307855854fb400c5d3528d008a42a12dd8c",
+          "bytes": 263230,
+          "parse": "single-json-document",
+          "records": 245,
+          "uniqueNumbers": 245,
+          "numberRange": [
+            1,
+            245
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/kamba-hymnal",
+      "url": "https://github.com/rejnac/kamba-hymnal",
+      "revision": "b52c80cd6d7dd9010d13c4202fb46451d15dbfcb",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Mbathi sya Kumutaia Ngai Lyrics.json",
+          "sha256": "6d0b9e8e67666fb791521d6233717c41e3d16ce928904b31cc56e8260fa683ec",
+          "bytes": 625094,
+          "parse": "single-json-document",
+          "records": 469,
+          "uniqueNumbers": 469,
+          "numberRange": [
+            1,
+            469
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/kikuyu-hymnal",
+      "url": "https://github.com/rejnac/kikuyu-hymnal",
+      "revision": "59f1a6904641b7024caec1a93dfe7cee987dc6e6",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Nyimbo Cia Agendi Lyrics.json",
+          "sha256": "3befc8ca04372724d67a961a505738dd12a86a98c0293b8acccc9c77ffc67cb9",
+          "bytes": 328342,
+          "parse": "single-json-document",
+          "records": 299,
+          "uniqueNumbers": 299,
+          "numberRange": [
+            1,
+            299
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/kinyarwanda-hymnal",
+      "url": "https://github.com/rejnac/kinyarwanda-hymnal",
+      "revision": "370dbe9850580b516fb097d76d9e71114b89fc2d",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Indirimbo Zo Guhimbaza Imana Lyrics.json",
+          "sha256": "d76bf1d32a2fe88e6e0543ffbd471b0eb4775528cec2c502e5c04fc864e225a3",
+          "bytes": 581718,
+          "parse": "single-json-document",
+          "records": 500,
+          "uniqueNumbers": 500,
+          "numberRange": [
+            1,
+            500
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/maasai-hymnal",
+      "url": "https://github.com/rejnac/maasai-hymnal",
+      "revision": "1a919853ab57115abffc3e00a394bb34c11ef856",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Isinkolioitin Lyrics.json",
+          "sha256": "fc77f4262e1b7d9d1241820cb286020b8e5ad28b10c620f9637eaf2aadb4ea27",
+          "bytes": 276157,
+          "parse": "single-json-document",
+          "records": 243,
+          "uniqueNumbers": 243,
+          "numberRange": [
+            1,
+            243
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/portuguese-hymnal",
+      "url": "https://github.com/rejnac/portuguese-hymnal",
+      "revision": "b32e9a1cd1dec50526efea0bf32c876b5fd09e3b",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Novo Hinário Adventista Lyrics.json",
+          "sha256": "706fcb62252a8e49a19da40186ef3f60661340e6cb11567057e574b41bb83df9",
+          "bytes": 681411,
+          "parse": "single-json-document",
+          "records": 610,
+          "uniqueNumbers": 610,
+          "numberRange": [
+            1,
+            610
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": [
+            146,
+            245,
+            249,
+            413,
+            443,
+            469,
+            477,
+            481,
+            495,
+            573,
+            574,
+            576,
+            578,
+            579,
+            580,
+            581,
+            583,
+            585,
+            586,
+            590,
+            591,
+            592,
+            594,
+            595,
+            596,
+            597,
+            598,
+            599,
+            600,
+            601,
+            602,
+            605,
+            606,
+            608,
+            609,
+            610
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/russian-hymnal",
+      "url": "https://github.com/rejnac/russian-hymnal",
+      "revision": "790c53192cc7f32df102c0a6d85c1a66cc26acc1",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Psalmi Siona Lyrics.json",
+          "sha256": "d84aa7bd730685945fb74480923969c8c733ba9c68f656eb5695cdb7b7aff8e3",
+          "bytes": 520604,
+          "parse": "single-json-document",
+          "records": 384,
+          "uniqueNumbers": 384,
+          "numberRange": [
+            1,
+            385
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [
+            223
+          ],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/sdah-hymnal",
+      "url": "https://github.com/rejnac/sdah-hymnal",
+      "revision": "225cf087a07791d4fe54ce42bbf42f0e024df7f7",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "SDAH Hymnal Lyrics.json",
+          "sha256": "21cb58c025dce763a49f4f25a42e86d2d17c6ed983eceb04d0fd0853209f01ab",
+          "bytes": 1154295,
+          "parse": "single-json-document",
+          "records": 952,
+          "uniqueNumbers": 952,
+          "numberRange": [
+            1,
+            952
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/sepedi-hymnal",
+      "url": "https://github.com/rejnac/sepedi-hymnal",
+      "revision": "f97edb6c05252ad222c8acaf45d6108a73a18781",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Kreste Ka Kopelo Lyrics.json",
+          "sha256": "47fe50270dddb739634417a68238dd329de041a9217fca81becc5d4355922d6d",
+          "bytes": 282974,
+          "parse": "single-json-document",
+          "records": 303,
+          "uniqueNumbers": 303,
+          "numberRange": [
+            1,
+            303
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/shona-hymnal",
+      "url": "https://github.com/rejnac/shona-hymnal",
+      "revision": "4bd8a5b92d49e9ff9c5ac772598c6f8c67c16f7d",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Kristu MuNzwiyo Lyrics.json",
+          "sha256": "5fbcc2119ecdc97c97dd7de7ffe921f5c8aed14823b509f2586f4f376b7db2c4",
+          "bytes": 330649,
+          "parse": "single-json-document",
+          "records": 300,
+          "uniqueNumbers": 300,
+          "numberRange": [
+            1,
+            300
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/sotho-hymnal",
+      "url": "https://github.com/rejnac/sotho-hymnal",
+      "revision": "2af56e338d5477a3ad4e6de4042dfb75dfc794bb",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Keresete Pineng Lyrics.json",
+          "sha256": "343d835ec62ad18f0640d78cfb75a234e6b16e8018c3d8decfa8e0671e68463a",
+          "bytes": 322647,
+          "parse": "single-json-document",
+          "records": 300,
+          "uniqueNumbers": 300,
+          "numberRange": [
+            1,
+            300
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": [
+            177,
+            180,
+            181,
+            182,
+            183,
+            190,
+            191,
+            192,
+            193,
+            194,
+            196,
+            197,
+            198,
+            199,
+            274,
+            279,
+            280,
+            281,
+            282,
+            284,
+            285,
+            286,
+            288,
+            289,
+            290,
+            291,
+            292,
+            294,
+            295,
+            296,
+            297,
+            300
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/spanish-hymnal",
+      "url": "https://github.com/rejnac/spanish-hymnal",
+      "revision": "bf5d0041877dd508f84881b7a38fc00be5bb8876",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Himnario Adventista Lyrics.json",
+          "sha256": "e668f71b39bb0aaf474c857d14bdf7c2c4b1dbeebede5e03d1250fc38ee542f7",
+          "bytes": 655851,
+          "parse": "single-json-document",
+          "records": 614,
+          "uniqueNumbers": 614,
+          "numberRange": [
+            1,
+            614
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/swahili-hymnal",
+      "url": "https://github.com/rejnac/swahili-hymnal",
+      "revision": "ef6d881019298aeac532e60f73c9e229b40af750",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Nyimbo za Kristo Lyrics.json",
+          "sha256": "9b9dab112769253ff2fab64c2512cdc1a7a1cf8e85351d00f219d7757319a249",
+          "bytes": 224309,
+          "parse": "single-json-document",
+          "records": 220,
+          "uniqueNumbers": 220,
+          "numberRange": [
+            1,
+            220
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/tonga-hymnal",
+      "url": "https://github.com/rejnac/tonga-hymnal",
+      "revision": "6698d71e2f8c03eadd0debc53f031a7cb518f479",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Kristu Mu Nyimbo Lyrics.json",
+          "sha256": "3cc8f36311167f6d21cf21338e4a3374837ae3f12d3437627e5a6decfd917ee1",
+          "bytes": 375679,
+          "parse": "single-json-document",
+          "records": 341,
+          "uniqueNumbers": 341,
+          "numberRange": [
+            1,
+            341
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/tswana-hymnal",
+      "url": "https://github.com/rejnac/tswana-hymnal",
+      "revision": "4c31060cc4f3a308972aa1829d040874cb2d7db9",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Keresete mo Kopelong Lyrics.json",
+          "sha256": "31431bcb4408b8d1958a8cde632c663da76c86cf089d40a2e602d78d43ba12e3",
+          "bytes": 374156,
+          "parse": "single-json-document",
+          "records": 300,
+          "uniqueNumbers": 300,
+          "numberRange": [
+            1,
+            300
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/tumbuka-hymnal",
+      "url": "https://github.com/rejnac/tumbuka-hymnal",
+      "revision": "71355f57721127d6dbb6499c821add8cb6a3cbe8",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Nyimbo za Mpingo wa SDA Lyrics.json",
+          "sha256": "dac096656fd7a6bf72b19be15a9fe932e45ab1f64aec8963c45c8b34b9e14d74",
+          "bytes": 400951,
+          "parse": "single-json-document",
+          "records": 372,
+          "uniqueNumbers": 372,
+          "numberRange": [
+            1,
+            372
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": [
+            51,
+            66,
+            250,
+            266,
+            348,
+            349,
+            350,
+            351,
+            352,
+            353,
+            354,
+            355,
+            356,
+            357,
+            358,
+            359,
+            360,
+            361,
+            363,
+            365
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/twi-hymnal",
+      "url": "https://github.com/rejnac/twi-hymnal",
+      "revision": "a3cbd87452929ec24ea9f601c4b1bf2b08a6eea8",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Memeneda Akwanhwefo Nnwom Lyrics.json",
+          "sha256": "9434a1add36bab02ff8813a53c119767619cdff07e99bf6106410a425c5840e1",
+          "bytes": 765574,
+          "parse": "single-json-document",
+          "records": 770,
+          "uniqueNumbers": 770,
+          "numberRange": [
+            1,
+            770
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": [
+            215,
+            216,
+            217,
+            218,
+            219,
+            740,
+            741,
+            742,
+            743,
+            744,
+            745,
+            746,
+            747,
+            748,
+            749,
+            750
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/venda-hymnal",
+      "url": "https://github.com/rejnac/venda-hymnal",
+      "revision": "7b807f10c3f7b1ef55bf9aca10cb1b89c1b6ef09",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Ngosha YaDzingosha Lyrics.json",
+          "sha256": "b3ffdba90add46cd554eb763a403685220daea80a151b0b3c33eadc97f981291",
+          "bytes": 372624,
+          "parse": "single-json-document",
+          "records": 306,
+          "uniqueNumbers": 306,
+          "numberRange": [
+            1,
+            306
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/xhosa-hymnal",
+      "url": "https://github.com/rejnac/xhosa-hymnal",
+      "revision": "0cb83c6f4f7d4f9591f3cca61665624718db9fe1",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "uKrestu Engomeni Lyrics.json",
+          "sha256": "e46306068c5b84e15fbb4e66aa74d1617ae289374542fb9e572f8bcd0a60fcf5",
+          "bytes": 412907,
+          "parse": "single-json-document",
+          "records": 352,
+          "uniqueNumbers": 352,
+          "numberRange": [
+            1,
+            352
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/xitsonga-hymnal",
+      "url": "https://github.com/rejnac/xitsonga-hymnal",
+      "revision": "e53d2c7c9b78aa122020edefcea21e76e4b50136",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "Tinsimu ta Mhalamhala Lyrics.json",
+          "sha256": "40acf30c1603b74f238124984be040df96343b363b6de9c80b202320227f2475",
+          "bytes": 385527,
+          "parse": "single-json-document",
+          "records": 311,
+          "uniqueNumbers": 311,
+          "numberRange": [
+            1,
+            311
+          ],
+          "duplicateNumbers": [],
+          "missingNumbersWithinRange": [],
+          "emptyTitleOrLyricsNumbers": []
+        }
+      ]
+    },
+    {
+      "repository": "thebiblelover7/hymnal",
+      "url": "https://github.com/thebiblelover7/hymnal",
+      "revision": "484079f99ce177002f618fc255393432ea894c19",
+      "branch": "master",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "app/src/main/assets/json/new-hymnal-en.json",
+          "sha256": "769e439b57b701729449e59ace1f38db5b60fd4ba5d37f6edebd2fcc619fc614",
+          "bytes": 534386,
+          "parse": "single-json-document",
+          "records": 695,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            695
+          ],
+          "uniqueNumbers": 695
+        },
+        {
+          "path": "app/src/main/assets/json/new-hymnal-es.json",
+          "sha256": "93633202c80c94029cdc1fd1b5ad3daee3674370c78aa9f6c168cd1836e22978",
+          "bytes": 456298,
+          "parse": "single-json-document",
+          "records": 614,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            614
+          ],
+          "uniqueNumbers": 614
+        },
+        {
+          "path": "app/src/main/assets/json/new-hymnal-pt.json",
+          "sha256": "1e30b78cce5d965d3baae146bd08d40c5fa16dbf22615d56fec6e6b05c9434bb",
+          "bytes": 388044,
+          "parse": "single-json-document",
+          "records": 610,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            610
+          ],
+          "uniqueNumbers": 610
+        },
+        {
+          "path": "app/src/main/assets/json/new-hymnal-ru.json",
+          "sha256": "f5e20ac052e5ebf62400a18105b1e1f059ad3239890c19d1e8e749f15f5c5980",
+          "bytes": 417923,
+          "parse": "single-json-document",
+          "records": 385,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            385
+          ],
+          "uniqueNumbers": 385
+        },
+        {
+          "path": "app/src/main/assets/json/old-hymnal-en.json",
+          "sha256": "7caa496c0695b5fa54b04d41246cd9c9e5eaa32f138c0f60357e19f8d436cecc",
+          "bytes": 558252,
+          "parse": "single-json-document",
+          "records": 703,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            703
+          ],
+          "uniqueNumbers": 703
+        },
+        {
+          "path": "app/src/main/assets/json/old-hymnal-es.json",
+          "sha256": "2476b687347a58df3ea429194970eef6f04611129fc36188a4ce64799f190f2e",
+          "bytes": 344457,
+          "parse": "single-json-document",
+          "records": 527,
+          "numberField": "number",
+          "numberRange": [
+            1,
+            527
+          ],
+          "uniqueNumbers": 527
+        }
+      ]
+    },
+    {
+      "repository": "wanmigs/sda-hymnal-data",
+      "url": "https://github.com/wanmigs/sda-hymnal-data",
+      "revision": "8fba6417536b1a36e7d35c5cea3773e5bea3c47b",
+      "branch": "main",
+      "archived": false,
+      "treeComplete": true,
+      "files": [
+        {
+          "path": "ay-songs.json",
+          "sha256": "c01e921543a9e6cf1d6b6104ff11c01a995b9f4a152d0e2a5d782be586022ade",
+          "bytes": 9242,
+          "parse": "single-json-document",
+          "records": 10,
+          "numberField": "pageNumber",
+          "numberRange": [
+            1,
+            10
+          ],
+          "uniqueNumbers": 10
+        },
+        {
+          "path": "cebuano.json",
+          "sha256": "c0e2b9cb8f229400d2b473a13ef90771f59684127ed75bbfb99720fc59bd4858",
+          "bytes": 273392,
+          "parse": "single-json-document",
+          "records": 237,
+          "numberField": "pageNumber",
+          "numberRange": [
+            2,
+            474
+          ],
+          "uniqueNumbers": 237
+        },
+        {
+          "path": "data.json",
+          "sha256": "bc55ee62cae9c378b69b6a81427bd816b669573aed59d9972b0f731e43ca1fa0",
+          "bytes": 6871,
+          "parse": "requires-multi-document-adapter",
+          "standardJsonError": "Extra data: line 113 column 1 (char 4123)"
+        },
+        {
+          "path": "english.json",
+          "sha256": "e8e312bcb15e57759fad48f77754f8bcd1f085e41ac566560df9bdd5c20a641d",
+          "bytes": 343390,
+          "parse": "single-json-document",
+          "records": 237,
+          "numberField": "pageNumber",
+          "numberRange": [
+            1,
+            473
+          ],
+          "uniqueNumbers": 237
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "fff5d7aff9df429f468247ca7a323595571ea6daba0349a148bdf7ba4d089b92",
+          "bytes": 3461,
+          "parse": "single-json-document"
+        },
+        {
+          "path": "others.json",
+          "sha256": "29715e48904432d02820fdf95c7163c8b243c0535ca86fbc036a8cc2bd90060f",
+          "bytes": 20739,
+          "parse": "single-json-document",
+          "records": 5
+        },
+        {
+          "path": "scripture-songs.json",
+          "sha256": "a18ff4675773f820ac8cd49a210af371b4ecf2941f69499ac40a97d1449be196",
+          "bytes": 2306,
+          "parse": "single-json-document",
+          "records": 3,
+          "numberField": "pageNumber",
+          "numberRange": [
+            1,
+            3
+          ],
+          "uniqueNumbers": 3
+        },
+        {
+          "path": "sdahymnal.json",
+          "sha256": "eaaddaebb80a3ce207e0a1e8845ff98ad50ca864909a11fe9b7e7f58e36bc9d7",
+          "bytes": 544587,
+          "parse": "single-json-document",
+          "collectionCounts": {
+            "english_hymns": 237,
+            "tagalog_hymns": 237,
+            "cebuano_hymns": 237
+          }
+        },
+        {
+          "path": "special-songs.json",
+          "sha256": "e27a57f166e13fe66ca8efc51808341c467c081102a253e680caf776640079c2",
+          "bytes": 654589,
+          "parse": "single-json-document",
+          "records": 382,
+          "numberField": "pageNumber",
+          "numberRange": [
+            1,
+            382
+          ],
+          "uniqueNumbers": 382
+        },
+        {
+          "path": "tagalog.json",
+          "sha256": "91980b9ede3663660afeb2ac267fc4b15eb9e9b56c7722d7996cc2b393f99e68",
+          "bytes": 289915,
+          "parse": "single-json-document",
+          "records": 237,
+          "numberField": "pageNumber",
+          "numberRange": [
+            2,
+            474
+          ],
+          "uniqueNumbers": 237
+        }
+      ]
+    }
+  ],
+  "audioProbeMethod": "HTTP HEAD for hymn 001 in each configured stream; no full coverage or listening verification.",
+  "audioProbes": [
+    {
+      "id": "en-newVersion",
+      "kind": "InstrumentalMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/english/1985%20version/instrumental/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "1072508"
+    },
+    {
+      "id": "en-oldVersion",
+      "kind": "InstrumentalMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/english/1941%20version/instrumental/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "290419"
+    },
+    {
+      "id": "es-newVersion",
+      "kind": "InstrumentalMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/spanish/2009%20version/instrumental/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "1754477"
+    },
+    {
+      "id": "es-newVersion",
+      "kind": "SungMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/spanish/2009%20version/sung/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "1764872"
+    },
+    {
+      "id": "es-oldVersion",
+      "kind": "InstrumentalMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/spanish/1962%20version/instrumental/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "1108670"
+    },
+    {
+      "id": "pt-newVersion",
+      "kind": "SungMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/portuguese/1996%20version/sung/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "1505251"
+    },
+    {
+      "id": "ru-newVersion",
+      "kind": "InstrumentalMusicUrl",
+      "url": "https://isax5.github.io/hymnal/music/russian/1997%20version/instrumental/001.m4a",
+      "status": 200,
+      "contentType": "audio/mp4",
+      "size": "598772"
+    }
+  ]
+}
