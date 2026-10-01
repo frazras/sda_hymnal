@@ -101,7 +101,8 @@ class ClassicNumberPad extends StatelessWidget {
       required this.onNew,
       this.onReading,
       this.onOccasions,
-      this.onReadings});
+      this.onReadings,
+      this.discoveryRows});
 
   final String display, oldTitle, newTitle, readingTitle, readingCategory;
   final double fontSize;
@@ -111,6 +112,7 @@ class ClassicNumberPad extends StatelessWidget {
   final VoidCallback? onReading;
   final VoidCallback? onOccasions;
   final VoidCallback? onReadings;
+  final Widget? discoveryRows;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +219,7 @@ class ClassicNumberPad extends StatelessWidget {
               ),
             ],
           ),
+        if (discoveryRows != null) discoveryRows!,
         Padding(
             padding: const EdgeInsets.all(6),
             child: Text('NEW: $display $newTitle',

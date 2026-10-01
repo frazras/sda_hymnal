@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/popular_hymns.dart';
+import 'package:sdahymnal/services/trends.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
@@ -16,12 +18,14 @@ import 'package:sdahymnal/ui/additional_readings.dart';
 /// giant Literata number + blinking caret, recents chips, NEW/OLD preview
 /// cards) with the keypad pinned at the bottom.
 class Buttons extends StatefulWidget {
+  final bool active;
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
   final AdditionalReadingCatalog additionalReadings;
 
   const Buttons({
     super.key,
+    this.active = true,
     required this.hymnsOld,
     required this.hymnsNew,
     this.additionalReadings = const AdditionalReadingCatalog([]),
@@ -37,15 +41,57 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
 
   String _display = '';
   late final AnimationController _caret;
+  List<Hymn> _popular = [];
+  TrendsSnapshot? _trends;
+  bool _routeWasCurrent = false;
 
   @override
   void initState() {
     super.initState();
+    _selectPopular();
+    _loadPopular();
     // Hard on/off blink: visible 0–55% of the 1.2s cycle, hidden 56–100%.
     _caret = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat();
+  }
+
+  void _selectPopular() {
+    _popular = popularHymns([...widget.hymnsNew, ...widget.hymnsOld],
+        snapshot: _trends);
+  }
+
+  Future<void> _loadPopular() async {
+    try {
+      final snapshot = await TrendsRepository().load();
+      if (!mounted) return;
+      setState(() {
+        _trends = snapshot;
+        _selectPopular();
+      });
+    } catch (_) {
+      // Keep the bundled selection when the community report is unavailable.
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Track the shell route, including returns after reader replacements.
+    final current = ModalRoute.isCurrentOf(context) ?? true;
+    if (current && !_routeWasCurrent && widget.active) _selectPopular();
+    _routeWasCurrent = current;
+  }
+
+  @override
+  void didUpdateWidget(covariant Buttons oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((!oldWidget.active && widget.active) ||
+        oldWidget.hymnsNew != widget.hymnsNew ||
+        oldWidget.hymnsOld != widget.hymnsOld) {
+      _selectPopular();
+    }
   }
 
   @override
@@ -134,6 +180,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
       return ValueListenableBuilder<double>(
         valueListenable: FontSizeController.instance,
         builder: (context, fontSize, _) => ClassicNumberPad(
+          discoveryRows: Column(children: [_recentsRow(t), _popularRow(t)]),
           display: _display,
           oldTitle: _titleFor(widget.hymnsOld, n),
           newTitle: _titleFor(widget.hymnsNew, n),
@@ -183,11 +230,13 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                 _displayZone(t, numSize),
                 _browseLinks(t),
                 _recentsRow(t),
-                _previewZone(t),
+                _popularRow(t),
+                if (_display.isEmpty) _previewZone(t),
               ],
             ),
           ),
         ),
+        if (_display.isNotEmpty) _previewZone(t),
         _keypad(t, keyHeight),
       ],
     );
@@ -354,6 +403,51 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _popularRow(HymnalTokens t) {
+    if (_popular.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      key: const ValueKey('popular-hymns'),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 6,
+        runSpacing: 6,
+        children: [
+          Text('Popular',
+              style:
+                  TextStyle(fontFamily: kSans, fontSize: 11, color: t.muted)),
+          for (final hymn in _popular)
+            Tooltip(
+              message:
+                  '${hymn.version == 'new' ? 'New' : 'Old'} Hymnal · ${hymn.title.trim()}',
+              child: Pressable(
+                key: ValueKey('popular-${hymn.version}-${hymn.number}'),
+                onTap: () =>
+                    _openHymn(isNew: hymn.version == 'new', n: hymn.number),
+                pressedScale: 0.94,
+                builder: (context, pressed) => Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: t.surface,
+                    border: Border.all(color: t.line),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text('${hymn.number}',
+                      style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: t.ink)),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   // ---- Preview zone: NEW/OLD cards when a number is typed, hint otherwise
 
   Widget _previewZone(HymnalTokens t) {
@@ -489,6 +583,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     required VoidCallback? onTap,
   }) {
     return Pressable(
+      key: ValueKey(isNew ? 'number-preview-new' : 'number-preview-old'),
       onTap: onTap,
       pressedScale: 0.985,
       builder: (context, pressed) => Container(

@@ -150,6 +150,7 @@ class _TabsState extends State<Tabs> {
                     index: _tab,
                     children: [
                       Buttons(
+                          active: _tab == 0,
                           hymnsOld: _hymnsOld,
                           hymnsNew: _hymnsNew,
                           additionalReadings: _readings),
