@@ -31,13 +31,16 @@ void main() {
     test('${entry.key} shares the exact arranger and transposition pipeline',
         () {
       final raw = arrangeStyle(hymn, entry.value.$1);
-      expect(renderHymnMidi(hymn, theme: entry.key), raw);
+      final volumes = <int, int>{if (entry.key == 'jazz') 0: 50};
+      expect(renderHymnMidi(hymn, theme: entry.key),
+          transformMidi(raw, channelVolumes: volumes));
       expect(renderHymnMidi(hymn, theme: entry.key, semitones: 2),
-          transformMidi(raw, semitones: 2));
+          transformMidi(raw, semitones: 2, channelVolumes: volumes));
       final ios = arrangeStyle(hymn, entry.value.$1,
           channelVolumes:
               entry.key == 'reggae' ? reggaeVolumesForAppleSynth : const {});
-      expect(renderHymnMidi(hymn, theme: entry.key, forAppleSynth: true), ios);
+      expect(renderHymnMidi(hymn, theme: entry.key, forAppleSynth: true),
+          transformMidi(ios, channelVolumes: volumes));
       if (entry.key != 'reggae') expect(ios, raw);
     });
   }
