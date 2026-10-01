@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
+import 'package:sdahymnal/services/hymn_search.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
@@ -109,25 +110,8 @@ class _HymnListState extends State<HymnList> {
           ? widget.hymnsNew
           : widget.hymns;
 
-  /// Same predicate as the old app / mockup: title contains q, OR
-  /// punctuation-stripped body contains q, OR number-as-string contains q
-  /// (substring, not exact). Query is trimmed + lowercased; only the body
-  /// is punctuation-stripped.
   void _applyFilter() {
-    final q = _query.trim().toLowerCase();
-    if (q.isEmpty) {
-      _filteredHymns = _currentHymns;
-      return;
-    }
-    _filteredHymns = _currentHymns
-        .where((h) =>
-            h.title.toLowerCase().contains(q) ||
-            h.body
-                .toLowerCase()
-                .replaceAll(RegExp(r'[^\w\s]+'), '')
-                .contains(q) ||
-            h.number.toString().contains(q))
-        .toList();
+    _filteredHymns = searchHymns(_currentHymns, _query);
   }
 
   /// toLocaleString()-style thousands separator ("1,398").
