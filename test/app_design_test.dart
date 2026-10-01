@@ -1003,6 +1003,10 @@ void main() {
         matching: find.byType(Scrollable),
       ),
     );
+    await Scrollable.ensureVisible(
+        tester.element(find.byKey(const ValueKey('design-classic'))),
+        alignment: .5);
+    await tester.pump();
     await tester.tap(find.byKey(const ValueKey('design-classic')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
@@ -1024,6 +1028,10 @@ void main() {
     expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
         'cross');
     await tester.tap(find.text('Settings'));
+    await tester.pump();
+    await Scrollable.ensureVisible(
+        tester.element(find.byKey(const ValueKey('design-modern'))),
+        alignment: .5);
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('design-modern')));
     await tester.pump();
@@ -1055,6 +1063,10 @@ void main() {
         matching: find.byType(Scrollable),
       ),
     );
+    await Scrollable.ensureVisible(
+        tester.element(find.byKey(const ValueKey('design-classic'))),
+        alignment: .5);
+    await tester.pump();
     await tester.tap(find.byKey(const ValueKey('design-classic')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
