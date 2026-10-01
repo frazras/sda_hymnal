@@ -117,6 +117,16 @@ class Settings extends StatelessWidget {
                 ),
                 onTap: () => showMusicalStyleSheet(context),
               ),
+              _SettingsRow(
+                leading: Icon(Icons.play_circle_outline, color: t.muted),
+                title: 'Autoplay video and music',
+                subtitle:
+                    'After you press Play, continue through this list until paused',
+                divider: true,
+                trailing: _MiniSwitch(Autoplay.instance),
+                chevron: false,
+                onTap: () => Autoplay.instance.set(!Autoplay.instance.value),
+              ),
               // Chord tabs + its dependent difficulty row rebuild together:
               // the divider under Chord tabs exists exactly while the
               // difficulty row is visible, so the card's last row never

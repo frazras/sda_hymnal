@@ -1,8 +1,9 @@
-import 'favorite_lists.dart';
-import 'package:sdahymnal/ui/favorite_burst.dart';
+import 'dart:async';
+import '../services/playback_continuation.dart';
 import '../services/error_reports.dart';
 
 import 'report_error.dart';
+import 'favorite_lists.dart';
 import 'hymn_page_turn.dart';
 // ignore_for_file: file_names
 
@@ -25,9 +26,12 @@ import 'package:sdahymnal/services/screen_wake.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/favorite_burst.dart';
 import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/ui/hymn_story_page.dart';
 import 'package:sdahymnal/ui/hymn_video_overlay.dart';
+
+enum HymnContinuation { midi, video }
 
 /// Hymn reading page (full-screen sub-page, pushed with slideRoute).
 ///
@@ -45,6 +49,7 @@ class HymnPage extends StatefulWidget {
 
   /// Same reader layout, without history, playback or screen-wake effects.
   final bool previewOnly;
+  final HymnContinuation? continuation;
 
   bool get cycleCategory => categoryTitle != null;
 
@@ -54,7 +59,8 @@ class HymnPage extends StatefulWidget {
       required this.hymns,
       this.analyticsSource = 'unknown',
       this.categoryTitle,
-      this.previewOnly = false});
+      this.previewOnly = false,
+      this.continuation});
 
   @override
   State<HymnPage> createState() => _HymnPageState();
@@ -73,6 +79,8 @@ enum _ReaderAction {
 
 class _HymnPageState extends State<HymnPage> {
   bool _videoVisible = false;
+  bool _advancing = false;
+  StreamSubscription<MidiPlayback>? _completionSubscription;
   final _favoriteBurst = GlobalKey<FavoriteBurstState>();
   bool _endHintShown = false;
 
@@ -108,6 +116,14 @@ class _HymnPageState extends State<HymnPage> {
   void initState() {
     super.initState();
     if (widget.previewOnly) return;
+    _completionSubscription =
+        MidiPlayer.instance.completions.listen((finished) {
+      if (finished.n == widget.hymn.number &&
+          finished.version == widget.hymn.version &&
+          !_videoVisible) {
+        _continue(HymnContinuation.midi);
+      }
+    });
     AppAnalytics.instance.openHymn(
         widget.hymn.number, widget.hymn.version, widget.analyticsSource);
     // Single recents recording point: every open (keypad, search, chip) and
@@ -120,8 +136,20 @@ class _HymnPageState extends State<HymnPage> {
     });
     // Publishes this hymn's written key for the key pill and resets the
     // transposition when the page moved to a different hymn.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) MidiPlayer.instance.prepareKey(widget.hymn);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await MidiPlayer.instance.prepareKey(widget.hymn);
+      if (!mounted ||
+          !Autoplay.instance.value ||
+          !(ModalRoute.of(context)?.isCurrent ?? false)) {
+        return;
+      }
+      if (widget.continuation == HymnContinuation.video) {
+        _showVideo();
+      } else if (widget.continuation == HymnContinuation.midi &&
+          MidiPlayer.instance.current.value == null) {
+        await MidiPlayer.instance.toggle(widget.hymn);
+      }
     });
     // Reading is the one place worth fighting the lock timer: the phone is
     // propped up and untouched for a whole hymn. Honours the setting.
@@ -134,10 +162,11 @@ class _HymnPageState extends State<HymnPage> {
       super.dispose();
       return;
     }
+    _completionSubscription?.cancel();
     AppAnalytics.instance.closeHymn(widget.hymn.number, widget.hymn.version);
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
-    MidiPlayer.instance.stopIfCurrent(widget.hymn);
+    if (!_advancing) MidiPlayer.instance.stopIfCurrent(widget.hymn);
     ScreenWake.instance.release();
     super.dispose();
   }
@@ -154,6 +183,36 @@ class _HymnPageState extends State<HymnPage> {
     AppAnalytics.instance.event('video_close',
         hymn: widget.hymn.number, edition: widget.hymn.version);
     setState(() => _videoVisible = false);
+  }
+
+  void _continue(HymnContinuation medium) {
+    if (!mounted ||
+        _advancing ||
+        !Autoplay.instance.value ||
+        !(ModalRoute.of(context)?.isCurrent ?? false)) {
+      return;
+    }
+    if (medium == HymnContinuation.video && !_videoVisible) return;
+    final target = nextPlayableHymn(
+        widget.hymns,
+        widget.hymn,
+        (h) => medium == HymnContinuation.video
+            ? h.video != null
+            : MidiPlayer.hasMidi(h));
+    if (target == null) return;
+    _advancing = true;
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder<void>(
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          pageBuilder: (_, __, ___) => HymnPage(
+              hymn: target,
+              hymns: widget.hymns,
+              categoryTitle: widget.categoryTitle,
+              analyticsSource: 'adjacent',
+              continuation: medium),
+        ));
   }
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
@@ -259,6 +318,8 @@ class _HymnPageState extends State<HymnPage> {
                               child: HymnVideoOverlay(
                                 video: widget.hymn.video!,
                                 onClose: _closeVideo,
+                                onEnded: () =>
+                                    _continue(HymnContinuation.video),
                               ),
                             ),
                           ),

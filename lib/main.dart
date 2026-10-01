@@ -15,6 +15,7 @@ Future<void> main() async {
   await FontSizeController.instance.load();
   await KeepScreenOn.instance.load();
   await AutoScroll.instance.load();
+  await Autoplay.instance.load();
   await MusicPlayerVisible.instance.load();
   await Recents.instance.load();
   await Favorites.instance.load();

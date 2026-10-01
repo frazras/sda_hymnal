@@ -142,6 +142,21 @@ class KeepScreenOn extends ValueNotifier<bool> {
   }
 }
 
+/// Continue the active medium through the reader's list after a manual start.
+class Autoplay extends ValueNotifier<bool> {
+  Autoplay._() : super(false);
+  static final instance = Autoplay._();
+  Future<void> load() async {
+    value =
+        (await SharedPreferences.getInstance()).getBool('autoplay') ?? false;
+  }
+
+  Future<void> set(bool enabled) async {
+    value = enabled;
+    await (await SharedPreferences.getInstance()).setBool('autoplay', enabled);
+  }
+}
+
 /// Opt-in MIDI-timed lyric scrolling, shared by both reader designs.
 class AutoScroll extends ValueNotifier<bool> {
   AutoScroll._() : super(false);

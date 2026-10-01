@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../services/playback_continuation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -11,11 +12,13 @@ import 'package:sdahymnal/theme.dart';
 class HymnVideoOverlay extends StatefulWidget {
   final HymnVideo video;
   final VoidCallback onClose;
+  final VoidCallback? onEnded;
 
   const HymnVideoOverlay({
     super.key,
     required this.video,
     required this.onClose,
+    this.onEnded,
   });
 
   @override
@@ -26,6 +29,7 @@ class _HymnVideoOverlayState extends State<HymnVideoOverlay> {
   late final YoutubePlayerController _controller;
   StreamSubscription<YoutubePlayerValue>? _subscription;
   bool _reportedError = false;
+  final _endGate = PlaybackEndGate();
 
   @override
   void initState() {
@@ -42,6 +46,16 @@ class _HymnVideoOverlayState extends State<HymnVideoOverlay> {
       ),
     );
     _subscription = _controller.listen((value) {
+      if (!mounted) return;
+      if (value.hasError) {
+        _endGate.stop();
+      } else if (value.playerState == PlayerState.playing) {
+        _endGate.playing();
+      } else if (value.playerState == PlayerState.paused) {
+        _endGate.stop();
+      } else if (value.playerState == PlayerState.ended && _endGate.ended()) {
+        widget.onEnded?.call();
+      }
       if (value.hasError && !_reportedError) {
         _reportedError = true;
         AppAnalytics.instance.event('video_error');

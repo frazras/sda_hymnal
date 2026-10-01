@@ -204,6 +204,9 @@ class MidiPlayer {
   static double _toSeconds(Duration d) => d.inMilliseconds / 1000.0;
 
   /// Natural end of the tune: same reset on both engines.
+  final _completions = StreamController<MidiPlayback>.broadcast(sync: true);
+  Stream<MidiPlayback> get completions => _completions.stream;
+
   void _onComplete() {
     final finished = current.value;
     if (finished != null) {
@@ -217,6 +220,7 @@ class MidiPlayer {
     current.value = null;
     position.value = Duration.zero;
     duration.value = Duration.zero;
+    if (finished != null && !finished.paused) _completions.add(finished);
   }
 
   void _startPositionPolling() {
