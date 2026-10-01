@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'jazz_phrasing.dart';
+
 import 'package:sdahymnal/services/chord_detect.dart';
 
 /// Generated-accompaniment engine for the bundled hymn tunes
@@ -405,7 +407,34 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   final targetLevel = gospel ? 90.0 : 100.0;
   final norm = targetLevel * melodyNotes.length / velocitySum;
   final melody = _Track()..program(0, 0, melodyProgram);
-  for (final note in melodyNotes) {
+  if (style == ArrangeStyle.jazz) {
+    final order = {for (final (i, note) in melodyNotes.indexed) note: i};
+    melodyNotes.sort((a, b) {
+      final time = a.startTick.compareTo(b.startTick);
+      return time != 0 ? time : order[a]!.compareTo(order[b]!);
+    });
+  }
+  final jazzPitches = style == ArrangeStyle.jazz
+      ? phraseJazzMelody([
+          for (final note in melodyNotes)
+            (tick: note.startTick, end: note.endTick, pitch: note.pitch),
+        ], division: d, beatsPerBar: n, harmony: beatChords)
+      : null;
+  final fills = jazzPitches == null
+      ? <JazzMelodyFill>[]
+      : jazzMelodyFills([
+          for (final (i, note) in melodyNotes.indexed)
+            (tick: note.startTick, end: note.endTick, pitch: jazzPitches[i]),
+        ],
+          division: d,
+          beatsPerBar: n,
+          bpm: ctx.bpm,
+          harmony: beatChords);
+  final fillsByNote = <int, List<JazzMelodyFill>>{};
+  for (final fill in fills) {
+    fillsByNote.putIfAbsent(fill.sourceIndex, () => []).add(fill);
+  }
+  for (final (index, note) in melodyNotes.indexed) {
     final velocity = (note.velocity * norm).round().clamp(1, melodyCap);
     var length = note.endTick - note.startTick;
     // The closing ritardando is flattened away with the rest of the tempo
@@ -415,7 +444,15 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     if (!gospel && note.startTick == lastMelodyStart) {
       length += n * d;
     }
-    melody.note(note.startTick, 0, note.pitch, velocity, length);
+    final answer = fillsByNote[index];
+    if (answer != null && note.startTick + length > answer.first.tick) {
+      length = answer.first.tick - note.startTick;
+    }
+    melody.note(
+        note.startTick, 0, jazzPitches?[index] ?? note.pitch, velocity, length);
+    for (final fill in answer ?? <JazzMelodyFill>[]) {
+      melody.note(fill.tick, 0, fill.pitch, velocity, fill.end - fill.tick);
+    }
   }
 
   // The descant rides above the tune on channel 4 in the lead's own voice,
