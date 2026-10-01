@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -47,9 +48,77 @@ class MidiPlayer {
     }
     // An instrument change re-renders the loaded tune in place.
     InstrumentTheme.instance.addListener(_restartWithTransform);
+    MusicOptions.instance.addListener(_restartWithTransform);
   }
 
   static final MidiPlayer instance = MidiPlayer._();
+
+  final ValueNotifier<List<({int index, String name})>> parts =
+      ValueNotifier([]);
+  final ValueNotifier<Set<int>> mutedParts = ValueNotifier({});
+  final ValueNotifier<Set<int>> soloParts = ValueNotifier({});
+  bool _preview = false;
+  bool get _practice => MusicOptions.instance.choirPractice && !_preview;
+  Future<void> _operations = Future.value();
+  Future<void> _enqueue(Future<void> Function() action) {
+    final next = _operations.then((_) => action());
+    _operations = next.catchError((Object _) {});
+    return next;
+  }
+
+  Future<void> setPartMuted(int track, bool muted) async {
+    mutedParts.value = {...mutedParts.value}..remove(track);
+    if (muted) mutedParts.value = {...mutedParts.value, track};
+    await _restartWithTransform();
+  }
+
+  Future<void> setPartSolo(int track, bool solo) async {
+    soloParts.value = {...soloParts.value}..remove(track);
+    if (solo) soloParts.value = {...soloParts.value, track};
+    await _restartWithTransform();
+  }
+
+  Future<void> setPartInstrument(Hymn hymn, int track, int? program) async {
+    final id = '${hymn.version}:${hymn.number}';
+    final choices = MusicOptions.instance.trackPrograms(id);
+    if (program == null) {
+      choices.remove(track);
+    } else {
+      choices[track] = program;
+    }
+    // Validate channel capacity before saving a choice that playback cannot honor.
+    instrumentMidiParts(await _assetBytes(hymn.version, hymn.number), choices);
+    await MusicOptions.instance.setTrackProgram(id, track, program);
+    // The preference listener queues the reload; wait for that reload as well.
+    await _operations;
+  }
+
+  Future<void> resetParts({Hymn? hymn}) async {
+    mutedParts.value = {};
+    soloParts.value = {};
+    final id = hymn != null
+        ? '${hymn.version}:${hymn.number}'
+        : _lastHymn == null
+            ? null
+            : '${_lastHymn!.$1}:${_lastHymn!.$2}';
+    if (id != null && MusicOptions.instance.trackVolumes(id).isNotEmpty) {
+      await MusicOptions.instance.resetTrackVolumes(id);
+      await _operations;
+    } else {
+      await _restartWithTransform();
+    }
+  }
+
+  /// Preview shares the native engine, so it cannot overlap hymn playback.
+  Future<void> preview(Hymn hymn) => _enqueue(() async {
+        await _stop();
+        _preview = true;
+        await _toggle(hymn);
+      });
+
+  Future<void> stopPreview() => _enqueue(() async {
+        if (_preview) await _stop();
+      });
 
   /// True when playback goes through the native iOS channel engine. Host
   /// test runs report Platform.isIOS == false and keep the audioplayers path.
@@ -96,7 +165,7 @@ class MidiPlayer {
   /// Transposition/instrument remapping do not alter event timing.
   Future<Duration?> readingDuration(Hymn hymn) async {
     if (!hasMidi(hymn)) return null;
-    final theme = InstrumentTheme.instance.value;
+    final theme = _practice ? 'classic' : InstrumentTheme.instance.value;
     return _durationCache.putIfAbsent((hymn.version, hymn.number, theme),
         () async {
       try {
@@ -175,6 +244,9 @@ class MidiPlayer {
     final id = (hymn.version, hymn.number);
     if (_lastHymn == id) return;
     _lastHymn = id;
+    parts.value = [];
+    mutedParts.value = {};
+    soloParts.value = {};
     if (transpose.value != 0) transpose.value = 0;
   }
 
@@ -183,6 +255,7 @@ class MidiPlayer {
   /// there is no MIDI) and resets [transpose] when the page shows a new hymn
   /// number.
   Future<void> prepareKey(Hymn hymn) async {
+    _preview = false;
     _trackHymn(hymn);
     if (!hasMidi(hymn)) {
       originalKey.value = null;
@@ -191,6 +264,8 @@ class MidiPlayer {
     }
     try {
       final bytes = await _assetBytes(hymn.version, hymn.number);
+      if (_lastHymn != (hymn.version, hymn.number)) return;
+      parts.value = midiParts(bytes);
       originalKey.value = readKeySignature(bytes);
       final id = (hymn.version, hymn.number);
       final raw = _chordCache.putIfAbsent(id, () => detectChords(bytes));
@@ -211,6 +286,7 @@ class MidiPlayer {
   /// style is playing, because the two reshape the timeline differently.
   ChordTrack? _displayTrack(Uint8List bytes, ChordTrack? raw) {
     if (raw == null) return null;
+    if (_practice) return raw;
     final arranged = arrangedMidiThemes[InstrumentTheme.instance.value];
     if (arranged == null) return raw;
     try {
@@ -238,7 +314,18 @@ class MidiPlayer {
   /// (audioplayers engine only): the bare asset when both are at their
   /// defaults, otherwise the cached render from [_renderFile].
   Future<Source> _source(String version, int n) async {
-    if (transpose.value == 0 && !InstrumentTheme.instance.transforms) {
+    if (transpose.value == 0 &&
+        !InstrumentTheme.instance.transforms &&
+        !_practice &&
+        MusicOptions.instance
+            .programs(InstrumentTheme.instance.value)
+            .isEmpty &&
+        MusicOptions.instance
+            .styleVolumes(InstrumentTheme.instance.value)
+            .isEmpty &&
+        MusicOptions.instance
+            .styleSolo(InstrumentTheme.instance.value)
+            .isEmpty) {
       return AssetSource(_asset(version, n));
     }
     return DeviceFileSource((await _renderFile(version, n)).path);
@@ -255,17 +342,61 @@ class MidiPlayer {
     final semis = transpose.value;
     final theme = InstrumentTheme.instance.value;
     final program = InstrumentTheme.instance.program;
+    final programs = MusicOptions.instance.programs(theme);
+    final styleVolumes = MusicOptions.instance.styleVolumes(theme);
+    final solo = MusicOptions.instance.styleSolo(theme);
+    final mutedStyle = solo.isEmpty
+        ? <int>{}
+        : instrumentRoles(theme).keys.where((ch) => !solo.contains(ch)).toSet();
+    final practice = _practice;
+    final trackPrograms = practice
+        ? MusicOptions.instance.trackPrograms('$version:$n')
+        : <int, int>{};
+    final trackKeys = trackPrograms.keys.toList()..sort();
+    final trackVolumes = practice
+        ? MusicOptions.instance.trackVolumes('$version:$n')
+        : <int, int>{};
+    final volumeKeys = trackVolumes.keys.toList()..sort();
+    final muted = practice
+        ? {
+            ...mutedParts.value,
+            if (soloParts.value.isNotEmpty)
+              ...parts.value
+                  .where((p) => !soloParts.value.contains(p.index))
+                  .map((p) => p.index),
+          }
+        : <int>{};
+    final programKeys = programs.keys.toList()..sort();
+    final styleVolumeKeys = styleVolumes.keys.toList()..sort();
+    final styleSoloKeys = solo.toList()..sort();
+    final mutedKeys = muted.toList()..sort();
+    final suffix = '_practice${practice ? 1 : 0}'
+        '_voices${trackKeys.map((t) => '$t-${trackPrograms[t]}').join('-')}'
+        '_levels${volumeKeys.map((t) => '$t-${trackVolumes[t]}').join('-')}'
+        '_mix${mutedKeys.join('-')}'
+        '_inst${programKeys.map((ch) => '$ch-${programs[ch]}').join('-')}';
+    final cacheSuffix =
+        '_stylevol${styleVolumeKeys.map((ch) => '$ch-${styleVolumes[ch]}').join('-')}'
+        '_stylesolo${styleSoloKeys.join('-')}';
     final name = MidiRenderCache.filename(
-        hymnal: version,
-        hymn: n,
-        semitones: semis,
-        theme: theme,
-        forceProgram: program,
-        forAppleSynth: _useChannel);
+            hymnal: version,
+            hymn: n,
+            semitones: semis,
+            theme: theme,
+            forceProgram: program,
+            forAppleSynth: _useChannel)
+        .replaceFirst('.mid', '$suffix$cacheSuffix.mid');
     return (await _renderCache).getOrCreate(
         name,
         () async => renderHymnMidi(await _assetBytes(version, n),
             theme: theme,
+            channelPrograms: programs,
+            channelVolumes: styleVolumes,
+            mutedChannels: mutedStyle,
+            mutedTracks: muted,
+            choirPractice: practice,
+            trackPrograms: trackPrograms,
+            trackVolumes: trackVolumes,
             semitones: semis,
             forceProgram: program,
             forAppleSynth: _useChannel));
@@ -284,7 +415,10 @@ class MidiPlayer {
           variant: InstrumentTheme.instance.value);
     }
     try {
-      await _toggle(hymn);
+      await _enqueue(() async {
+        _preview = false;
+        await _toggle(hymn);
+      });
       final after = current.value;
       if (isCurrent(after, hymn)) {
         AppAnalytics.instance.event(
@@ -400,7 +534,9 @@ class MidiPlayer {
 
   /// Restart the loaded hymn through the current transform and pick up
   /// where it was: same position, same pause state, same speed.
-  Future<void> _restartWithTransform() async {
+  Future<void> _restartWithTransform() => _enqueue(_restartNow);
+
+  Future<void> _restartNow() async {
     await _republishChords();
     if (_useChannel) return _channelRestartWithTransform();
     final cur = current.value;
@@ -513,7 +649,10 @@ class MidiPlayer {
     position.value = clamped;
   }
 
-  Future<void> stop() async {
+  Future<void> stop() => _enqueue(_stop);
+
+  Future<void> _stop() async {
+    _preview = false;
     final stopped = current.value;
     if (stopped != null) {
       AppAnalytics.instance

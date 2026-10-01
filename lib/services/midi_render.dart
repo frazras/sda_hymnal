@@ -19,11 +19,29 @@ Uint8List renderHymnMidi(
   int semitones = 0,
   int? forceProgram,
   bool forAppleSynth = false,
+  Map<int, int> channelPrograms = const {},
+  Set<int> mutedTracks = const {},
+  bool choirPractice = false,
+  Map<int, int> trackPrograms = const {},
+  Map<int, int> trackVolumes = const {},
+  Map<int, int> channelVolumes = const {},
+  Set<int> mutedChannels = const {},
 }) {
+  if (choirPractice) {
+    return steelpanRolls(transformMidi(
+        mixMidiParts(
+            volumeMidiParts(
+                instrumentMidiParts(source, trackPrograms), trackVolumes),
+            mutedTracks),
+        semitones: semitones));
+  }
   final arrangement = arrangedMidiThemes[theme];
   if (arrangement == null) {
-    return transformMidi(source,
-        semitones: semitones, forceProgram: forceProgram);
+    return steelpanRolls(transformMidi(source,
+        semitones: semitones,
+        forceProgram: channelPrograms[0] ?? forceProgram,
+        channelVolumes: channelVolumes,
+        mutedChannels: mutedChannels));
   }
   final (style, fallback) = arrangement;
   Uint8List arranged;
@@ -35,7 +53,9 @@ Uint8List renderHymnMidi(
   } on FormatException {
     arranged = transformMidi(source, forceProgram: fallback);
   }
-  return semitones == 0
-      ? arranged
-      : transformMidi(arranged, semitones: semitones);
+  return steelpanRolls(transformMidi(arranged,
+      semitones: semitones,
+      channelPrograms: channelPrograms,
+      channelVolumes: {if (theme == 'jazz') 0: 50, ...channelVolumes},
+      mutedChannels: mutedChannels));
 }

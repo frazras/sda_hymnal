@@ -89,6 +89,20 @@ const _notesDown100 = <int>[
 ];
 
 void main() {
+  test('percussion volume and mute change velocity without changing drum keys',
+      () {
+    final input = _smf([_conductor, _notes]);
+    for (final volume in [0, 35, 100]) {
+      final expected = [..._notes];
+      expected[expected.indexOf(0x99) + 2] = volume;
+      expect(transformMidi(input, channelVolumes: {9: volume}),
+          _smf([_conductor, expected]));
+    }
+    final muted = [..._notes];
+    muted[muted.indexOf(0x99) + 2] = 0;
+    expect(transformMidi(input, mutedChannels: {9}), _smf([_conductor, muted]));
+  });
+
   final input = _smf([_conductor, _notes]);
 
   group('MIDI duration', () {

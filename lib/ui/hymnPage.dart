@@ -1,3 +1,6 @@
+import 'package:sdahymnal/ui/music_options.dart';
+import 'package:sdahymnal/services/music_options.dart';
+import 'musical_style_sheet.dart';
 import '../services/error_reports.dart';
 import 'report_error.dart';
 // ignore_for_file: file_names
@@ -43,7 +46,7 @@ class HymnPage extends StatefulWidget {
   State<HymnPage> createState() => _HymnPageState();
 }
 
-enum _ReaderAction { reportError, video, player, scrollSpeed, favorite, fontSize }
+enum _ReaderAction { musicalStyle, choirPractice, reportError, video, player, scrollSpeed, favorite, fontSize }
 
 class _HymnPageState extends State<HymnPage> {
   /// Accumulated horizontal drag distance for the swipe gesture.
@@ -274,6 +277,16 @@ class _HymnPageState extends State<HymnPage> {
                       itemId: '${widget.hymn.version}:${widget.hymn.number}',
                     ))));
 
+              case _ReaderAction.musicalStyle:
+                showMusicalStyleSheet(context);
+              case _ReaderAction.choirPractice:
+                final enabled = !MusicOptions.instance.choirPractice;
+                MusicOptions.instance.setChoirPractice(enabled);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(enabled
+                      ? 'Choir practice is on. Uses original vocal parts instead of musical styles.'
+                      : 'Choir practice is off. Your selected musical style is active again.'),
+                ));
               case _ReaderAction.video:
                 _showVideo();
               case _ReaderAction.player:
@@ -295,6 +308,19 @@ class _HymnPageState extends State<HymnPage> {
                 child: _menuLabel(
                     t, Icons.report_problem_outlined, 'Report Errors')),
 
+            if (MidiPlayer.hasMidi(widget.hymn)) ...[
+              PopupMenuItem(
+                key: const ValueKey('hymn-musical-style'),
+                value: _ReaderAction.musicalStyle,
+                child: _menuLabel(t, Icons.music_note, 'Musical style'),
+              ),
+              CheckedPopupMenuItem(
+                key: const ValueKey('hymn-choir-practice'),
+                value: _ReaderAction.choirPractice,
+                checked: MusicOptions.instance.choirPractice,
+                child: const Text('Choir practice'),
+              ),
+            ],
             if (widget.hymn.video != null)
               PopupMenuItem(
                 key: const ValueKey('hymn-youtube-button'),
@@ -573,6 +599,7 @@ class _HymnPageState extends State<HymnPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                ChoirPartsButton(hymn: widget.hymn),
                 _chordStrip(t),
                 _progressLine(t),
                 // FittedBox lets the whole control strip scale down as one

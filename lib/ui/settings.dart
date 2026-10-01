@@ -1,6 +1,9 @@
 import 'report_error.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
+import 'musical_style_sheet.dart';
+import 'package:sdahymnal/services/music_options.dart';
+import 'package:sdahymnal/ui/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:sdahymnal/services/analytics_endpoint.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -98,7 +101,7 @@ class Settings extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                 leading: HymnalIcons.organPipes(t.muted),
-                title: 'Instrument',
+                title: 'Musical style',
                 subtitle: 'How hymn music sounds',
                 divider: true,
                 trailing: ValueListenableBuilder<String>(
@@ -112,7 +115,7 @@ class Settings extends StatelessWidget {
                     ),
                   ),
                 ),
-                onTap: () => _showInstrumentSheet(context, t),
+                onTap: () => showMusicalStyleSheet(context),
               ),
               // Chord tabs + its dependent difficulty row rebuild together:
               // the divider under Chord tabs exists exactly while the
@@ -168,6 +171,45 @@ class Settings extends StatelessWidget {
             ],
           ),
         ),
+        const SectionLabel('MUSICIANS & CHOIR',
+            padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        _card(t,
+            child: AnimatedBuilder(
+              animation: MusicOptions.instance,
+              builder: (context, _) => Material(
+                  color: Colors.transparent,
+                  child: Column(children: [
+                    SwitchListTile.adaptive(
+                      title: const Text('Customize musical style instruments'),
+                      subtitle: const Text(
+                          'Choose instruments, volume and solos for each musical style'),
+                      value: MusicOptions.instance.customInstruments,
+                      onChanged: MusicOptions.instance.setCustomInstruments,
+                    ),
+                    if (MusicOptions.instance.customInstruments)
+                      ListTile(
+                          title: const Text('Ensemble instruments'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => Navigator.push(context,
+                              slideRoute(const EnsembleInstrumentsPage()))),
+                    SwitchListTile.adaptive(
+                      title: const Text('Choir practice'),
+                      subtitle: const Text(
+                          'Show vocal part controls in the hymn player. Uses original music, without styles.'),
+                      value: MusicOptions.instance.choirPractice,
+                      onChanged: (value) async {
+                        await MusicOptions.instance.setChoirPractice(value);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(value
+                              ? 'Choir practice is on. It overrides the selected musical style and uses the original vocal parts.'
+                              : 'Choir practice is off. Your selected musical style is active again.'),
+                          duration: const Duration(seconds: 4),
+                        ));
+                      },
+                    ),
+                  ])),
+            )),
         const SectionLabel('APPEARANCE',
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,
@@ -323,41 +365,6 @@ class Settings extends StatelessWidget {
     );
   }
 
-  /// Instrument picker sheet (same pattern as the hymn page's speed sheet):
-  /// one row per theme, tap applies and closes.
-  void _showInstrumentSheet(BuildContext context, HymnalTokens t) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => SafeArea(
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
-          decoration: BoxDecoration(
-            color: t.isDark ? const Color(0xFF171E1A) : t.surface,
-            border: Border.all(color: t.line),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionLabel('INSTRUMENT'),
-              const SizedBox(height: 6),
-              for (final (i, theme) in InstrumentTheme.themes.indexed)
-                _instrumentRow(
-                  t,
-                  theme,
-                  sheetContext,
-                  divider: i < InstrumentTheme.themes.length - 1,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Chord-difficulty options: (pref id, label, description).
   static const List<(String, String, String)> _chordLevels = [
     ('simple', 'Simple', 'Major and minor only'),
@@ -444,51 +451,6 @@ class Settings extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            if (selected)
-              Container(
-                width: 8,
-                height: 8,
-                decoration:
-                    BoxDecoration(color: t.accent, shape: BoxShape.circle),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _instrumentRow(
-    HymnalTokens t,
-    (String, String, int?) theme,
-    BuildContext sheetContext, {
-    required bool divider,
-  }) {
-    final selected = InstrumentTheme.instance.value == theme.$1;
-    return Pressable(
-      onTap: () {
-        InstrumentTheme.instance.set(theme.$1);
-        Navigator.pop(sheetContext);
-      },
-      pressedScale: 1.0,
-      builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
-        decoration: BoxDecoration(
-          color: pressed ? t.surface2 : Colors.transparent,
-          border: divider ? Border(bottom: BorderSide(color: t.line2)) : null,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                theme.$2,
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: selected ? t.accent : t.ink,
-                ),
               ),
             ),
             if (selected)

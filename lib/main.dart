@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/services/prefs.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   await Recents.instance.load();
   await Favorites.instance.load();
   await InstrumentTheme.instance.load();
+  await MusicOptions.instance.load();
   await ChordTabs.instance.load();
   await ChordLevelPref.instance.load();
   await AppAnalytics.instance

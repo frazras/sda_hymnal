@@ -10,7 +10,7 @@ class MidiRenderCache {
 
   // v22's Apple piano CC7=41 belongs to the original bank. Bypass it rather
   // than deleting old caches, which another running player may still use.
-  static const renderVersion = 23;
+  static const renderVersion = 31;
   final Directory directory;
   final _pending = <String, Future<File>>{};
 
