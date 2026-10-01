@@ -12,7 +12,7 @@ void main(List<String> args) {
   } catch (error) {
     stderr.writeln(error);
     stderr.writeln('Usage: dart run tool/export_midi.dart input.mid output.mid '
-        '[--style=reggae|calypso|gospel|classic] [--transpose=N] '
+        '[--style=reggae|calypso|gospel|jamaican_gospel|jazz|classic] [--transpose=N] '
         '[--ios-mix] [--piano-only]');
     exitCode = 1;
   }

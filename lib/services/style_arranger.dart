@@ -28,6 +28,9 @@ import 'package:sdahymnal/services/chord_detect.dart';
 
 /// The accompaniment styles the engine can generate.
 enum ArrangeStyle {
+  /// Piano trio with walking acoustic bass and swung ride cymbal.
+  jazz,
+
   /// Modern gospel: Rhodes stabs, finger bass with chromatic walk-ins,
   /// subtle hat/kick/sidestick groove.
   gospel,
@@ -374,6 +377,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   // under the strum), trumpet (reads as a bagpipe on this synth) and
   // acoustic piano were all heard and rejected for the calypso lead.
   final melodyProgram = switch (style) {
+    ArrangeStyle.jazz => _pianoProgram,
     ArrangeStyle.gospel => _rhodesProgram,
     ArrangeStyle.reggae => _rhodesProgram,
     ArrangeStyle.calypso => _rhodesProgram,
@@ -427,6 +431,12 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   final lead = descantChannels.isEmpty ? [melody] : [melody, descant];
 
   switch (style) {
+    case ArrangeStyle.jazz:
+      final comp = _Track()..program(0, 1, _pianoProgram);
+      final bass = _Track()..program(0, 2, _acousticBassProgram);
+      final drums = _Track();
+      _emitJazz(ctx, comp, bass, drums);
+      return _writeSmf(d, [conductor, ...lead, comp, bass, drums]);
     case ArrangeStyle.gospel:
       final comp = _Track()..program(0, 1, _rhodesProgram);
       final bass = _Track()..program(0, 2, _fingerBassProgram);
@@ -660,6 +670,107 @@ int _fnv(Uint8List bytes) {
     h = (h ^ b) * 16777619 & 0x7FFFFFFF;
   }
   return h;
+}
+
+// Seeded choices vary by hymn, bar and phrase; cached renders stay reproducible.
+int _jazzChoice(_Ctx c, int bar, int slot, int count) =>
+    c.vel(0, 100000, bar, slot).abs() % count;
+
+/// Piano-trio swing: alternating comping motifs, voice-led inversions, walking
+/// bass with pickups, and phrase-end drum answers. Never change the bar length.
+void _emitJazz(_Ctx c, _Track comp, _Track bass, _Track drums) {
+  final d = c.d;
+  int? previousBass;
+  for (var beat = c.firstBeat; beat <= c.lastBeat; beat++) {
+    final chord = c.chordAt(beat);
+    if (chord == null) continue;
+    final bar = beat ~/ c.n;
+    final within = beat % c.n;
+    final tick = beat * d;
+    final finalBeat = beat == c.lastBeat;
+    final next = c.chordAt(beat + 1);
+    final motif = _jazzChoice(c, bar, 301, 4);
+    final fill = bar % 4 == 3 || _jazzChoice(c, bar, 302, 7) == 0;
+    final third = const {'m', 'm7', 'dim'}.contains(chord.quality)
+        ? 3
+        : chord.quality == 'sus4'
+            ? 5
+            : 4;
+    final intervals = [0, third, _fifth(chord.quality), 12];
+    final interval = within == 0 || c.chordAt(beat - 1) != chord || finalBeat
+        ? 0
+        : intervals[(within + motif) % intervals.length];
+    var pitch = _voiceBass(chord.rootPc + interval);
+    if (previousBass != null && within != 0) {
+      if (pitch - previousBass > 6 && pitch >= 43) pitch -= 12;
+      if (previousBass - pitch > 6 && pitch <= 43) pitch += 12;
+    }
+    if (!finalBeat && within == c.n - 1 && next != null && next != chord) {
+      pitch = _voiceBass(next.rootPc) + (motif.isEven ? -1 : 1);
+    }
+    previousBass = pitch;
+    final pickup = !finalBeat && fill && within == c.n - 1 && next != null;
+    bass.note(
+        tick,
+        2,
+        pitch,
+        c.vel(75, 5, bar, within),
+        finalBeat
+            ? (c.n + 1) * d
+            : pickup
+                ? 2 * d ~/ 3
+                : 9 * d ~/ 10);
+    if (pickup) {
+      bass.note(tick + 2 * d ~/ 3, 2, _voiceBass(next.rootPc) - 1,
+          c.vel(64, 4, bar, 310), d ~/ 3);
+    }
+
+    // Leave space in the comping; different bars answer on different beats.
+    final offsets = finalBeat
+        ? [0]
+        : switch (motif) {
+            0 => within.isEven ? [0] : [2 * d ~/ 3],
+            1 => within == 0
+                ? [0]
+                : within == c.n - 1
+                    ? [d ~/ 3, 2 * d ~/ 3]
+                    : <int>[],
+            2 => within.isEven ? [2 * d ~/ 3] : [0],
+            _ => within == 0 ? <int>[] : [within.isOdd ? 2 * d ~/ 3 : 0],
+          };
+    final voicing = _voice(_stabIntervals, chord, 52 + motif * 2).toList();
+    for (final offset in offsets) {
+      for (final (i, note) in voicing.indexed) {
+        // A lightly rolled voicing rather than every key struck together.
+        final roll = motif == 2 && !finalBeat ? i * d ~/ 48 : 0;
+        comp.note(
+            tick + offset + roll,
+            1,
+            note,
+            c.vel(51, 7, bar, 330 + within * 5 + i),
+            finalBeat ? (c.n + 1) * d : d ~/ 4);
+      }
+    }
+    if (finalBeat) continue;
+    drums.note(tick, 9, 51, c.vel(43, 5, bar, 40 + within), d ~/ 5);
+    if (within.isOdd || (c.n == 3 && within == 2)) {
+      drums.note(
+          tick + 2 * d ~/ 3, 9, 51, c.vel(34, 4, bar, 60 + within), d ~/ 6);
+      drums.note(tick, 9, _pedalHat, 38, d ~/ 5);
+    }
+    if (within == 0) drums.note(tick, 9, _kick, 30, d ~/ 5);
+    if (fill && within == c.n - 1) {
+      final keys = motif.isEven
+          ? [_sidestick, _snare, _lowTom]
+          : [_snare, _hiMidTom, _sidestick];
+      for (var i = 0; i < keys.length; i++) {
+        drums.note(tick + i * d ~/ 3, 9, keys[i],
+            c.vel(39 + i * 4, 4, bar, 80 + i), d ~/ 6);
+      }
+    } else if (_jazzChoice(c, bar, within + 400, 4) == 0) {
+      drums.note(tick + 2 * d ~/ 3, 9, _sidestick, 28, d ~/ 6);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -14,6 +14,35 @@ import 'package:sdahymnal/ui/music_options.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('Jazz melody defaults to 50 percent and mixer overrides persist',
+      () async {
+    final bytes = File('assets/midi/016.mid').readAsBytesSync();
+    expect(
+        renderHymnMidi(bytes, theme: 'jazz'),
+        transformMidi(arrangeStyle(bytes, ArrangeStyle.jazz),
+            channelVolumes: {0: 50}));
+    SharedPreferences.setMockInitialValues({});
+    final options = MusicOptions.instance;
+    await options.load();
+    expect(options.styleVolumes('jazz')[0], 50);
+    await options.setCustomInstruments(true);
+    expect(options.styleVolumes('jazz')[0], 50);
+    await options.setStyleVolume('jazz', 0, 100);
+    await options.load();
+    expect(options.styleVolumes('jazz')[0], 100);
+    await options.setStyleVolume('jazz', 0, 50);
+    await options.load();
+    expect(options.styleVolumes('jazz')[0], 50);
+    expect(options.styleVolumes('gospel'), isEmpty);
+  });
+
+  test('Jazz is selectable with its own arrangement and mixer', () {
+    expect(InstrumentTheme.themes, contains(('jazz', 'Jazz', null)));
+    expect(arrangedMidiThemes.containsKey('jazz'), isTrue);
+    expect(instrumentRoles('jazz')[2], 'Walking bass');
+    expect(instrumentRoles('jazz')[9], 'Drum kit');
+  });
+
   test('Jamaican Gospel is selectable with its own arrangement and mixer', () {
     expect(InstrumentTheme.themes,
         contains(('jamaican_gospel', 'Jamaican Gospel', null)));

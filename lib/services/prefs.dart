@@ -226,6 +226,7 @@ class InstrumentTheme extends ValueNotifier<String> {
   static const List<(String, String, int?)> themes = [
     ('classic', 'Classic', null),
     ('gospel', 'Modern Gospel', null),
+    ('jazz', 'Jazz', null),
     ('reggae', 'Island Reggae', null),
     ('jamaican_gospel', 'Jamaican Gospel', null),
     ('calypso', 'Steel Pan Calypso', null),

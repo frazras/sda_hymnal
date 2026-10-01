@@ -666,6 +666,68 @@ void _rejectionTests(ArrangeStyle style) {
 
 void main() {
   for (final id in ['001', '016', '190', 'C001']) {
+    test('Jazz $id preserves tune and meter with a swung trio backing', () {
+      final source = File('assets/midi/$id.mid').readAsBytesSync();
+      final output = arrangeStyle(source, ArrangeStyle.jazz);
+      final scan = _scan(output);
+      final reference = _scan(arrangeStyle(source, ArrangeStyle.reggae));
+      final d = _division(output);
+      expect(output, arrangeStyle(source, ArrangeStyle.jazz));
+      expect(
+          detectChords(output)!.beatsPerBar, detectChords(source)!.beatsPerBar);
+      expect(scan.programs[0], {0});
+      expect(scan.programs[1], {0});
+      expect(scan.programs[2], {32});
+      final lead = scan.ons.where((e) => e.channel == 0).toList();
+      final written = reference.ons.where((e) => e.channel == 0).toList();
+      expect(lead.map((e) => e.tick), containsAll(written.map((e) => e.tick)),
+          reason: 'Keep every written melody attack');
+      final writtenTicks = written.map((e) => e.tick).toSet();
+      final added = lead.where((e) => !writtenTicks.contains(e.tick)).toList();
+      if (id == '190' || id == 'C001') expect(added, isNotEmpty);
+      for (final extra in added) {
+        final anchor = written.lastWhere((e) => e.tick < extra.tick);
+        expect(extra.vel, anchor.vel,
+            reason: 'Added notes share melody dynamics');
+        expect(extra.tick - anchor.tick, greaterThanOrEqualTo(d));
+      }
+      expect(lead.first.pitch, written.first.pitch);
+      expect(lead.last.pitch, written.last.pitch);
+      final walking = scan.ons.where((e) => e.channel == 2).toList();
+      expect(walking.length, greaterThan(8));
+      for (var i = 1; i < walking.length; i++) {
+        expect(walking[i].tick - walking[i - 1].tick, inInclusiveRange(1, d));
+      }
+      expect(
+          scan.ons.where((e) => e.channel == 0).length,
+          greaterThanOrEqualTo(
+              reference.ons.where((e) => e.channel == 0).length));
+      expect(scan.ons.where((e) => e.channel == 9).map((e) => e.pitch),
+          contains(38));
+      final barTicks = detectChords(source)!.beatsPerBar * d;
+      final patterns = <int, Set<int>>{};
+      for (final note in scan.ons.where((e) => e.channel == 1)) {
+        patterns
+            .putIfAbsent(note.tick ~/ barTicks, () => {})
+            .add(note.tick % barTicks);
+      }
+      expect(
+          patterns.values
+              .map((ticks) => (ticks.toList()..sort()).join(','))
+              .toSet()
+              .length,
+          greaterThan(2),
+          reason: 'Jazz comping must vary between bars');
+      // No fill extends the hymn beyond its held ending.
+      expect(scan.lastOffTick, lessThanOrEqualTo(reference.lastOffTick + d));
+      final ride = scan.ons.where((e) => e.channel == 9 && e.pitch == 51);
+      expect(ride.any((e) => e.tick % d == 2 * d ~/ 3), isTrue);
+      expect(scan.ons.every((e) => e.vel > 0 && e.vel <= 127), isTrue);
+    });
+  }
+
+
+  for (final id in ['001', '016', '190', 'C001']) {
     group('Jamaican Gospel hymn $id', () {
       final input = File('assets/midi/$id.mid').readAsBytesSync();
       final output = arrangeStyle(input, ArrangeStyle.jamaicanGospel);
