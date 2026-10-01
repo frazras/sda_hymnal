@@ -18,11 +18,15 @@ import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/midi_render.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/prefs.dart';
+import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/ui/classic.dart';
+import 'package:sdahymnal/ui/settings.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/report_error.dart';
+import 'package:sdahymnal/ui/favorite_burst.dart';
 import 'package:sdahymnal/theme.dart';
 
 class _HymnAssets extends CachingAssetBundle {
@@ -120,7 +124,7 @@ void main() {
       const ValueKey('hymn-scroll-speed-menu-item') =>
         find.text('Scroll speed'),
       const ValueKey('hymn-font-size-button') => find.text('Text size'),
-      const ValueKey('hymn-favorite-button') => find.textContaining('favorite'),
+      const ValueKey('hymn-chord-tabs') => find.textContaining('chord tabs'),
       _ => option,
     };
     await tester.tap(label);
@@ -242,6 +246,30 @@ void main() {
     return duration ?? Duration.zero;
   }
 
+  testWidgets('Report Errors opens from both hymn editions and designs',
+      (tester) async {
+    for (final classic in [false, true]) {
+      for (final version in ['old', 'new']) {
+        await pumpReader(tester, classic: classic, version: version);
+        await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Report Errors'));
+        await tester.pumpAndSettle();
+        final page =
+            tester.widget<ReportErrorPage>(find.byType(ReportErrorPage));
+        expect(page.subject.edition, version);
+        expect(page.subject.number, 534);
+        expect(
+            page.subject.title,
+            hymnByNumber(
+                    hymns.where((h) => h.version == version).toList(), 534)!
+                .title);
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+      }
+    }
+  });
+
   test('auto-scroll defaults off and survives a restart', () async {
     expect(AutoScroll.instance.value, isFalse);
     await AutoScroll.instance.set(true);
@@ -279,8 +307,10 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('favorite remains in both the header and reader menu',
+  testWidgets('header favorite remains and menu toggles saved chord tabs',
       (tester) async {
+    await ChordTabs.instance.set(false);
+    await MusicPlayerVisible.instance.set(false);
     await pumpReader(tester);
     final headerFavorite =
         find.byKey(const ValueKey('hymn-favorite-header-button'));
@@ -290,8 +320,17 @@ void main() {
     expect(Favorites.instance.contains(534, 'new'), isTrue);
     await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('hymn-favorite-button')), findsOneWidget);
-    expect(find.text('Remove favorite'), findsOneWidget);
+    expect(find.byKey(const ValueKey('hymn-favorite-button')), findsNothing);
+    expect(find.text('Show chord tabs'), findsOneWidget);
+    await tester.tap(find.text('Show chord tabs'));
+    await tester.pumpAndSettle();
+    expect(ChordTabs.instance.value, isTrue);
+    expect(MusicPlayerVisible.instance.value, isTrue);
+    await chooseReaderOption(tester, const ValueKey('hymn-chord-tabs'));
+    expect(ChordTabs.instance.value, isFalse);
+    expect(MusicPlayerVisible.instance.value, isTrue);
+    await ChordTabs.instance.load();
+    expect(ChordTabs.instance.value, isFalse);
     await tester.pumpWidget(const SizedBox());
   });
 
@@ -856,6 +895,71 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
   }
 
+  for (final size in [const Size(375, 812), const Size(568, 320)]) {
+    testWidgets('all musical styles remain reachable on $size with large text',
+        (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1.6)),
+          child: child!,
+        ),
+        home: const Scaffold(body: Settings()),
+      ));
+      await tester.scrollUntilVisible(find.text('Musical style'), 150,
+          scrollable: find.byType(Scrollable));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Musical style'));
+      await tester.pumpAndSettle();
+      final list = find.byKey(const ValueKey('musical-style-list'));
+      final scrollable =
+          find.descendant(of: list, matching: find.byType(Scrollable));
+      for (final theme in InstrumentTheme.themes) {
+        final row = find.descendant(of: list, matching: find.text(theme.$2));
+        await tester.scrollUntilVisible(row, 100, scrollable: scrollable);
+        expect(row.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      }
+      await tester
+          .tap(find.descendant(of: list, matching: find.text('Music Box')));
+      await tester.pumpAndSettle();
+      expect(InstrumentTheme.instance.value, 'musicbox');
+      expect(list, findsNothing);
+      final ids = InstrumentTheme.themes.map((e) => e.$1).toList();
+      expect(ids.indexOf('jamaican_gospel'), ids.indexOf('reggae') + 1);
+    });
+  }
+
+  testWidgets('song menu changes musical style and toggles choir practice',
+      (tester) async {
+    await MusicOptions.instance.load();
+    final list = hymns.where((h) => h.version == 'new').toList();
+    await tester.pumpWidget(MaterialApp(
+      theme: buildHymnalTheme(HymnalTokens.light),
+      home: HymnPage(hymn: hymnByNumber(list, 108)!, hymns: list),
+    ));
+    await chooseReaderOption(tester, const ValueKey('hymn-musical-style'));
+    final listFinder = find.byKey(const ValueKey('musical-style-list'));
+    expect(listFinder, findsOneWidget);
+    await tester.tap(find.descendant(
+        of: listFinder, matching: find.text('Jamaican Gospel')));
+    await tester.pumpAndSettle();
+    expect(InstrumentTheme.instance.value, 'jamaican_gospel');
+    for (final enabled in [true, false]) {
+      await chooseReaderOption(tester, const ValueKey('hymn-choir-practice'));
+      expect(MusicOptions.instance.choirPractice, enabled);
+      expect((await SharedPreferences.getInstance()).getBool('choirPractice'),
+          enabled);
+    }
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('Reading settings toggle auto-scroll in both app designs',
       (tester) async {
     for (final design in AppDesign.values) {
@@ -903,6 +1007,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(ClassicHeader), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('App design'), -100,
+        scrollable: find.descendant(
+            of: find.byKey(const ValueKey('settings-list')),
+            matching: find.byType(Scrollable)));
     expect(find.text('App design'), findsOneWidget);
     await tester.tap(find.text('Numbers'));
     await tester.pump();
@@ -921,6 +1029,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(ClassicHeader), findsNothing);
+    await tester.scrollUntilVisible(find.text('App design'), -100,
+        scrollable: find.descendant(
+            of: find.byKey(const ValueKey('settings-list')),
+            matching: find.byType(Scrollable)));
     expect(find.text('App design'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -1043,6 +1155,74 @@ void main() {
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
+
+  for (final classic in [false, true]) {
+    testWidgets(
+        'End-of-hymn nudge and favorite splash in ${classic ? 'Classic' : 'Modern'}',
+        (tester) async {
+      final list = hymns.where((h) => h.version == 'new').toList();
+      final hymn = hymnByNumber(list, 533)!;
+      await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light, classic: classic),
+        home: HymnPage(hymn: hymn, hymns: list),
+      ));
+      await tester.pump();
+      final burst = find.byType(FavoriteBurst);
+      Icon heart() => tester.widget<Icon>(
+          find.descendant(of: burst, matching: find.byType(Icon)));
+      final normal = heart().color!;
+      final scroll = readerScroll(tester);
+      scroll.jumpTo(scroll.position.maxScrollExtent);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(heart().color!.r, greaterThan(heart().color!.g));
+      expect(Favorites.instance.contains(hymn.number, hymn.version), isFalse);
+      await tester.pump(const Duration(milliseconds: 800));
+      expect(heart().color, normal);
+      expect(heart().icon, Icons.favorite_border);
+
+      // Reaching the bottom again must not repeatedly nag the reader.
+      scroll.jumpTo(0);
+      await tester.pump();
+      scroll.jumpTo(scroll.position.maxScrollExtent);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(heart().color, normal);
+
+      await tester
+          .tap(find.byKey(const ValueKey('hymn-favorite-header-button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(heart().color!.g, greaterThan(heart().color!.r));
+      expect(Favorites.instance.contains(hymn.number, hymn.version), isTrue);
+      await tester.pump(const Duration(milliseconds: 800));
+      expect(heart().icon, Icons.favorite);
+      await tester.pumpWidget(const SizedBox());
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets(
+        'Saved hymns do not show the red reminder in ${classic ? 'Classic' : 'Modern'}',
+        (tester) async {
+      final list = hymns.where((h) => h.version == 'new').toList();
+      final hymn = hymnByNumber(list, 533)!;
+      await Favorites.instance.toggle(hymn);
+      await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light, classic: classic),
+        home: HymnPage(hymn: hymn, hymns: list),
+      ));
+      await tester.pump();
+      final scroll = readerScroll(tester);
+      scroll.jumpTo(scroll.position.maxScrollExtent);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final heart = tester.widget<Icon>(find.descendant(
+          of: find.byType(FavoriteBurst), matching: find.byType(Icon)));
+      expect(heart.color!.g, greaterThan(heart.color!.r));
+      expect(heart.icon, Icons.favorite);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
 
   for (final dark in [false, true]) {
     testWidgets(
