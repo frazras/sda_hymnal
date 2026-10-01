@@ -1,17 +1,68 @@
 # Product Roadmap
 
 This roadmap lists planned ideas and release follow-ups for the Old and New SDA
-Hymnal app. The items are not yet ordered by release or priority.
+Hymnal app. Checkboxes describe implementation status. The next-work sequence
+below is recommended; it is not a promised release schedule.
+
+## Recommended Next Work
+
+1. Deliver the already-planned sheet-music viewer, beginning with English 1985.
+2. Introduce stable hymnal-edition identities and preserve existing user data;
+   then add Spanish, Portuguese, and Russian books.
+3. Add lyric sharing, favorite reordering, and a full history page as smaller
+   improvements; extend ordering into service playlists.
+4. Expand reviewed language packs, localization, optional recordings, and custom
+   songbook imports. Explore projection export after the content model is stable.
+
+The [1 October 2026 project audit](docs/multilingual-resource-audit.md) compares
+five source projects and all 26 Rejnac language repositories with our code. It
+includes counts, gaps, source links, migration details, and validation criteria.
+Items below are plans, not claims that multilingual content is already installed.
 
 ## Hymnal Content
 
-- [ ] Add sheet music.
+- [ ] Add zoomable, multipage sheet music, with offline availability and clear
+      missing-score states. Start with GoGoShift's English 1985 collection
+      (723 pages covering 695 numbers); add Spanish 2009 and Russian 1997 score
+      packs as their books become available. Russian #244 has no source score.
+      Preserve printed page order and validate samples; image scores do not
+      automatically transpose with MIDI.
 - [x] Add all 225 additional readings from the New Hymnal, with categories,
       Scripture references, printed responsive typography, keypad lookup,
       search, swiping, and reading-speed auto-scroll.
 - [x] Add searchable hymn and Scripture-reading lists from the New Hymnal
       topical index, while retaining suggested lists for communion, funerals,
       morning and evening worship, Sabbath, and other occasions.
+
+## Languages and Downloadable Hymnals
+
+- [ ] Add a language and hymnal-edition selector backed by a shared catalog.
+      Give every book a stable identity; migrate English favorites, categories,
+      recents, metadata, readings, and playback references without losing data.
+      Update both Modern and Classic layouts and backend book identities.
+- [ ] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
+      and Russian 1997 (385) from pinned GoGoShift sources, including their topic
+      indexes. Keep existing English corrections and music mappings.
+- [ ] Build repeatable source importers and a content validation report for
+      GoGoShift text, VideoPsalm JSON, and structured verse/refrain JSON. Track
+      provenance and reviewed overrides; catch duplicate numbers, empty lyrics,
+      numbering gaps, invalid references, and missing media before publishing.
+- [ ] Expand to French, Swahili, and the remaining reviewed Rejnac collections.
+      Validate edition/language labels and disclose partial coverage; resolve
+      known empty entries and duplicate numbers instead of silently renumbering.
+- [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
+      each in the audited source), plus optional Adventist Youth, Scripture-song,
+      and supplemental songbooks. Preserve their source page numbering.
+- [ ] Let users download, update, and remove optional language, score, and audio
+      packs. Show size and coverage, verify checksums, activate updates atomically,
+      preserve the last working version and saved favorites, and keep the current
+      English books available offline.
+- [ ] Localize the app interface independently of the selected book, starting
+      with Spanish, Portuguese, and Russian; add a reviewed community translation
+      workflow. Support script/font needs and future right-to-left books.
+- [ ] Improve multilingual search with Unicode normalization, accent-insensitive
+      matching where appropriate, book filters, and localized refrain handling.
+      Retain exact-number/title ranking and benchmark a large installed catalog.
 
 ## Music and Choir Features
 
@@ -23,6 +74,14 @@ Hymnal app. The items are not yet ordered by release or priority.
       bass, especially for choir practice. Opt-in original-MIDI track controls
       support naming, per-track instruments, mute, solo, and reset wherever separate tracks exist;
       musical styles are bypassed during practice.
+- [ ] Offer recorded instrumental and sung versions where verified recordings
+      exist, alongside MIDI and video. Support optional offline downloads and
+      the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
+      matching hymn numbers across languages; musical styles and choir controls
+      require verified MIDI assets or reviewed tune mappings.
+- [ ] Add persistent background audio with lock-screen/notification controls,
+      headphone actions, interruption handling, and one shared playback queue.
+      Start with audio playback; retain each medium's supported behavior.
 
 ## Browsing and Favorites
 
@@ -38,6 +97,25 @@ Hymnal app. The items are not yet ordered by release or priority.
       the top 20 hymns, refreshed each time the number pad is revisited.
 - [x] Keep hymn selection buttons above the number pad for two-line titles,
       and add a hymn-menu option to show or hide chord tabs.
+- [ ] Allow users to reorder favorites and favorite-category entries.
+- [ ] Add ordered worship-service playlists, building on favorite categories
+      but allowing repeated entries, multiple books, and readings. Preserve the
+      chosen sequence for navigation/playback, with readings advanced manually.
+- [ ] Add a full recently opened history page with book labels and a clear-history
+      action, while retaining the quick Recent chips on the number screen.
+- [ ] Add locale-aware alphabetical browsing and a jump index for large books.
+
+## Sharing and Custom Songbooks
+
+- [ ] Let users select, copy, and share a verse or full hymn with its title,
+      number, and hymnal edition, preserving stanza and refrain formatting.
+- [ ] Import custom songbooks through a documented JSON/ZIP format, including
+      optional score pages. Preview book details/counts, validate data and archive
+      paths, isolate user content from bundled books, and preserve references on
+      updates. Inspired by Adore's existing hymnal import feature.
+- [ ] Explore presentation export for service playlists and lyric slides,
+      including VideoPsalm compatibility. This is a proposed extension of the
+      Rejnac presentation workflow; live casting is a separate future decision.
 
 ## Usage Insights
 
