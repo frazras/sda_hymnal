@@ -1,13 +1,15 @@
-import 'package:sdahymnal/ui/music_options.dart';
-import 'package:sdahymnal/services/music_options.dart';
-import 'musical_style_sheet.dart';
 import '../services/error_reports.dart';
+
 import 'report_error.dart';
+import 'hymn_page_turn.dart';
 // ignore_for_file: file_names
 
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/ui/music_options.dart';
+import 'package:sdahymnal/services/music_options.dart';
+import 'musical_style_sheet.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -36,21 +38,38 @@ class HymnPage extends StatefulWidget {
   final List<Hymn> hymns;
   final String analyticsSource;
 
+  /// Cycle through [hymns] in displayed category order instead of by number.
+  final String? categoryTitle;
+
+  /// Same reader layout, without history, playback or screen-wake effects.
+  final bool previewOnly;
+
+  bool get cycleCategory => categoryTitle != null;
+
   const HymnPage(
       {super.key,
       required this.hymn,
       required this.hymns,
-      this.analyticsSource = 'unknown'});
+      this.analyticsSource = 'unknown',
+      this.categoryTitle,
+      this.previewOnly = false});
 
   @override
   State<HymnPage> createState() => _HymnPageState();
 }
 
-enum _ReaderAction { musicalStyle, choirPractice, reportError, video, player, scrollSpeed, favorite, fontSize }
+enum _ReaderAction {
+  reportError,
+  video,
+  player,
+  scrollSpeed,
+  chords,
+  fontSize,
+  musicalStyle,
+  choirPractice
+}
 
 class _HymnPageState extends State<HymnPage> {
-  /// Accumulated horizontal drag distance for the swipe gesture.
-  double _dragDx = 0;
   bool _videoVisible = false;
   final _autoScrollController = HymnAutoScrollController();
 
@@ -59,6 +78,7 @@ class _HymnPageState extends State<HymnPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.previewOnly) return;
     AppAnalytics.instance.openHymn(
         widget.hymn.number, widget.hymn.version, widget.analyticsSource);
     // Single recents recording point: every open (keypad, search, chip) and
@@ -81,6 +101,10 @@ class _HymnPageState extends State<HymnPage> {
 
   @override
   void dispose() {
+    if (widget.previewOnly) {
+      super.dispose();
+      return;
+    }
     AppAnalytics.instance.closeHymn(widget.hymn.number, widget.hymn.version);
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
@@ -104,25 +128,59 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   /// Navigate to the adjacent hymn: dir = -1 previous, 1 next.
-  /// Silently no-ops at the ends of the hymnal (new <= 695, old <= 703).
+  /// Categories wrap in list order; full hymnals stop at their ends.
   /// Numbers the hymnal does not carry are stepped over rather than landed
   /// on — see [adjacentHymn].
-  void _move(int dir) {
-    final max = widget.hymn.version == 'new' ? 695 : 703;
-    final target = adjacentHymn(widget.hymns, widget.hymn.number, dir, max);
+  Hymn? _adjacent(int dir) {
+    if (widget.cycleCategory) {
+      final index = widget.hymns.indexWhere((h) =>
+          h.number == widget.hymn.number && h.version == widget.hymn.version);
+      if (index < 0 || widget.hymns.length < 2) return null;
+      return widget.hymns[(index + dir) % widget.hymns.length];
+    }
+    return adjacentHymn(widget.hymns, widget.hymn.number, dir,
+        widget.hymn.version == 'new' ? 695 : 703);
+  }
+
+  void _move(int dir, {bool turned = false}) {
+    final target = _adjacent(dir);
     if (target == null) return;
+    final page = HymnPage(
+        hymn: target,
+        hymns: widget.hymns,
+        categoryTitle: widget.categoryTitle,
+        analyticsSource: 'adjacent');
     Navigator.pushReplacement(
       context,
-      slideRoute(
-        HymnPage(
-            hymn: target, hymns: widget.hymns, analyticsSource: 'adjacent'),
-        fromLeft: dir < 0,
-      ),
+      turned
+          ? PageRouteBuilder<void>(
+              transitionDuration: Duration.zero,
+              pageBuilder: (_, __, ___) => page)
+          : slideRoute(page, fromLeft: dir < 0),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => widget.previewOnly
+      ? _reader(context)
+      : HymnPageTurn(
+          previewBuilder: (dir) {
+            final hymn = _adjacent(dir);
+            return hymn == null ? null : _turnPreview(context, hymn);
+          },
+          onTurn: (dir) => _move(dir, turned: true),
+          child: _reader(context),
+        );
+
+  Widget _turnPreview(BuildContext context, Hymn hymn) => HymnPage(
+        key: const ValueKey('hymn-turn-preview'),
+        hymn: hymn,
+        hymns: widget.hymns,
+        categoryTitle: widget.categoryTitle,
+        previewOnly: true,
+      );
+
+  Widget _reader(BuildContext context) {
     final t = context.tokens;
     return Scaffold(
       backgroundColor: t.bg,
@@ -132,7 +190,7 @@ class _HymnPageState extends State<HymnPage> {
           const SingleActivator(LogicalKeyboardKey.arrowRight): () => _move(1),
         },
         child: Focus(
-          autofocus: true,
+          autofocus: !widget.previewOnly,
           child: SafeArea(
             child: Column(
               children: [
@@ -142,6 +200,22 @@ class _HymnPageState extends State<HymnPage> {
                   SubPageHeader(
                     center: _headerCenter(t),
                     trailing: _headerActions(t),
+                  ),
+                if (widget.categoryTitle != null)
+                  Container(
+                    key: const ValueKey('hymn-category-indicator'),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: t.surface,
+                      border: Border(bottom: BorderSide(color: t.line2)),
+                    ),
+                    child: Text(
+                      'Category: ${widget.categoryTitle} · ${widget.hymns.indexWhere((h) => h.number == widget.hymn.number && h.version == widget.hymn.version) + 1} of ${widget.hymns.length}',
+                      style: TextStyle(
+                          fontFamily: kSans, fontSize: 13, color: t.accent),
+                    ),
                   ),
                 Expanded(
                   child: Column(
@@ -162,6 +236,7 @@ class _HymnPageState extends State<HymnPage> {
                         ),
                       Expanded(
                         child: HymnAutoScroll(
+                          previewOnly: widget.previewOnly,
                           key: ValueKey(
                               '${widget.hymn.version}-${widget.hymn.number}'),
                           hymn: widget.hymn,
@@ -253,11 +328,9 @@ class _HymnPageState extends State<HymnPage> {
       );
 
   Widget _readerMenu(HymnalTokens t) {
-    return ValueListenableBuilder<List<({int n, String v})>>(
-      valueListenable: Favorites.instance,
-      builder: (context, _, __) {
-        final favorite = Favorites.instance
-            .contains(widget.hymn.number, widget.hymn.version);
+    return ValueListenableBuilder<bool>(
+      valueListenable: ChordTabs.instance,
+      builder: (context, chordsVisible, _) {
         return PopupMenuButton<_ReaderAction>(
           key: const ValueKey('hymn-reader-options'),
           tooltip: 'Reader options',
@@ -276,7 +349,6 @@ class _HymnPageState extends State<HymnPage> {
                       number: widget.hymn.number,
                       itemId: '${widget.hymn.version}:${widget.hymn.number}',
                     ))));
-
               case _ReaderAction.musicalStyle:
                 showMusicalStyleSheet(context);
               case _ReaderAction.choirPractice:
@@ -296,18 +368,18 @@ class _HymnPageState extends State<HymnPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) _autoScrollController.showControls();
                 });
-              case _ReaderAction.favorite:
-                Favorites.instance.toggle(widget.hymn);
+              case _ReaderAction.chords:
+                final show = !ChordTabs.instance.value;
+                ChordTabs.instance.set(show);
+                if (show && !_showPlayer) {
+                  MusicPlayerVisible.instance.set(true);
+                  setState(() {});
+                }
               case _ReaderAction.fontSize:
                 Navigator.push(context, slideRoute(const FontSizer()));
             }
           },
           itemBuilder: (context) => [
-            PopupMenuItem(
-                value: _ReaderAction.reportError,
-                child: _menuLabel(
-                    t, Icons.report_problem_outlined, 'Report Errors')),
-
             if (MidiPlayer.hasMidi(widget.hymn)) ...[
               PopupMenuItem(
                 key: const ValueKey('hymn-musical-style'),
@@ -351,20 +423,25 @@ class _HymnPageState extends State<HymnPage> {
                 value: _ReaderAction.scrollSpeed,
                 child: _menuLabel(t, Icons.speed, 'Scroll speed'),
               ),
-            PopupMenuItem(
-              key: const ValueKey('hymn-favorite-button'),
-              value: _ReaderAction.favorite,
-              child: _menuLabel(
-                t,
-                favorite ? Icons.favorite : Icons.favorite_border,
-                favorite ? 'Remove favorite' : 'Add favorite',
+            if (MidiPlayer.hasMidi(widget.hymn))
+              PopupMenuItem(
+                key: const ValueKey('hymn-chord-tabs'),
+                value: _ReaderAction.chords,
+                child: _menuLabel(
+                  t,
+                  Icons.piano,
+                  chordsVisible ? 'Hide chord tabs' : 'Show chord tabs',
+                ),
               ),
-            ),
             PopupMenuItem(
               key: const ValueKey('hymn-font-size-button'),
               value: _ReaderAction.fontSize,
               child: _menuLabel(t, Icons.text_fields, 'Text size'),
             ),
+            PopupMenuItem(
+                value: _ReaderAction.reportError,
+                child: _menuLabel(
+                    t, Icons.report_problem_outlined, 'Report Errors')),
           ],
         );
       },
@@ -442,17 +519,8 @@ class _HymnPageState extends State<HymnPage> {
 
   Widget _scrollArea(
       HymnalTokens t, ScrollController controller, Widget scrollControls) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: (_) => _dragDx = 0,
-      onHorizontalDragUpdate: (d) => _dragDx += d.delta.dx,
-      onHorizontalDragEnd: (_) {
-        if (_dragDx > 40) {
-          _move(-1); // swipe right = previous
-        } else if (_dragDx < -40) {
-          _move(1); // swipe left = next
-        }
-      },
+    return NotificationListener<ScrollNotification>(
+      onNotification: (_) => false,
       child: SingleChildScrollView(
         key: const ValueKey('hymn-lyrics-scroll'),
         controller: controller,

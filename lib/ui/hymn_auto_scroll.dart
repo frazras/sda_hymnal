@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
@@ -26,9 +27,11 @@ class HymnAutoScroll extends StatefulWidget {
     required this.hymn,
     required this.builder,
     this.controller,
+    this.previewOnly = false,
   });
 
   final Hymn hymn;
+  final bool previewOnly;
   final HymnAutoScrollController? controller;
   final Widget Function(
     ScrollController controller,
@@ -198,6 +201,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   Duration? _estimated;
   bool _loading = false;
   bool _requested = false;
+  bool _choirPractice = MusicOptions.instance.choirPractice;
   bool _followingMusic = false;
   bool _wasLoaded = false;
   bool _visible = true;
@@ -240,9 +244,11 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
         vsync: this, animationBehavior: AnimationBehavior.preserve)
       ..addListener(_applyProgress)
       ..addStatusListener(_onStatus);
+    if (widget.previewOnly) return;
     WidgetsBinding.instance.addObserver(this);
     AutoScroll.instance.addListener(_onSetting);
     InstrumentTheme.instance.addListener(_loadTiming);
+    MusicOptions.instance.addListener(_onMusicOptionsChanged);
     _player.current.addListener(_onPlayback);
     _player.position.addListener(_syncMusic);
     _player.duration.addListener(_onDuration);
@@ -266,6 +272,13 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _foreground = state == AppLifecycleState.resumed;
     if (!_foreground) _pause();
+  }
+
+  void _onMusicOptionsChanged() {
+    final practice = MusicOptions.instance.choirPractice;
+    if (practice == _choirPractice) return;
+    _choirPractice = practice;
+    _loadTiming();
   }
 
   Future<void> _loadTiming() async {
@@ -503,6 +516,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
     WidgetsBinding.instance.removeObserver(this);
     AutoScroll.instance.removeListener(_onSetting);
     InstrumentTheme.instance.removeListener(_loadTiming);
+    MusicOptions.instance.removeListener(_onMusicOptionsChanged);
     _player.current.removeListener(_onPlayback);
     _player.position.removeListener(_syncMusic);
     _player.duration.removeListener(_onDuration);
@@ -515,6 +529,10 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.previewOnly) {
+      return widget.builder(
+          _scroll, _buildControls(context, 'Start auto-scroll'));
+    }
     _scheduleMetrics();
     final startTooltip = !MidiPlayer.hasMidi(widget.hymn)
         ? 'Auto-scroll unavailable: no MIDI'

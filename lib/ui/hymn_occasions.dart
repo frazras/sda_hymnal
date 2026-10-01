@@ -248,9 +248,8 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                           context,
                           slideRoute(HymnPage(
                             hymn: hymn,
-                            hymns: widget.hymns
-                                .where((h) => h.version == hymn.version)
-                                .toList(),
+                            hymns: List.unmodifiable(suggestions),
+                            categoryTitle: widget.occasion.title,
                           ))),
                     ),
                     Divider(height: 1, color: t.line2),
@@ -295,6 +294,7 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                             slideRoute(AdditionalReadingPage(
                               reading: reading,
                               readings: readings,
+                              categoryTitle: widget.occasion.title,
                             ))),
                       ),
                   ],

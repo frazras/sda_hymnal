@@ -99,6 +99,13 @@ void main() {
             .reading
             .number,
         784);
+    expect(
+        tester
+            .widget<AdditionalReadingPage>(find.byType(AdditionalReadingPage))
+            .categoryTitle,
+        topic.title);
+    expect(find.byKey(const ValueKey('reading-category-indicator')),
+        findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Old Hymnal'));
@@ -172,6 +179,30 @@ void main() {
       expect(reader.hymn.number, 476);
       expect(reader.hymn.version, 'old');
       expect(reader.hymns.every((h) => h.version == 'old'), isTrue);
+      final category = hymnOccasions.singleWhere((o) => o.title == 'Communion');
+      expect(reader.hymns.map((h) => h.number).toSet(),
+          category.oldNumbers.toSet());
+      expect(reader.categoryTitle, 'Communion');
+      final start = reader.hymns.indexWhere((h) => h.number == 476);
+      Future<void> swipe(double dx, int expectedIndex) async {
+        await tester.drag(
+            find.byKey(const ValueKey('hymn-lyrics-scroll')), Offset(dx, 0));
+        await tester.pumpAndSettle();
+        final current = tester.widget<HymnPage>(find.byType(HymnPage));
+        expect(current.hymn, reader.hymns[expectedIndex]);
+        expect(current.categoryTitle, 'Communion');
+        expect(
+            find.text(
+                'Category: Communion · ${expectedIndex + 1} of ${reader.hymns.length}'),
+            findsOneWidget);
+      }
+
+      // Walk the complete category, including wraparound, then reverse.
+      for (var step = 1; step <= reader.hymns.length; step++) {
+        await swipe(-150, (start + step) % reader.hymns.length);
+      }
+      await swipe(150, (start - 1) % reader.hymns.length);
+
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('occasion-old-476')), findsOneWidget);

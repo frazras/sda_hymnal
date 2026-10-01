@@ -1,5 +1,6 @@
 import '../services/error_reports.dart';
 import 'report_error.dart';
+import 'hymn_page_turn.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/theme.dart';
@@ -36,24 +37,6 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Additional Readings'),
-        actions: [
-          PopupMenuButton<String>(
-            tooltip: 'Reading options',
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'report', child: Text('Report Errors'))
-            ],
-            onSelected: (_) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ReportErrorPage(
-                        subject: ErrorReportSubject(
-                            kind: 'reading',
-                            title: widget.reading.title,
-                            edition: widget.reading.edition,
-                            number: widget.reading.number,
-                            itemId: widget.reading.id)))),
-          )
-        ],
         leading: IconButton(
           icon: HymnalIcons.backChevron(t.ink),
           onPressed: () => Navigator.pop(context),
@@ -119,7 +102,10 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
                       context,
                       MaterialPageRoute(
                           builder: (_) => AdditionalReadingPage(
-                              reading: reading, readings: readings)),
+                              reading: reading,
+                              readings: readings,
+                              categoryTitle:
+                                  _category == 'ALL' ? null : _category)),
                     ),
                   ),
                 );
@@ -135,11 +121,15 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
 class AdditionalReadingPage extends StatefulWidget {
   final AdditionalReading reading;
   final List<AdditionalReading> readings;
+  final String? categoryTitle;
+  final bool previewOnly;
 
   const AdditionalReadingPage({
     super.key,
     required this.reading,
     this.readings = const [],
+    this.categoryTitle,
+    this.previewOnly = false,
   });
 
   @override
@@ -151,7 +141,6 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
   final _scroll = ScrollController();
   AnimationController? _autoScroll;
   bool _running = false;
-  double _dragDx = 0;
 
   @override
   void dispose() {
@@ -186,106 +175,165 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
     _autoScroll!.forward();
   }
 
-  void _move(int direction) {
+  AdditionalReading? _adjacent(int direction) {
     final readings = widget.readings;
     final index = readings.indexWhere((item) => item.id == widget.reading.id);
-    final targetIndex = index + direction;
-    if (index < 0 || targetIndex < 0 || targetIndex >= readings.length) return;
+    if (index < 0 || readings.length < 2) return null;
+    final target = index + direction;
+    if (widget.categoryTitle != null) {
+      return readings[target % readings.length];
+    }
+    return target < 0 || target >= readings.length ? null : readings[target];
+  }
+
+  void _move(int direction) {
+    final target = _adjacent(direction);
+    if (target == null) return;
     Navigator.pushReplacement(
       context,
-      slideRoute(
-        AdditionalReadingPage(
-          reading: readings[targetIndex],
-          readings: readings,
+      PageRouteBuilder<void>(
+        transitionDuration: Duration.zero,
+        pageBuilder: (_, __, ___) => AdditionalReadingPage(
+          reading: target,
+          readings: widget.readings,
+          categoryTitle: widget.categoryTitle,
         ),
-        fromLeft: direction < 0,
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => widget.previewOnly
+      ? _reader(context)
+      : HymnPageTurn(
+          previewBuilder: (direction) {
+            final target = _adjacent(direction);
+            return target == null
+                ? null
+                : AdditionalReadingPage(
+                    key: const ValueKey('reading-turn-preview'),
+                    reading: target,
+                    readings: widget.readings,
+                    categoryTitle: widget.categoryTitle,
+                    previewOnly: true,
+                  );
+          },
+          onTurn: _move,
+          child: _reader(context),
+        );
+
+  Widget _reader(BuildContext context) {
     final t = context.tokens;
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.reading.number}  ${widget.reading.title}'),
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Reading options',
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'report', child: Text('Report Errors'))
+            ],
+            onSelected: (_) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => ReportErrorPage(
+                        subject: ErrorReportSubject(
+                            kind: 'reading',
+                            title: widget.reading.title,
+                            edition: widget.reading.edition,
+                            number: widget.reading.number,
+                            itemId: widget.reading.id)))),
+          )
+        ],
         leading: IconButton(
           icon: HymnalIcons.backChevron(t.ink),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragStart: (_) => _dragDx = 0,
-            onHorizontalDragUpdate: (details) => _dragDx += details.delta.dx,
-            onHorizontalDragEnd: (_) {
-              if (_dragDx > 40) {
-                _move(-1);
-              } else if (_dragDx < -40) {
-                _move(1);
-              }
-            },
-            child: ListView(
-              key: const ValueKey('additional-reading-scroll'),
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(22, 18, 22, 100),
-              children: [
-                Text(widget.reading.category.toUpperCase(),
-                    style: TextStyle(
-                        color: t.accent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.1)),
-                if (widget.reading.scriptureReference?.isNotEmpty ?? false) ...[
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.menu_book_outlined, size: 18, color: t.muted),
-                      const SizedBox(width: 7),
-                      Expanded(
-                        child: Text(
-                            'Scripture: ${widget.reading.scriptureReference}',
-                            style: TextStyle(color: t.muted)),
-                      ),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 24),
-                ...widget.reading.segments.expand((segment) => [
-                      Text(segment.text,
-                          style: TextStyle(
-                            fontFamily: kSerif,
-                            fontSize: 19,
-                            height: 1.55,
-                            fontWeight: segment.isCongregation
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                            fontStyle: segment.isCongregation
-                                ? FontStyle.italic
-                                : FontStyle.normal,
-                            color: t.ink,
-                          )),
-                      const SizedBox(height: 24),
-                    ]),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 20,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: FloatingActionButton.extended(
-                onPressed: _toggleAutoScroll,
-                icon: Icon(_running ? Icons.pause : Icons.play_arrow),
-                label: Text(_running ? 'Pause reading' : 'Start auto-scroll'),
+          if (widget.categoryTitle != null)
+            Container(
+              key: const ValueKey('reading-category-indicator'),
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: t.surface,
+                border: Border(bottom: BorderSide(color: t.line2)),
+              ),
+              child: Text(
+                'Category: ${widget.categoryTitle} · ${widget.readings.indexWhere((r) => r.id == widget.reading.id) + 1} of ${widget.readings.length}',
+                style:
+                    TextStyle(fontFamily: kSans, fontSize: 13, color: t.accent),
               ),
             ),
-          ),
+          Expanded(
+              child: Stack(
+            children: [
+              ListView(
+                key: const ValueKey('additional-reading-scroll'),
+                controller: _scroll,
+                padding: const EdgeInsets.fromLTRB(22, 18, 22, 100),
+                children: [
+                  Text(widget.reading.category.toUpperCase(),
+                      style: TextStyle(
+                          color: t.accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.1)),
+                  if (widget.reading.scriptureReference?.isNotEmpty ??
+                      false) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.menu_book_outlined,
+                            size: 18, color: t.muted),
+                        const SizedBox(width: 7),
+                        Expanded(
+                          child: Text(
+                              'Scripture: ${widget.reading.scriptureReference}',
+                              style: TextStyle(color: t.muted)),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  ...widget.reading.segments.expand((segment) => [
+                        Text(segment.text,
+                            style: TextStyle(
+                              fontFamily: kSerif,
+                              fontSize: 19,
+                              height: 1.55,
+                              fontWeight: segment.isCongregation
+                                  ? FontWeight.w700
+                                  : FontWeight.w400,
+                              fontStyle: segment.isCongregation
+                                  ? FontStyle.italic
+                                  : FontStyle.normal,
+                              color: t.ink,
+                            )),
+                        const SizedBox(height: 24),
+                      ]),
+                ],
+              ),
+              Positioned(
+                left: 20,
+                right: 20,
+                bottom: 20,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FloatingActionButton.extended(
+                    heroTag: widget.previewOnly ? null : 'reading-auto-scroll',
+                    onPressed: _toggleAutoScroll,
+                    icon: Icon(_running ? Icons.pause : Icons.play_arrow),
+                    label:
+                        Text(_running ? 'Pause reading' : 'Start auto-scroll'),
+                  ),
+                ),
+              ),
+            ],
+          )),
         ],
       ),
     );
