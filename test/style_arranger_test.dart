@@ -665,6 +665,79 @@ void _rejectionTests(ArrangeStyle style) {
 }
 
 void main() {
+  for (final id in ['001', '016', '190', 'C001']) {
+    group('Jamaican Gospel hymn $id', () {
+      final input = File('assets/midi/$id.mid').readAsBytesSync();
+      final output = arrangeStyle(input, ArrangeStyle.jamaicanGospel);
+      final scan = _scan(output);
+      final d = _division(output);
+      final harmony = detectChords(input)!;
+      final n = harmony.beatsPerBar;
+      test('preserves meter, melody voice and deterministic rendering', () {
+        expect(detectChords(output)!.beatsPerBar, n);
+        expect(output, arrangeStyle(input, ArrangeStyle.jamaicanGospel));
+        expect(scan.programs[0], {4});
+        expect(scan.programs[1], {16});
+        expect(scan.programs[2], {33});
+        expect(scan.tempoCount, 1);
+        // Same melody extraction and normalization as the other island styles.
+        final reference = _scan(arrangeStyle(input, ArrangeStyle.reggae));
+        expect(
+            scan.ons
+                .where((e) => e.channel == 0)
+                .map((e) => (e.tick, e.pitch, e.vel)),
+            reference.ons
+                .where((e) => e.channel == 0)
+                .map((e) => (e.tick, e.pitch, e.vel)));
+      });
+      test('15% faster shared clock keeps the chord display synchronized', () {
+        final originalPace = _scan(arrangeStyle(input, ArrangeStyle.reggae));
+        expect(originalPace.tempi.single / scan.tempi.single,
+            closeTo(1.15, 0.00001));
+        final normal =
+            retimeTrackForArrangement(input, harmony, ArrangeStyle.reggae);
+        final faster = retimeTrackForArrangement(
+            input, harmony, ArrangeStyle.jamaicanGospel);
+        expect(faster.chords.length, normal.chords.length);
+        for (var i = 0; i < normal.chords.length; i++) {
+          expect(faster.chords[i].startMs,
+              closeTo(normal.chords[i].startMs / 1.15, 2));
+          expect(faster.chords[i].durationMs,
+              closeTo(normal.chords[i].durationMs / 1.15, 2));
+        }
+      });
+      test('organ offbeats and congregational percussion retain source groove',
+          () {
+        final organ = scan.ons.where((e) => e.channel == 1).toList();
+        final ending = organ.map((e) => e.tick).reduce(max);
+        final attacks = organ
+            .where((e) => e.tick < ending)
+            .map((e) => e.tick)
+            .toSet()
+            .toList()
+          ..sort();
+        expect(attacks.length, greaterThan(6));
+        expect(attacks.every((tick) => tick % d == 7 * d ~/ 12), isTrue);
+        for (var i = 1; i < attacks.length; i++) {
+          expect(attacks[i] - attacks[i - 1], d);
+        }
+        final claps = scan.ons.where((e) => e.channel == 9 && e.pitch == 39);
+        expect(claps, isNotEmpty);
+        expect(
+            claps.every(
+                (e) => (n >= 4 ? [1, 3] : [1]).contains((e.tick - 2) ~/ d % n)),
+            isTrue);
+        final tambourine =
+            scan.ons.where((e) => e.channel == 9 && e.pitch == 54);
+        expect(tambourine, isNotEmpty);
+        expect(tambourine.every((e) => e.tick % d == 7 * d ~/ 12), isTrue);
+        expect(
+            scan.ons.where((e) => e.channel == 9 && e.pitch == 36), isNotEmpty);
+      });
+    });
+  }
+
+
   const reggaeBands = {
     1: (55, 67), // piano: the chop alone, in the charts' G3–F#4
     3: (52, 84), // organ: dabs C3–B3, the held chord C5–B5

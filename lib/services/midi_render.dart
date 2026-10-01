@@ -5,6 +5,7 @@ import 'style_arranger.dart';
 
 /// Arrangement and plain-instrument fallback used by both playback and export.
 const arrangedMidiThemes = <String, (ArrangeStyle, int)>{
+  'jamaican_gospel': (ArrangeStyle.jamaicanGospel, 16),
   'gospel': (ArrangeStyle.gospel, 4),
   'reggae': (ArrangeStyle.reggae, 16),
   'calypso': (ArrangeStyle.calypso, 114),

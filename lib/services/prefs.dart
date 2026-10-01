@@ -227,6 +227,7 @@ class InstrumentTheme extends ValueNotifier<String> {
     ('classic', 'Classic', null),
     ('gospel', 'Modern Gospel', null),
     ('reggae', 'Island Reggae', null),
+    ('jamaican_gospel', 'Jamaican Gospel', null),
     ('calypso', 'Steel Pan Calypso', null),
     ('organ', 'Cathedral Organ', 19),
     ('strings', 'Strings', 49),

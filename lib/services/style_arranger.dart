@@ -44,6 +44,9 @@ enum ArrangeStyle {
   /// cowbell — backing at the lead's own level. Straight sixteenths, no
   /// swing, and one flat tempo across the whole hymn (see [_arrangedTempi]).
   calypso,
+
+  /// Jamaican church gospel with swung organ offbeats, claps and tambourine.
+  jamaicanGospel,
 }
 
 /// MIDI percussion channel (0-based).
@@ -66,6 +69,11 @@ const int _acousticKick = 35; // Acoustic Bass Drum — the deeper GM kick
 const int _kick = 36; // Bass Drum 1 — the tighter one
 const int _sidestick = 37;
 const int _snare = 38;
+const int _handClap = 39;
+const int _highFloorTom = 43;
+const int _pedalHat = 44;
+const int _lowTom = 45;
+const int _hiMidTom = 48;
 const int _hiBongo = 60;
 const int _loBongo = 61;
 const int _closedHat = 42;
@@ -203,8 +211,9 @@ _Song _stretchWaltz(_Song song) {
     final barLine = (note.endTick ~/ (3 * d) + 1) * 3 * d;
     final reaches = note.endTick > barLine - d ~/ 4 && note.endTick <= barLine;
     final end = _stretchTick(reaches ? barLine : note.endTick, d);
-    out.notes.add(_NoteEvent(note.channel, note.pitch, note.velocity, start)
-      ..endTick = end > start ? end : start + 1);
+    out.notes.add(
+        _NoteEvent(note.channel, note.pitch, note.velocity, start)
+          ..endTick = end > start ? end : start + 1);
   }
   for (final (tick, us) in song.tempi) {
     out.tempi.add((_stretchTick(tick, d), us));
@@ -289,7 +298,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     chordTrack = simplifyTrack(chordTrack, ChordLevel.medium);
   }
 
-  final d = original.division; // ticks per beat (quarter note)
+  final d = original.division;
   // A 3/4 hymn under reggae is played in four (see [_stretchWaltz]); the
   // beat map below is built on the ORIGINAL timeline, where detection ran,
   // and moved onto the 4/4 grid beat by beat.
@@ -368,6 +377,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     ArrangeStyle.gospel => _rhodesProgram,
     ArrangeStyle.reggae => _rhodesProgram,
     ArrangeStyle.calypso => _rhodesProgram,
+    ArrangeStyle.jamaicanGospel => _rhodesProgram,
   };
   final gospel = style == ArrangeStyle.gospel;
   final melodyCap = gospel ? 112 : 120;
@@ -398,7 +408,9 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     // map, which clipped the final chord's ring — so the last melody note
     // (like the button-ending voices) holds one extra bar past the final
     // bar line.
-    if (!gospel && note.startTick == lastMelodyStart) length += n * d;
+    if (!gospel && note.startTick == lastMelodyStart) {
+      length += n * d;
+    }
     melody.note(note.startTick, 0, note.pitch, velocity, length);
   }
 
@@ -428,6 +440,16 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
       final drums = _Track();
       _emitReggae(ctx, skank, bass, organ, drums);
       return _writeSmf(d, [conductor, ...lead, skank, bass, organ, drums]);
+    case ArrangeStyle.jamaicanGospel:
+      final organ = _Track()..program(0, 1, _drawbarOrganProgram);
+      final bass = _Track()..program(0, 2, _fingerBassProgram);
+      final drums = _Track();
+      // Preserve the source app's tuned backing levels on both platforms.
+      organ.control(0, 1, 7, 84);
+      bass.control(0, 2, 7, 104);
+      drums.control(0, 9, 7, 127);
+      _emitJamaicanGospel(ctx, organ, bass, drums);
+      return _writeSmf(d, [conductor, ...lead, organ, bass, drums]);
     case ArrangeStyle.calypso:
       final strum = _Track()..program(0, 1, _steelDrumsProgram);
       final shimmer = _Track()..program(0, 3, _vibraphoneProgram);
@@ -558,7 +580,11 @@ const int _rampSteps = 8; // in 8 micro-steps (≈2% each)
   // late at every verse end. The hymn's fermatas survive as [dipTicks], and
   // the emitters still mark them — with the sticks, not the clock.
   if (style != ArrangeStyle.gospel) {
-    return (usPerQuarter, [(0, usPerQuarter)], dipTicks);
+    // Speed the shared clock, keeping every part and chord display in sync.
+    final arrangedUs = style == ArrangeStyle.jamaicanGospel
+        ? (usPerQuarter / 1.15).round().clamp(1, 0xFFFFFF)
+        : usPerQuarter;
+    return (arrangedUs, [(0, arrangedUs)], dipTicks);
   }
   // The ADAPTIVE beat: a clamped map that still stepped straight between
   // tempos read as a stutter under the groove (listening feedback). Every
@@ -1288,6 +1314,170 @@ void _emitCalypso(
   }
 }
 
+/// Jamaican Gospel, ported from Caribbean Choruses' gospel arrangement.
+/// Swung organ offbeats, quarter-note bass, claps and tambourine, with an
+/// eight-bar tom fill. Keeps the hymn's written meter and melody.
+void _emitJamaicanGospel(_Ctx c, _Track organ, _Track bass, _Track drums) {
+  final d = c.d;
+  final beats = c.n;
+  final barTicks = beats * d;
+  final sixteenth = (d ~/ 4).clamp(1, d);
+  final endTick = (c.lastBeat + 1) * d;
+  _Chord? chordAt(int tick) => c.chordAt(tick ~/ d);
+  int bassPitch(int pc, int low) => low + ((pc - low) % 12 + 12) % 12;
+  void safeNote(_Track track, int tick, int channel, int pitch, int velocity,
+      int length) {
+    if (chordAt(tick) == null || tick >= endTick) return;
+    track.note(tick, channel, pitch, velocity, length.clamp(1, endTick - tick));
+  }
+
+  // The offbeat sits at 7/12 of the beat rather than halfway. Offbeat eighths
+  // in Jamaican church recordings land around 0.58 of the beat, and the reggae
+  // emitter above already uses this same 7/12 figure.
+  int offbeat(int beat) => beat * d + 7 * d ~/ 12;
+
+  // Backbeat on 2 and 4 in common time, on 2 in triple metre.
+  final backbeats = beats >= 4 ? const [1, 3] : const [1];
+  final stab = (d ~/ 4).clamp(1, d);
+
+  for (var bar = c.firstBar; bar <= c.lastBar; bar++) {
+    final barStart = bar * barTicks;
+    final phase = bar % 8;
+    final lastBar = bar == c.lastBar;
+    final fills = phase == 7 && !lastBar && beats >= 3;
+    // A fill hands the last two beats to the kit; everything before is groove.
+    final fillFrom = fills ? beats - 2 : beats;
+
+    void drum(int offset, int key, int velocity, [int? length]) {
+      final tick = barStart + offset;
+      if (offset < 0 || offset >= barTicks || chordAt(tick) == null) {
+        return;
+      }
+      safeNote(
+          drums, tick, _percussionChannel, key, velocity, length ?? sixteenth);
+    }
+
+    // Original organ groove: one short chord on each swung offbeat.
+    for (var beat = 0; beat < beats; beat++) {
+      final tick = barStart + offbeat(beat);
+      final chord = chordAt(tick);
+      if (chord == null) continue;
+      final isButton = lastBar && beat == beats - 1;
+      final length = isButton ? endTick - tick : stab;
+      final velocity = c.vel(beat.isEven ? 95 : 88, 3, bar, 20 + beat);
+      for (final pitch in _voice(_triadIntervals, chord, 55)) {
+        organ.note(tick, 1, pitch, velocity, length);
+      }
+    }
+
+    // BASS on every beat. With the skank syncopating above it, the pulse
+    // underneath has to stay plain or the ear relocates the downbeat.
+    final nextChord = bar < c.lastBar ? chordAt((bar + 1) * barTicks) : null;
+    for (var beat = 0; beat < beats; beat++) {
+      final tick = barStart + beat * d;
+      final chord = chordAt(tick);
+      if (chord == null) continue;
+      final onFifth = beats >= 4 ? beat == 2 : beat == beats - 1;
+      final pitchClass =
+          onFifth ? chord.rootPc + _fifth(chord.quality) : chord.rootPc;
+      safeNote(
+        bass,
+        tick,
+        2,
+        bassPitch(pitchClass, 31),
+        c.vel(beat == 0 ? 106 : 94, 2, bar, 60 + beat),
+        3 * d ~/ 4,
+      );
+    }
+    if (nextChord != null && nextChord.rootPc != chordAt(barStart)?.rootPc) {
+      safeNote(
+        bass,
+        barStart + offbeat(beats - 1),
+        2,
+        bassPitch(nextChord.rootPc + 11, 31),
+        c.vel(84, 2, bar, 78),
+        d ~/ 3,
+      );
+    }
+
+    // ---- KIT ----
+    if (phase == 0 && bar > 0) drum(0, _crash, 114, d);
+
+    // Kick on every beat and loudest in the kit: the snare band of the source
+    // recording measures 8-10 dB under its kick.
+    for (var beat = 0; beat < beats; beat++) {
+      if (beat >= fillFrom) continue;
+      final base = beat == 0
+          ? 122
+          : beat == 2
+              ? 117
+              : 102;
+      drum(beat * d, _kick, c.vel(base, 2, bar, 70 + beat), d ~/ 2);
+    }
+
+    // Hard backbeat plus the congregation clap, and the foot hi-hat under it.
+    for (final beat in backbeats) {
+      if (beat >= fillFrom) continue;
+      drum(beat * d, _snare, c.vel(112, 3, bar, 80 + beat), d ~/ 3);
+      drum(beat * d + 2, _handClap, c.vel(98, 3, bar, 84 + beat));
+      drum(beat * d, _pedalHat, c.vel(70, 3, bar, 88 + beat));
+    }
+
+    // Hi-hat: swung eighths accented on the UPBEAT, opening on the offbeat of
+    // each backbeat and closing on the next downbeat.
+    for (var beat = 0; beat < beats; beat++) {
+      if (beat >= fillFrom) continue;
+      drum(beat * d, _closedHat, c.vel(60, 3, bar, 90 + beat));
+      final up = offbeat(beat);
+      if (backbeats.contains(beat)) {
+        drum(up, _openHat, c.vel(100, 3, bar, 100 + beat), d ~/ 3);
+      } else {
+        drum(up, _closedHat, c.vel(82, 3, bar, 100 + beat));
+      }
+    }
+
+    // Tambourine holds the offbeat through the fill: it is the thread that
+    // keeps a busy bar from losing its place.
+    for (var beat = 0; beat < beats; beat++) {
+      drum(offbeat(beat), _tambourine, c.vel(94, 3, bar, 110 + beat));
+    }
+
+    // Gospel ghost note leaning into the backbeat.
+    if (beats >= 4 && fillFrom > 1 && bar.isOdd) {
+      drum(d + 3 * sixteenth, _snare, c.vel(40, 6, bar, 118), sixteenth);
+    }
+
+    // Descending tom fill with gaps in it. Eight consecutive sixteenths reads
+    // as a machine; the holes are what a player actually leaves.
+    if (fills) {
+      const shape = <(int, int, int)>[
+        (0, _snare, 110),
+        (2, _hiMidTom, 96),
+        (3, _hiMidTom, 60),
+        (4, _lowTom, 104),
+        (6, _highFloorTom, 108),
+        (7, _highFloorTom, 112),
+      ];
+      final base = fillFrom * d;
+      for (final (step, key, velocity) in shape) {
+        drum(base + step * sixteenth, key, c.vel(velocity, 3, bar, 120 + step),
+            sixteenth);
+      }
+      drum(base, _kick, c.vel(118, 2, bar, 130), d ~/ 2);
+    }
+  }
+
+  final finalChord = c.chordAt(c.lastBeat);
+  if (finalChord != null) {
+    for (final pitch in _voice(_triadIntervals, finalChord, 55)) {
+      organ.note(endTick, 1, pitch, 92, 2 * d);
+    }
+    bass.note(endTick, 2, bassPitch(finalChord.rootPc, 31), 110, 2 * d);
+    drums.note(endTick, _percussionChannel, _crash, 112, 2 * d);
+    drums.note(endTick, _percussionChannel, _kick, 120, d);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Voicing helpers
 // ---------------------------------------------------------------------------
@@ -1507,7 +1697,8 @@ _Song _parseSong(Uint8List bytes) {
       final hi = e.status & 0xF0;
       final ch = e.status & 0x0F;
       if (hi == 0x90 && e.body[1] > 0) {
-        final note = _NoteEvent(ch, e.body[0], e.body[1], tick);
+        final note =
+            _NoteEvent(ch, e.body[0], e.body[1], tick);
         (open[ch << 8 | e.body[0]] ??= []).add(note);
         song.notes.add(note);
       } else if (hi == 0x80 || hi == 0x90) {

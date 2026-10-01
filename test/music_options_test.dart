@@ -14,6 +14,13 @@ import 'package:sdahymnal/ui/music_options.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('Jamaican Gospel is selectable with its own arrangement and mixer', () {
+    expect(InstrumentTheme.themes,
+        contains(('jamaican_gospel', 'Jamaican Gospel', null)));
+    expect(arrangedMidiThemes.containsKey('jamaican_gospel'), isTrue);
+    expect(instrumentRoles('jamaican_gospel')[1], 'Offbeat organ');
+  });
+
   test(
       'muting every bundled track preserves conductor, duration and other parts',
       () {
