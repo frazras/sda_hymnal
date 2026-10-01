@@ -303,7 +303,14 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     chordTrack = simplifyTrack(chordTrack, ChordLevel.medium);
   }
 
-  final d = original.division;
+  final d = original.division; // SMF division always stays quarter-note based.
+  final signature =
+      original.metas.where((e) => e.$2.length >= 5 && e.$2[1] == 0x58);
+  final denominator = signature.isEmpty ? 4 : 1 << signature.first.$2[4];
+  final compound = denominator == 8 &&
+      chordTrack.beatsPerBar >= 6 &&
+      chordTrack.beatsPerBar % 3 == 0;
+  final rhythmDivision = compound ? d ~/ 2 : d;
   // A 3/4 hymn under reggae is played in four (see [_stretchWaltz]); the
   // beat map below is built on the ORIGINAL timeline, where detection ran,
   // and moved onto the 4/4 grid beat by beat.
@@ -317,7 +324,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   final beatChords = <int, _Chord>{};
   for (final chord in chordTrack.chords) {
     for (final ms in chord.beatMs) {
-      final beat = (tempo.tickOf(ms) / d).round();
+      final beat = (tempo.tickOf(ms) / rhythmDivision).round();
       final chordAt = (rootPc: chord.rootPc, quality: chord.quality);
       if (!stretch) {
         beatChords[beat] = chordAt;
@@ -341,13 +348,14 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   final (usPerQuarter, arrangedTempi, _) = _arrangedTempi(original, style);
 
   final ctx = _Ctx(
-    d: d,
+    d: rhythmDivision,
+    compound: compound,
     n: n,
     beatChords: beatChords,
     firstBeat: firstBeat,
     lastBeat: lastBeat,
     seed: _fnv(originalBytes),
-    bpm: 60e6 / usPerQuarter,
+    bpm: 60e6 / usPerQuarter * d / rhythmDivision,
   );
 
   // Bands keep time — but they breathe at cadences. The conductor carries
@@ -387,7 +395,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
   };
   final gospel = style == ArrangeStyle.gospel;
   final melodyCap = gospel ? 112 : 120;
-  final (leadChannel, descantChannels) = _leadAndDescants(song, n * d);
+  final (leadChannel, descantChannels) = _leadAndDescants(song, n * rhythmDivision);
   final melodyNotes = [
     for (final note in song.notes)
       if (note.channel == leadChannel) note,
@@ -418,7 +426,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
       ? phraseJazzMelody([
           for (final note in melodyNotes)
             (tick: note.startTick, end: note.endTick, pitch: note.pitch),
-        ], division: d, beatsPerBar: n, harmony: beatChords)
+        ], division: rhythmDivision, beatsPerBar: n, harmony: beatChords)
       : null;
   final fills = jazzPitches == null
       ? <JazzMelodyFill>[]
@@ -426,7 +434,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
           for (final (i, note) in melodyNotes.indexed)
             (tick: note.startTick, end: note.endTick, pitch: jazzPitches[i]),
         ],
-          division: d,
+          division: rhythmDivision,
           beatsPerBar: n,
           bpm: ctx.bpm,
           harmony: beatChords);
@@ -442,7 +450,7 @@ Uint8List arrangeStyle(Uint8List originalBytes, ArrangeStyle style,
     // (like the button-ending voices) holds one extra bar past the final
     // bar line.
     if (!gospel && note.startTick == lastMelodyStart) {
-      length += n * d;
+      length += n * rhythmDivision;
     }
     final answer = fillsByNote[index];
     if (answer != null && note.startTick + length > answer.first.tick) {
@@ -518,6 +526,7 @@ class _Ctx {
     required this.lastBeat,
     required this.seed,
     required this.bpm,
+    this.compound = false,
   });
 
   final int d; // ticks per beat
@@ -528,6 +537,7 @@ class _Ctx {
   final int lastBeat;
   final int seed;
   final double bpm;
+  final bool compound;
 
   int get firstBar => firstBeat ~/ n;
   int get lastBar => lastBeat ~/ n;
@@ -713,9 +723,97 @@ int _fnv(Uint8List bytes) {
 int _jazzChoice(_Ctx c, int bar, int slot, int count) =>
     c.vel(0, 100000, bar, slot).abs() % count;
 
+/// Compound-meter patterns use three eighths per pulse (two pulses in 6/8).
+/// All hits query harmony on their own eighth and preserve the SMF clock.
+void _emitCompound(
+    _Ctx c, ArrangeStyle style, _Track comp, _Track bass, _Track drums,
+    {_Track? extra}) {
+  final d = c.d;
+  final jazz = style == ArrangeStyle.jazz;
+  final reggae = style == ArrangeStyle.reggae;
+  final calypso = style == ArrangeStyle.calypso;
+  final jamaican = style == ArrangeStyle.jamaicanGospel;
+  for (var beat = c.firstBeat; beat <= c.lastBeat; beat++) {
+    final chord = c.chordAt(beat);
+    if (chord == null) continue;
+    final tick = beat * d;
+    final bar = beat ~/ c.n;
+    final inBar = beat % c.n;
+    final sub = inBar % 3;
+    final pulse = inBar ~/ 3;
+    final ending = beat == c.lastBeat;
+    final length = ending ? (c.n + 1) * d : d ~/ 2;
+    if (sub == 0 || ending) {
+      final pc =
+          chord.rootPc + (pulse.isOdd && !ending ? _fifth(chord.quality) : 0);
+      bass.note(tick, 2, _voiceBass(pc), jazz ? 75 : 90,
+          ending ? length : 5 * d ~/ 2);
+    }
+    final chordHit = ending ||
+        (jazz
+            ? (bar.isEven ? inBar == 0 || inBar == 4 : sub == 2)
+            : reggae
+                ? sub == 2
+                : calypso
+                    ? sub != 0
+                    : jamaican
+                        ? sub == 2 || (inBar == 0 && bar.isEven)
+                        : sub == 0 || (sub == 2 && pulse.isOdd));
+    if (chordHit) {
+      final intervals = jazz || style == ArrangeStyle.gospel
+          ? _stabIntervals
+          : _triadIntervals;
+      for (final pitch in _voice(intervals, chord, calypso ? 60 : 55)) {
+        comp.note(
+            tick, 1, pitch, c.vel(jazz ? 52 : 70, 3, bar, inBar + 20), length);
+      }
+    }
+    if (extra != null && !ending && (reggae ? sub == 1 : sub == 2)) {
+      for (final pitch in _voice(_triadIntervals, chord, reggae ? 48 : 60)) {
+        extra.note(tick, 3, pitch, reggae ? 48 : 36, d ~/ 2);
+      }
+    }
+    if (ending) continue;
+    drums.note(
+        tick,
+        9,
+        jazz
+            ? 51
+            : calypso
+                ? _maracas
+                : _closedHat,
+        c.vel(sub == 0 ? 48 : 35, 3, bar, inBar + 40),
+        d ~/ 3);
+    if (sub == 0) {
+      if (!reggae || pulse.isOdd) {
+        drums.note(
+            tick, 9, reggae ? _acousticKick : _kick, jazz ? 30 : 75, d ~/ 3);
+      }
+      if (pulse.isOdd) {
+        drums.note(
+            tick,
+            9,
+            jamaican
+                ? _handClap
+                : jazz
+                    ? _pedalHat
+                    : _sidestick,
+            jazz ? 38 : 65,
+            d ~/ 3);
+      }
+      if (calypso) drums.note(tick, 9, _claves, 52, d ~/ 3);
+    }
+    if (jamaican && sub == 2) drums.note(tick, 9, _tambourine, 54, d ~/ 3);
+  }
+}
+
 /// Piano-trio swing: alternating comping motifs, voice-led inversions, walking
 /// bass with pickups, and phrase-end drum answers. Never change the bar length.
 void _emitJazz(_Ctx c, _Track comp, _Track bass, _Track drums) {
+  if (c.compound) {
+    _emitCompound(c, ArrangeStyle.jazz, comp, bass, drums);
+    return;
+  }
   final d = c.d;
   int? previousBass;
   for (var beat = c.firstBeat; beat <= c.lastBeat; beat++) {
@@ -825,6 +923,10 @@ void _emitJazz(_Ctx c, _Track comp, _Track bass, _Track drums) {
 /// Stab and hat velocities carry a ±3 deterministic jitter; the kick,
 /// sidestick and bass anchors stay fixed.
 void _emitGospel(_Ctx c, _Track comp, _Track bass, _Track drums) {
+  if (c.compound) {
+    _emitCompound(c, ArrangeStyle.gospel, comp, bass, drums);
+    return;
+  }
   final d = c.d;
   final n = c.n;
 
@@ -953,6 +1055,10 @@ const double _reggaeEighthsBelowBpm = 100;
 /// retaining the hymn's written three-beat meter.
 void _emitReggae(
     _Ctx c, _Track skank, _Track bass, _Track organ, _Track drums) {
+  if (c.compound) {
+    _emitCompound(c, ArrangeStyle.reggae, skank, bass, drums, extra: organ);
+    return;
+  }
   final d = c.d;
   final n = c.n;
   final waltz = n == 3;
@@ -1270,6 +1376,10 @@ void _drop(void Function(int, int, int, [int?]) dnote, int offset, int d) {
 /// beats, claves on the 1 / 2& hemiola, triangle color on 2 and 3.
 void _emitCalypso(
     _Ctx c, _Track strum, _Track shimmer, _Track bass, _Track drums) {
+  if (c.compound) {
+    _emitCompound(c, ArrangeStyle.calypso, strum, bass, drums, extra: shimmer);
+    return;
+  }
   final d = c.d;
   final n = c.n;
   final waltz = n == 3;
@@ -1466,6 +1576,10 @@ void _emitCalypso(
 /// Swung organ offbeats, quarter-note bass, claps and tambourine, with an
 /// eight-bar tom fill. Keeps the hymn's written meter and melody.
 void _emitJamaicanGospel(_Ctx c, _Track organ, _Track bass, _Track drums) {
+  if (c.compound) {
+    _emitCompound(c, ArrangeStyle.jamaicanGospel, organ, bass, drums);
+    return;
+  }
   final d = c.d;
   final beats = c.n;
   final barTicks = beats * d;

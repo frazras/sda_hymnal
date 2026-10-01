@@ -433,7 +433,12 @@ ChordTrack? detectChords(Uint8List midiBytes) {
 /// Scores each quarter-note window against the chord templates and merges
 /// consecutive identical winners into [ChordEvent]s.
 List<ChordEvent> _detect(_Score score, _TempoMap tempo) {
-  final step = score.division;
+  // Compound meter needs eighth-note windows so harmony can change on the
+  // second dotted-quarter pulse instead of being smeared across a quarter.
+  final compound = score.denominator == 8 &&
+      score.beatsPerBar >= 6 &&
+      score.beatsPerBar % 3 == 0;
+  final step = compound ? score.division ~/ 2 : score.division;
   final spans = <(int start, int end, int rootPc, String quality)>[];
 
   for (var w0 = 0; w0 < score.endTick; w0 += step) {

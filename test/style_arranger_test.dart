@@ -27,6 +27,7 @@ class _NoteOn {
   int lastOffTick,
   Map<int, Set<int>> programs,
   int tempoCount,
+  int denominator,
   List<int> tempi,
   List<(int, int)> tempoMap,
 }) _scan(Uint8List bytes) {
@@ -35,6 +36,7 @@ class _NoteOn {
   final tempi = <int>[]; // FF51 values, microseconds per quarter
   final tempoMap = <(int, int)>[]; // the same, with the tick each sits at
   var tempoCount = 0;
+  var denominator = 4;
   var lastOff = 0;
   var seq = 0;
   var i =
@@ -67,6 +69,7 @@ class _NoteOn {
             len = (len << 7) | (b & 0x7F);
             if (b & 0x80 == 0) break;
           }
+          if (type == 0x58 && len >= 2) denominator = 1 << bytes[i + 1];
           if (type == 0x51 && len == 3) {
             tempoCount++;
             final us = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
@@ -107,6 +110,7 @@ class _NoteOn {
     lastOffTick: lastOff,
     programs: programs,
     tempoCount: tempoCount,
+    denominator: denominator,
     tempi: tempi,
     tempoMap: tempoMap,
   );
@@ -665,6 +669,38 @@ void _rejectionTests(ArrangeStyle style) {
 }
 
 void main() {
+  for (final id in ['C653', '388']) {
+    for (final style in ArrangeStyle.values) {
+      test('6/8 $id $style keeps two dotted-quarter pulses per measure', () {
+        final source = File('assets/midi/$id.mid').readAsBytesSync();
+        final output = arrangeStyle(source, style);
+        final scan = _scan(output);
+        final d = _division(source);
+        final eighth = d ~/ 2;
+        final bar = 3 * d;
+        expect(_division(output), d);
+        expect(detectChords(output)!.beatsPerBar, 6);
+        final bass = scan.ons.where((e) => e.channel == 2).toList();
+        expect(bass.length, greaterThan(8));
+        // The final held button may land on the final written eighth.
+        for (final note in bass.take(bass.length - 1)) {
+          expect(note.tick % bar, anyOf(0, 3 * eighth));
+        }
+        for (final note
+            in scan.ons.where((e) => e.channel == 1 || e.channel == 9)) {
+          expect(note.tick % eighth, 0);
+        }
+        expect(scan.lastOffTick,
+            lessThanOrEqualTo(_scan(source).lastOffTick + 2 * bar));
+        final original = detectChords(source)!;
+        final retimed = retimeTrackForArrangement(source, original, style);
+        expect(retimed.measureStartMs.length, original.measureStartMs.length);
+        expect(retimed.chords.expand((c) => c.beatMs).length,
+            original.chords.expand((c) => c.beatMs).length);
+      });
+    }
+  }
+
   for (final id in ['001', '016', '190', 'C001']) {
     test('Jazz $id preserves tune and meter with a swung trio backing', () {
       final source = File('assets/midi/$id.mid').readAsBytesSync();
@@ -725,7 +761,6 @@ void main() {
       expect(scan.ons.every((e) => e.vel > 0 && e.vel <= 127), isTrue);
     });
   }
-
 
   for (final id in ['001', '016', '190', 'C001']) {
     group('Jamaican Gospel hymn $id', () {
@@ -798,7 +833,6 @@ void main() {
       });
     });
   }
-
 
   const reggaeBands = {
     1: (55, 67), // piano: the chop alone, in the charts' G3–F#4
@@ -1095,7 +1129,9 @@ void main() {
         final scan = _scan(output);
         final d = _division(output);
         // Read the written meter back from the render.
-        final barTicks = detectChords(output)!.beatsPerBar * d;
+        final n = detectChords(output)!.beatsPerBar;
+        final compound = scan.denominator == 8 && n >= 6 && n % 3 == 0;
+        final barTicks = n * d * 4 ~/ scan.denominator;
 
         // The one drop's law: the kicks only ever on a drop pulse.
         final pulse =
@@ -1103,7 +1139,11 @@ void main() {
         for (final on in scan.ons) {
           if (on.channel != 9) continue;
           if (on.pitch == 35 || on.pitch == 36) {
-            expect(pulse.dropOffsets, contains(on.tick % barTicks),
+            expect(
+                compound
+                    ? [for (var p = 1; p < n ~/ 3; p += 2) p * 3 * d ~/ 2]
+                    : pulse.dropOffsets,
+                contains(on.tick % barTicks),
                 reason: 'hymn $hymn: kick off the drop');
           }
         }

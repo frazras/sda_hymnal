@@ -9,7 +9,7 @@ void main() {
   late Directory directory;
   late MidiRenderCache cache;
   final bytes = File('assets/midi/016.mid').readAsBytesSync();
-  const name = '016_t0_reggae_apple-scoped_v31.mid';
+  const name = '016_t0_reggae_apple-scoped_v35.mid';
   setUp(() async {
     directory =
         await Directory.systemTemp.createTemp('hymnal-midi-cache-test-');

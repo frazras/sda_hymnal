@@ -10,7 +10,13 @@ class MidiRenderCache {
 
   // v22's Apple piano CC7=41 belongs to the original bank. Bypass it rather
   // than deleting old caches, which another running player may still use.
-  static const renderVersion = 31;
+  // v30 restores the original Jamaican Gospel groove at 15% faster tempo.
+  // v31 includes percussion in ensemble volume and solo controls.
+  // v32 adds Jazz improvisation and a 50% default melody mix.
+  // v33 replaces Jazz note-tail ornaments with multi-bar phrase planning.
+  // v34 adds spacious answers on the Jazz melody channel.
+  // v35 fixes the compound-meter backing grid and harmony windows.
+  static const renderVersion = 35;
   final Directory directory;
   final _pending = <String, Future<File>>{};
 
