@@ -82,22 +82,6 @@ class _NoteOn {
   return (ons: ons, lastOffTick: lastOff);
 }
 
-/// The input channel [arrangeGospel] treats as the melody: highest average
-/// pitch, ties broken by note count, then by lowest channel number.
-int _melodyChannel(Uint8List bytes) {
-  final stats = channelStats(bytes);
-  var best = -1;
-  for (final ch in stats.keys.toList()..sort()) {
-    if (best < 0 ||
-        stats[ch]!.avgPitch > stats[best]!.avgPitch ||
-        (stats[ch]!.avgPitch == stats[best]!.avgPitch &&
-            stats[ch]!.notes > stats[best]!.notes)) {
-      best = ch;
-    }
-  }
-  return best;
-}
-
 /// The chord root governing each of the first [count] measure starts that
 /// carry harmony, sampled at the same media-time instants for both tracks.
 List<int> _barStartRoots(
@@ -155,18 +139,14 @@ void _arrangementTests(String path) {
   });
 
   test('copies the melody onto channel 0', () {
-    final melodyCh = _melodyChannel(input);
-    expect(outStats[0]!.notes, channelStats(input)[melodyCh]!.notes);
-    final inMelody = [
-      for (final on in inScan.ons)
-        if (on.channel == melodyCh) on.pitch,
-    ];
-    final outMelody = [
-      for (final on in outScan.ons)
-        if (on.channel == 0) on.pitch,
-    ];
-    expect(outMelody.first, inMelody.first);
-    expect(outMelody.last, inMelody.last);
+    // Soprano is source track 1; alto shares its channel in these fixtures.
+    final melody = _scan(mixMidiParts(input, {
+      for (final part in midiParts(input))
+        if (part.index != 1) part.index,
+    })).ons;
+    expect(
+        outScan.ons.where((n) => n.channel == 0).map((n) => (n.tick, n.pitch)),
+        melody.map((n) => (n.tick, n.pitch)));
   });
 
   test('keeps the bass and comp in their registers', () {
