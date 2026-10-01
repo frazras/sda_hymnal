@@ -1,3 +1,5 @@
+import 'favorite_lists.dart';
+import 'package:sdahymnal/ui/favorite_burst.dart';
 import '../services/error_reports.dart';
 
 import 'report_error.dart';
@@ -71,6 +73,33 @@ enum _ReaderAction {
 
 class _HymnPageState extends State<HymnPage> {
   bool _videoVisible = false;
+  final _favoriteBurst = GlobalKey<FavoriteBurstState>();
+  bool _endHintShown = false;
+
+  void _toggleFavorite() {
+    saveFavorite(context, widget.hymn);
+    _favoriteBurst.currentState?.play(context.tokens.accent);
+  }
+
+  bool _onLyricsScroll(ScrollNotification notification) {
+    if (!_endHintShown &&
+        notification.depth == 0 &&
+        notification is ScrollUpdateNotification &&
+        (notification.scrollDelta ?? 0) > 0 &&
+        notification.metrics.maxScrollExtent > 0 &&
+        notification.metrics.extentAfter <= 2) {
+      _endHintShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted &&
+            !Favorites.instance
+                .containsAnywhere(widget.hymn.number, widget.hymn.version)) {
+          _favoriteBurst.currentState?.play(const Color(0xFFE53935));
+        }
+      });
+    }
+    return false;
+  }
+
   final _autoScrollController = HymnAutoScrollController();
 
   bool get _showPlayer => MusicPlayerVisible.instance.value;
@@ -308,21 +337,26 @@ class _HymnPageState extends State<HymnPage> {
         children: [_favoriteHeaderButton(t), _readerMenu(t)],
       );
 
-  Widget _favoriteHeaderButton(HymnalTokens t) =>
-      ValueListenableBuilder<List<({int n, String v})>>(
-        valueListenable: Favorites.instance,
-        builder: (context, _, __) {
+  Widget _favoriteHeaderButton(HymnalTokens t) => AnimatedBuilder(
+        animation:
+            Listenable.merge([Favorites.instance, Favorites.instance.sublists]),
+        builder: (context, _) {
           final favorite = Favorites.instance
-              .contains(widget.hymn.number, widget.hymn.version);
+              .containsAnywhere(widget.hymn.number, widget.hymn.version);
           return IconButton(
             key: const ValueKey('hymn-favorite-header-button'),
-            tooltip: favorite ? 'Remove favorite' : 'Add favorite',
+            tooltip: Favorites.instance.sublists.value.isNotEmpty
+                ? 'Save to favorites and categories'
+                : favorite
+                    ? 'Remove favorite'
+                    : 'Add favorite',
             visualDensity: VisualDensity.compact,
-            icon: Icon(
-              favorite ? Icons.favorite : Icons.favorite_border,
+            icon: FavoriteBurst(
+              key: _favoriteBurst,
+              favorite: favorite,
               color: favorite ? t.accent : t.ink,
             ),
-            onPressed: () => Favorites.instance.toggle(widget.hymn),
+            onPressed: _toggleFavorite,
           );
         },
       );
@@ -520,7 +554,7 @@ class _HymnPageState extends State<HymnPage> {
   Widget _scrollArea(
       HymnalTokens t, ScrollController controller, Widget scrollControls) {
     return NotificationListener<ScrollNotification>(
-      onNotification: (_) => false,
+      onNotification: _onLyricsScroll,
       child: SingleChildScrollView(
         key: const ValueKey('hymn-lyrics-scroll'),
         controller: controller,
@@ -565,6 +599,35 @@ class _HymnPageState extends State<HymnPage> {
                           padding: HtmlPaddings.zero,
                         ),
                       },
+                    ),
+                    Padding(
+                      key: const ValueKey('hymn-end-mark'),
+                      padding: const EdgeInsets.only(top: 12, bottom: 8),
+                      child: Semantics(
+                        label: 'End of hymn',
+                        excludeSemantics: true,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 32, child: Divider(color: t.line)),
+                            const SizedBox(width: 14),
+                            HymnalIcons.logoMark(t, size: 22),
+                            const SizedBox(width: 9),
+                            Text(
+                              'End',
+                              style: TextStyle(
+                                fontFamily: 'PinyonScript',
+                                fontSize: 32,
+                                height: 1,
+                                letterSpacing: 1,
+                                color: t.accent,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            SizedBox(width: 32, child: Divider(color: t.line)),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

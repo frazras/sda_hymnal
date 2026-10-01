@@ -221,12 +221,13 @@ class InstrumentTheme extends ValueNotifier<String> {
 
   /// (id, label, GM program); a null program means the theme is not a simple
   /// single-instrument remap: 'classic' leaves the file as-is, while
-  /// 'gospel', 'reggae' and 'calypso' are generated arrangements (melody
+  /// 'gospel', 'jazz', 'jamaican_gospel', 'reggae' and 'calypso' generate arrangements (melody
   /// preserved, backing regenerated per style by the style arranger).
   static const List<(String, String, int?)> themes = [
     ('classic', 'Classic', null),
     ('gospel', 'Modern Gospel', null),
     ('jazz', 'Jazz', null),
+    // Keep the Jamaican styles together, followed by Trinidadian calypso.
     ('reggae', 'Island Reggae', null),
     ('jamaican_gospel', 'Jamaican Gospel', null),
     ('calypso', 'Steel Pan Calypso', null),
@@ -316,11 +317,21 @@ class ChordLevelPref extends ValueNotifier<String> {
   }
 }
 
+class FavoriteSublist {
+  const FavoriteSublist(
+      {required this.id, required this.name, this.hymns = const []});
+  final String id;
+  final String name;
+  final List<({int n, String v})> hymns;
+}
+
 /// Favorited hymns (SharedPreferences key 'hymnalFavorites'):
 /// JSON list of {n, v}, most recently added first, deduped by (n,v).
 class Favorites extends ValueNotifier<List<({int n, String v})>> {
   Favorites._() : super(const []);
   static final Favorites instance = Favorites._();
+  final sublists = ValueNotifier<List<FavoriteSublist>>(const []);
+  Future<void>? _pendingSave;
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -331,9 +342,121 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
     } catch (_) {
       value = const [];
     }
+    try {
+      final raw =
+          jsonDecode(prefs.getString('hymnalFavoriteSublists') ?? '[]') as List;
+      sublists.value = [
+        for (final list in raw)
+          FavoriteSublist(
+            id: list['id'] as String,
+            name: list['name'] as String,
+            hymns: [
+              for (final e in list['hymns'] as List)
+                (n: e['n'] as int, v: e['v'] as String)
+            ],
+          )
+      ];
+    } catch (_) {
+      sublists.value = const [];
+    }
   }
 
   bool contains(int n, String v) => value.any((e) => e.n == n && e.v == v);
+
+  bool containsAnywhere(int n, String v) =>
+      contains(n, v) ||
+      sublists.value.any((list) => list.hymns.contains((n: n, v: v)));
+
+  String _validName(String name, {String? exceptId}) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed.length > 60) {
+      throw ArgumentError('Use a name between 1 and 60 characters.');
+    }
+    if (trimmed.toLowerCase() == 'favorites' ||
+        sublists.value.any((list) =>
+            list.id != exceptId &&
+            list.name.toLowerCase() == trimmed.toLowerCase())) {
+      throw ArgumentError('Choose a different list name.');
+    }
+    return trimmed;
+  }
+
+  Future<void> createSublist(String name) {
+    final valid = _validName(name);
+    sublists.value = [
+      FavoriteSublist(
+          id: DateTime.now().microsecondsSinceEpoch.toString(), name: valid),
+      ...sublists.value
+    ];
+    return _save();
+  }
+
+  Future<void> renameSublist(String id, String name) {
+    final valid = _validName(name, exceptId: id);
+    sublists.value = [
+      for (final list in sublists.value)
+        if (list.id == id)
+          FavoriteSublist(id: id, name: valid, hymns: list.hymns)
+        else
+          list
+    ];
+    return _save();
+  }
+
+  Future<void> deleteSublist(String id) {
+    sublists.value = sublists.value.where((list) => list.id != id).toList();
+    return _save();
+  }
+
+  Future<void> setSublistHymn(String id, Hymn hymn, bool selected) {
+    if (!sublists.value.any((list) => list.id == id)) return Future.value();
+    final entry = (n: hymn.number, v: hymn.version);
+    sublists.value = [
+      for (final list in sublists.value)
+        if (list.id == id)
+          FavoriteSublist(id: id, name: list.name, hymns: [
+            if (selected) entry,
+            ...list.hymns.where((e) => e != entry)
+          ])
+        else
+          list
+    ];
+    return _save();
+  }
+
+  Future<void> _save() {
+    final favoritesJson = jsonEncode([
+      for (final e in value) {'n': e.n, 'v': e.v}
+    ]);
+    final listsJson = jsonEncode([
+      for (final list in sublists.value)
+        {
+          'id': list.id,
+          'name': list.name,
+          'hymns': [
+            for (final e in list.hymns) {'n': e.n, 'v': e.v}
+          ]
+        }
+    ]);
+    // Preserve tap order even when several checkboxes change rapidly.
+    final previous = _pendingSave;
+    Future<void> write() async {
+      if (previous != null) await previous.catchError((Object _) {});
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('hymnalFavorites', favoritesJson);
+      await prefs.setString('hymnalFavoriteSublists', listsJson);
+    }
+
+    final operation = write();
+    _pendingSave = operation;
+    void clear() {
+      if (identical(_pendingSave, operation)) _pendingSave = null;
+    }
+
+    operation.then((_) => clear(),
+        onError: (Object _, StackTrace __) => clear());
+    return operation;
+  }
 
   /// Adds the hymn (to the front) if absent, removes it otherwise.
   Future<void> toggle(Hymn hymn) async {
@@ -342,12 +465,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
     value = contains(entry.n, entry.v)
         ? value.where((e) => !(e.n == entry.n && e.v == entry.v)).toList()
         : [entry, ...value];
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        'hymnalFavorites',
-        jsonEncode([
-          for (final e in value) {'n': e.n, 'v': e.v}
-        ]));
+    await _save();
     AppAnalytics.instance.event(removing ? 'favorite_remove' : 'favorite_add',
         hymn: hymn.number, edition: hymn.version);
   }

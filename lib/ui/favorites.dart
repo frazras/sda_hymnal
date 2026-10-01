@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'favorite_lists.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -27,13 +28,16 @@ class FavoritesTab extends StatelessWidget {
     return null;
   }
 
-  void _openHymn(BuildContext context, Hymn hymn) {
+  void _openHymn(BuildContext context, Hymn hymn, {FavoriteSublist? category}) {
     Navigator.push(
       context,
       slideRoute(HymnPage(
         hymn: hymn,
         analyticsSource: 'favorites',
-        hymns: hymn.version == 'new' ? hymnsNew : hymnsOld,
+        categoryTitle: category?.name ?? 'Favorites',
+        hymns: category == null
+            ? Favorites.instance.value.map(_resolve).whereType<Hymn>().toList()
+            : category.hymns.map(_resolve).whereType<Hymn>().toList(),
       )),
     );
   }
@@ -41,15 +45,83 @@ class FavoritesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return ValueListenableBuilder<List<({int n, String v})>>(
-      valueListenable: Favorites.instance,
-      builder: (context, favorites, _) {
-        final hymns = favorites.map(_resolve).whereType<Hymn>().toList();
-        if (hymns.isEmpty) return _emptyState(t);
-        return ListView.builder(
+    final saved = Favorites.instance;
+    return AnimatedBuilder(
+      animation: Listenable.merge([saved, saved.sublists]),
+      builder: (context, _) {
+        final hymns = saved.value.map(_resolve).whereType<Hymn>().toList();
+        return ListView(
           padding: EdgeInsets.zero,
-          itemCount: hymns.length,
-          itemBuilder: (context, index) => _buildRow(context, hymns[index]),
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                key: const ValueKey('create-favorite-sublist'),
+                onPressed: () => editFavoriteSublist(context),
+                icon: const Icon(Icons.playlist_add),
+                label: const Text('New favorite category'),
+              ),
+            ),
+            for (final list in saved.sublists.value)
+              ExpansionTile(
+                key: PageStorageKey('favorite-sublist-${list.id}'),
+                leading: Icon(Icons.folder_outlined, color: t.accent),
+                title: Text(list.name),
+                subtitle: Text('${list.hymns.length} hymns'),
+                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                  PopupMenuButton<String>(
+                    tooltip: 'Manage ${list.name}',
+                    onSelected: (action) async {
+                      if (action == 'rename') {
+                        await editFavoriteSublist(context, list: list);
+                      } else {
+                        final remove = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text('Delete “${list.name}”?'),
+                                  content: const Text(
+                                      'Hymns saved in other categories or Favorites will stay there.'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: const Text('Cancel')),
+                                    TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        child: const Text('Delete')),
+                                  ],
+                                ));
+                        if (remove == true) await saved.deleteSublist(list.id);
+                      }
+                    },
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                      PopupMenuItem(
+                          value: 'delete', child: Text('Delete category')),
+                    ],
+                  ),
+                  const Icon(Icons.expand_more),
+                ]),
+                children: [
+                  if (list.hymns.isEmpty)
+                    const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                            'Tap a hymn’s heart to add it to this favorite category.')),
+                  for (final hymn in list.hymns.map(_resolve).whereType<Hymn>())
+                    _buildRow(context, hymn, category: list),
+                ],
+              ),
+            if (saved.sublists.value.isNotEmpty)
+              const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('Main favorites',
+                      style: TextStyle(fontWeight: FontWeight.bold))),
+            if (hymns.isEmpty)
+              Padding(padding: const EdgeInsets.all(32), child: _emptyState(t)),
+            for (final hymn in hymns) _buildRow(context, hymn),
+          ],
         );
       },
     );
@@ -75,10 +147,11 @@ class FavoritesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(BuildContext context, Hymn hymn) {
+  Widget _buildRow(BuildContext context, Hymn hymn,
+      {FavoriteSublist? category}) {
     final t = context.tokens;
     return Pressable(
-      onTap: () => _openHymn(context, hymn),
+      onTap: () => _openHymn(context, hymn, category: category),
       pressedScale: 1.0,
       builder: (context, pressed) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
@@ -124,7 +197,7 @@ class FavoritesTab extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Pressable.child(
-              onTap: () => Favorites.instance.toggle(hymn),
+              onTap: () => saveFavorite(context, hymn),
               pressedScale: 0.9,
               child: HymnalIcons.heart(t.accent, filled: true),
             ),

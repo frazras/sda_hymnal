@@ -86,6 +86,9 @@ flutter:
     - assets/midi/
 
   fonts:
+    - family: PinyonScript
+      fonts:
+        - asset: assets/fonts/PinyonScript-Regular.ttf
     - family: InstrumentSans
       fonts:
         - asset: assets/fonts/InstrumentSans-400.ttf
