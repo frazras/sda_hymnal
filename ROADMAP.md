@@ -45,9 +45,11 @@ Items below are plans, not claims that multilingual content is already installed
       Extend the English compatibility adapters to book-aware labels, metadata,
       readings, playback, and navigation in both Modern and Classic layouts.
       Update backend book identities before sending foreign-book events.
-- [ ] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
+- [x] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
       and Russian 1997 (385) from pinned GoGoShift sources, including their topic
       indexes. Keep existing English corrections and music mappings.
+      [Source and validation details](docs/language-packs.md). Reader/selector
+      integration remains the separate item above.
 - [ ] Build repeatable source importers and a content validation report for
       GoGoShift text, VideoPsalm JSON, and structured verse/refrain JSON. Track
       provenance and reviewed overrides; catch duplicate numbers, empty lyrics,

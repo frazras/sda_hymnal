@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "repository": "GoGoShift/Hymnal-Flutter",
+  "revision": "42e1263684ddd756841f11581611b9c9c6cc574f",
+  "books": [
+    {
+      "id": "sda-es-2009",
+      "languageTag": "es",
+      "displayName": "Español · 2009",
+      "year": 2009,
+      "expectedCount": 614,
+      "sources": {
+        "lyrics": {
+          "path": "assets/hymns/new_hymnal_es.json",
+          "sha256": "eaf57157e03751e15e90665542ca2163b28faa6b1456cec499a2fcc902db2aa5",
+          "bytes": 456297
+        },
+        "topics": {
+          "path": "assets/hymns/new_hymnal_thematic_list_es.json",
+          "sha256": "2b3cecb634b966eb597e524ac092e23546e8c25e85d4d6f049288f023e748eb4",
+          "bytes": 6661
+        }
+      }
+    },
+    {
+      "id": "sda-es-1962",
+      "languageTag": "es",
+      "displayName": "Español · 1962",
+      "year": 1962,
+      "expectedCount": 527,
+      "sources": {
+        "lyrics": {
+          "path": "assets/hymns/old_hymnal_es.json",
+          "sha256": "2476b687347a58df3ea429194970eef6f04611129fc36188a4ce64799f190f2e",
+          "bytes": 344457
+        },
+        "topics": {
+          "path": "assets/hymns/old_hymnal_thematic_list_es.json",
+          "sha256": "8efcf41c15d8f385f83a7cdb8ceb2ff60142d29be0205a5419e3b900a7e9ac8f",
+          "bytes": 7541
+        }
+      }
+    },
+    {
+      "id": "sda-pt-1996",
+      "languageTag": "pt",
+      "displayName": "Português · 1996",
+      "year": 1996,
+      "expectedCount": 610,
+      "sources": {
+        "lyrics": {
+          "path": "assets/hymns/new_hymnal_pt.json",
+          "sha256": "b10a20cb09c3ec5cd8882e5f039a0bdc2d324601a573993641b3438dd9aee48c",
+          "bytes": 388926
+        },
+        "topics": {
+          "path": "assets/hymns/new_hymnal_thematic_list_pt.json",
+          "sha256": "6de9378ff5813eebc75af5f28cd556a30917ea09f29886c279d05cedf5e03b65",
+          "bytes": 6416
+        }
+      }
+    },
+    {
+      "id": "sda-ru-1997",
+      "languageTag": "ru",
+      "displayName": "Гимны Надежды · 1997",
+      "year": 1997,
+      "expectedCount": 385,
+      "sources": {
+        "lyrics": {
+          "path": "assets/hymns/new_hymnal_ru.json",
+          "sha256": "cee4bdf52b2d3a932b075429fdba7410cb6ce1df157fa93ec86b1b4bc3b2f66d",
+          "bytes": 417922
+        },
+        "topics": {
+          "path": "assets/hymns/new_hymnal_thematic_list_ru.json",
+          "sha256": "9f03f5ba2f0340da1cf5ee6e4b0dc2e7bb556cfbe7489485cc6247c761d2e914",
+          "bytes": 9652
+        }
+      }
+    }
+  ]
+}

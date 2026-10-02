@@ -4,6 +4,7 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$script_dir/.."
 python3 tool/import_sheet_music.py --check
+python3 -m unittest discover -s test -p 'test_hymnal_import.py'
 python3 -m unittest discover -s test -p 'test_ios_soundfont.py'
 python3 -m unittest discover -s test -p 'test_app_icons.py'
 python3 tool/prepare_ios_soundfont.py \

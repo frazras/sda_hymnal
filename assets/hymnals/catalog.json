@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "books": [
+    {
+      "id": "sda-es-2009",
+      "languageTag": "es",
+      "displayName": "Español · 2009",
+      "year": 2009,
+      "asset": "assets/hymnals/sda-es-2009.json",
+      "hymnCount": 614,
+      "topicCount": 47,
+      "bytes": 1029781,
+      "sha256": "c784cbc404032746923b9f85f92611a3d821619c4d94a7d4883da6e923efbb3d"
+    },
+    {
+      "id": "sda-es-1962",
+      "languageTag": "es",
+      "displayName": "Español · 1962",
+      "year": 1962,
+      "asset": "assets/hymnals/sda-es-1962.json",
+      "hymnCount": 527,
+      "topicCount": 53,
+      "bytes": 832957,
+      "sha256": "bf80253d881c470a56d571bebc3a8aa8ebbd9bbff36532a9375f98aa659685d3"
+    },
+    {
+      "id": "sda-pt-1996",
+      "languageTag": "pt",
+      "displayName": "Português · 1996",
+      "year": 1996,
+      "asset": "assets/hymnals/sda-pt-1996.json",
+      "hymnCount": 610,
+      "topicCount": 45,
+      "bytes": 964317,
+      "sha256": "72198dbc7e35d3ef4727c2174875f531802c88b722f78e4ba410949bb81c31f8"
+    },
+    {
+      "id": "sda-ru-1997",
+      "languageTag": "ru",
+      "displayName": "Гимны Надежды · 1997",
+      "year": 1997,
+      "asset": "assets/hymnals/sda-ru-1997.json",
+      "hymnCount": 385,
+      "topicCount": 55,
+      "bytes": 953100,
+      "sha256": "2da144787dbda76a5b5723fff6f4ccacdd371209543b7ce3c293f8f2e79c223c"
+    }
+  ]
+}
