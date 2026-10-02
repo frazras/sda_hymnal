@@ -1,5 +1,6 @@
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
+import 'package:sdahymnal/models/hymn_ref.dart';
 
 class Hymn {
   final int number;
@@ -8,6 +9,8 @@ class Hymn {
   final String version;
   final HymnMetadata? metadata;
   final HymnVideo? video;
+
+  HymnRef get ref => HymnRef(bookId: version, itemId: '$number');
 
   /// Reading order only; the source lyrics stay unchanged for search/export.
   late final String readingBody = repeatChoruses(body);

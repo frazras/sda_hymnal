@@ -1,3 +1,5 @@
+import 'package:sdahymnal/models/hymn_ref.dart';
+
 class AdditionalReading {
   final String id;
   final String edition;
@@ -7,6 +9,9 @@ class AdditionalReading {
   final String category;
   final String? scriptureReference;
   final List<ReadingSegment> segments;
+
+  HymnRef get ref =>
+      HymnRef(bookId: edition, itemId: id, kind: HymnalItemKind.reading);
 
   const AdditionalReading({
     required this.id,

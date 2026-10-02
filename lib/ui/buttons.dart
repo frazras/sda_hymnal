@@ -351,7 +351,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     return ValueListenableBuilder<List<({int n, String v})>>(
       valueListenable: Recents.instance,
       builder: (context, recents, _) {
-        if (recents.isEmpty) return const SizedBox.shrink();
+        final available =
+            recents.where((r) => r.v == 'new' || r.v == 'old').take(3).toList();
+        if (available.isEmpty) return const SizedBox.shrink();
         return Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Row(
@@ -370,11 +372,11 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                   ),
                 ),
               ),
-              for (final (i, r) in recents.take(3).indexed) ...[
+              for (final (i, r) in available.indexed) ...[
                 if (i > 0) const SizedBox(width: 6),
                 Pressable(
-                  onTap: () => _openHymn(
-                      isNew: r.v.contains('new'), n: r.n, source: 'recent'),
+                  onTap: () =>
+                      _openHymn(isNew: r.v == 'new', n: r.n, source: 'recent'),
                   pressedScale: 0.94,
                   builder: (context, pressed) => Container(
                     padding:

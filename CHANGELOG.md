@@ -6,6 +6,9 @@ file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
 ## Unreleased
 
+- Prepare the shared hymnal catalog for additional languages, preserving saved
+  favorites, categories, and recent hymns with permanent book identities and
+  retained recovery copies. Unreadable saved lists show a retry message.
 - Read offline sheet music for all 695 New Hymnal numbers from the hymn menu.
   Zoom and pan, move between score pages, and return to lyrics while music
   continues. Available in Modern and Classic layouts, including dark mode.

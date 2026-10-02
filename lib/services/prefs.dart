@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/app_icon.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
+import 'package:sdahymnal/services/saved_hymn_store.dart';
 
 /// Layout is independent of brightness and of the MIDI instrument named
 /// "Classic". Existing installs keep Modern until they explicitly opt in.
@@ -196,34 +195,49 @@ class MusicPlayerVisible extends ValueNotifier<bool> {
   }
 }
 
-/// Recently opened hymns (SharedPreferences key 'hymnalRecents'):
-/// JSON list of {n, v}, most recent first, deduped by (n,v), capped at 6.
+/// The UI keeps its numeric adapter; saved references use permanent book IDs.
 class Recents extends ValueNotifier<List<({int n, String v})>> {
   Recents._() : super(const []);
   static final Recents instance = Recents._();
+  final storageError = ValueNotifier<bool>(false);
+  Future<void>? _pendingSave;
 
   Future<void> load() async {
+    if (_pendingSave != null) await _pendingSave;
     final prefs = await SharedPreferences.getInstance();
     try {
-      final raw = jsonDecode(prefs.getString('hymnalRecents') ?? '[]') as List;
-      value = [for (final e in raw) (n: e['n'] as int, v: e['v'] as String)];
+      value = await SavedHymnStore.loadRecents(prefs);
+      storageError.value = false;
     } catch (_) {
-      value = const [];
+      // Keep the original storage and stop writes until a successful reload.
+      storageError.value = true;
     }
   }
 
   Future<void> push(Hymn hymn) async {
+    if (storageError.value) return;
     final entry = (n: hymn.number, v: hymn.version);
     value = [
       entry,
       ...value.where((e) => !(e.n == entry.n && e.v == entry.v)),
     ].take(6).toList();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-        'hymnalRecents',
-        jsonEncode([
-          for (final e in value) {'n': e.n, 'v': e.v}
-        ]));
+    final snapshot = List.of(value);
+    final previous = _pendingSave;
+    Future<void> write() async {
+      if (previous != null) await previous;
+      if (storageError.value) return;
+      try {
+        await SavedHymnStore.saveRecents(
+            await SharedPreferences.getInstance(), snapshot);
+      } catch (_) {
+        storageError.value = true;
+      }
+    }
+
+    final operation = write();
+    _pendingSave = operation;
+    await operation;
+    if (identical(_pendingSave, operation)) _pendingSave = null;
   }
 }
 
@@ -340,39 +354,31 @@ class FavoriteSublist {
   final List<({int n, String v})> hymns;
 }
 
-/// Favorited hymns (SharedPreferences key 'hymnalFavorites'):
-/// JSON list of {n, v}, most recently added first, deduped by (n,v).
+/// Favorites and categories are saved together, with permanent book IDs.
 class Favorites extends ValueNotifier<List<({int n, String v})>> {
   Favorites._() : super(const []);
   static final Favorites instance = Favorites._();
   final sublists = ValueNotifier<List<FavoriteSublist>>(const []);
+  final storageError = ValueNotifier<bool>(false);
   Future<void>? _pendingSave;
 
   Future<void> load() async {
+    if (_pendingSave != null) await _pendingSave;
     final prefs = await SharedPreferences.getInstance();
     try {
-      final raw =
-          jsonDecode(prefs.getString('hymnalFavorites') ?? '[]') as List;
-      value = [for (final e in raw) (n: e['n'] as int, v: e['v'] as String)];
-    } catch (_) {
-      value = const [];
-    }
-    try {
-      final raw =
-          jsonDecode(prefs.getString('hymnalFavoriteSublists') ?? '[]') as List;
+      final collection = await SavedHymnStore.loadFavorites(prefs);
+      value = collection.hymns;
       sublists.value = [
-        for (final list in raw)
+        for (final list in collection.lists)
           FavoriteSublist(
-            id: list['id'] as String,
-            name: list['name'] as String,
-            hymns: [
-              for (final e in list['hymns'] as List)
-                (n: e['n'] as int, v: e['v'] as String)
-            ],
+            id: list.id,
+            name: list.name,
+            hymns: list.hymns,
           )
       ];
+      storageError.value = false;
     } catch (_) {
-      sublists.value = const [];
+      storageError.value = true;
     }
   }
 
@@ -397,6 +403,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
   }
 
   Future<void> createSublist(String name) {
+    if (storageError.value) return Future.value();
     final valid = _validName(name);
     sublists.value = [
       FavoriteSublist(
@@ -407,6 +414,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
   }
 
   Future<void> renameSublist(String id, String name) {
+    if (storageError.value) return Future.value();
     final valid = _validName(name, exceptId: id);
     sublists.value = [
       for (final list in sublists.value)
@@ -419,11 +427,13 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
   }
 
   Future<void> deleteSublist(String id) {
+    if (storageError.value) return Future.value();
     sublists.value = sublists.value.where((list) => list.id != id).toList();
     return _save();
   }
 
   Future<void> setSublistHymn(String id, Hymn hymn, bool selected) {
+    if (storageError.value) return Future.value();
     if (!sublists.value.any((list) => list.id == id)) return Future.value();
     final entry = (n: hymn.number, v: hymn.version);
     sublists.value = [
@@ -440,26 +450,22 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
   }
 
   Future<void> _save() {
-    final favoritesJson = jsonEncode([
-      for (final e in value) {'n': e.n, 'v': e.v}
-    ]);
-    final listsJson = jsonEncode([
+    final snapshot = SavedFavoriteCollection(List.of(value), [
       for (final list in sublists.value)
-        {
-          'id': list.id,
-          'name': list.name,
-          'hymns': [
-            for (final e in list.hymns) {'n': e.n, 'v': e.v}
-          ]
-        }
+        SavedFavoriteList(
+            id: list.id, name: list.name, hymns: List.of(list.hymns)),
     ]);
     // Preserve tap order even when several checkboxes change rapidly.
     final previous = _pendingSave;
     Future<void> write() async {
       if (previous != null) await previous.catchError((Object _) {});
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('hymnalFavorites', favoritesJson);
-      await prefs.setString('hymnalFavoriteSublists', listsJson);
+      if (storageError.value) return;
+      try {
+        await SavedHymnStore.saveFavorites(
+            await SharedPreferences.getInstance(), snapshot);
+      } catch (_) {
+        storageError.value = true;
+      }
     }
 
     final operation = write();
@@ -475,6 +481,7 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
 
   /// Adds the hymn (to the front) if absent, removes it otherwise.
   Future<void> toggle(Hymn hymn) async {
+    if (storageError.value) return;
     final entry = (n: hymn.number, v: hymn.version);
     final removing = contains(entry.n, entry.v);
     value = contains(entry.n, entry.v)

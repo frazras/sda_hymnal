@@ -4,6 +4,7 @@ import '../services/error_reports.dart';
 
 import 'report_error.dart';
 import 'favorite_lists.dart';
+import 'saved_hymn_notice.dart';
 import 'hymn_page_turn.dart';
 import 'hymn_sheet_music.dart';
 // ignore_for_file: file_names
@@ -296,6 +297,7 @@ class _HymnPageState extends State<HymnPage> {
                     center: _headerCenter(t),
                     trailing: _headerActions(t),
                   ),
+                if (!widget.previewOnly) const SavedHymnNotice(),
                 if (widget.categoryTitle != null)
                   Container(
                     key: const ValueKey('hymn-category-indicator'),

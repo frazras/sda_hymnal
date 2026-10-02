@@ -78,6 +78,23 @@ void main() {
     expect(saved.containsAnywhere(1, 'new'), isTrue);
   });
 
+  testWidgets('unavailable books never resolve to the same English number',
+      (tester) async {
+    await saved.toggle(Hymn(
+        number: 1,
+        version: 'sda-es-2009',
+        title: 'Spanish song',
+        body: 'Spanish lyrics'));
+    await saved.load();
+    await tester.pumpWidget(MaterialApp(
+      theme: buildHymnalTheme(HymnalTokens.light),
+      home: Scaffold(body: FavoritesTab(hymnsNew: [hymn], hymnsOld: [oldHymn])),
+    ));
+    expect(find.text('Old song'), findsNothing);
+    expect(find.text('My song'), findsNothing);
+    expect(saved.value, [(n: 1, v: 'sda-es-2009')]);
+  });
+
   for (final classic in [false, true]) {
     testWidgets(
         'favorite category swipes left to next and wraps, classic=$classic',

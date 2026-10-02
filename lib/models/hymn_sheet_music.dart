@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sdahymnal/models/hymn_ref.dart';
 
 class HymnScorePage {
   final String asset;
@@ -45,13 +46,7 @@ class HymnSheetMusicCatalog {
   }
 
   List<HymnScorePage> forHymn(String version, int number) {
-    // Legacy aliases remain confined to this boundary until the full catalog
-    // migration. An unknown edition must never borrow an English score.
-    final book = switch (version) {
-      'new' => 'sda-en-1985',
-      'old' => 'sda-en-1941',
-      _ => version,
-    };
+    final book = canonicalBookId(version);
     return books[book]?[number] ?? const [];
   }
 }

@@ -21,7 +21,11 @@ class FavoritesTab extends StatelessWidget {
   /// Looks up the favorite's Hymn in the matching version list; null when it
   /// cannot be resolved (such favorites are skipped, not shown broken).
   Hymn? _resolve(({int n, String v}) e) {
-    final list = e.v == 'new' ? hymnsNew : hymnsOld;
+    final list = switch (e.v) {
+      'new' => hymnsNew,
+      'old' => hymnsOld,
+      _ => const <Hymn>[],
+    };
     for (final h in list) {
       if (h.number == e.n) return h;
     }

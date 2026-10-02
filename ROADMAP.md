@@ -6,8 +6,8 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Introduce stable hymnal-edition identities and preserve existing user data;
-   then add Spanish, Portuguese, and Russian books.
+1. Build on the catalog and saved-data foundation to add Spanish, Portuguese,
+   and Russian books with a language/edition selector.
 2. Add lyric sharing, favorite reordering, and a full history page as smaller
    improvements; extend ordering into service playlists.
 3. Expand reviewed language packs, localization, optional recordings, and custom
@@ -37,10 +37,14 @@ Items below are plans, not claims that multilingual content is already installed
 
 ## Languages and Downloadable Hymnals
 
+- [x] Introduce stable English book/item identities, a shared repository, and
+      versioned favorites/category/recents storage. Preserve original saved data,
+      order, memberships, lyrics, media, and settings; protect unreadable lists
+      from overwrite. [Foundation details](docs/hymnal-catalog.md).
 - [ ] Add a language and hymnal-edition selector backed by a shared catalog.
-      Give every book a stable identity; migrate English favorites, categories,
-      recents, metadata, readings, and playback references without losing data.
-      Update both Modern and Classic layouts and backend book identities.
+      Extend the English compatibility adapters to book-aware labels, metadata,
+      readings, playback, and navigation in both Modern and Classic layouts.
+      Update backend book identities before sending foreign-book events.
 - [ ] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
       and Russian 1997 (385) from pinned GoGoShift sources, including their topic
       indexes. Keep existing English corrections and music mappings.

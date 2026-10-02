@@ -8,6 +8,7 @@ import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
 import 'package:sdahymnal/services/api.dart';
+import 'package:sdahymnal/services/hymnal_repository.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/buttons.dart';
@@ -16,6 +17,7 @@ import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/settings.dart';
+import 'package:sdahymnal/ui/saved_hymn_notice.dart';
 
 /// App shell: brand header + active tab + bottom nav.
 /// Tab screens are content-only; the header and nav live here.
@@ -95,8 +97,10 @@ class _TabsState extends State<Tabs> {
         metadata: metadata,
         videos: videos,
       );
-      _hymnsNew = _hymns.where((f) => f.version.contains('new')).toList();
-      _hymnsOld = _hymns.where((f) => f.version.contains('old')).toList();
+      final repository =
+          HymnalRepository.english(_hymns, readings: _readings.readings);
+      _hymnsNew = repository.hymnsFor('sda-en-1985');
+      _hymnsOld = repository.hymnsFor('sda-en-1941');
     });
   }
 
@@ -142,6 +146,7 @@ class _TabsState extends State<Tabs> {
                       onFavorites: () => _selectTab(2))
                 else
                   BrandHeader(onLogoTap: () => _selectTab(0)),
+                const SavedHymnNotice(),
                 Expanded(
                   // Both surrounding navigation widgets change with design.
                   // Keep the shared tab subtree when Flutter reconciles them.

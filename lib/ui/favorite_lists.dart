@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/hymn.dart';
 import '../services/prefs.dart';
+import 'saved_hymn_notice.dart';
 
 /// Keep the one-tap heart when there are no lists. Once lists exist, save a
 /// new favorite immediately, then let the user adjust all memberships.
@@ -22,11 +23,13 @@ void saveFavorite(BuildContext context, Hymn hymn) {
         constraints:
             BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .75),
         child: AnimatedBuilder(
-          animation: Listenable.merge([favorites, favorites.sublists]),
+          animation: Listenable.merge(
+              [favorites, favorites.sublists, favorites.storageError]),
           builder: (context, _) => ListView(
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(vertical: 12),
             children: [
+              const SavedHymnNotice(),
               ListTile(
                 title: const Text('Save to favorites',
                     style: TextStyle(fontWeight: FontWeight.bold)),
@@ -40,7 +43,9 @@ void saveFavorite(BuildContext context, Hymn hymn) {
                 title: const Text('Favorites'),
                 subtitle: const Text('Main favorites list'),
                 value: favorites.contains(hymn.number, hymn.version),
-                onChanged: (_) => favorites.toggle(hymn),
+                onChanged: favorites.storageError.value
+                    ? null
+                    : (_) => favorites.toggle(hymn),
               ),
               for (final list in favorites.sublists.value)
                 Padding(
@@ -50,8 +55,10 @@ void saveFavorite(BuildContext context, Hymn hymn) {
                     title: Text(list.name),
                     value:
                         list.hymns.contains((n: hymn.number, v: hymn.version)),
-                    onChanged: (selected) => favorites.setSublistHymn(
-                        list.id, hymn, selected ?? false),
+                    onChanged: favorites.storageError.value
+                        ? null
+                        : (selected) => favorites.setSublistHymn(
+                            list.id, hymn, selected ?? false),
                   ),
                 ),
             ],
