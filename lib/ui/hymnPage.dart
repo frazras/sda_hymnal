@@ -5,6 +5,7 @@ import '../services/error_reports.dart';
 import 'report_error.dart';
 import 'favorite_lists.dart';
 import 'hymn_page_turn.dart';
+import 'hymn_sheet_music.dart';
 // ignore_for_file: file_names
 
 import 'dart:ui' show ImageFilter;
@@ -50,6 +51,7 @@ class HymnPage extends StatefulWidget {
   /// Same reader layout, without history, playback or screen-wake effects.
   final bool previewOnly;
   final HymnContinuation? continuation;
+  final bool showSheetMusic;
 
   bool get cycleCategory => categoryTitle != null;
 
@@ -60,6 +62,7 @@ class HymnPage extends StatefulWidget {
       this.analyticsSource = 'unknown',
       this.categoryTitle,
       this.previewOnly = false,
+      this.showSheetMusic = false,
       this.continuation});
 
   @override
@@ -74,10 +77,12 @@ enum _ReaderAction {
   chords,
   fontSize,
   musicalStyle,
-  choirPractice
+  choirPractice,
+  sheetMusic
 }
 
 class _HymnPageState extends State<HymnPage> {
+  late bool _sheetMusicVisible = widget.showSheetMusic;
   bool _videoVisible = false;
   bool _advancing = false;
   StreamSubscription<MidiPlayback>? _completionSubscription;
@@ -211,6 +216,7 @@ class _HymnPageState extends State<HymnPage> {
               hymns: widget.hymns,
               categoryTitle: widget.categoryTitle,
               analyticsSource: 'adjacent',
+              showSheetMusic: _sheetMusicVisible,
               continuation: medium),
         ));
   }
@@ -237,6 +243,7 @@ class _HymnPageState extends State<HymnPage> {
         hymn: target,
         hymns: widget.hymns,
         categoryTitle: widget.categoryTitle,
+        showSheetMusic: _sheetMusicVisible,
         analyticsSource: 'adjacent');
     Navigator.pushReplacement(
       context,
@@ -249,7 +256,7 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.previewOnly
+  Widget build(BuildContext context) => widget.previewOnly || _sheetMusicVisible
       ? _reader(context)
       : HymnPageTurn(
           previewBuilder: (dir) {
@@ -325,41 +332,58 @@ class _HymnPageState extends State<HymnPage> {
                           ),
                         ),
                       Expanded(
-                        child: HymnAutoScroll(
-                          previewOnly: widget.previewOnly,
-                          key: ValueKey(
-                              '${widget.hymn.version}-${widget.hymn.number}'),
-                          hymn: widget.hymn,
-                          controller: _autoScrollController,
-                          builder: (controller, scrollControls) => t.isClassic
-                              ? Column(children: [
-                                  Expanded(
-                                      child: _scrollArea(
-                                          t, controller, scrollControls)),
-                                  if (MidiPlayer.hasMidi(widget.hymn) &&
-                                      _showPlayer &&
-                                      !_videoVisible)
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                      child: _playerBar(t),
-                                    ),
-                                ])
-                              : Stack(
-                                  children: [
-                                    Positioned.fill(
-                                        child: _scrollArea(
-                                            t, controller, scrollControls)),
-                                    if (_showPlayer && !_videoVisible)
-                                      Positioned(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 18,
-                                        child: _playerBar(t),
-                                      ),
-                                  ],
+                        child: _sheetMusicVisible
+                            ? Column(children: [
+                                Expanded(
+                                  child: HymnSheetMusic(
+                                    hymn: widget.hymn,
+                                    onLyrics: () => setState(
+                                        () => _sheetMusicVisible = false),
+                                  ),
                                 ),
-                        ),
+                                if (_showPlayer && !_videoVisible)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                    child: _playerBar(t),
+                                  ),
+                              ])
+                            : HymnAutoScroll(
+                                previewOnly: widget.previewOnly,
+                                key: ValueKey(
+                                    '${widget.hymn.version}-${widget.hymn.number}'),
+                                hymn: widget.hymn,
+                                controller: _autoScrollController,
+                                builder: (controller, scrollControls) => t
+                                        .isClassic
+                                    ? Column(children: [
+                                        Expanded(
+                                            child: _scrollArea(
+                                                t, controller, scrollControls)),
+                                        if (MidiPlayer.hasMidi(widget.hymn) &&
+                                            _showPlayer &&
+                                            !_videoVisible)
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 0, 8, 8),
+                                            child: _playerBar(t),
+                                          ),
+                                      ])
+                                    : Stack(
+                                        children: [
+                                          Positioned.fill(
+                                              child: _scrollArea(t, controller,
+                                                  scrollControls)),
+                                          if (_showPlayer && !_videoVisible)
+                                            Positioned(
+                                              left: 16,
+                                              right: 16,
+                                              bottom: 18,
+                                              child: _playerBar(t),
+                                            ),
+                                        ],
+                                      ),
+                              ),
                       ),
                     ],
                   ),
@@ -435,6 +459,8 @@ class _HymnPageState extends State<HymnPage> {
           icon: Icon(Icons.more_vert, color: t.ink),
           onSelected: (action) {
             switch (action) {
+              case _ReaderAction.sheetMusic:
+                setState(() => _sheetMusicVisible = !_sheetMusicVisible);
               case _ReaderAction.reportError:
                 Navigator.push(
                     context,
@@ -477,6 +503,12 @@ class _HymnPageState extends State<HymnPage> {
             }
           },
           itemBuilder: (context) => [
+            PopupMenuItem(
+              key: const ValueKey('hymn-sheet-music'),
+              value: _ReaderAction.sheetMusic,
+              child: _menuLabel(t, Icons.library_music_outlined,
+                  _sheetMusicVisible ? 'Show lyrics' : 'Sheet music'),
+            ),
             if (MidiPlayer.hasMidi(widget.hymn)) ...[
               PopupMenuItem(
                 key: const ValueKey('hymn-musical-style'),
@@ -514,7 +546,9 @@ class _HymnPageState extends State<HymnPage> {
                   _showPlayer ? 'Hide music player' : 'Show music player',
                 ),
               ),
-            if (AutoScroll.instance.value && MidiPlayer.hasMidi(widget.hymn))
+            if (!_sheetMusicVisible &&
+                AutoScroll.instance.value &&
+                MidiPlayer.hasMidi(widget.hymn))
               PopupMenuItem(
                 key: const ValueKey('hymn-scroll-speed-menu-item'),
                 value: _ReaderAction.scrollSpeed,
@@ -530,11 +564,12 @@ class _HymnPageState extends State<HymnPage> {
                   chordsVisible ? 'Hide chord tabs' : 'Show chord tabs',
                 ),
               ),
-            PopupMenuItem(
-              key: const ValueKey('hymn-font-size-button'),
-              value: _ReaderAction.fontSize,
-              child: _menuLabel(t, Icons.text_fields, 'Text size'),
-            ),
+            if (!_sheetMusicVisible)
+              PopupMenuItem(
+                key: const ValueKey('hymn-font-size-button'),
+                value: _ReaderAction.fontSize,
+                child: _menuLabel(t, Icons.text_fields, 'Text size'),
+              ),
             PopupMenuItem(
                 value: _ReaderAction.reportError,
                 child: _menuLabel(

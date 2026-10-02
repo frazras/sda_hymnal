@@ -4,6 +4,12 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
+## Unreleased
+
+- Read offline sheet music for all 695 New Hymnal numbers from the hymn menu.
+  Zoom and pan, move between score pages, and return to lyrics while music
+  continues. Available in Modern and Classic layouts, including dark mode.
+
 ## 4.5.0 (40500) — prepared (2026-09-25)
 
 - Keep the actual melody in front when source voices share MIDI channels, including New 388.

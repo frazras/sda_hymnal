@@ -10,6 +10,7 @@ import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/hymn_sheet_music.dart';
 import 'package:sdahymnal/theme.dart';
 
 class _TestAudioCache extends AudioCache {
@@ -112,7 +113,11 @@ void main() {
     MusicPlayerVisible.instance.value = true;
     await tester.pumpWidget(MaterialApp(
         theme: buildHymnalTheme(HymnalTokens.light),
-        home: HymnPage(hymn: first, hymns: list, categoryTitle: 'Test list')));
+        home: HymnPage(
+            hymn: first,
+            hymns: list,
+            categoryTitle: 'Test list',
+            showSheetMusic: true)));
     await tester.pump();
     expect(MidiPlayer.instance.current.value, isNull);
     await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
@@ -123,6 +128,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, second);
+    expect(
+        tester.widget<HymnPage>(find.byType(HymnPage)).showSheetMusic, isTrue);
+    expect(find.byType(HymnSheetMusic), findsOneWidget);
     expect(MidiPlayer.instance.current.value?.version, 'old');
     await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
     await tester.pump();

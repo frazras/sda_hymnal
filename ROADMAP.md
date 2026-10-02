@@ -6,12 +6,11 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Deliver the already-planned sheet-music viewer, beginning with English 1985.
-2. Introduce stable hymnal-edition identities and preserve existing user data;
+1. Introduce stable hymnal-edition identities and preserve existing user data;
    then add Spanish, Portuguese, and Russian books.
-3. Add lyric sharing, favorite reordering, and a full history page as smaller
+2. Add lyric sharing, favorite reordering, and a full history page as smaller
    improvements; extend ordering into service playlists.
-4. Expand reviewed language packs, localization, optional recordings, and custom
+3. Expand reviewed language packs, localization, optional recordings, and custom
    songbook imports. Explore projection export after the content model is stable.
 
 The [1 October 2026 project audit](docs/multilingual-resource-audit.md) compares
@@ -21,12 +20,14 @@ Items below are plans, not claims that multilingual content is already installed
 
 ## Hymnal Content
 
-- [ ] Add zoomable, multipage sheet music, with offline availability and clear
-      missing-score states. Start with GoGoShift's English 1985 collection
-      (723 pages covering 695 numbers); add Spanish 2009 and Russian 1997 score
-      packs as their books become available. Russian #244 has no source score.
-      Preserve printed page order and validate samples; image scores do not
-      automatically transpose with MIDI.
+- [x] Add an offline, zoomable, multipage sheet-music viewer for English 1985
+      (723 pages covering 695 numbers), accessible from the hymn menu in both
+      designs. Preserve playback/category autoplay, show clear missing-score
+      states, and provide page, zoom, fit, and return-to-lyrics controls.
+      [Source/import details](docs/sheet-music.md).
+- [ ] Add Spanish 2009 and Russian 1997 score packs as their books become
+      available. Russian #244 has no source score. Image scores retain their
+      printed key rather than transposing with MIDI.
 - [x] Add all 225 additional readings from the New Hymnal, with categories,
       Scripture references, printed responsive typography, keypad lookup,
       search, swiping, and reading-speed auto-scroll.

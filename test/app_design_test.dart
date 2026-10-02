@@ -23,6 +23,8 @@ import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/settings.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/hymn_sheet_music.dart';
+import 'package:sdahymnal/ui/hymn_page_turn.dart';
 import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/ui/fontsize.dart';
 import 'package:sdahymnal/ui/report_error.dart';
@@ -175,6 +177,21 @@ void main() {
         expect((source.arguments as Map)['url'],
             endsWith('/assets/midi/${prefix}533.mid'));
         expect(audioCalls.any((c) => c.method == 'resume'), isTrue);
+        final callsBeforeScore = audioCalls.length;
+        await chooseReaderOption(tester, const ValueKey('hymn-sheet-music'));
+        expect(find.byType(HymnSheetMusic), findsOneWidget);
+        expect(find.byType(HymnPageTurn), findsNothing);
+        expect(find.byKey(const ValueKey('hymn-music-player')), findsOneWidget);
+        expect(MidiPlayer.instance.current.value,
+            (version: version, n: 533, paused: false));
+        await tester.tap(find.byKey(const ValueKey('score-show-lyrics')));
+        await tester.pump();
+        expect(find.byType(HymnSheetMusic), findsNothing);
+        expect(find.byType(HymnPageTurn), findsOneWidget);
+        expect(
+            audioCalls.skip(callsBeforeScore).where(
+                (c) => ['pause', 'stop', 'setSourceUrl'].contains(c.method)),
+            isEmpty);
         final callsBeforeHide = audioCalls.length;
         await chooseReaderOption(
             tester, const ValueKey('hymn-player-visibility'));

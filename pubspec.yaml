@@ -72,6 +72,8 @@ flutter:
     - assets/hymn_metadata.json
     - assets/hymn_videos.json
     - assets/additional_readings.json
+    - assets/sheet_music/catalog.json
+    - assets/sheet_music/en_1985/
     - assets/logo.svg
     - assets/logo-mark.svg
     - assets/logo-mark-dark.svg
