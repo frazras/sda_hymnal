@@ -6,7 +6,7 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Add lyric sharing, favorite reordering,
+1. Add favorite reordering,
    and a full history page.
 2. Extend favorite ordering into service playlists as practical worship
    tools; add the available Spanish and Russian score collections.
@@ -117,7 +117,7 @@ Items below are plans, not claims that multilingual content is already installed
 
 ## Sharing and Custom Songbooks
 
-- [ ] Let users select, copy, and share a verse or full hymn with its title,
+- [x] Let users select, copy, and share a verse or full hymn with its title,
       number, and hymnal edition, preserving stanza and refrain formatting.
 - [ ] Import custom songbooks through a documented JSON/ZIP format, including
       optional score pages. Preview book details/counts, validate data and archive

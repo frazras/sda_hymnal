@@ -7,6 +7,7 @@ import 'favorite_lists.dart';
 import 'saved_hymn_notice.dart';
 import 'hymn_page_turn.dart';
 import 'hymn_sheet_music.dart';
+import 'hymn_share.dart';
 // ignore_for_file: file_names
 
 import 'dart:ui' show ImageFilter;
@@ -71,6 +72,7 @@ class HymnPage extends StatefulWidget {
 }
 
 enum _ReaderAction {
+  shareLyrics,
   reportError,
   video,
   player,
@@ -386,7 +388,8 @@ class _HymnPageState extends State<HymnPage> {
                                               child: _scrollArea(t, controller,
                                                   scrollControls)),
                                           if (MidiPlayer.hasMidi(widget.hymn) &&
-                                              _showPlayer && !_videoVisible)
+                                              _showPlayer &&
+                                              !_videoVisible)
                                             Positioned(
                                               left: 16,
                                               right: 16,
@@ -501,6 +504,9 @@ class _HymnPageState extends State<HymnPage> {
           icon: Icon(Icons.more_vert, color: t.ink),
           onSelected: (action) {
             switch (action) {
+              case _ReaderAction.shareLyrics:
+                Navigator.push(
+                    context, slideRoute(HymnSharePage(hymn: widget.hymn)));
               case _ReaderAction.sheetMusic:
                 setState(() => _sheetMusicVisible = !_sheetMusicVisible);
               case _ReaderAction.reportError:
@@ -618,6 +624,11 @@ class _HymnPageState extends State<HymnPage> {
                 value: _ReaderAction.fontSize,
                 child: _menuLabel(t, Icons.text_fields, 'Text size'),
               ),
+            PopupMenuItem(
+                key: const ValueKey('hymn-share-lyrics'),
+                value: _ReaderAction.shareLyrics,
+                child: _menuLabel(
+                    t, Icons.share_outlined, 'Copy or share lyrics')),
             PopupMenuItem(
                 value: _ReaderAction.reportError,
                 child: _menuLabel(
