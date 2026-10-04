@@ -1,5 +1,31 @@
 # Bundled language-pack sources
 
+## Using the books
+
+Use the hymnal selector above the Numbers or Search tab to switch editions.
+English retains the combined Old/New keypad. Imported editions offer number
+lookup, text search, and native topic lists. Book selection persists across
+launches. Favorites and named categories can mix editions without number
+collisions. The shared reader supports paging, text size, themes, and credits;
+topic navigation stays in the selected topic.
+
+The interface remains English. Hymn text, titles, credits, and topics retain
+their source language. UI translation, accent-folded search, audio, and foreign
+scores are separate roadmap items. Foreign music controls are hidden until
+explicit media mappings exist. Cyrillic labels use a bundled font fallback.
+
+Foreign per-hymn analytics are suppressed while the deployed collector still
+accepts only English aliases. Content reports use its existing general-report
+path, with the correct book, hymn number, and title prefilled in the report title.
+No foreign hymn is reported as an English hymn with the same number.
+
+Pack loading verifies catalog hashes, byte sizes, schema, book identities,
+counts, and topic references. An unavailable pack does not prevent English
+reading; Search offers a retry action. Source text is escaped before entering
+the HTML reader, and English metadata or media is never inferred for a pack.
+
+## Reproducible sources
+
 `tool/import_hymnals.py` imports four audited GoGoShift books at revision
 `42e1263684ddd756841f11581611b9c9c6cc574f`. Source paths, hashes, sizes, edition
 metadata, and expected counts are pinned in `tool/data/hymnal_sources.json`.

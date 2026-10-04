@@ -6,6 +6,10 @@ file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
 ## Unreleased
 
+- Read 2,136 additional hymns offline in Spanish (2009 and 1962), Portuguese
+  (1996), and Russian (1997). Choose an edition from Numbers or Search, browse
+  its topics, and save favorites across books. Existing English music stays
+  separate from imported lyrics.
 - Prepare the shared hymnal catalog for additional languages, preserving saved
   favorites, categories, and recent hymns with permanent book identities and
   retained recovery copies. Unreadable saved lists show a retry message.

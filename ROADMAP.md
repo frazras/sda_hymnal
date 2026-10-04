@@ -6,10 +6,10 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Build on the catalog and saved-data foundation to add Spanish, Portuguese,
-   and Russian books with a language/edition selector.
-2. Add lyric sharing, favorite reordering, and a full history page as smaller
-   improvements; extend ordering into service playlists.
+1. Improve multilingual search, then add lyric sharing, favorite reordering,
+   and a full history page.
+2. Extend favorite ordering into service playlists as practical worship
+   tools; add the available Spanish and Russian score collections.
 3. Expand reviewed language packs, localization, optional recordings, and custom
    songbook imports. Explore projection export after the content model is stable.
 
@@ -41,10 +41,13 @@ Items below are plans, not claims that multilingual content is already installed
       versioned favorites/category/recents storage. Preserve original saved data,
       order, memberships, lyrics, media, and settings; protect unreadable lists
       from overwrite. [Foundation details](docs/hymnal-catalog.md).
-- [ ] Add a language and hymnal-edition selector backed by a shared catalog.
-      Extend the English compatibility adapters to book-aware labels, metadata,
-      readings, playback, and navigation in both Modern and Classic layouts.
-      Update backend book identities before sending foreign-book events.
+- [x] Add a persistent language and hymnal-edition selector backed by the shared
+      catalog. Support offline number/text/topic browsing, reading, paging,
+      credits, and mixed-book favorites in both designs. Preserve English
+      readings/media and hide unavailable foreign music controls.
+- [ ] Extend deployed analytics/error-report schemas to native book identities.
+      Until deployed, suppress foreign per-hymn statistics and submit foreign
+      content reports as general reports with the correct book/title context.
 - [x] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
       and Russian 1997 (385) from pinned GoGoShift sources, including their topic
       indexes. Keep existing English corrections and music mappings.

@@ -233,8 +233,15 @@ class _HymnPageState extends State<HymnPage> {
       if (index < 0 || widget.hymns.length < 2) return null;
       return widget.hymns[(index + dir) % widget.hymns.length];
     }
-    return adjacentHymn(widget.hymns, widget.hymn.number, dir,
-        widget.hymn.version == 'new' ? 695 : 703);
+    final book = widget.hymns
+        .where((h) => h.version == widget.hymn.version)
+        .toList()
+      ..sort((a, b) => a.number.compareTo(b.number));
+    final index = book.indexWhere((h) => h.number == widget.hymn.number);
+    final target = index + dir;
+    return index >= 0 && target >= 0 && target < book.length
+        ? book[target]
+        : null;
   }
 
   void _move(int dir, {bool turned = false}) {
@@ -343,7 +350,9 @@ class _HymnPageState extends State<HymnPage> {
                                         () => _sheetMusicVisible = false),
                                   ),
                                 ),
-                                if (_showPlayer && !_videoVisible)
+                                if (MidiPlayer.hasMidi(widget.hymn) &&
+                                    _showPlayer &&
+                                    !_videoVisible)
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -376,7 +385,8 @@ class _HymnPageState extends State<HymnPage> {
                                           Positioned.fill(
                                               child: _scrollArea(t, controller,
                                                   scrollControls)),
-                                          if (_showPlayer && !_videoVisible)
+                                          if (MidiPlayer.hasMidi(widget.hymn) &&
+                                              _showPlayer && !_videoVisible)
                                             Positioned(
                                               left: 16,
                                               right: 16,
@@ -387,6 +397,29 @@ class _HymnPageState extends State<HymnPage> {
                                       ),
                               ),
                       ),
+                      if (!MidiPlayer.hasMidi(widget.hymn))
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                  key: const ValueKey('reader-previous'),
+                                  tooltip: 'Previous hymn',
+                                  onPressed: _adjacent(-1) == null
+                                      ? null
+                                      : () => _move(-1),
+                                  icon: const Icon(Icons.chevron_left)),
+                              const Expanded(
+                                  child: Text('Swipe to turn the page',
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2)),
+                              IconButton(
+                                  key: const ValueKey('reader-next'),
+                                  tooltip: 'Next hymn',
+                                  onPressed: _adjacent(1) == null
+                                      ? null
+                                      : () => _move(1),
+                                  icon: const Icon(Icons.chevron_right)),
+                            ]),
                     ],
                   ),
                 ),
@@ -409,12 +442,19 @@ class _HymnPageState extends State<HymnPage> {
         child: Row(children: [
           const BackButton(),
           Expanded(
-              child: Text(
-            '${widget.hymn.number} ${widget.hymn.title}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
-          )),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+            if (!widget.hymn.isEnglishEdition)
+              Text(widget.hymn.bookLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: t.muted, fontSize: 11)),
+            Text(
+              '${widget.hymn.number} ${widget.hymn.title}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
+            )
+          ])),
           _headerActions(t),
         ]),
       );
@@ -467,13 +507,18 @@ class _HymnPageState extends State<HymnPage> {
                 Navigator.push(
                     context,
                     slideRoute(ReportErrorPage(
-                        subject: ErrorReportSubject(
-                      kind: 'hymn',
-                      title: widget.hymn.title,
-                      edition: widget.hymn.version,
-                      number: widget.hymn.number,
-                      itemId: '${widget.hymn.version}:${widget.hymn.number}',
-                    ))));
+                        subject: widget.hymn.isEnglishEdition
+                            ? ErrorReportSubject(
+                                kind: 'hymn',
+                                title: widget.hymn.title,
+                                edition: widget.hymn.version,
+                                number: widget.hymn.number,
+                                itemId:
+                                    '${widget.hymn.version}:${widget.hymn.number}',
+                              )
+                            : ErrorReportSubject(
+                                title:
+                                    '${widget.hymn.bookLabel} · ${widget.hymn.number} · ${widget.hymn.title}'))));
               case _ReaderAction.musicalStyle:
                 showMusicalStyleSheet(context);
               case _ReaderAction.choirPractice:
@@ -505,12 +550,13 @@ class _HymnPageState extends State<HymnPage> {
             }
           },
           itemBuilder: (context) => [
-            PopupMenuItem(
-              key: const ValueKey('hymn-sheet-music'),
-              value: _ReaderAction.sheetMusic,
-              child: _menuLabel(t, Icons.library_music_outlined,
-                  _sheetMusicVisible ? 'Show lyrics' : 'Sheet music'),
-            ),
+            if (widget.hymn.isEnglishEdition)
+              PopupMenuItem(
+                key: const ValueKey('hymn-sheet-music'),
+                value: _ReaderAction.sheetMusic,
+                child: _menuLabel(t, Icons.library_music_outlined,
+                    _sheetMusicVisible ? 'Show lyrics' : 'Sheet music'),
+              ),
             if (MidiPlayer.hasMidi(widget.hymn)) ...[
               PopupMenuItem(
                 key: const ValueKey('hymn-musical-style'),
@@ -598,12 +644,14 @@ class _HymnPageState extends State<HymnPage> {
       );
 
   Widget _headerCenter(HymnalTokens t) {
-    final crumb = widget.hymn.version == 'new' ? 'NEW HYMNAL' : 'OLD HYMNAL';
+    final crumb = widget.hymn.bookLabel.toUpperCase();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           crumb,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: kSans,
             fontSize: 10,
@@ -668,7 +716,11 @@ class _HymnPageState extends State<HymnPage> {
                       24,
                       16,
                       24,
-                      _showPlayer && !_videoVisible ? 150 : 26,
+                      MidiPlayer.hasMidi(widget.hymn) &&
+                              _showPlayer &&
+                              !_videoVisible
+                          ? 150
+                          : 26,
                     ),
               child: ValueListenableBuilder<double>(
                 valueListenable: FontSizeController.instance,
@@ -741,7 +793,11 @@ class _HymnPageState extends State<HymnPage> {
 
   Widget _hymnInfo(HymnalTokens t) {
     final metadata = widget.hymn.metadata;
-    if (metadata == null) return const SizedBox.shrink();
+    if (metadata == null) {
+      final credits = widget.hymn.credits;
+      if (credits == null || credits.isEmpty) return const SizedBox.shrink();
+      return Text(credits, style: TextStyle(color: t.muted, fontSize: 12));
+    }
     final authors = metadata.authorsFor(
       widget.hymn.version,
       widget.hymn.number,

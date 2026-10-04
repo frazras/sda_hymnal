@@ -69,6 +69,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/hymnals/
     - assets/hymns.json
     - assets/hymn_metadata.json
     - assets/hymn_videos.json

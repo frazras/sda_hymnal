@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/hymnal_pack.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
@@ -18,6 +20,7 @@ import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/settings.dart';
 import 'package:sdahymnal/ui/saved_hymn_notice.dart';
+import 'package:sdahymnal/ui/hymnal_browser.dart';
 
 /// App shell: brand header + active tab + bottom nav.
 /// Tab screens are content-only; the header and nav live here.
@@ -32,6 +35,33 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymns = [];
   List<Hymn> _hymnsNew = [];
   List<Hymn> _hymnsOld = [];
+  List<HymnalPack> _packs = [];
+  String _selectedBook = 'english';
+  bool _packsFailed = false;
+  bool _contentLoaded = false;
+  Future<void>? _selectionSave;
+
+  HymnalPack? get _activePack {
+    for (final pack in _packs) {
+      if (pack.edition.id == _selectedBook) return pack;
+    }
+    return null;
+  }
+
+  void _selectBook(String id) {
+    setState(() => _selectedBook = id);
+    final previous = _selectionSave;
+    _selectionSave = () async {
+      if (previous != null) await previous;
+      try {
+        await (await SharedPreferences.getInstance())
+            .setString('selectedHymnal', id);
+      } catch (_) {
+        // The selected book remains usable even if its preference cannot save.
+      }
+    }();
+  }
+
   AdditionalReadingCatalog _readings = const AdditionalReadingCatalog([]);
   int _tab = 0;
   bool _loadingStarted = false;
@@ -90,23 +120,47 @@ class _TabsState extends State<Tabs> {
       // builds that intentionally ship only the lyrics asset.
       videos = null;
     }
+    List<HymnalPack> packs = [];
+    var packsFailed = false;
+    try {
+      packs = await loadHymnalPacks(bundle);
+    } catch (_) {
+      packsFailed = true;
+    }
+    final selected =
+        (await SharedPreferences.getInstance()).getString('selectedHymnal') ??
+            'english';
     if (!mounted) return;
     setState(() {
+      _packs = packs;
+      _packsFailed = packsFailed;
+      _selectedBook =
+          packs.any((p) => p.edition.id == selected) ? selected : 'english';
       _hymns = HymnApi.allHymnsFromJson(
         hymnData,
         metadata: metadata,
         videos: videos,
       );
-      final repository =
-          HymnalRepository.english(_hymns, readings: _readings.readings);
+      final repository = HymnalRepository(editions: [
+        HymnalEdition.englishNew,
+        HymnalEdition.englishOld,
+        ...packs.map((p) => p.edition)
+      ], hymns: [
+        ..._hymns,
+        ...packs.expand((p) => p.hymns)
+      ], readings: _readings.readings);
       _hymnsNew = repository.hymnsFor('sda-en-1985');
       _hymnsOld = repository.hymnsFor('sda-en-1941');
+      _contentLoaded = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    final typing = _activePack != null &&
+        _tab <= 1 &&
+        MediaQuery.viewInsetsOf(context).bottom > 0;
     return Scaffold(
       body: Stack(
         children: [
@@ -139,40 +193,69 @@ class _TabsState extends State<Tabs> {
             bottom: false,
             child: Column(
               children: [
-                if (t.isClassic)
+                if (!typing && t.isClassic)
                   ClassicHeader(
                       active: _tab,
                       onSelect: _selectTab,
                       onFavorites: () => _selectTab(2))
-                else
+                else if (!typing)
                   BrandHeader(onLogoTap: () => _selectTab(0)),
                 const SavedHymnNotice(),
+                if (!typing && _tab <= 1 && _packs.isNotEmpty)
+                  HymnalSelector(
+                      packs: _packs,
+                      value: _selectedBook,
+                      onChanged: _selectBook),
+                if (_tab == 1 && _packsFailed)
+                  TextButton(
+                      onPressed: _loadHymns,
+                      child:
+                          const Text('Additional hymnals unavailable · Retry')),
                 Expanded(
                   // Both surrounding navigation widgets change with design.
                   // Keep the shared tab subtree when Flutter reconciles them.
                   key: const ValueKey('shared-tab-content'),
-                  child: IndexedStack(
-                    index: _tab,
-                    children: [
-                      Buttons(
-                          active: _tab == 0,
-                          hymnsOld: _hymnsOld,
-                          hymnsNew: _hymnsNew,
-                          additionalReadings: _readings),
-                      HymnList(
-                          active: _tab == 1,
-                          additionalReadings: _readings,
-                          hymns: _hymns,
-                          hymnsOld: _hymnsOld,
-                          hymnsNew: _hymnsNew),
-                      FavoritesTab(hymnsNew: _hymnsNew, hymnsOld: _hymnsOld),
-                      Settings(hymns: _hymns),
-                    ],
-                  ),
+                  child: !_contentLoaded
+                      ? const Center(child: CircularProgressIndicator())
+                      : IndexedStack(
+                          index: _tab,
+                          children: [
+                            if (_activePack case final pack?)
+                              HymnalBrowser(
+                                  key: ValueKey('numbers-${pack.edition.id}'),
+                                  pack: pack,
+                                  keyboardOpen: typing && _tab == 0,
+                                  numbersOnly: true)
+                            else
+                              Buttons(
+                                  active: _tab == 0,
+                                  hymnsOld: _hymnsOld,
+                                  hymnsNew: _hymnsNew,
+                                  additionalReadings: _readings),
+                            if (_activePack case final pack?)
+                              HymnalBrowser(
+                                  key: ValueKey('search-${pack.edition.id}'),
+                                  keyboardOpen: typing && _tab == 1,
+                                  pack: pack)
+                            else
+                              HymnList(
+                                  active: _tab == 1,
+                                  additionalReadings: _readings,
+                                  hymns: _hymns,
+                                  hymnsOld: _hymnsOld,
+                                  hymnsNew: _hymnsNew),
+                            FavoritesTab(
+                                hymnsNew: _hymnsNew,
+                                hymnsOld: _hymnsOld,
+                                additionalHymns:
+                                    _packs.expand((p) => p.hymns).toList()),
+                            Settings(hymns: _hymns),
+                          ],
+                        ),
                 ),
-                if (t.isClassic)
+                if (!typing && t.isClassic)
                   SizedBox(height: MediaQuery.paddingOf(context).bottom)
-                else
+                else if (!typing)
                   HymnalBottomNav(
                     active: _tab,
                     onSelect: _selectTab,

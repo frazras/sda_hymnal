@@ -10,9 +10,10 @@ Repository lookups are exact and preserve sparse numbering. Duplicate IDs and
 unregistered books are rejected. The adapter retains the original hymn objects,
 including corrected English lyrics, metadata, and media associations.
 
-This milestone does **not** enable foreign language books, translate the UI,
-change backend identities, or infer cross-language MIDI mappings. Those remain
-separate roadmap work. The reader still accepts numeric hymn identifiers;
+The subsequent [language-pack integration](language-packs.md) enables Spanish,
+Portuguese, and Russian books on this foundation. UI translation, backend book
+identities, and explicit cross-language media mappings remain separate roadmap
+work. The reader still accepts numeric hymn identifiers;
 non-numeric songbooks require extending its UI adapter before activation.
 
 ## Saved-data migration
@@ -55,8 +56,7 @@ the compatibility adapters.
 
 ## Next integration step
 
-Add pinned imports for Spanish 2009/1962, Portuguese 1996, and Russian 1997.
-Then replace the shell's English-only presentation adapters with installed-book
-selection and capability-aware navigation. Extend search, topics, labels, and
-backend reporting before exposing these books in the shared reader. A foreign
-number alone must never select English lyrics, recordings, scores, or MIDI.
+The first four imports, book selection, topics, and shared-reader integration
+are complete. Next extend search normalization, explicit media packs, and
+backend reporting. A foreign number alone must never select English lyrics,
+recordings, scores, or MIDI.

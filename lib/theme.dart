@@ -206,6 +206,9 @@ ThemeData buildHymnalTheme(HymnalTokens t, {bool classic = false}) {
     ),
     textTheme: base.textTheme.apply(
       fontFamily: classic ? 'Roboto' : kSans,
+      // Instrument Sans lacks Cyrillic; the bundled Literata face supplies it
+      // offline in menus and labels as well as in the hymn lyrics.
+      fontFamilyFallback: const ['Literata'],
       bodyColor: t.ink,
       displayColor: t.ink,
     ),

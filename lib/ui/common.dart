@@ -397,6 +397,7 @@ class HymnalBottomNav extends StatelessWidget {
 
 class VersionBadge extends StatelessWidget {
   final bool isNew;
+  final String? label;
 
   /// Per-line size of the wrapped two-line label ('NEW' over 'HYMNAL');
   /// smaller than the old single-line sizes so the pill keeps a reasonable
@@ -407,6 +408,7 @@ class VersionBadge extends StatelessWidget {
   const VersionBadge(
       {super.key,
       required this.isNew,
+      this.label,
       this.fontSize = 8,
       this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 3)});
 
@@ -420,7 +422,7 @@ class VersionBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        isNew ? 'NEW\nHYMNAL' : 'OLD\nHYMNAL',
+        label ?? (isNew ? 'NEW\nHYMNAL' : 'OLD\nHYMNAL'),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: kSans,

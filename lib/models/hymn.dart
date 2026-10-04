@@ -9,11 +9,24 @@ class Hymn {
   final String version;
   final HymnMetadata? metadata;
   final HymnVideo? video;
+  final String? bookTitle;
+  final String languageTag;
+  final String? credits;
+
+  bool get isEnglishEdition => version == 'new' || version == 'old';
+  String get bookLabel =>
+      bookTitle ??
+      switch (version) {
+        'new' => 'New Hymnal',
+        'old' => 'Old Hymnal',
+        _ => version,
+      };
 
   HymnRef get ref => HymnRef(bookId: version, itemId: '$number');
 
   /// Reading order only; the source lyrics stay unchanged for search/export.
-  late final String readingBody = repeatChoruses(body);
+  late final String readingBody =
+      isEnglishEdition ? repeatChoruses(body) : body;
 
   Hymn({
     required this.number,
@@ -22,6 +35,9 @@ class Hymn {
     required this.version,
     this.metadata,
     this.video,
+    this.bookTitle,
+    this.languageTag = 'en',
+    this.credits,
   });
 
   @override

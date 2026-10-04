@@ -14,9 +14,13 @@ import 'package:sdahymnal/ui/hymnPage.dart';
 class FavoritesTab extends StatelessWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
+  final List<Hymn> additionalHymns;
 
   const FavoritesTab(
-      {super.key, required this.hymnsNew, required this.hymnsOld});
+      {super.key,
+      required this.hymnsNew,
+      required this.hymnsOld,
+      this.additionalHymns = const []});
 
   /// Looks up the favorite's Hymn in the matching version list; null when it
   /// cannot be resolved (such favorites are skipped, not shown broken).
@@ -24,7 +28,7 @@ class FavoritesTab extends StatelessWidget {
     final list = switch (e.v) {
       'new' => hymnsNew,
       'old' => hymnsOld,
-      _ => const <Hymn>[],
+      _ => additionalHymns.where((h) => h.version == e.v).toList(),
     };
     for (final h in list) {
       if (h.number == e.n) return h;
@@ -196,6 +200,7 @@ class FavoritesTab extends StatelessWidget {
             const SizedBox(width: 12),
             VersionBadge(
               isNew: hymn.version == 'new',
+              label: hymn.isEnglishEdition ? null : hymn.bookLabel,
               fontSize: 7.5,
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
             ),
