@@ -479,6 +479,37 @@ class Favorites extends ValueNotifier<List<({int n, String v})>> {
     return operation;
   }
 
+  /// Move to the final zero-based position. Retain every
+  /// reference, including books which are not currently installed.
+  Future<void> reorderHymns(int oldIndex, int newIndex, {String? sublistId}) {
+    if (storageError.value) return Future.value();
+    final category = sublistId == null
+        ? null
+        : sublists.value.where((list) => list.id == sublistId).firstOrNull;
+    if (sublistId != null && category == null) return Future.value();
+    final entries = List.of(category?.hymns ?? value);
+    if (oldIndex < 0 ||
+        oldIndex >= entries.length ||
+        newIndex < 0 ||
+        newIndex >= entries.length) {
+      return Future.value();
+    }
+    if (oldIndex == newIndex) return Future.value();
+    entries.insert(newIndex, entries.removeAt(oldIndex));
+    if (category == null) {
+      value = entries;
+    } else {
+      sublists.value = [
+        for (final list in sublists.value)
+          if (list.id == sublistId)
+            FavoriteSublist(id: list.id, name: list.name, hymns: entries)
+          else
+            list,
+      ];
+    }
+    return _save();
+  }
+
   /// Adds the hymn (to the front) if absent, removes it otherwise.
   Future<void> toggle(Hymn hymn) async {
     if (storageError.value) return;

@@ -6,8 +6,7 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Add favorite reordering,
-   and a full history page.
+1. Add a full history page.
 2. Extend favorite ordering into service playlists as practical worship
    tools; add the available Spanish and Russian score collections.
 3. Expand reviewed language packs, localization, optional recordings, and custom
@@ -107,7 +106,7 @@ Items below are plans, not claims that multilingual content is already installed
       the top 20 hymns, refreshed each time the number pad is revisited.
 - [x] Keep hymn selection buttons above the number pad for two-line titles,
       and add a hymn-menu option to show or hide chord tabs.
-- [ ] Allow users to reorder favorites and favorite-category entries.
+- [x] Allow users to reorder favorites and favorite-category entries.
 - [ ] Add ordered worship-service playlists, building on favorite categories
       but allowing repeated entries, multiple books, and readings. Preserve the
       chosen sequence for navigation/playback, with readings advanced manually.

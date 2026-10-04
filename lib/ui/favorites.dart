@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'favorite_lists.dart';
+import 'favorite_order.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -50,6 +51,10 @@ class FavoritesTab extends StatelessWidget {
     );
   }
 
+  void _reorder(BuildContext context, {String? categoryId}) => Navigator.push(
+      context,
+      slideRoute(FavoriteOrderPage(sublistId: categoryId, resolve: _resolve)));
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -82,6 +87,8 @@ class FavoritesTab extends StatelessWidget {
                     onSelected: (action) async {
                       if (action == 'rename') {
                         await editFavoriteSublist(context, list: list);
+                      } else if (action == 'reorder') {
+                        _reorder(context, categoryId: list.id);
                       } else {
                         final remove = await showDialog<bool>(
                             context: context,
@@ -106,6 +113,8 @@ class FavoritesTab extends StatelessWidget {
                     itemBuilder: (_) => const [
                       PopupMenuItem(value: 'rename', child: Text('Rename')),
                       PopupMenuItem(
+                          value: 'reorder', child: Text('Reorder hymns')),
+                      PopupMenuItem(
                           value: 'delete', child: Text('Delete category')),
                     ],
                   ),
@@ -128,6 +137,14 @@ class FavoritesTab extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold))),
             if (hymns.isEmpty)
               Padding(padding: const EdgeInsets.all(32), child: _emptyState(t)),
+            if (saved.value.length > 1)
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                      key: const ValueKey('reorder-main-favorites'),
+                      onPressed: () => _reorder(context),
+                      icon: const Icon(Icons.reorder),
+                      label: const Text('Reorder favorites'))),
             for (final hymn in hymns) _buildRow(context, hymn),
           ],
         );
