@@ -125,7 +125,7 @@ void main() {
     expect(prefs.getString(SavedHymnStore.recentsKey), future);
   });
 
-  test('rapid recent changes persist in order and stay capped at six',
+  test('rapid recent changes persist in order without truncating history',
       () async {
     await Future.wait([
       for (var n = 1; n <= 8; n++)
@@ -133,7 +133,7 @@ void main() {
             .push(Hymn(number: n, title: 'Song', body: 'Verse', version: 'new'))
     ]);
     await Recents.instance.load();
-    expect(Recents.instance.value.map((e) => e.n), [8, 7, 6, 5, 4, 3]);
+    expect(Recents.instance.value.map((e) => e.n), [8, 7, 6, 5, 4, 3, 2, 1]);
     await Recents.instance
         .push(Hymn(number: 5, title: 'Song', body: 'Verse', version: 'old'));
     await Recents.instance.load();

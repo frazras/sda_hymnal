@@ -220,7 +220,17 @@ class Recents extends ValueNotifier<List<({int n, String v})>> {
     value = [
       entry,
       ...value.where((e) => !(e.n == entry.n && e.v == entry.v)),
-    ].take(6).toList();
+    ];
+    await _save();
+  }
+
+  Future<void> clear() async {
+    if (storageError.value) return;
+    value = [];
+    await _save();
+  }
+
+  Future<void> _save() async {
     final snapshot = List.of(value);
     final previous = _pendingSave;
     Future<void> write() async {

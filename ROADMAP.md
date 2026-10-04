@@ -6,7 +6,8 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Add a full history page.
+1. Restore a consistent number-pad and reader experience across languages,
+   including paired Old/New Spanish hymnals. Preserve clarity and avoid crowding.
 2. Extend favorite ordering into service playlists as practical worship
    tools; add the available Spanish and Russian score collections.
 3. Expand reviewed language packs, localization, optional recordings, and custom
@@ -110,7 +111,7 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Add ordered worship-service playlists, building on favorite categories
       but allowing repeated entries, multiple books, and readings. Preserve the
       chosen sequence for navigation/playback, with readings advanced manually.
-- [ ] Add a full recently opened history page with book labels and a clear-history
+- [x] Add a full recently opened history page with book labels and a clear-history
       action, while retaining the quick Recent chips on the number screen.
 - [ ] Add locale-aware alphabetical browsing and a jump index for large books.
 

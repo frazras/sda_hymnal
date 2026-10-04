@@ -1,4 +1,5 @@
 import 'report_error.dart';
+import 'reading_history.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'musical_style_sheet.dart';
@@ -22,8 +23,9 @@ import 'package:sdahymnal/ui/statistics.dart';
 /// Settings tab — content only (the shell renders the brand header above and
 /// the bottom nav below). Sections: READING, SOUND, APPEARANCE, MORE, footer.
 class Settings extends StatelessWidget {
-  const Settings({super.key, this.hymns = const []});
+  const Settings({super.key, this.hymns = const [], this.historyHymns});
   final List<Hymn> hymns;
+  final List<Hymn>? historyHymns;
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +233,13 @@ class Settings extends StatelessWidget {
           child: const _ThemeSegmentedControl(),
         ),
         const SectionLabel('MORE', padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        _card(t,
+            child: _SettingsRow(
+              leading: const Icon(Icons.history),
+              title: 'Reading history',
+              onTap: () => Navigator.push(context,
+                  slideRoute(ReadingHistoryPage(hymns: historyHymns ?? hymns))),
+            )),
         _card(
           t,
           child: Column(

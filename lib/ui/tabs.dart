@@ -272,7 +272,10 @@ class _TabsState extends State<Tabs> {
                                 hymnsOld: _hymnsOld,
                                 additionalHymns:
                                     _packs.expand((p) => p.hymns).toList()),
-                            Settings(hymns: _hymns),
+                            Settings(hymns: _hymns, historyHymns: [
+                              ..._hymns,
+                              ..._packs.expand((p) => p.hymns),
+                            ]),
                           ],
                         ),
                 ),
