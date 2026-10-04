@@ -37,6 +37,7 @@ class _TabsState extends State<Tabs> {
   List<Hymn> _hymnsOld = [];
   List<HymnalPack> _packs = [];
   String _selectedBook = 'english';
+  bool _searchAllBooks = false;
   bool _packsFailed = false;
   bool _contentLoaded = false;
   Future<void>? _selectionSave;
@@ -49,13 +50,17 @@ class _TabsState extends State<Tabs> {
   }
 
   void _selectBook(String id) {
-    setState(() => _selectedBook = id);
+    setState(() {
+      _searchAllBooks = id == 'all';
+      if (id != 'all') _selectedBook = id;
+    });
     final previous = _selectionSave;
     _selectionSave = () async {
       if (previous != null) await previous;
       try {
-        await (await SharedPreferences.getInstance())
-            .setString('selectedHymnal', id);
+        final prefs = await SharedPreferences.getInstance();
+        if (id != 'all') await prefs.setString('selectedHymnal', id);
+        await prefs.setBool('searchAllHymnals', id == 'all');
       } catch (_) {
         // The selected book remains usable even if its preference cannot save.
       }
@@ -130,10 +135,14 @@ class _TabsState extends State<Tabs> {
     final selected =
         (await SharedPreferences.getInstance()).getString('selectedHymnal') ??
             'english';
+    final searchAll =
+        (await SharedPreferences.getInstance()).getBool('searchAllHymnals') ??
+            false;
     if (!mounted) return;
     setState(() {
       _packs = packs;
       _packsFailed = packsFailed;
+      _searchAllBooks = searchAll;
       _selectedBook =
           packs.any((p) => p.edition.id == selected) ? selected : 'english';
       _hymns = HymnApi.allHymnsFromJson(
@@ -158,9 +167,9 @@ class _TabsState extends State<Tabs> {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    final typing = _activePack != null &&
-        _tab <= 1 &&
-        MediaQuery.viewInsetsOf(context).bottom > 0;
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    final typing =
+        (_tab == 1 || (_activePack != null && _tab == 0)) && keyboardInset > 0;
     return Scaffold(
       body: Stack(
         children: [
@@ -204,7 +213,9 @@ class _TabsState extends State<Tabs> {
                 if (!typing && _tab <= 1 && _packs.isNotEmpty)
                   HymnalSelector(
                       packs: _packs,
-                      value: _selectedBook,
+                      value:
+                          _tab == 1 && _searchAllBooks ? 'all' : _selectedBook,
+                      allowAll: _tab == 1,
                       onChanged: _selectBook),
                 if (_tab == 1 && _packsFailed)
                   TextButton(
@@ -227,12 +238,24 @@ class _TabsState extends State<Tabs> {
                                   keyboardOpen: typing && _tab == 0,
                                   numbersOnly: true)
                             else
-                              Buttons(
-                                  active: _tab == 0,
-                                  hymnsOld: _hymnsOld,
-                                  hymnsNew: _hymnsNew,
-                                  additionalReadings: _readings),
-                            if (_activePack case final pack?)
+                              LayoutBuilder(
+                                  builder: (context, bounds) => OverflowBox(
+                                      alignment: Alignment.topCenter,
+                                      minHeight:
+                                          bounds.maxHeight + keyboardInset,
+                                      maxHeight:
+                                          bounds.maxHeight + keyboardInset,
+                                      child: Buttons(
+                                          active: _tab == 0,
+                                          hymnsOld: _hymnsOld,
+                                          hymnsNew: _hymnsNew,
+                                          additionalReadings: _readings))),
+                            if (_searchAllBooks)
+                              AllHymnalsSearch(hymns: [
+                                ..._hymns,
+                                ..._packs.expand((p) => p.hymns)
+                              ], keyboardOpen: typing && _tab == 1)
+                            else if (_activePack case final pack?)
                               HymnalBrowser(
                                   key: ValueKey('search-${pack.edition.id}'),
                                   keyboardOpen: typing && _tab == 1,

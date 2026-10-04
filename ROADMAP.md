@@ -6,7 +6,7 @@ below is recommended; it is not a promised release schedule.
 
 ## Recommended Next Work
 
-1. Improve multilingual search, then add lyric sharing, favorite reordering,
+1. Add lyric sharing, favorite reordering,
    and a full history page.
 2. Extend favorite ordering into service playlists as practical worship
    tools; add the available Spanish and Russian score collections.
@@ -70,7 +70,7 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Localize the app interface independently of the selected book, starting
       with Spanish, Portuguese, and Russian; add a reviewed community translation
       workflow. Support script/font needs and future right-to-left books.
-- [ ] Improve multilingual search with Unicode normalization, accent-insensitive
+- [x] Improve multilingual search with Unicode normalization, accent-insensitive
       matching where appropriate, book filters, and localized refrain handling.
       Retain exact-number/title ranking and benchmark a large installed catalog.
 

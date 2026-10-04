@@ -1,12 +1,6 @@
 import 'package:html/parser.dart' show parseFragment;
 import 'package:sdahymnal/models/hymn.dart';
-
-String _normalize(String text) => text
-    .toLowerCase()
-    .replaceAll(RegExp("['’‘ʼ`\\\\]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}\s]', unicode: true), ' ')
-    .replaceAll(RegExp(r'\s+'), ' ')
-    .trim();
+import 'package:sdahymnal/services/search_normalization.dart';
 
 final _index = Expando<_SearchText>();
 
@@ -17,20 +11,25 @@ class _SearchText {
   final String lyrics;
   final List<String> lyricLines;
 
-  _SearchText(Hymn hymn) : this._(hymn, _lines(hymn.body));
+  factory _SearchText(Hymn hymn) {
+    final lines = _lines(hymn.body);
+    final labels = refrainLabelsFor(hymn.languageTag);
+    final lyrics = lines.where((line) => _isLyric(line, labels)).toList();
+    return _SearchText._(
+        normalizeHymnSearch(hymn.title),
+        lyrics.isEmpty ? '' : lyrics.first,
+        _chorusOpening(lines, labels),
+        lyrics,
+        lyrics.join(' '));
+  }
 
-  _SearchText._(Hymn hymn, List<String> lines)
-      : title = _normalize(hymn.title),
-        firstVerse = lines.firstWhere(_isLyric, orElse: () => ''),
-        chorus = _chorusOpening(lines),
-        lyricLines = lines.where(_isLyric).toList(),
-        lyrics = lines.where(_isLyric).join(' ');
+  _SearchText._(
+      this.title, this.firstVerse, this.chorus, this.lyricLines, this.lyrics);
 
-  static bool _isLyric(String line) =>
+  static bool _isLyric(String line, Set<String> labels) =>
       line.isNotEmpty &&
       !RegExp(r'^\d+$').hasMatch(line) &&
-      line != 'chorus' &&
-      line != 'refrain';
+      !labels.contains(line);
 
   static List<String> _lines(String body) {
     // The inherited asset includes literal backslash-n separators as well
@@ -39,16 +38,15 @@ class _SearchText {
         RegExp(r'<br\s*/?>|</?p\b[^>]*>', caseSensitive: false), '\n');
     return (parseFragment(html).text ?? '')
         .split('\n')
-        .map(_normalize)
+        .map(normalizeHymnSearch)
         .where((line) => line.isNotEmpty)
         .toList();
   }
 
-  static String _chorusOpening(List<String> lines) {
-    final at =
-        lines.indexWhere((line) => line == 'chorus' || line == 'refrain');
+  static String _chorusOpening(List<String> lines, Set<String> labels) {
+    final at = lines.indexWhere(labels.contains);
     if (at < 0 || at + 1 >= lines.length) return '';
-    return _isLyric(lines[at + 1]) ? lines[at + 1] : '';
+    return _isLyric(lines[at + 1], labels) ? lines[at + 1] : '';
   }
 
   int? rank(String query, String number) {
@@ -72,7 +70,7 @@ class _SearchText {
 /// Within each group, prioritize title, first verse, and chorus openings.
 /// Equal ranks retain the hymnal's original number/edition order.
 List<Hymn> searchHymns(List<Hymn> hymns, String query) {
-  final normalized = _normalize(query);
+  final normalized = normalizeHymnSearch(query);
   if (normalized.isEmpty) return hymns;
   final matches = <({Hymn hymn, int rank, int order})>[];
   for (var i = 0; i < hymns.length; i++) {

@@ -129,6 +129,25 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('all-language search keeps results and navigation book-specific',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      theme: buildHymnalTheme(HymnalTokens.light),
+      home: Scaffold(
+          body: AllHymnalsSearch(hymns: [...spanish.hymns, ...russian.hymns])),
+    ));
+    await tester.enterText(
+        find.byKey(const ValueKey('all-books-query')), '388');
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('all-book-sda-es-2009-388')));
+    await tester.pumpAndSettle();
+    final reader = tester.widget<HymnPage>(find.byType(HymnPage));
+    expect(reader.hymn.version, 'sda-es-2009');
+    expect(reader.hymns, spanish.hymns);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('imported favorites resolve from their own book', (tester) async {
     await Favorites.instance.toggle(spanish.hymns.first);
     await Favorites.instance.toggle(russian.hymns.first);

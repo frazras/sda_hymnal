@@ -10,11 +10,13 @@ class HymnalSelector extends StatelessWidget {
   final List<HymnalPack> packs;
   final String value;
   final ValueChanged<String> onChanged;
+  final bool allowAll;
   const HymnalSelector(
       {super.key,
       required this.packs,
       required this.value,
-      required this.onChanged});
+      required this.onChanged,
+      this.allowAll = false});
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -25,6 +27,9 @@ class HymnalSelector extends StatelessWidget {
           isExpanded: true,
           hint: const Text('Choose hymnal'),
           items: [
+            if (allowAll)
+              const DropdownMenuItem(
+                  value: 'all', child: Text('All languages')),
             const DropdownMenuItem(
                 value: 'english',
                 child: Text('English · Old & New Hymnal',
@@ -40,6 +45,88 @@ class HymnalSelector extends StatelessWidget {
           },
         ),
       );
+}
+
+/// Search all installed books while retaining each result's own book queue.
+class AllHymnalsSearch extends StatefulWidget {
+  final List<Hymn> hymns;
+  final bool keyboardOpen;
+  const AllHymnalsSearch(
+      {super.key, required this.hymns, this.keyboardOpen = false});
+
+  @override
+  State<AllHymnalsSearch> createState() => _AllHymnalsSearchState();
+}
+
+class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
+  final _query = TextEditingController();
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final results = searchHymns(widget.hymns, _query.text);
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+        child: TextField(
+          key: const ValueKey('all-books-query'),
+          controller: _query,
+          onChanged: (_) => setState(() {}),
+          decoration: InputDecoration(
+              labelText: 'Search all languages',
+              prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                  tooltip: 'Clear',
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => setState(_query.clear))),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(children: [
+          Expanded(child: Text('${results.length} hymns · All languages')),
+          if (widget.keyboardOpen)
+            TextButton(
+                onPressed: () => FocusScope.of(context).unfocus(),
+                child: const Text('Done')),
+        ]),
+      ),
+      Expanded(
+          child: results.isEmpty
+              ? const Center(child: Text('No matching hymns.'))
+              : ListView.builder(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  itemCount: results.length,
+                  itemBuilder: (context, index) {
+                    final hymn = results[index];
+                    return ListTile(
+                      key: ValueKey('all-book-${hymn.version}-${hymn.number}'),
+                      leading: Text('${hymn.number}'),
+                      title: Text(hymn.title),
+                      subtitle: Text(hymn.bookLabel),
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        Navigator.push(
+                            context,
+                            slideRoute(HymnPage(
+                              hymn: hymn,
+                              hymns: widget.hymns
+                                  .where((h) => h.version == hymn.version)
+                                  .toList(),
+                              analyticsSource: 'search',
+                            )));
+                      },
+                    );
+                  },
+                )),
+    ]);
+  }
 }
 
 /// Shared offline browsing for the imported editions. The English keypad keeps

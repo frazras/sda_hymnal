@@ -9,8 +9,15 @@ launches. Favorites and named categories can mix editions without number
 collisions. The shared reader supports paging, text size, themes, and credits;
 topic navigation stays in the selected topic.
 
+Search can target one edition or All languages, with book labels on every
+combined result. Opening a result keeps navigation in its own book. The search
+scope persists without replacing the Numbers tab's selected book. Latin accents
+are optional in queries; canonical Unicode forms match, while meaningful
+Cyrillic letters such as й and ё remain distinct. Native refrain labels are
+recognized for ranking. Displayed titles and lyrics are never normalized.
+
 The interface remains English. Hymn text, titles, credits, and topics retain
-their source language. UI translation, accent-folded search, audio, and foreign
+their source language. UI translation, audio, and foreign
 scores are separate roadmap items. Foreign music controls are hidden until
 explicit media mappings exist. Cyrillic labels use a bundled font fallback.
 
