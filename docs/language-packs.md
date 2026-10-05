@@ -3,11 +3,14 @@
 ## Using the books
 
 Use the hymnal selector above the Numbers or Search tab to switch editions.
-English retains the combined Old/New keypad. Imported editions offer number
-lookup, text search, and native topic lists. Book selection persists across
+Every language uses the shared number pad. English and Spanish each offer
+paired Old/New previews; Portuguese and Russian show their single edition.
+Search remains on the Search tab, with native topic lists available through
+Topics. Book selection persists across
 launches. Favorites and named categories can mix editions without number
 collisions. The shared reader supports paging, text size, themes, and credits;
-topic navigation stays in the selected topic.
+topic navigation stays in the selected topic. Imported editions also support
+opt-in silent auto-scroll with adjustable reading speed.
 
 Search can target one edition or All languages, with book labels on every
 combined result. Opening a result keeps navigation in its own book. The search

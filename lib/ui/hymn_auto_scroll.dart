@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart' show parseFragment;
 import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
@@ -220,6 +221,8 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   int get _defaultSpeedTenths => widget.hymn.version == 'old' ? 13 : 10;
 
   bool get _enabled => AutoScroll.instance.value;
+  bool get _supportsTiming =>
+      MidiPlayer.hasMidi(widget.hymn) || !widget.hymn.isEnglishEdition;
   bool get _loaded =>
       MidiPlayer.hasMidi(widget.hymn) &&
       MidiPlayer.isCurrent(_player.current.value, widget.hymn);
@@ -285,6 +288,19 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
     final generation = ++_loadGeneration;
     _pause(rebuild: false);
     _estimated = null;
+    if (_enabled && !widget.hymn.isEnglishEdition) {
+      final text =
+          parseFragment(widget.hymn.body.replaceAll(RegExp(r'<br\s*/?>'), ' '))
+                  .text ??
+              '';
+      final words =
+          text.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).length;
+      _estimated =
+          Duration(seconds: (words * 60 / 150).round().clamp(30, 3600));
+      _loading = false;
+      if (mounted) setState(() {});
+      return;
+    }
     _loading = _enabled && MidiPlayer.hasMidi(widget.hymn);
     if (mounted) setState(() {});
     if (!_loading) return;
@@ -534,7 +550,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
           _scroll, _buildControls(context, 'Start auto-scroll'));
     }
     _scheduleMetrics();
-    final startTooltip = !MidiPlayer.hasMidi(widget.hymn)
+    final startTooltip = !_supportsTiming
         ? 'Auto-scroll unavailable: no MIDI'
         : _loading
             ? 'Loading auto-scroll timing…'
@@ -587,7 +603,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   }
 
   Widget _buildControls(BuildContext context, String startTooltip) {
-    if (!_enabled || !MidiPlayer.hasMidi(widget.hymn)) {
+    if (!_enabled || !_supportsTiming) {
       return const SizedBox.shrink();
     }
     return HymnAutoScrollControl(

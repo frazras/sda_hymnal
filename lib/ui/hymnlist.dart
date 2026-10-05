@@ -20,11 +20,15 @@ class HymnList extends StatefulWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
   final bool active;
+  final bool english;
+  final VoidCallback? onTopics;
   final AdditionalReadingCatalog additionalReadings;
 
   const HymnList(
       {super.key,
       this.active = true,
+      this.english = true,
+      this.onTopics,
       this.additionalReadings = const AdditionalReadingCatalog([]),
       required this.hymns,
       required this.hymnsOld,
@@ -153,7 +157,7 @@ class _HymnListState extends State<HymnList> {
       slideRoute(HymnPage(
         hymn: hymn,
         analyticsSource: 'search',
-        hymns: hymn.version == 'new' ? widget.hymnsNew : widget.hymnsOld,
+        hymns: widget.hymns.where((h) => h.version == hymn.version).toList(),
       )),
     );
   }
@@ -236,9 +240,9 @@ class _HymnListState extends State<HymnList> {
         children: [
           _chip(t, 'ALL', 'All'),
           const SizedBox(width: 7),
-          _chip(t, 'NEW', 'New Hymnal'),
+          _chip(t, 'NEW', widget.english ? 'New Hymnal' : 'Nuevo'),
           const SizedBox(width: 7),
-          _chip(t, 'OLD', 'Old Hymnal'),
+          _chip(t, 'OLD', widget.english ? 'Old Hymnal' : 'Antiguo'),
           const Spacer(),
           Text(
             _countText,
@@ -299,6 +303,9 @@ class _HymnListState extends State<HymnList> {
             const SizedBox(width: 12),
             VersionBadge(
               isNew: hymn.version == 'new',
+              label: widget.english
+                  ? null
+                  : (hymn.version == 'sda-es-2009' ? 'Nuevo' : 'Antiguo'),
               fontSize: 7.5,
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
             ),
@@ -330,6 +337,13 @@ class _HymnListState extends State<HymnList> {
           ClassicSearchControls(
               controller: _searchController,
               filter: _filter,
+              filterLabel: widget.english
+                  ? null
+                  : switch (_filter) {
+                      'NEW' => 'Nuevo',
+                      'OLD' => 'Antiguo',
+                      _ => 'All'
+                    },
               onQuery: _setQuery,
               onFilter: () => setState(() {
                     _filter = switch (_filter) {
@@ -349,37 +363,40 @@ class _HymnListState extends State<HymnList> {
             children: [
               Expanded(
                 child: TextButton.icon(
-                  onPressed: widget.hymns.isEmpty
-                      ? null
-                      : () {
-                          FocusScope.of(context).unfocus();
-                          Navigator.push(
-                              context,
-                              slideRoute(
-                                  HymnOccasionsPage(hymns: widget.hymns)));
-                        },
+                  onPressed: !widget.english
+                      ? widget.onTopics
+                      : widget.hymns.isEmpty
+                          ? null
+                          : () {
+                              FocusScope.of(context).unfocus();
+                              Navigator.push(
+                                  context,
+                                  slideRoute(
+                                      HymnOccasionsPage(hymns: widget.hymns)));
+                            },
                   icon: const Icon(Icons.library_music_outlined, size: 18),
-                  label: const Text('Hymns by occasion',
+                  label: Text(widget.english ? 'Hymns by occasion' : 'Topics',
                       maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
               ),
-              Expanded(
-                child: TextButton.icon(
-                  onPressed: widget.additionalReadings.readings.isEmpty
-                      ? null
-                      : () {
-                          FocusScope.of(context).unfocus();
-                          Navigator.push(
-                            context,
-                            slideRoute(AdditionalReadingsPage(
-                                catalog: widget.additionalReadings)),
-                          );
-                        },
-                  icon: const Icon(Icons.menu_book_outlined, size: 18),
-                  label: const Text('Additional readings',
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
+              if (widget.english)
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: widget.additionalReadings.readings.isEmpty
+                        ? null
+                        : () {
+                            FocusScope.of(context).unfocus();
+                            Navigator.push(
+                              context,
+                              slideRoute(AdditionalReadingsPage(
+                                  catalog: widget.additionalReadings)),
+                            );
+                          },
+                    icon: const Icon(Icons.menu_book_outlined, size: 18),
+                    label: const Text('Additional readings',
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

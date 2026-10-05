@@ -6,6 +6,37 @@ import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 
+class HymnalTopicsPage extends StatelessWidget {
+  final List<HymnalPack> packs;
+  const HymnalTopicsPage({super.key, required this.packs});
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Topics')),
+        body: ListView(children: [
+          for (final pack in packs) ...[
+            if (packs.length > 1)
+              Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(pack.edition.displayName)),
+            for (final group in pack.topics.map((t) => t.group).toSet())
+              ExpansionTile(title: Text(group), children: [
+                for (final topic in pack.topics.where((t) => t.group == group))
+                  ListTile(
+                      title: Text(topic.title),
+                      subtitle: Text('${topic.hymns.length} hymns'),
+                      onTap: () => Navigator.push(
+                          context,
+                          slideRoute(Scaffold(
+                            appBar: AppBar(title: Text(topic.title)),
+                            body:
+                                HymnalBrowser(pack: pack, initialTopic: topic),
+                          )))),
+              ]),
+          ],
+        ]),
+      );
+}
+
 class HymnalSelector extends StatelessWidget {
   final List<HymnalPack> packs;
   final String value;
@@ -34,11 +65,15 @@ class HymnalSelector extends StatelessWidget {
                 value: 'english',
                 child: Text('English · Old & New Hymnal',
                     maxLines: 1, overflow: TextOverflow.ellipsis)),
+            if (packs.any((p) => p.edition.id == 'sda-es-2009'))
+              const DropdownMenuItem(
+                  value: 'spanish', child: Text('Español · Nuevo y Antiguo')),
             for (final pack in packs)
-              DropdownMenuItem(
-                  value: pack.edition.id,
-                  child: Text(pack.edition.displayName,
-                      maxLines: 1, overflow: TextOverflow.ellipsis)),
+              if (pack.edition.languageTag != 'es')
+                DropdownMenuItem(
+                    value: pack.edition.id,
+                    child: Text(pack.edition.displayName,
+                        maxLines: 1, overflow: TextOverflow.ellipsis)),
           ],
           onChanged: (id) {
             if (id != null) onChanged(id);
@@ -129,16 +164,17 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
   }
 }
 
-/// Shared offline browsing for the imported editions. The English keypad keeps
-/// its established dual-book workflow; each imported edition has its own list.
+/// Offline text and topic browsing; Numbers uses the shared number pad.
 class HymnalBrowser extends StatefulWidget {
   final HymnalPack pack;
   final bool numbersOnly;
   final bool keyboardOpen;
+  final HymnalTopic? initialTopic;
   const HymnalBrowser(
       {super.key,
       required this.pack,
       this.numbersOnly = false,
+      this.initialTopic,
       this.keyboardOpen = false});
 
   @override
@@ -147,7 +183,7 @@ class HymnalBrowser extends StatefulWidget {
 
 class _HymnalBrowserState extends State<HymnalBrowser> {
   final _query = TextEditingController();
-  HymnalTopic? _topic;
+  late HymnalTopic? _topic = widget.initialTopic;
 
   @override
   void dispose() {

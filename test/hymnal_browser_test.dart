@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/models/hymnal_pack.dart';
+import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/models/release_notes.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/services/release_notes.dart';
@@ -30,6 +32,7 @@ void main() {
     await Recents.instance.load();
     await KeepScreenOn.instance.set(false);
     MusicPlayerVisible.instance.value = true;
+    AutoScroll.instance.value = false;
     audioCalls.clear();
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -53,7 +56,94 @@ void main() {
     });
   });
 
+  testWidgets('foreign reader starts silent auto-scroll from its menu',
+      (tester) async {
+    final hymn = Hymn(
+        number: 1,
+        title: 'Lectura',
+        version: 'sda-es-2009',
+        bookTitle: 'Español 2009',
+        languageTag: 'es',
+        body: List.filled(100, 'Una línea del himno para leer.').join('<br>'));
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: HymnPage(hymn: hymn, hymns: [hymn])));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('hymn-scroll-speed-menu-item')));
+    await tester.pumpAndSettle();
+    await tester
+        .tap(find.byKey(const ValueKey('hymn-scroll-toggle-sheet-button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(seconds: 2));
+    final scroll = tester.state<ScrollableState>(find
+        .descendant(
+            of: find.byType(HymnAutoScroll), matching: find.byType(Scrollable))
+        .first);
+    expect(scroll.position.pixels, greaterThan(0));
+    expect(audioCalls.where((m) => m.startsWith('setSource')), isEmpty);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+  });
+
   for (final classic in [false, true]) {
+    testWidgets('Spanish keeps paired number-pad results classic=$classic',
+        (tester) async {
+      if (!classic) {
+        tester.view.physicalSize = const Size(320, 568);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+      }
+      await (await SharedPreferences.getInstance())
+          .setString('selectedHymnal', 'sda-es-1962');
+      await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(
+            classic ? HymnalTokens.classic(true) : HymnalTokens.dark,
+            classic: classic),
+        home: DefaultAssetBundle(bundle: FilePackBundle(), child: const Tabs()),
+      ));
+      for (var i = 0; i < 12; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byKey(const ValueKey('book-query')), findsNothing);
+      expect(
+          tester
+              .widget<DropdownButton<String>>(
+                  find.byKey(const ValueKey('hymnal-selector')))
+              .value,
+          'spanish');
+      for (final digit in ['3', '8', '8']) {
+        await tester.tap(find.text(digit).last);
+        await tester.pump();
+      }
+      if (classic) {
+        await tester.ensureVisible(find.text('Antiguo»'));
+        await tester.tap(find.text('Antiguo»'));
+      } else {
+        expect(
+            find.byKey(const ValueKey('number-preview-new')), findsOneWidget);
+        expect(
+            tester.getRect(find.text('388').first).bottom,
+            lessThanOrEqualTo(tester
+                .getRect(find.byKey(const ValueKey('number-preview-new')))
+                .top));
+        await tester.tap(find.byKey(const ValueKey('number-preview-old')));
+      }
+      await tester.pumpAndSettle();
+      expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.version,
+          'sda-es-1962');
+      expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.number, 388);
+      await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('hymn-scroll-speed-menu-item')),
+          findsOneWidget);
+      expect(find.text('Copy or share lyrics'), findsOneWidget);
+      expect(find.text('Text size'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
     for (final dark in [false, true]) {
       testWidgets(
           'Russian reader, paging and favorites classic=$classic dark=$dark',
@@ -183,16 +273,20 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('hymnal-selector')));
     await tester.pump(const Duration(milliseconds: 600));
     await tester.tap(find.text('Português · 1996').last);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 600));
     expect((await SharedPreferences.getInstance()).getString('selectedHymnal'),
         'sda-pt-1996');
+    await tester.tap(find.text('1').last);
+    await tester.pump();
     expect(find.text('Ó Deus de Amor'), findsOneWidget);
     await tester.tap(find.text('Search').last);
     await tester.pumpAndSettle();
     expect(find.text('Title, lyrics or number'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await shell();
-    await tester.pumpAndSettle();
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
     expect(
         tester
             .widget<DropdownButton<String>>(
@@ -208,12 +302,12 @@ void main() {
         (tester) async {
       tester.view.physicalSize = const Size(320, 568);
       tester.view.devicePixelRatio = 1;
-      tester.view.viewInsets = const FakeViewPadding(bottom: 250);
+      // The keyboard opens only on Search, never on the number pad.
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       addTearDown(tester.view.resetViewInsets);
       await (await SharedPreferences.getInstance())
-          .setString('selectedHymnal', 'sda-es-2009');
+          .setString('selectedHymnal', 'sda-pt-1996');
       await tester.pumpWidget(MaterialApp(
         theme: buildHymnalTheme(
             classic ? HymnalTokens.classic(false) : HymnalTokens.light,
@@ -227,6 +321,10 @@ void main() {
       for (var i = 0; i < 12; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
+      await tester.tap(find.text('Search').last);
+      await tester.pump();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 250);
+      await tester.pump();
       await tester.enterText(find.byKey(const ValueKey('book-query')), '388');
       await tester.pump();
       expect(find.byKey(const ValueKey('book-hymn-388')), findsOneWidget);

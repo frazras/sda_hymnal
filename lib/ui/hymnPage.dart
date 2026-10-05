@@ -541,6 +541,7 @@ class _HymnPageState extends State<HymnPage> {
                 MusicPlayerVisible.instance.set(!_showPlayer);
                 setState(() {});
               case _ReaderAction.scrollSpeed:
+                if (!AutoScroll.instance.value) AutoScroll.instance.set(true);
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) _autoScrollController.showControls();
                 });
@@ -601,12 +602,13 @@ class _HymnPageState extends State<HymnPage> {
                 ),
               ),
             if (!_sheetMusicVisible &&
-                AutoScroll.instance.value &&
-                MidiPlayer.hasMidi(widget.hymn))
+                (MidiPlayer.hasMidi(widget.hymn) ||
+                    !widget.hymn.isEnglishEdition))
               PopupMenuItem(
                 key: const ValueKey('hymn-scroll-speed-menu-item'),
                 value: _ReaderAction.scrollSpeed,
-                child: _menuLabel(t, Icons.speed, 'Scroll speed'),
+                child: _menuLabel(t, Icons.speed,
+                    AutoScroll.instance.value ? 'Scroll speed' : 'Auto-scroll'),
               ),
             if (MidiPlayer.hasMidi(widget.hymn))
               PopupMenuItem(

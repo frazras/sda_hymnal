@@ -4,6 +4,10 @@ This roadmap lists planned ideas and release follow-ups for the Old and New SDA
 Hymnal app. Checkboxes describe implementation status. The next-work sequence
 below is recommended; it is not a promised release schedule.
 
+All work must follow the [UX contract](docs/ux-contract.md): preserve the shared
+number pad, pair related editions, keep reader controls coherent, and check
+small-screen layouts before adding more features.
+
 ## Recommended Next Work
 
 1. Restore a consistent number-pad and reader experience across languages,

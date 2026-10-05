@@ -44,10 +44,25 @@ class _TabsState extends State<Tabs> {
 
   HymnalPack? get _activePack {
     for (final pack in _packs) {
-      if (pack.edition.id == _selectedBook) return pack;
+      if (pack.edition.id ==
+          (_selectedBook == 'spanish' ? 'sda-es-2009' : _selectedBook)) {
+        return pack;
+      }
     }
     return null;
   }
+
+  List<HymnalPack> get _languagePacks => _selectedBook == 'spanish'
+      ? _packs.where((p) => p.edition.languageTag == 'es').toList()
+      : [if (_activePack case final pack?) pack];
+  List<Hymn> get _numberNew => _activePack?.hymns ?? _hymnsNew;
+  List<Hymn> get _numberOld => _selectedBook == 'spanish'
+      ? _packs.firstWhere((p) => p.edition.id == 'sda-es-1962').hymns
+      : _activePack == null
+          ? _hymnsOld
+          : const [];
+  void _openTopics() => Navigator.push(
+      context, slideRoute(HymnalTopicsPage(packs: _languagePacks)));
 
   void _selectBook(String id) {
     setState(() {
@@ -144,7 +159,12 @@ class _TabsState extends State<Tabs> {
       _packsFailed = packsFailed;
       _searchAllBooks = searchAll;
       _selectedBook =
-          packs.any((p) => p.edition.id == selected) ? selected : 'english';
+          (selected == 'spanish' || selected.startsWith('sda-es-')) &&
+                  packs.any((p) => p.edition.id == 'sda-es-2009')
+              ? 'spanish'
+              : packs.any((p) => p.edition.id == selected)
+                  ? selected
+                  : 'english';
       _hymns = HymnApi.allHymnsFromJson(
         hymnData,
         metadata: metadata,
@@ -168,8 +188,7 @@ class _TabsState extends State<Tabs> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
-    final typing =
-        (_tab == 1 || (_activePack != null && _tab == 0)) && keyboardInset > 0;
+    final typing = _tab == 1 && keyboardInset > 0;
     return Scaffold(
       body: Stack(
         children: [
@@ -207,7 +226,8 @@ class _TabsState extends State<Tabs> {
                       active: _tab,
                       onSelect: _selectTab,
                       onFavorites: () => _selectTab(2))
-                else if (!typing)
+                else if (!typing &&
+                    !(_tab == 0 && MediaQuery.sizeOf(context).height < 650))
                   BrandHeader(onLogoTap: () => _selectTab(0)),
                 const SavedHymnNotice(),
                 if (!typing && _tab <= 1 && _packs.isNotEmpty)
@@ -231,30 +251,56 @@ class _TabsState extends State<Tabs> {
                       : IndexedStack(
                           index: _tab,
                           children: [
-                            if (_activePack case final pack?)
-                              HymnalBrowser(
-                                  key: ValueKey('numbers-${pack.edition.id}'),
-                                  pack: pack,
-                                  keyboardOpen: typing && _tab == 0,
-                                  numbersOnly: true)
-                            else
-                              LayoutBuilder(
-                                  builder: (context, bounds) => OverflowBox(
-                                      alignment: Alignment.topCenter,
-                                      minHeight:
-                                          bounds.maxHeight + keyboardInset,
-                                      maxHeight:
-                                          bounds.maxHeight + keyboardInset,
-                                      child: Buttons(
-                                          active: _tab == 0,
-                                          hymnsOld: _hymnsOld,
-                                          hymnsNew: _hymnsNew,
-                                          additionalReadings: _readings))),
+                            TickerMode(
+                                enabled: _tab == 0,
+                                child: LayoutBuilder(
+                                    builder: (context, bounds) => OverflowBox(
+                                        alignment: Alignment.topCenter,
+                                        minHeight:
+                                            bounds.maxHeight + keyboardInset,
+                                        maxHeight:
+                                            bounds.maxHeight + keyboardInset,
+                                        child: Buttons(
+                                            key: ValueKey(
+                                                'numbers-$_selectedBook'),
+                                            active: _tab == 0,
+                                            english: _activePack == null,
+                                            newLabel: _selectedBook == 'spanish'
+                                                ? 'Nuevo'
+                                                : _activePack == null
+                                                    ? 'New Hymnal'
+                                                    : _activePack!.edition
+                                                                .languageTag ==
+                                                            'pt'
+                                                        ? 'Hinário'
+                                                        : 'Гимны',
+                                            oldLabel: _selectedBook == 'spanish'
+                                                ? 'Antiguo'
+                                                : 'Old Hymnal',
+                                            onTopics: _activePack == null
+                                                ? null
+                                                : _openTopics,
+                                            hymnsOld: _numberOld,
+                                            hymnsNew: _numberNew,
+                                            additionalReadings: _activePack ==
+                                                    null
+                                                ? _readings
+                                                : const AdditionalReadingCatalog(
+                                                    []))))),
                             if (_searchAllBooks)
                               AllHymnalsSearch(hymns: [
                                 ..._hymns,
                                 ..._packs.expand((p) => p.hymns)
                               ], keyboardOpen: typing && _tab == 1)
+                            else if (_selectedBook == 'spanish')
+                              HymnList(
+                                  key: const ValueKey('spanish-search'),
+                                  english: false,
+                                  onTopics: _openTopics,
+                                  active: _tab == 1,
+                                  hymns: [..._numberNew, ..._numberOld],
+                                  hymnsNew: _numberNew,
+                                  hymnsOld: _numberOld)
                             else if (_activePack case final pack?)
                               HymnalBrowser(
                                   key: ValueKey('search-${pack.edition.id}'),

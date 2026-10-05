@@ -93,6 +93,11 @@ class ClassicNumberPad extends StatelessWidget {
       required this.newTitle,
       this.readingTitle = '',
       this.readingCategory = '',
+      this.newLabel = 'New Hymnal',
+      this.oldLabel = 'Old Hymnal',
+      this.showOld = true,
+      this.hasReadings = true,
+      this.occasionsLabel = 'Hymns by occasion',
       required this.fontSize,
       required this.onDigit,
       required this.onClear,
@@ -105,6 +110,8 @@ class ClassicNumberPad extends StatelessWidget {
       this.discoveryRows});
 
   final String display, oldTitle, newTitle, readingTitle, readingCategory;
+  final String newLabel, oldLabel, occasionsLabel;
+  final bool showOld, hasReadings;
   final double fontSize;
   final ValueChanged<String> onDigit;
   final VoidCallback onClear, onBackspace;
@@ -147,7 +154,11 @@ class ClassicNumberPad extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
-              display.isEmpty ? 'Enter hymn or reading number' : display,
+              display.isEmpty
+                  ? (hasReadings
+                      ? 'Enter hymn or reading number'
+                      : 'Enter hymn number')
+                  : display,
               key: const ValueKey('classic-number-display'),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -170,8 +181,10 @@ class ClassicNumberPad extends StatelessWidget {
               label: 'Delete digit'),
         ]),
         Row(children: [
-          button(const Text('OLD»'), onOld),
-          button(const Text('NEW»'), onNew)
+          if (showOld)
+            button(
+                Text(oldLabel == 'Old Hymnal' ? 'OLD»' : '$oldLabel»'), onOld),
+          button(Text(newLabel == 'New Hymnal' ? 'NEW»' : '$newLabel»'), onNew)
         ]),
         if (onReading != null)
           Padding(
@@ -201,35 +214,41 @@ class ClassicNumberPad extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: onOccasions,
                     icon: const Icon(Icons.library_music_outlined, size: 18),
-                    label: const Text('Hymns by occasion',
+                    label: Text(occasionsLabel,
                         maxLines: 1, overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: OutlinedButton.icon(
-                    onPressed: onReadings,
-                    icon: const Icon(Icons.menu_book_outlined, size: 18),
-                    label: const Text('Additional readings',
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
+              if (hasReadings)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: OutlinedButton.icon(
+                      onPressed: onReadings,
+                      icon: const Icon(Icons.menu_book_outlined, size: 18),
+                      label: const Text('Additional readings',
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         if (discoveryRows != null) discoveryRows!,
         Padding(
             padding: const EdgeInsets.all(6),
-            child: Text('NEW: $display $newTitle',
+            child: Text(
+                '${newLabel == 'New Hymnal' ? 'NEW' : newLabel}: $display $newTitle',
                 style: TextStyle(
                     fontSize: 16, fontWeight: FontWeight.bold, color: t.ink))),
-        Padding(
-            padding: const EdgeInsets.all(6),
-            child: Text('OLD: $display $oldTitle',
-                style: TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.bold, color: t.ink))),
+        if (showOld)
+          Padding(
+              padding: const EdgeInsets.all(6),
+              child: Text(
+                  '${oldLabel == 'Old Hymnal' ? 'OLD' : oldLabel}: $display $oldTitle',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: t.ink))),
       ]),
     );
   }
@@ -240,12 +259,14 @@ class ClassicSearchControls extends StatelessWidget {
       {super.key,
       required this.controller,
       required this.filter,
+      this.filterLabel,
       required this.onQuery,
       required this.onFilter});
   final TextEditingController controller;
   final String filter;
   final ValueChanged<String> onQuery;
   final VoidCallback onFilter;
+  final String? filterLabel;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -277,7 +298,8 @@ class ClassicSearchControls extends StatelessWidget {
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(8)),
-                child: Text('$filter\nHymns', textAlign: TextAlign.center),
+                child: Text('${filterLabel ?? filter}\nHymns',
+                    textAlign: TextAlign.center),
               )),
         ]),
       );
@@ -297,15 +319,19 @@ class ClassicSearchRow extends StatelessWidget {
         color: hymn.version == 'new' ? t.bg : t.surface2,
         shape: RoundedRectangleBorder(side: BorderSide(color: t.ink, width: 2)),
         child: ListTile(
-          leading: SvgPicture.asset(
-              hymn.version == 'new'
-                  ? 'assets/lettern.svg'
-                  : 'assets/lettero.svg',
-              width: 32,
-              semanticsLabel:
-                  hymn.version == 'new' ? 'New Hymnal' : 'Old Hymnal'),
+          leading: !hymn.isEnglishEdition
+              ? Tooltip(
+                  message: hymn.bookLabel, child: const Icon(Icons.menu_book))
+              : SvgPicture.asset(
+                  hymn.version == 'new'
+                      ? 'assets/lettern.svg'
+                      : 'assets/lettero.svg',
+                  width: 32,
+                  semanticsLabel:
+                      hymn.version == 'new' ? 'New Hymnal' : 'Old Hymnal'),
           title: Text('${hymn.number}. ${hymn.title}',
               style: TextStyle(fontWeight: FontWeight.bold, color: t.ink)),
+          subtitle: hymn.isEnglishEdition ? null : Text(hymn.bookLabel),
           onTap: onTap,
         ),
       ),
