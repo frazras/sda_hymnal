@@ -557,7 +557,9 @@ class _HymnPageState extends State<HymnPage> {
             }
           },
           itemBuilder: (context) => [
-            if (widget.hymn.isEnglishEdition)
+            if (widget.hymn.isEnglishEdition ||
+                widget.hymn.version == 'sda-es-2009' ||
+                widget.hymn.version == 'sda-ru-1997')
               PopupMenuItem(
                 key: const ValueKey('hymn-sheet-music'),
                 value: _ReaderAction.sheetMusic,

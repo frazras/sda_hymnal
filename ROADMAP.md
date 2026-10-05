@@ -10,10 +10,10 @@ small-screen layouts before adding more features.
 
 ## Recommended Next Work
 
-1. Restore a consistent number-pad and reader experience across languages,
+1. Maintain a consistent number-pad and reader experience across languages,
    including paired Old/New Spanish hymnals. Preserve clarity and avoid crowding.
 2. Extend favorite ordering into service playlists as practical worship
-   tools; add the available Spanish and Russian score collections.
+   tools while preserving the shared reader and uncluttered menus.
 3. Expand reviewed language packs, localization, optional recordings, and custom
    songbook imports. Explore projection export after the content model is stable.
 
@@ -29,8 +29,8 @@ Items below are plans, not claims that multilingual content is already installed
       designs. Preserve playback/category autoplay, show clear missing-score
       states, and provide page, zoom, fit, and return-to-lyrics controls.
       [Source/import details](docs/sheet-music.md).
-- [ ] Add Spanish 2009 and Russian 1997 score packs as their books become
-      available. Russian #244 has no source score. Image scores retain their
+- [x] Add Spanish 2009 (614 pages) and Russian 1997 (506 pages) score packs
+      to the existing viewer. Russian #244 has no source score. Image scores retain their
       printed key rather than transposing with MIDI.
 - [x] Add all 225 additional readings from the New Hymnal, with categories,
       Scripture references, printed responsive typography, keypad lookup,

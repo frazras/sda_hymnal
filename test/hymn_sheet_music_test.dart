@@ -47,9 +47,38 @@ void main() {
 
   test('old, unknown editions, and missing numbers cannot borrow a score', () {
     expect(catalog.forHymn('old', 1), isEmpty);
-    expect(catalog.forHymn('sda-es-2009', 1), isEmpty);
+    expect(catalog.forHymn('sda-es-1962', 1), isEmpty);
+    expect(catalog.forHymn('sda-pt-1996', 1), isEmpty);
+    expect(catalog.forHymn('sda-ru-1997', 244), isEmpty);
     expect(catalog.forHymn('new', 696), isEmpty);
     expect(catalog.forHymn('sda-en-1985', 1), catalog.forHymn('new', 1));
+  });
+
+  test('Spanish and Russian scores retain their own edition and coverage', () {
+    for (var number = 1; number <= 614; number++) {
+      final pages = catalog.forHymn('sda-es-2009', number);
+      expect(pages.length, 1);
+      expect(pages.single.asset, contains('/es_2009/piano_sheet_es_'));
+      expect(File(pages.single.asset).existsSync(), isTrue);
+    }
+    var russianPages = 0;
+    for (var number = 1; number <= 385; number++) {
+      final pages = catalog.forHymn('sda-ru-1997', number);
+      if (number == 244) {
+        expect(pages, isEmpty);
+        continue;
+      }
+      expect(pages, isNotEmpty);
+      russianPages += pages.length;
+      for (final page in pages) {
+        expect(page.asset, contains('/ru_1997/piano_sheet_ru_'));
+        expect(File(page.asset).existsSync(), isTrue);
+      }
+    }
+    expect(russianPages, 506);
+    expect(catalog.forHymn('sda-ru-1997', 2), hasLength(2));
+    expect(catalog.forHymn('sda-es-2009', 388).single.asset,
+        isNot(catalog.forHymn('new', 388).single.asset));
   });
 
   test('unsupported schemas and unsafe asset paths are rejected', () {
@@ -122,6 +151,39 @@ void main() {
       });
     }
   }
+
+  testWidgets('language scores use the existing viewer and reset between books',
+      (tester) async {
+    Widget app(String version, int number) => MaterialApp(
+          theme: buildHymnalTheme(HymnalTokens.light),
+          home: DefaultAssetBundle(
+            bundle: _ScoreAssets(),
+            child: Scaffold(
+                body: HymnSheetMusic(
+                    hymn: hymn(number, version: version), onLyrics: () {})),
+          ),
+        );
+    await tester.pumpWidget(app('sda-es-2009', 388));
+    await tester.pumpAndSettle();
+    expect(
+        find.byKey(const ValueKey(
+            'assets/sheet_music/es_2009/piano_sheet_es_388.png')),
+        findsOneWidget);
+    await tester.pumpWidget(app('sda-ru-1997', 2));
+    await tester.pumpAndSettle();
+    expect(find.text('1 of 2'), findsOneWidget);
+    await tester.tap(find.byTooltip('Next score page'));
+    await tester.pumpAndSettle();
+    expect(
+        find.byKey(const ValueKey(
+            'assets/sheet_music/ru_1997/piano_sheet_ru_002_1.png')),
+        findsOneWidget);
+    await tester.pumpWidget(app('sda-ru-1997', 244));
+    await tester.pumpAndSettle();
+    expect(find.text('Sheet music is not available for this hymn yet.'),
+        findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('missing scores stay readable and catalog errors can retry',
       (tester) async {

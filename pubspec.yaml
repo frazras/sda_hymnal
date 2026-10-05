@@ -78,6 +78,8 @@ flutter:
     - assets/additional_readings.json
     - assets/sheet_music/catalog.json
     - assets/sheet_music/en_1985/
+    - assets/sheet_music/es_2009/
+    - assets/sheet_music/ru_1997/
     - assets/logo.svg
     - assets/logo-mark.svg
     - assets/logo-mark-dark.svg

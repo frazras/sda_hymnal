@@ -185,7 +185,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Musical style'), findsNothing);
         expect(find.text('Choir practice'), findsNothing);
-        expect(find.text('Sheet music'), findsNothing);
+        expect(find.text('Sheet music'), findsOneWidget);
         expect(audioCalls.where((m) => m.startsWith('setSource')), isEmpty);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());

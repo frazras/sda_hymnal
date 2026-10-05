@@ -20,8 +20,8 @@ Cyrillic letters such as й and ё remain distinct. Native refrain labels are
 recognized for ranking. Displayed titles and lyrics are never normalized.
 
 The interface remains English. Hymn text, titles, credits, and topics retain
-their source language. UI translation, audio, and foreign
-scores are separate roadmap items. Foreign music controls are hidden until
+their source language. UI translation and audio are separate roadmap items.
+Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Foreign music controls are hidden until
 explicit media mappings exist. Cyrillic labels use a bundled font fallback.
 
 Foreign per-hymn analytics are suppressed while the deployed collector still
@@ -69,6 +69,7 @@ offline with `python3 tool/import_hymnals.py --check` or the import unit tests i
 never silently replace existing English corrections with this source's English
 files. No upstream scripts are executed.
 
-These lyric/topic packs contain no MIDI, recordings, videos, or scores. Media
-must be explicitly mapped by book and item in a later feature. New 388 in one
+These lyric/topic packs contain no MIDI, recordings, or videos. Scores have a
+separate verified catalog keyed by exact book and number. Other media must also
+be explicitly mapped by book and item. New 388 in one
 book does not authorize reuse of another book's hymn 388 music.

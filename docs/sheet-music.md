@@ -6,8 +6,10 @@ and Lyrics to return. The music player remains below the score rather than
 covering it. While viewing scores, horizontal dragging pans the image instead
 of turning to another hymn; hymn navigation is still available in the player.
 
-The initial collection covers all 695 English New Hymnal numbers with 723 PNG
-pages, about 12.51 MiB of source images. Old Hymnal songs show an unavailable
+The collection covers all 695 English New Hymnal numbers (723 pages), all 614
+Spanish 2009 numbers (614 pages), and 384 Russian 1997 numbers (506 pages).
+Russian #244 has no source score and shows a clear unavailable state. Spanish
+1962 and Portuguese have no matched score collection yet. Old English songs show an unavailable
 message instead of borrowing a same-numbered New Hymnal score. Page controls
 reset zoom when changing score pages. Printed scores retain their original key
 and arrangement, even when MIDI is transposed or played in a different style.
@@ -35,7 +37,7 @@ blob checksum, verifies PNG dimensions and complete/ordered coverage, and writes
 the catalog only after every page succeeds. Existing verified downloads are
 reused. `--check` checks the committed catalog and assets without network access.
 
-The catalog uses stable book IDs (`sda-en-1985`) already. The model translates
+The catalog uses stable book IDs (`sda-en-1985`, `sda-es-2009`, and `sda-ru-1997`). The model translates
 legacy `new`/`old` only at the lookup boundary; it does not implement the broader
 multilingual migration. Future books need their own explicit score associations.
 
@@ -48,7 +50,7 @@ multilingual migration. Future books need their own explicit score associations.
 - Reader tests verify switching views leaves active audio playing without a
   reload; the autoplay regression verifies that score mode survives advancement
   into a different edition and that pausing prevents further advancement.
-- `python3 tool/import_sheet_music.py --check` verifies all 723 bundled pages.
+- `python3 tool/import_sheet_music.py --check` verifies all 1,843 bundled pages.
 
 See [the broader integration plan](multilingual-resource-audit.md) for language
 packs, recorded audio, and the remaining catalog/persistence migration.
