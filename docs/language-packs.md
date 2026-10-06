@@ -73,3 +73,23 @@ These lyric/topic packs contain no MIDI, recordings, or videos. Scores have a
 separate verified catalog keyed by exact book and number. Other media must also
 be explicitly mapped by book and item. New 388 in one
 book does not authorize reuse of another book's hymn 388 music.
+
+## Content validation report
+
+Run `python3 tool/validate_hymnal_content.py --output /tmp/hymnal-content-report.json`
+to produce a deterministic, offline JSON review of all bundled imported books.
+The report collects structural errors across books instead of stopping at the
+first invalid entry. A nonzero exit status means publication must stop.
+
+Checks include duplicate identities/numbers, empty or invalid text and lyric
+blocks, missing provenance, invalid topic references, expected numbering from
+the pinned manifest, catalog hashes/counts, and exact-edition score references.
+Every referenced score file is checked against its byte count and SHA-256.
+Missing scores are listed separately as coverage gaps; absent language audio
+is explicitly disclosed. No media association is inferred from a title or number.
+
+The reusable pack inspector accepts an explicit expected-number set for partial
+collections; it never fills gaps or renumbers source records. This report
+covers the current canonical packs. VideoPsalm/structured-source adapters and
+reviewed override tracking remain roadmap work. Structural validation does not
+replace lyric review or certify cross-language musical equivalence.
