@@ -314,6 +314,15 @@ class _TabsState extends State<Tabs> {
                                   hymnsOld: _hymnsOld,
                                   hymnsNew: _hymnsNew),
                             FavoritesTab(
+                                serviceRepository: HymnalRepository(editions: [
+                                  HymnalEdition.englishNew,
+                                  HymnalEdition.englishOld,
+                                  ..._packs.map((p) => p.edition)
+                                ], hymns: [
+                                  ..._hymnsNew,
+                                  ..._hymnsOld,
+                                  ..._packs.expand((p) => p.hymns)
+                                ], readings: _readings.readings),
                                 hymnsNew: _hymnsNew,
                                 hymnsOld: _hymnsOld,
                                 additionalHymns:

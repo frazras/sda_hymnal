@@ -1,3 +1,6 @@
+import 'package:sdahymnal/models/service_playlist.dart';
+import 'package:sdahymnal/services/hymnal_repository.dart';
+import 'package:sdahymnal/ui/service_reader.dart';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +110,7 @@ void main() {
   });
 
   testWidgets(
-      'manual MIDI start advances on completion, pause prevents next advance',
+      'manual playback respects pause, service repeats, and the service end',
       (tester) async {
     await Autoplay.instance.set(true);
     MusicPlayerVisible.instance.value = true;
@@ -138,6 +141,38 @@ void main() {
     await audioEvent('audio.onComplete');
     await tester.pump();
     expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, second);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+    await Autoplay.instance.set(true);
+    MusicPlayerVisible.instance.value = true;
+    final session = ServiceReader(
+        repository: HymnalRepository.english([first]),
+        playlist:
+            ServicePlaylist(id: 'service', name: 'Repeated hymn', entries: [
+          ServiceEntry(id: 'opening', ref: first.ref),
+          ServiceEntry(id: 'closing', ref: first.ref),
+        ]));
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light), home: session.page(0)));
+    await tester.pumpAndSettle();
+    expect(MidiPlayer.instance.current.value, isNull);
+    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(MidiPlayer.instance.current.value?.paused, isFalse);
+    await audioEvent('audio.onComplete');
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('Service: Repeated hymn · 2 of 2'), findsOneWidget);
+    expect(MidiPlayer.instance.current.value?.n, first.number);
+    await audioEvent('audio.onComplete');
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('Service: Repeated hymn · 2 of 2'), findsOneWidget);
+    expect(MidiPlayer.instance.current.value, isNull);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });

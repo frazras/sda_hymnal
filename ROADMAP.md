@@ -112,10 +112,10 @@ Items below are plans, not claims that multilingual content is already installed
 - [x] Keep hymn selection buttons above the number pad for two-line titles,
       and add a hymn-menu option to show or hide chord tabs.
 - [x] Allow users to reorder favorites and favorite-category entries.
-- [ ] Add ordered worship-service playlists, building on favorite categories
+- [x] Add ordered worship-service playlists, building on favorite categories
       but allowing repeated entries, multiple books, and readings. Preserve the
       chosen sequence for navigation/playback, with readings advanced manually.
-      [Saved sequence foundation and remaining integration](docs/service-playlists.md).
+      [Editor, navigation, persistence, and validation](docs/service-playlists.md).
 - [x] Add a full recently opened history page with book labels and a clear-history
       action, while retaining the quick Recent chips on the number screen.
 - [ ] Add locale-aware alphabetical browsing and a jump index for large books.

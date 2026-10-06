@@ -47,6 +47,7 @@ class ServicePlaylists extends ChangeNotifier {
   Future<void> load() => _serialize(() async {
         try {
           final prefs = await SharedPreferences.getInstance();
+          await prefs.reload();
           final raw = prefs.getString(storageKey);
           _playlists = raw == null ? const [] : _decode(raw);
           _loaded = true;

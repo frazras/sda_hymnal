@@ -78,6 +78,8 @@ class HymnalRepository {
   List<HymnalEdition> get editions => List.unmodifiable(_editions.values);
   HymnalEdition? edition(String id) => _editions[canonicalBookId(id)];
   List<Hymn> hymnsFor(String id) => _hymns[canonicalBookId(id)] ?? const [];
+  List<AdditionalReading> readingsFor(String id) => List.unmodifiable(
+      _readings.values.where((r) => r.ref.bookId == canonicalBookId(id)));
   Hymn? hymn(HymnRef ref) => _byRef[ref];
   AdditionalReading? reading(HymnRef ref) => _readings[ref];
 }

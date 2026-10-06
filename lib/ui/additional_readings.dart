@@ -1,3 +1,4 @@
+import 'reader_sequence.dart';
 import '../services/error_reports.dart';
 import 'report_error.dart';
 import 'hymn_page_turn.dart';
@@ -123,6 +124,7 @@ class AdditionalReadingPage extends StatefulWidget {
   final List<AdditionalReading> readings;
   final String? categoryTitle;
   final bool previewOnly;
+  final ReaderSequence? sequence;
 
   const AdditionalReadingPage({
     super.key,
@@ -130,6 +132,7 @@ class AdditionalReadingPage extends StatefulWidget {
     this.readings = const [],
     this.categoryTitle,
     this.previewOnly = false,
+    this.sequence,
   });
 
   @override
@@ -187,6 +190,17 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
   }
 
   void _move(int direction) {
+    if (widget.sequence != null) {
+      final page = widget.sequence!.page(direction);
+      if (page != null) {
+        Navigator.pushReplacement(
+            context,
+            PageRouteBuilder<void>(
+                transitionDuration: Duration.zero,
+                pageBuilder: (_, __, ___) => page));
+      }
+      return;
+    }
     final target = _adjacent(direction);
     if (target == null) return;
     Navigator.pushReplacement(
@@ -207,6 +221,9 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
       ? _reader(context)
       : HymnPageTurn(
           previewBuilder: (direction) {
+            if (widget.sequence != null) {
+              return widget.sequence!.page(direction, previewOnly: true);
+            }
             final target = _adjacent(direction);
             return target == null
                 ? null
@@ -225,6 +242,23 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
   Widget _reader(BuildContext context) {
     final t = context.tokens;
     return Scaffold(
+      bottomNavigationBar: widget.sequence == null
+          ? null
+          : SafeArea(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                  TextButton.icon(
+                      onPressed:
+                          widget.sequence!.canMove(-1) ? () => _move(-1) : null,
+                      icon: const Icon(Icons.chevron_left),
+                      label: const Text('Previous')),
+                  TextButton.icon(
+                      onPressed:
+                          widget.sequence!.canMove(1) ? () => _move(1) : null,
+                      icon: const Icon(Icons.chevron_right),
+                      label: const Text('Next')),
+                ])),
       appBar: AppBar(
         title: Text('${widget.reading.number}  ${widget.reading.title}'),
         actions: [
@@ -252,7 +286,7 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
       ),
       body: Column(
         children: [
-          if (widget.categoryTitle != null)
+          if (widget.categoryTitle != null || widget.sequence != null)
             Container(
               key: const ValueKey('reading-category-indicator'),
               width: double.infinity,
@@ -262,7 +296,8 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
                 border: Border(bottom: BorderSide(color: t.line2)),
               ),
               child: Text(
-                'Category: ${widget.categoryTitle} · ${widget.readings.indexWhere((r) => r.id == widget.reading.id) + 1} of ${widget.readings.length}',
+                widget.sequence?.label ??
+                    'Category: ${widget.categoryTitle} · ${widget.readings.indexWhere((r) => r.id == widget.reading.id) + 1} of ${widget.readings.length}',
                 style:
                     TextStyle(fontFamily: kSans, fontSize: 13, color: t.accent),
               ),

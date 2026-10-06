@@ -34,7 +34,9 @@ import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/ui/hymn_story_page.dart';
 import 'package:sdahymnal/ui/hymn_video_overlay.dart';
 
-enum HymnContinuation { midi, video }
+import 'reader_sequence.dart';
+
+export 'reader_sequence.dart' show HymnContinuation;
 
 /// Hymn reading page (full-screen sub-page, pushed with slideRoute).
 ///
@@ -49,6 +51,7 @@ class HymnPage extends StatefulWidget {
 
   /// Cycle through [hymns] in displayed category order instead of by number.
   final String? categoryTitle;
+  final ReaderSequence? sequence;
 
   /// Same reader layout, without history, playback or screen-wake effects.
   final bool previewOnly;
@@ -63,6 +66,7 @@ class HymnPage extends StatefulWidget {
       required this.hymns,
       this.analyticsSource = 'unknown',
       this.categoryTitle,
+      this.sequence,
       this.previewOnly = false,
       this.showSheetMusic = false,
       this.continuation});
@@ -201,6 +205,19 @@ class _HymnPageState extends State<HymnPage> {
       return;
     }
     if (medium == HymnContinuation.video && !_videoVisible) return;
+    if (widget.sequence != null) {
+      final page = widget.sequence!
+          .page(1, continuation: medium, showSheetMusic: _sheetMusicVisible);
+      if (page == null) return;
+      _advancing = true;
+      Navigator.pushReplacement(
+          context,
+          PageRouteBuilder<void>(
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+              pageBuilder: (_, __, ___) => page));
+      return;
+    }
     final target = nextPlayableHymn(
         widget.hymns,
         widget.hymn,
@@ -246,7 +263,24 @@ class _HymnPageState extends State<HymnPage> {
         : null;
   }
 
+  bool _canMove(int dir) =>
+      widget.sequence?.canMove(dir) ?? (_adjacent(dir) != null);
+
   void _move(int dir, {bool turned = false}) {
+    if (widget.sequence != null) {
+      final page =
+          widget.sequence!.page(dir, showSheetMusic: _sheetMusicVisible);
+      if (page != null) {
+        Navigator.pushReplacement(
+            context,
+            turned
+                ? PageRouteBuilder<void>(
+                    transitionDuration: Duration.zero,
+                    pageBuilder: (_, __, ___) => page)
+                : slideRoute(page, fromLeft: dir < 0));
+      }
+      return;
+    }
     final target = _adjacent(dir);
     if (target == null) return;
     final page = HymnPage(
@@ -270,6 +304,9 @@ class _HymnPageState extends State<HymnPage> {
       ? _reader(context)
       : HymnPageTurn(
           previewBuilder: (dir) {
+            if (widget.sequence != null) {
+              return widget.sequence!.page(dir, previewOnly: true);
+            }
             final hymn = _adjacent(dir);
             return hymn == null ? null : _turnPreview(context, hymn);
           },
@@ -307,7 +344,7 @@ class _HymnPageState extends State<HymnPage> {
                     trailing: _headerActions(t),
                   ),
                 if (!widget.previewOnly) const SavedHymnNotice(),
-                if (widget.categoryTitle != null)
+                if (widget.categoryTitle != null || widget.sequence != null)
                   Container(
                     key: const ValueKey('hymn-category-indicator'),
                     width: double.infinity,
@@ -318,7 +355,8 @@ class _HymnPageState extends State<HymnPage> {
                       border: Border(bottom: BorderSide(color: t.line2)),
                     ),
                     child: Text(
-                      'Category: ${widget.categoryTitle} · ${widget.hymns.indexWhere((h) => h.number == widget.hymn.number && h.version == widget.hymn.version) + 1} of ${widget.hymns.length}',
+                      widget.sequence?.label ??
+                          'Category: ${widget.categoryTitle} · ${widget.hymns.indexWhere((h) => h.number == widget.hymn.number && h.version == widget.hymn.version) + 1} of ${widget.hymns.length}',
                       style: TextStyle(
                           fontFamily: kSans, fontSize: 13, color: t.accent),
                     ),
@@ -406,10 +444,11 @@ class _HymnPageState extends State<HymnPage> {
                             children: [
                               IconButton(
                                   key: const ValueKey('reader-previous'),
-                                  tooltip: 'Previous hymn',
-                                  onPressed: _adjacent(-1) == null
-                                      ? null
-                                      : () => _move(-1),
+                                  tooltip: widget.sequence == null
+                                      ? 'Previous hymn'
+                                      : 'Previous item',
+                                  onPressed:
+                                      !_canMove(-1) ? null : () => _move(-1),
                                   icon: const Icon(Icons.chevron_left)),
                               const Expanded(
                                   child: Text('Swipe to turn the page',
@@ -417,10 +456,11 @@ class _HymnPageState extends State<HymnPage> {
                                       maxLines: 2)),
                               IconButton(
                                   key: const ValueKey('reader-next'),
-                                  tooltip: 'Next hymn',
-                                  onPressed: _adjacent(1) == null
-                                      ? null
-                                      : () => _move(1),
+                                  tooltip: widget.sequence == null
+                                      ? 'Next hymn'
+                                      : 'Next item',
+                                  onPressed:
+                                      !_canMove(1) ? null : () => _move(1),
                                   icon: const Icon(Icons.chevron_right)),
                             ]),
                     ],

@@ -1,3 +1,5 @@
+import '../services/hymnal_repository.dart';
+import 'service_playlists.dart';
 import 'package:flutter/material.dart';
 import 'favorite_lists.dart';
 import 'favorite_order.dart';
@@ -16,12 +18,14 @@ class FavoritesTab extends StatelessWidget {
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
   final List<Hymn> additionalHymns;
+  final HymnalRepository? serviceRepository;
 
   const FavoritesTab(
       {super.key,
       required this.hymnsNew,
       required this.hymnsOld,
-      this.additionalHymns = const []});
+      this.additionalHymns = const [],
+      this.serviceRepository});
 
   /// Looks up the favorite's Hymn in the matching version list; null when it
   /// cannot be resolved (such favorites are skipped, not shown broken).
@@ -66,14 +70,29 @@ class FavoritesTab extends StatelessWidget {
         return ListView(
           padding: EdgeInsets.zero,
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                key: const ValueKey('create-favorite-sublist'),
-                onPressed: () => editFavoriteSublist(context),
-                icon: const Icon(Icons.playlist_add),
-                label: const Text('New favorite category'),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                    child: TextButton.icon(
+                  key: const ValueKey('create-favorite-sublist'),
+                  onPressed: () => editFavoriteSublist(context),
+                  icon: const Icon(Icons.playlist_add),
+                  label: const Text('New favorite category'),
+                )),
+                if (serviceRepository != null)
+                  PopupMenuButton<String>(
+                      tooltip: 'More favorites options',
+                      onSelected: (_) => Navigator.push(
+                          context,
+                          slideRoute(ServicePlaylistsPage(
+                              repository: serviceRepository!))),
+                      itemBuilder: (_) => const [
+                            PopupMenuItem(
+                                value: 'services',
+                                child: Text('Service playlists'))
+                          ]),
+              ],
             ),
             for (final list in saved.sublists.value)
               ExpansionTile(
