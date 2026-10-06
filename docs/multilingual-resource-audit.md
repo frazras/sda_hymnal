@@ -186,7 +186,7 @@ This is a data repository, not an app whose UI features can be compared.
 |---|---|---|
 | `english.json` | 237 records, odd page numbers 1–473 | Reference/parallel collection, not replacement for our English hymnal |
 | `tagalog.json` | 237 records, pages 2–474; six odd-label discrepancies found during importer validation | Partial Tagalog collection; reconcile labels before publication |
-| `cebuano.json` | 237 records, even page numbers 2–474 | Partial Cebuano collection |
+| `cebuano.json` | 237 records, pages 2–474; same six odd-label conflicts as Tagalog | Partial Cebuano collection; reconcile labels before publication |
 | `sdahymnal.json` | Three roots: 237 English, 237 Tagalog, 237 Cebuano records | Alternate stanza-based representation; avoid double import |
 | `ay-songs.json` | 10 entries | Optional Adventist Youth collection |
 | `scripture-songs.json` | 3 entries | Optional Scripture-song collection |

@@ -164,3 +164,17 @@ paired Old/New Spanish remain unchanged.
 Tagalog remains a staging-only partial collection. Its page-label discrepancies
 are unresolved. French and Swahili have graduated from staging IDs to the stable
 catalog IDs above; their source snapshots remain unmodified.
+
+## Philippine collection numbering review
+
+Cebuano now has a pinned 237-record staging manifest and snapshot alongside
+Tagalog, exercised by the same offline importer tests. Neither partial
+collection is enabled in the app.
+
+The structured Tagalog and Cebuano files both use 19, 143, 201, 237, 269 and
+465 for six entries. In the same repository revision, `sdahymnal.json` uses
+18, 142, 200, 236, 268 and 464 for those exact titles in the respective language.
+`tool/data/structured_sources/philippine-numbering-review.json` records the
+twelve title/number pairs and the alternate source URL, byte size and checksum.
+This corroborates a source conflict; it does not establish which label matches
+the printed book. Both staging manifests preserve the structured source labels.

@@ -1,0 +1,86 @@
+{
+  "alternateSource": {
+    "url": "https://raw.githubusercontent.com/wanmigs/sda-hymnal-data/8fba6417536b1a36e7d35c5cea3773e5bea3c47b/sdahymnal.json",
+    "bytes": 544587,
+    "sha256": "eaaddaebb80a3ce207e0a1e8845ff98ad50ca864909a11fe9b7e7f58e36bc9d7"
+  },
+  "status": "Conflicting source labels; no correction applied",
+  "collections": {
+    "tagalog": [
+      {
+        "sourcePage": 19,
+        "sourceTitle": "Panginoon Iyong Dinggin",
+        "alternateNumber": 18,
+        "alternateTitle": "Panginoon Iyong Dinggin"
+      },
+      {
+        "sourcePage": 143,
+        "sourceTitle": "Banal na Espiritu, Ilaw ng Kabanalan",
+        "alternateNumber": 142,
+        "alternateTitle": "Banal na Espiritu, Ilaw ng Kabanalan"
+      },
+      {
+        "sourcePage": 201,
+        "sourceTitle": "Upang Malapit sa Diyos",
+        "alternateNumber": 200,
+        "alternateTitle": "Upang Malapit sa Diyos"
+      },
+      {
+        "sourcePage": 237,
+        "sourceTitle": "Pagpalain Nawa",
+        "alternateNumber": 236,
+        "alternateTitle": "Pagpalain Nawa"
+      },
+      {
+        "sourcePage": 269,
+        "sourceTitle": "Maluwalhating Araw",
+        "alternateNumber": 268,
+        "alternateTitle": "Maluwalhating Araw"
+      },
+      {
+        "sourcePage": 465,
+        "sourceTitle": "Dinggin, Pangino'n, ang Panalangin",
+        "alternateNumber": 464,
+        "alternateTitle": "Dinggin, Pangino'n, ang Panalangin"
+      }
+    ],
+    "cebuano": [
+      {
+        "sourcePage": 19,
+        "sourceTitle": "Sa Buntag Ako, O Jesus",
+        "alternateNumber": 18,
+        "alternateTitle": "Sa Buntag Ako, O Jesus"
+      },
+      {
+        "sourcePage": 143,
+        "sourceTitle": "Hupnga Man sa Espiritu",
+        "alternateNumber": 142,
+        "alternateTitle": "Hupnga Man sa Espiritu"
+      },
+      {
+        "sourcePage": 201,
+        "sourceTitle": "Usa ka Suod nga Paglakaw",
+        "alternateNumber": 200,
+        "alternateTitle": "Usa ka Suod nga Paglakaw"
+      },
+      {
+        "sourcePage": 237,
+        "sourceTitle": "Bugkosa Na Kami",
+        "alternateNumber": 236,
+        "alternateTitle": "Bugkosa Na Kami"
+      },
+      {
+        "sourcePage": 269,
+        "sourceTitle": "Malahalong Sabado",
+        "alternateNumber": 268,
+        "alternateTitle": "Malahalong Sabado"
+      },
+      {
+        "sourcePage": 465,
+        "sourceTitle": "Pamati, O Dios",
+        "alternateNumber": 464,
+        "alternateTitle": "Pamati, O Dios"
+      }
+    ]
+  }
+}
