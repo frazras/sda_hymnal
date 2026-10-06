@@ -51,13 +51,12 @@ class _SearchText {
 
   int? rank(String query, String number) {
     if (number == query) return 0;
-    // Placement comes before field priority: a line opening is more
-    // recognizable than the same phrase buried inside another title.
+    // Keep every title match ahead of lyric-only matches.
     if (title.startsWith(query)) return 1;
-    if (firstVerse.startsWith(query)) return 2;
-    if (chorus.startsWith(query)) return 3;
-    if (lyricLines.any((line) => line.startsWith(query))) return 4;
-    if (title.contains(query)) return 5;
+    if (title.contains(query)) return 2;
+    if (firstVerse.startsWith(query)) return 3;
+    if (chorus.startsWith(query)) return 4;
+    if (lyricLines.any((line) => line.startsWith(query))) return 5;
     if (firstVerse.contains(query)) return 6;
     if (chorus.contains(query)) return 7;
     if (number.contains(query)) return 8;
@@ -66,8 +65,8 @@ class _SearchText {
   }
 }
 
-/// Prefer the start of a title or lyric line, then matches within a line.
-/// Within each group, prioritize title, first verse, and chorus openings.
+/// Prefer exact numbers, then title starts and other title matches.
+/// Lyric-only matches follow, prioritizing first verse and chorus openings.
 /// Equal ranks retain the hymnal's original number/edition order.
 List<Hymn> searchHymns(List<Hymn> hymns, String query) {
   final normalized = normalizeHymnSearch(query);

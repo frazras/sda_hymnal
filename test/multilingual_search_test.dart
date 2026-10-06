@@ -26,6 +26,16 @@ void main() {
       () {
     for (final (source, query) in [
       ('SEÑOR', 'senor'),
+      ('corazón', 'corazon'),
+      ('corazo\u0301n', 'CORAZON'),
+      ('cora\u200bzón', 'corazon'),
+      ('cora\u00adzón', 'corazon'),
+      ('Œuvre', 'oeuvre'),
+      ('Straße', 'strasse'),
+      ('Łaska', 'laska'),
+      ('Smør', 'smor'),
+      ('Ære', 'aere'),
+      ('İsa', 'isa'),
       ('Glória', 'glo\u0301ria'),
       ('Ó Deus de Amor', 'o deus de amor'),
       ('Salvação', 'salvacao'),
@@ -40,6 +50,27 @@ void main() {
     expect(normalizeHymnSearch('Glória', foldLatinAccents: false), 'glória');
     expect(
         normalizeHymnSearch('glo\u0301ria', foldLatinAccents: false), 'glória');
+  });
+
+  test('corazon finds accented titles and lyrics in both Spanish editions', () {
+    for (final pack in packs.take(2)) {
+      final plain = searchHymns(pack.hymns, 'corazon');
+      expect(plain, isNotEmpty);
+      final titleMatches = plain
+          .where((h) => normalizeHymnSearch(h.title).contains('corazon'))
+          .toList();
+      expect(plain.take(titleMatches.length), titleMatches);
+      final abre = plain.singleWhere(
+          (h) => normalizeHymnSearch(h.title) == 'abre tu corazon');
+      expect(titleMatches, contains(abre));
+      expect(searchHymns(pack.hymns, 'abre tu corazon').first, abre);
+      expect(searchHymns(pack.hymns, 'corazón'), plain);
+      expect(searchHymns(pack.hymns, 'corazo\u0301n'), plain);
+      expect(
+          plain.any((h) =>
+              h.title.contains('Corazón') || h.title.contains('corazón')),
+          isTrue);
+    }
   });
 
   test('Cyrillic canonical equivalence preserves distinct letters', () {

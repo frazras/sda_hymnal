@@ -53,7 +53,7 @@ void main() {
     }
   });
 
-  test('line beginnings outrank interior matches across fields', () {
+  test('all title matches outrank lyric openings', () {
     Hymn hymn(int n, String title, String body) =>
         Hymn(number: n, title: title, body: body, version: 'new');
     final inside = hymn(1, 'Sing of Jesus love', 'Sing of Jesus love');
@@ -63,7 +63,7 @@ void main() {
     final verse = hymn(4, 'Verse', '<b>1</b><br>Jesus loves me');
     final title = hymn(5, 'Jesus loves me', 'Other words');
     expect(searchHymns([inside, later, chorus, verse, title], 'Jesus love'),
-        [title, verse, chorus, later, inside]);
+        [title, inside, verse, chorus, later]);
     final tiedTitle = hymn(6, 'Jesus loves us', 'Other words');
     expect(searchHymns([tiedTitle, title], 'Jesus love'), [tiedTitle, title]);
   });

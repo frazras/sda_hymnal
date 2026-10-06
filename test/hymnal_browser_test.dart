@@ -56,6 +56,35 @@ void main() {
     });
   });
 
+  for (final classic in [false, true]) {
+    testWidgets(
+        'Spanish search matches corazon while keyboard is open classic=$classic',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({
+        ReleaseNotesService.seenVersionsKey: <String>[appReleaseVersion],
+        'selectedHymnal': 'spanish',
+      });
+      await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(HymnalTokens.light, classic: classic),
+          home: DefaultAssetBundle(
+              bundle: FilePackBundle(), child: const Tabs())));
+      for (var i = 0; i < 12; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      await tester.tap(find.text('Search').last);
+      await tester.pumpAndSettle();
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.enterText(find.byType(TextField).first, 'corazon');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Corazones siempre alegres'), findsWidgets);
+      await tester.enterText(find.byType(TextField).first, 'corazón');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Corazones siempre alegres'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('foreign reader starts silent auto-scroll from its menu',
       (tester) async {
     final hymn = Hymn(
