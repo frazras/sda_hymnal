@@ -269,15 +269,20 @@ class _TabsState extends State<Tabs> {
                                                 ? 'Nuevo'
                                                 : _activePack == null
                                                     ? 'New Hymnal'
-                                                    : _activePack!.edition
-                                                                .languageTag ==
-                                                            'pt'
-                                                        ? 'Hinário'
-                                                        : 'Гимны',
+                                                    : switch (_activePack!
+                                                        .edition.languageTag) {
+                                                        'pt' => 'Hinário',
+                                                        'ru' => 'Гимны',
+                                                        'fr' => 'Hymne',
+                                                        'sw' => 'Wimbo',
+                                                        _ => 'Hymn',
+                                                      },
                                             oldLabel: _selectedBook == 'spanish'
                                                 ? 'Antiguo'
                                                 : 'Old Hymnal',
-                                            onTopics: _activePack == null
+                                            onTopics: _activePack == null ||
+                                                    _languagePacks.every(
+                                                        (p) => p.topics.isEmpty)
                                                 ? null
                                                 : _openTopics,
                                             hymnsOld: _numberOld,

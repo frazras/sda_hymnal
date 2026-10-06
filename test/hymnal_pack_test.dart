@@ -28,10 +28,10 @@ class FilePackBundle extends CachingAssetBundle {
 }
 
 void main() {
-  test('all four offline books and topics resolve to their own lyrics',
+  test('all six offline books and topics resolve to their own lyrics',
       () async {
     final packs = await loadHymnalPacks(FilePackBundle());
-    expect(packs.map((p) => p.hymns.length), [614, 527, 610, 385]);
+    expect(packs.map((p) => p.hymns.length), [614, 527, 610, 385, 520, 220]);
     expect(packs.fold(0, (int n, p) => n + p.topics.length), 200);
     for (final pack in packs) {
       final source = jsonDecode(
@@ -53,6 +53,11 @@ void main() {
         expect(topic.hymns.every((h) => h.version == pack.edition.id), isTrue);
       }
     }
+    expect(packs[4].edition.year, isNull);
+    expect(packs[5].edition.year, isNull);
+    expect(packs[4].hymns.first.title, 'Je veux chanter');
+    expect(packs[4].topics, isEmpty);
+    expect(packs[5].topics, isEmpty);
     expect(packs[2].hymns.first.title, 'Ó Deus de Amor');
     expect(packs[3].hymns.first.title, 'Коль славен');
     expect(packs[0].hymns[387].ref, isNot(packs[1].hymns[387].ref));

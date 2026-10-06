@@ -292,12 +292,13 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
             TextButton(
                 onPressed: () => FocusScope.of(context).unfocus(),
                 child: const Text('Done')),
-          Flexible(
-              child: TextButton.icon(
-                  onPressed: _chooseTopic,
-                  icon: const Icon(Icons.list_alt),
-                  label: Text(_topic?.title ?? 'Topics',
-                      maxLines: 2, overflow: TextOverflow.ellipsis))),
+          if (widget.pack.topics.isNotEmpty)
+            Flexible(
+                child: TextButton.icon(
+                    onPressed: _chooseTopic,
+                    icon: const Icon(Icons.list_alt),
+                    label: Text(_topic?.title ?? 'Topics',
+                        maxLines: 2, overflow: TextOverflow.ellipsis))),
         ]),
       ),
       Expanded(

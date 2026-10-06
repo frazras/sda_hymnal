@@ -6,7 +6,7 @@ class HymnalEdition {
   final String id;
   final String languageTag;
   final String displayName;
-  final int year;
+  final int? year;
 
   const HymnalEdition(
       {required this.id,

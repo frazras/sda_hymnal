@@ -2,9 +2,10 @@
   "format": "videopsalm",
   "snapshot": "french.source.json",
   "book": {
-    "id": "review-fr-hymnes-et-louanges",
+    "id": "sda-fr-hymnes-et-louanges",
     "languageTag": "fr",
-    "displayName": "Hymnes et Louanges"
+    "displayName": "Français · Hymnes et Louanges",
+    "year": null
   },
   "source": {
     "repository": "rejnac/french-hymnal",
@@ -536,5 +537,5 @@
     520
   ],
   "structurallyComplete": true,
-  "coverageNote": "Source record coverage only; edition labels and editorial review pending."
+  "coverageNote": "All source entries included. Print edition year not established; independent lyric review pending."
 }

@@ -5,6 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/hymnal_repository.dart';
 
+bool _supportedImportedBook(String id) =>
+    RegExp(r'^sda-(es|pt|ru)-\d{4}$').hasMatch(id) ||
+    const {'sda-fr-hymnes-et-louanges', 'sda-sw-nyimbo-za-kristo'}.contains(id);
+
 class HymnalTopic {
   final String id;
   final String group;
@@ -29,8 +33,8 @@ class HymnalPack {
         id: book['id'] as String,
         languageTag: book['languageTag'] as String,
         displayName: book['displayName'] as String,
-        year: book['year'] as int);
-    if (!RegExp(r'^sda-(es|pt|ru)-\d{4}$').hasMatch(edition.id)) {
+        year: book['year'] as int?);
+    if (!_supportedImportedBook(edition.id)) {
       throw const FormatException('Unknown imported book.');
     }
     const escape = HtmlEscape();
@@ -111,7 +115,7 @@ Future<List<HymnalPack>> loadHymnalPacks(AssetBundle bundle) async {
     final id = book['id'] as String;
     final asset = book['asset'] as String;
     if (!ids.add(id) ||
-        !RegExp(r'^sda-(es|pt|ru)-\d{4}$').hasMatch(id) ||
+        !_supportedImportedBook(id) ||
         asset != 'assets/hymnals/$id.json') {
       throw const FormatException('Invalid catalog book.');
     }

@@ -13,7 +13,9 @@ void main() {
       'sda-es-2009',
       'sda-es-1962',
       'sda-pt-1996',
-      'sda-ru-1997'
+      'sda-ru-1997',
+      'sda-fr-hymnes-et-louanges',
+      'sda-sw-nyimbo-za-kristo'
     ])
       HymnalPack.fromJson(File('assets/hymnals/$id.json').readAsStringSync())
   ];
@@ -105,12 +107,12 @@ void main() {
   }
 
   test('all installed books preserve exact-number priority and identities', () {
-    expect(all, hasLength(3534));
+    expect(all, hasLength(4274));
     final results = searchHymns(all, '388');
     final exact = results.where((h) => h.number == 388).toList();
-    expect(exact, hasLength(5));
-    expect(exact.map((h) => h.ref).toSet(), hasLength(5));
-    expect(results.take(5), exact);
+    expect(exact, hasLength(6));
+    expect(exact.map((h) => h.ref).toSet(), hasLength(6));
+    expect(results.take(6), exact);
     expect(searchHymns(packs[0].hymns, 'senor'), isNotEmpty);
     expect(searchHymns(all, '∞☃').length, all.length);
   });

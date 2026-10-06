@@ -136,6 +136,20 @@ def build(check=False):
         books.append({**pack['book'], 'asset': asset, 'hymnCount': len(pack['items']),
                       'topicCount': len(pack['topics']), 'bytes': len(data),
                       'sha256': hashlib.sha256(data).hexdigest()})
+    # Import lazily to avoid a module cycle with the shared text helpers.
+    from import_structured_hymnals import convert
+    for name in ('french', 'swahili'):
+        manifest_path = ROOT / 'tool/data/structured_sources' / f'{name}.manifest.json'
+        structured = json.loads(manifest_path.read_text())
+        snapshot = manifest_path.parent / structured['snapshot']
+        source = verified(snapshot.read_bytes(), structured['source'])
+        pack = convert(source, structured)
+        data = json_bytes(pack)
+        asset = f'assets/hymnals/{pack["book"]["id"]}.json'
+        outputs[ROOT / asset] = data
+        books.append({**pack['book'], 'asset': asset, 'hymnCount': len(pack['items']),
+                      'topicCount': len(pack['topics']), 'bytes': len(data),
+                      'sha256': hashlib.sha256(data).hexdigest()})
     outputs[DEST / 'catalog.json'] = json_bytes({'schemaVersion': 1, 'books': books})
     # All books validate before replacing any generated asset. The build step
     # does not activate a runtime download or touch user storage.

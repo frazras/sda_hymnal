@@ -279,6 +279,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
   }
 
   Widget _browseLinks(HymnalTokens t) {
+    if (!widget.english && widget.onTopics == null) {
+      return const SizedBox.shrink();
+    }
     final linkStyle = TextStyle(
       fontFamily: kSans,
       fontSize: 11.5,

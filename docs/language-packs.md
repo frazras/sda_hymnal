@@ -4,7 +4,7 @@
 
 Use the hymnal selector above the Numbers or Search tab to switch editions.
 Every language uses the shared number pad. English and Spanish each offer
-paired Old/New previews; Portuguese and Russian show their single edition.
+paired Old/New previews; Portuguese, Russian, French and Swahili show their single book.
 Search remains on the Search tab, with native topic lists available through
 Topics. Book selection persists across
 launches. Favorites and named categories can mix editions without number
@@ -98,12 +98,11 @@ replace lyric review or certify cross-language musical equivalence.
 ## Additional source adapters (review staging)
 
 `tool/import_structured_hymnals.py` accepts pinned VideoPsalm JSON and structured
-verse/refrain JSON. The two manifests and unmodified full snapshots in
+verse/refrain JSON. The manifests and unmodified full snapshots in
 `tool/data/structured_sources/` exercise French (520 records) and the partial
-Tagalog collection (237 records, source pages 2–474 with six odd-label discrepancies). Neither is
-registered in the app catalog by this tool. Edition metadata and the shared
-reader/selector still need review before publication; the staging IDs are
-explicitly temporary review identities.
+Tagalog collection (237 records, source pages 2–474 with six odd-label discrepancies). The standalone tool does not register books in the app catalog. French and
+Swahili are included through the main importer described below; Tagalog retains
+a temporary review identity and is not published.
 
 Example:
 ```sh
@@ -139,3 +138,29 @@ The pinned Tagalog snapshot uses 19, 143, 201, 237, 269 and 465 in place of
 the expected even labels 18, 142, 200, 236, 268 and 464. The staging manifest
 enumerates the actual source labels. No correction has been inferred, and
 publication remains pending editorial reconciliation.
+
+
+## French and Swahili expansion
+
+The catalog now also includes the 520-entry **Hymnes et Louanges** collection
+(`sda-fr-hymnes-et-louanges`) and the 220-entry **Nyimbo za Kristo** collection
+(`sda-sw-nyimbo-za-kristo`). These use the pinned Rejnac snapshots and manifests
+under `tool/data/structured_sources/`; the standard import/check command
+regenerates all six books (2,876 imported hymns and 200 topic subdivisions).
+
+Source titles establish the collection names, but do not establish a print
+edition year. Their year is therefore null, not the repository copyright date.
+Stable IDs name the books without fabricating an edition date. Numbering covers
+1–520 and 1–220 respectively. Structural completeness describes source coverage,
+not independent certification of every lyric.
+
+Both use the existing Numbers keypad, Search, favorites, service playlists, and
+shared reader. Long selector labels truncate within the available width. There
+are no supplied topic indexes, scores, or verified audio, so unavailable actions
+are omitted. Original source verse order and repeated occurrences are retained;
+numeric presentation tags are not interpreted without review. English and
+paired Old/New Spanish remain unchanged.
+
+Tagalog remains a staging-only partial collection. Its page-label discrepancies
+are unresolved. French and Swahili have graduated from staging IDs to the stable
+catalog IDs above; their source snapshots remain unmodified.

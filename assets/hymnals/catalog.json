@@ -44,6 +44,28 @@
       "topicCount": 55,
       "bytes": 953100,
       "sha256": "2da144787dbda76a5b5723fff6f4ccacdd371209543b7ce3c293f8f2e79c223c"
+    },
+    {
+      "id": "sda-fr-hymnes-et-louanges",
+      "languageTag": "fr",
+      "displayName": "Français · Hymnes et Louanges",
+      "year": null,
+      "asset": "assets/hymnals/sda-fr-hymnes-et-louanges.json",
+      "hymnCount": 520,
+      "topicCount": 0,
+      "bytes": 1449432,
+      "sha256": "d4db4333567bead48618a2e2de181c58ce6a5f7fd012f6ef8a045bceb312e8fd"
+    },
+    {
+      "id": "sda-sw-nyimbo-za-kristo",
+      "languageTag": "sw",
+      "displayName": "Kiswahili · Nyimbo za Kristo",
+      "year": null,
+      "asset": "assets/hymnals/sda-sw-nyimbo-za-kristo.json",
+      "hymnCount": 220,
+      "topicCount": 0,
+      "bytes": 590752,
+      "sha256": "b8ffb47099d5f43c0a5ec0d7b3485b77834c8da8dfe5a849cd7cd8acdbbb2432"
     }
   ]
 }

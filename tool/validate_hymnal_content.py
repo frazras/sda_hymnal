@@ -122,6 +122,10 @@ def report(root=ROOT):
     manifest = json.loads((root / 'tool/data/hymnal_sources.json').read_text())
     scores = json.loads((root / 'assets/sheet_music/catalog.json').read_text())['books']
     expected = {b['id']: range(1, b['expectedCount'] + 1) for b in manifest['books']}
+    for name in ('french', 'swahili'):
+        extra = json.loads((root / f'tool/data/structured_sources/{name}.manifest.json').read_text()) if (root / f'tool/data/structured_sources/{name}.manifest.json').exists() else None
+        if extra:
+            expected[extra['book']['id']] = extra['expectedNumbers']
     books = []
     for entry in catalog['books']:
         try:

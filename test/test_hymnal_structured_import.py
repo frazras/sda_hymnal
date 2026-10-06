@@ -85,7 +85,7 @@ class StructuredImportTest(unittest.TestCase):
             importer.apply_overrides(pack, overrides)
 
     def test_pinned_full_sources_regenerate_offline_and_detect_stale_output(self):
-        for name, count in [('french', 520), ('tagalog', 237)]:
+        for name, count in [('french', 520), ('tagalog', 237), ('swahili', 220)]:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 manifest = ROOT / f'tool/data/structured_sources/{name}.manifest.json'
                 output = Path(directory) / 'pack.json'

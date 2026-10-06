@@ -1,9 +1,11 @@
 import copy
 import importlib.util
 import unittest
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tool'))
 spec = importlib.util.spec_from_file_location('import_hymnals', ROOT / 'tool/import_hymnals.py')
 importer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(importer)

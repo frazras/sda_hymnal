@@ -223,6 +223,56 @@ void main() {
     }
   }
 
+  for (final book in ['sda-fr-hymnes-et-louanges', 'sda-sw-nyimbo-za-kristo']) {
+    for (final classic in [false, true]) {
+      for (final dark in [false, true]) {
+        testWidgets(
+            'expanded book keeps keypad and reader $book classic=$classic dark=$dark',
+            (tester) async {
+          SharedPreferences.setMockInitialValues({
+            ReleaseNotesService.seenVersionsKey: <String>[appReleaseVersion],
+            'selectedHymnal': book,
+          });
+          tester.view.physicalSize = const Size(320, 568);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          await tester.pumpWidget(MaterialApp(
+              theme: buildHymnalTheme(
+                  dark ? HymnalTokens.dark : HymnalTokens.light,
+                  classic: classic),
+              builder: (context, child) => MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: const TextScaler.linear(1.3)),
+                  child: child!),
+              home: DefaultAssetBundle(
+                  bundle: FilePackBundle(), child: const Tabs())));
+          for (var i = 0; i < 16; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(find.byKey(ValueKey('numbers-$book')), findsOneWidget);
+          expect(find.text('Topics'), findsNothing);
+          expect(tester.takeException(), isNull);
+          await tester.tap(find.text('Search').last);
+          await tester.pumpAndSettle();
+          await tester.enterText(find.byType(TextField).first, '1');
+          await tester.pumpAndSettle();
+          await tester.tap(find.byKey(const ValueKey('book-hymn-1')));
+          await tester.pumpAndSettle();
+          final reader = tester.widget<HymnPage>(find.byType(HymnPage));
+          expect(reader.hymn.ref.bookId, book);
+          expect(reader.hymn.number, 1);
+          expect(reader.hymns.every((h) => h.ref.bookId == book), isTrue);
+          expect(find.byKey(const ValueKey('hymn-music-player')), findsNothing);
+          expect(audioCalls.where((m) => m.startsWith('setSource')), isEmpty);
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox());
+          await tester.pumpAndSettle();
+        });
+      }
+    }
+  }
+
   testWidgets('topics provide only their ordered book queue', (tester) async {
     await tester.pumpWidget(MaterialApp(
         theme: buildHymnalTheme(HymnalTokens.light),

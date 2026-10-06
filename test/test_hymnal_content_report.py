@@ -97,7 +97,7 @@ class ContentReportTest(unittest.TestCase):
         self.assertEqual(result, validator.report())
         self.assertEqual(result['errorCount'], 0)
         books = {b['bookId']: b for b in result['books']}
-        self.assertEqual(sum(b['items'] for b in books.values()), 2136)
+        self.assertEqual(sum(b['items'] for b in books.values()), 2876)
         self.assertEqual(books['sda-es-2009']['media']['scoreHymns'], 614)
         self.assertEqual(books['sda-ru-1997']['media']['missingScoreItemIds'], ['244'])
         self.assertEqual(books['sda-es-1962']['media']['scoreHymns'], 0)

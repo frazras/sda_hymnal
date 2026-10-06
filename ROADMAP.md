@@ -61,7 +61,10 @@ Items below are plans, not claims that multilingual content is already installed
       GoGoShift text, VideoPsalm JSON, and structured verse/refrain JSON. Track
       provenance and reviewed overrides; catch duplicate numbers, empty lyrics,
       numbering gaps, invalid references, and missing media before publishing.
-- [ ] Expand to French, Swahili, and the remaining reviewed Rejnac collections.
+- [x] Add French Hymnes et Louanges (520) and Swahili Nyimbo za Kristo (220)
+      through the shared keypad/search/reader; retain unknown edition years and
+      omit unavailable topics/media.
+- [ ] Expand to the remaining reviewed Rejnac collections.
       Validate edition/language labels and disclose partial coverage; resolve
       known empty entries and duplicate numbers instead of silently renumbering.
 - [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
