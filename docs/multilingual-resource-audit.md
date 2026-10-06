@@ -208,7 +208,9 @@ whole file count. Its custom decoder supports concatenated documents in
 
 **Use:** adapt the manifest/versioning pattern and structured stanza format.
 Introduce separate Tagalog/Cebuano packs and optional youth/Scripture collections.
-The repository has no accompanying music assets. Hash validity proves file
+The repository has no accompanying music asset files. Some structured records
+include external audio URLs; these are unverified candidate links, not confirmed
+language-specific recordings or permission to enable playback. Hash validity proves file
 integrity, not editorial quality or schema compatibility.
 
 ## Fit with our current architecture

@@ -90,6 +90,46 @@ is explicitly disclosed. No media association is inferred from a title or number
 
 The reusable pack inspector accepts an explicit expected-number set for partial
 collections; it never fills gaps or renumbers source records. This report
-covers the current canonical packs. VideoPsalm/structured-source adapters and
-reviewed override tracking remain roadmap work. Structural validation does not
+covers the current canonical packs. VideoPsalm/structured-source adapters and reviewed override tracking are
+available for staged review; catalog integration of their books remains separate. Structural validation does not
 replace lyric review or certify cross-language musical equivalence.
+
+
+## Additional source adapters (review staging)
+
+`tool/import_structured_hymnals.py` accepts pinned VideoPsalm JSON and structured
+verse/refrain JSON. The two manifests and unmodified full snapshots in
+`tool/data/structured_sources/` exercise French (520 records) and the partial
+Tagalog collection (237 records, source pages 2–474, even numbers). Neither is
+registered in the app catalog by this tool. Edition metadata and the shared
+reader/selector still need review before publication; the staging IDs are
+explicitly temporary review identities.
+
+Example:
+```sh
+python3 tool/import_structured_hymnals.py   tool/data/structured_sources/french.manifest.json   --output /tmp/french-review-pack.json
+```
+
+Repeat with `--check` to require byte-identical output, or substitute the Tagalog
+manifest. Every run verifies the snapshot size and SHA-256 before parsing.
+Explicit expected-number lists support source page numbering without inventing
+missing pages. Invalid numbers, duplicates, empty blocks and language mismatches
+fail before output replacement.
+
+VideoPsalm verse order, repeated occurrences, GUIDs and original records remain
+intact. A manifest may map reviewed `refrainTags`; unreviewed numeric tags are
+not interpreted. Structured sources retain numbered verses and one separate
+refrain after them. This represents the source fields, not an inferred singing
+sequence. Blank separator lines remain intact. Original source records and text
+are preserved alongside display blocks.
+
+Optional `--overrides reviewed.json` accepts a source-revision-pinned object
+with `changes`: each change supplies `itemId`, `field`, `before`, `after`,
+`reviewer`, and `reason`. Only title, blocks and credits may change. Duplicate
+changes, stale values and identity changes fail; applied decisions are included
+in `reviewedOverrides`. This does not imply that an override was reviewed merely
+because it passes schema validation.
+
+Some structured records carry external audio links. They remain in the original
+record as research leads only; the importer does not activate, download, or
+certify them as matching recordings. Playback requires separate verification.
