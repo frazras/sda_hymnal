@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "mappings": [
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "303",
+      "asset": "assets/midi/es-2009-303.mid",
+      "sha256": "16605038ff29a48658b74a7ff2fe90e3faf2e9d2d031c7eea1f2c614d42ecc79",
+      "sourceBookId": "sda-en-1985",
+      "sourceItemId": "108",
+      "sourceSha256": "a6f74d1bb227df2512a03464a4f488e05f16197aebbc45ebcbe80f8eac972c4e",
+      "tune": "NEW BRITAIN",
+      "key": "F",
+      "meter": "3/4",
+      "verses": 3,
+      "includesIntroduction": true,
+      "score": "assets/sheet_music/es_2009/piano_sheet_es_303.png"
+    }
+  ]
+}

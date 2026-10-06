@@ -12,6 +12,7 @@ import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
 import 'package:sdahymnal/services/midi_transform.dart';
 import 'package:sdahymnal/services/midi_cache.dart';
+import 'package:sdahymnal/services/verified_midi.dart';
 import 'package:sdahymnal/services/midi_render.dart';
 import 'package:sdahymnal/services/style_arranger.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -182,15 +183,15 @@ class MidiPlayer {
   (String, int)? _lastHymn;
 
   static bool hasMidi(Hymn hymn) =>
-      hymn.version == 'new' && hymn.number >= 1 && hymn.number <= 695 ||
-      hymn.version == 'old' && hymn.number >= 1 && hymn.number <= 703;
+      hymnMidiAsset(hymn.version, hymn.number) != null;
 
   static bool isCurrent(MidiPlayback? playback, Hymn hymn) =>
       playback?.version == hymn.version && playback?.n == hymn.number;
 
   static String _asset(String version, int n) {
-    final prefix = version == 'old' ? 'C' : '';
-    return 'midi/$prefix${n.toString().padLeft(3, '0')}.mid';
+    final asset = hymnMidiAsset(version, n);
+    if (asset == null) throw ArgumentError('No verified MIDI for $version:$n');
+    return asset;
   }
 
   static Future<Uint8List> _assetBytes(String version, int n) async {

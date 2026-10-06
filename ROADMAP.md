@@ -14,8 +14,10 @@ small-screen layouts before adding more features.
    including paired Old/New Spanish hymnals. Preserve clarity and avoid crowding.
 2. Extend favorite ordering into service playlists as practical worship
    tools while preserving the shared reader and uncluttered menus.
-3. Expand reviewed language packs, localization, optional recordings, and custom
-   songbook imports. Explore projection export after the content model is stable.
+3. Prioritize verified cross-language music, translated menus, background
+   playback, and optional downloadable packs. Continue reviewed language
+   expansion; explore presentation export later. Custom songbook imports are
+   outside the active roadmap.
 
 The [1 October 2026 project audit](docs/multilingual-resource-audit.md) compares
 five source projects and all 26 Rejnac language repositories with our code. It
@@ -83,6 +85,10 @@ Items below are plans, not claims that multilingual content is already installed
 
 ## Music and Choir Features
 
+- [ ] Expand verified cross-language tune mappings. Spanish New #303 now has
+      three-verse NEW BRITAIN playback verified against English New #108 and its
+      Spanish score. Other pairs require individual musical/form verification.
+
 - [x] Add Jazz with piano chords, walking acoustic bass, swung ride cymbal,
       and customizable ensemble instruments and mix.
 - [x] Allow listeners to choose the instruments used for a musical style.
@@ -123,14 +129,10 @@ Items below are plans, not claims that multilingual content is already installed
       action, while retaining the quick Recent chips on the number screen.
 - [ ] Add locale-aware alphabetical browsing and a jump index for large books.
 
-## Sharing and Custom Songbooks
+## Sharing and Presentation
 
 - [x] Let users select, copy, and share a verse or full hymn with its title,
       number, and hymnal edition, preserving stanza and refrain formatting.
-- [ ] Import custom songbooks through a documented JSON/ZIP format, including
-      optional score pages. Preview book details/counts, validate data and archive
-      paths, isolate user content from bundled books, and preserve references on
-      updates. Inspired by Adore's existing hymnal import feature.
 - [ ] Explore presentation export for service playlists and lyric slides,
       including VideoPsalm compatibility. This is a proposed extension of the
       Rejnac presentation workflow; live casting is a separate future decision.

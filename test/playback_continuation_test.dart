@@ -32,6 +32,7 @@ void main() {
   final third = hymn(2);
   final list = [first, second, third];
 
+  final loadedSources = <String>[];
   String? playerId;
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -58,6 +59,7 @@ void main() {
             (_) async => null);
       }
       if (call.method == 'setSourceUrl' || call.method == 'setSourceAsset') {
+        loadedSources.add((call.arguments as Map).toString());
         await audioEvent('audio.onPrepared');
       }
       if (call.method == 'getDuration') return 10000;
@@ -173,6 +175,27 @@ void main() {
     }
     expect(find.text('Service: Repeated hymn · 2 of 2'), findsOneWidget);
     expect(MidiPlayer.instance.current.value, isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+    final spanish = hymn(303, 'sda-es-2009');
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: HymnPage(hymn: spanish, hymns: [spanish])));
+    await tester.pumpAndSettle();
+    expect(MidiPlayer.instance.current.value, isNull);
+    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(MidiPlayer.instance.current.value?.version, 'sda-es-2009');
+    expect(MidiPlayer.instance.current.value?.n, 303);
+    expect(loadedSources.last, contains('es-2009-303.mid'));
+    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+    await tester.pump();
+    expect(MidiPlayer.instance.current.value?.paused, isTrue);
+    await audioEvent('audio.onComplete');
+    await tester.pump();
+    expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, spanish);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
   });

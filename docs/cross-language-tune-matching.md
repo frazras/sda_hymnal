@@ -27,8 +27,23 @@ Important counterexample: English 1941 #295 has the same English title but is
 set to BELMONT, in G major. It is not an equivalent music source for this Spanish
 entry: https://hymnary.org/hymn/CHSD1941/295
 
-This is a confirmed printed-tune association, not yet an enabled MIDI fallback.
-The actual MIDI source must be checked against that score before enabling it.
+Spanish 2009 #303 now has verified instrumental playback. The full 35-note
+soprano phrase and its onset rhythm in all five source verses match the Spanish
+score (allowing the source's four-tick humanized offsets). The source is pinned
+by SHA-256, and changes require a new review.
+
+The generated asset keeps the introduction and first two verses, then joins
+the source's final verse to retain the ending. Removed beats are [125, 221);
+both boundaries have no active notes and the same tempo, with no discarded
+controller/program changes. The result has three verses, 174 quarter-note
+beats, and a duration of about 116.418 seconds. English New #108 is unchanged
+at about 180.700 seconds. Melody volume and style settings are unchanged.
+
+Rebuild using `python3 tool/build_verified_tune.py`; `--check` verifies both the
+generated MIDI and `assets/midi/verified_tunes.json`. The app resolver enables
+only this exact Spanish book/item. It keeps Spanish playback identity and a
+separate render-cache key across styles, transposition, and choir practice.
+Other languages/editions and videos are not inferred from this mapping.
 
 ## Integration rules
 

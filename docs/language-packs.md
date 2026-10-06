@@ -21,8 +21,8 @@ recognized for ranking. Displayed titles and lyrics are never normalized.
 
 The interface remains English. Hymn text, titles, credits, and topics retain
 their source language. UI translation and audio are separate roadmap items.
-Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Foreign music controls are hidden until
-explicit media mappings exist. Cyrillic labels use a bundled font fallback.
+Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Music controls appear only for verified mappings: Spanish New #303 now has
+three-verse instrumental playback; other foreign entries remain silent. Cyrillic labels use a bundled font fallback.
 
 Foreign per-hymn analytics are suppressed while the deployed collector still
 accepts only English aliases. Content reports use its existing general-report

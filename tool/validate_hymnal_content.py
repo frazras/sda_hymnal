@@ -126,6 +126,8 @@ def report(root=ROOT):
         extra = json.loads((root / f'tool/data/structured_sources/{name}.manifest.json').read_text()) if (root / f'tool/data/structured_sources/{name}.manifest.json').exists() else None
         if extra:
             expected[extra['book']['id']] = extra['expectedNumbers']
+    midi_catalog = root / 'assets/midi/verified_tunes.json'
+    midi_mappings = json.loads(midi_catalog.read_text())['mappings'] if midi_catalog.exists() else []
     books = []
     for entry in catalog['books']:
         try:
@@ -157,10 +159,22 @@ def report(root=ROOT):
                     available.add(identity)
                 else:
                     result['errors'].append({'code': 'invalid_score_asset', 'location': identity})
+            instrumental = []
+            for mapping in midi_mappings:
+                if mapping['bookId'] != entry['id']:
+                    continue
+                try:
+                    asset = local_asset(root, mapping['asset']).read_bytes()
+                    if mapping['itemId'] not in item_ids or hashlib.sha256(asset).hexdigest() != mapping['sha256']:
+                        raise ValueError('Invalid MIDI mapping')
+                    instrumental.append(mapping['itemId'])
+                except (OSError, ValueError, KeyError, TypeError):
+                    result['errors'].append({'code': 'invalid_midi_mapping', 'location': mapping.get('itemId')})
             result['media'] = {
                 'scoreHymns': len(available & item_ids),
                 'missingScoreItemIds': sorted(item_ids - available, key=lambda x: (len(x), x)),
-                'audio': 'No verified instrumental or vocal mappings in these language packs.'}
+                'verifiedInstrumentalItemIds': instrumental,
+                'vocals': 'No verified sung recordings in these language packs.'}
         except (OSError, ValueError, KeyError, TypeError) as exc:
             result = {'bookId': entry.get('id'), 'errors': [
                 {'code': 'unreadable_pack', 'location': str(exc)}]}

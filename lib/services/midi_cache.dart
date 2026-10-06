@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'midi_file.dart';
+import 'verified_midi.dart';
 
 /// Generated files only; source assets and user preferences are never changed.
 class MidiRenderCache {
@@ -28,12 +29,12 @@ class MidiRenderCache {
       required String theme,
       required bool forAppleSynth,
       int? forceProgram}) {
-    if (hymnal != 'new' && hymnal != 'old') {
+    if (hymnMidiAsset(hymnal, hymn) == null) {
       throw ArgumentError.value(hymnal, 'hymnal', 'Unsupported hymnal');
     }
     final engine = forAppleSynth ? 'apple-scoped' : 'portable';
     final program = forceProgram == null ? '' : '_p$forceProgram';
-    final edition = hymnal == 'old' ? 'old_' : '';
+    final edition = hymnal == 'new' ? '' : '${hymnal}_';
     return '$edition${hymn.toString().padLeft(3, '0')}_t${semitones}_$theme'
         '${program}_${engine}_v$renderVersion.mid';
   }
