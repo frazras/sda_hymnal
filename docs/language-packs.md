@@ -100,7 +100,7 @@ replace lyric review or certify cross-language musical equivalence.
 `tool/import_structured_hymnals.py` accepts pinned VideoPsalm JSON and structured
 verse/refrain JSON. The two manifests and unmodified full snapshots in
 `tool/data/structured_sources/` exercise French (520 records) and the partial
-Tagalog collection (237 records, source pages 2–474, even numbers). Neither is
+Tagalog collection (237 records, source pages 2–474 with six odd-label discrepancies). Neither is
 registered in the app catalog by this tool. Edition metadata and the shared
 reader/selector still need review before publication; the staging IDs are
 explicitly temporary review identities.
@@ -133,3 +133,9 @@ because it passes schema validation.
 Some structured records carry external audio links. They remain in the original
 record as research leads only; the importer does not activate, download, or
 certify them as matching recordings. Playback requires separate verification.
+
+
+The pinned Tagalog snapshot uses 19, 143, 201, 237, 269 and 465 in place of
+the expected even labels 18, 142, 200, 236, 268 and 464. The staging manifest
+enumerates the actual source labels. No correction has been inferred, and
+publication remains pending editorial reconciliation.
