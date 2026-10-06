@@ -27,8 +27,8 @@ void main() {
     final english = File('assets/midi/108.mid').readAsBytesSync();
     expect(readMidiDuration(spanish).inMilliseconds, closeTo(116418, 1));
     expect(readMidiDuration(english).inMilliseconds, closeTo(180700, 1));
-    expect(readKeySignature(spanish).toString(),
-        readKeySignature(english).toString());
+    expect(readKeySignature(spanish)?.label, 'F');
+    expect(readKeySignature(english)?.label, 'F');
     String cache(String book, int number) => MidiRenderCache.filename(
         hymnal: book,
         hymn: number,
