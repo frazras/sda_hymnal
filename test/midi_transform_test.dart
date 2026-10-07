@@ -147,7 +147,9 @@ void main() {
       }
     });
 
-    test('both complete hymnals have a usable full-song duration', () {
+    test(
+        'both English hymnals and verified Spanish music have usable durations',
+        () {
       final files = Directory('assets/midi')
           .listSync()
           .whereType<File>()
@@ -157,6 +159,7 @@ void main() {
       final expected = {
         for (var n = 1; n <= 695; n++) '${n.toString().padLeft(3, '0')}.mid',
         for (var n = 1; n <= 703; n++) 'C${n.toString().padLeft(3, '0')}.mid',
+        'es-2009-303.mid',
       };
       expect(names, expected);
       for (final file in files) {

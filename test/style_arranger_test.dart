@@ -1245,7 +1245,7 @@ void main() {
       }
     }
 
-    expect(threeFourHymns, 388,
+    expect(threeFourHymns, 389,
         reason: 'update this count when the bundled MIDI corpus changes');
   });
 
