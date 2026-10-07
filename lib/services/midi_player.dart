@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'hymn_recordings.dart';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sdahymnal/services/music_options.dart';
@@ -19,11 +21,11 @@ import 'package:sdahymnal/services/prefs.dart';
 
 /// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid)
 /// and Old-Hymnal files (assets/midi/C001.mid … C703.mid). One hymn at a
-/// time; play/pause toggles. [hasMidi] gates invalid/out-of-range records.
+/// time; play/pause toggles. [hasMidi] identifies editable arrangements;
+/// [hasMusic] also includes edition-specific instrumental recordings.
 ///
 /// Two engines behind one API:
-///  * Android (and host test runs): the platform media player via
-///    audioplayers, unchanged.
+///  * Recordings on every platform, plus Android MIDI: audioplayers.
 ///  * iOS: the native soundfont player behind the 'sdahymnal/midi'
 ///    MethodChannel (load/play/pause/stop/seek/setRate/getPosition, plus an
 ///    'onComplete' callback), which only accepts real file paths.
@@ -36,17 +38,25 @@ import 'package:sdahymnal/services/prefs.dart';
 typedef MidiPlayback = ({String version, int n, bool paused});
 
 class MidiPlayer {
-  MidiPlayer._() {
+  MidiPlayer._(
+      {bool? useNative, Future<File> Function(String, int)? recordingFile})
+      : _useChannel = useNative ?? (!kIsWeb && Platform.isIOS),
+        _recordingFile = recordingFile ?? HymnRecordings.file {
     if (_useChannel) {
       _channel.setMethodCallHandler((call) async {
-        if (call.method == 'onComplete') _onComplete();
+        if (call.method == 'onComplete' && _nativeActive) _onComplete();
         return null;
       });
-    } else {
-      _player.onPlayerComplete.listen((_) => _onComplete());
-      _player.onPositionChanged.listen((p) => position.value = p);
-      _player.onDurationChanged.listen((d) => duration.value = d);
     }
+    _player.onPlayerComplete.listen((_) {
+      if (!_nativeActive) _onComplete();
+    });
+    _player.onPositionChanged.listen((p) {
+      if (!_nativeActive && current.value != null) position.value = p;
+    });
+    _player.onDurationChanged.listen((d) {
+      if (!_nativeActive && current.value != null) duration.value = d;
+    });
     // An instrument change re-renders the loaded tune in place.
     InstrumentTheme.instance.addListener(_restartWithTransform);
     MusicOptions.instance.addListener(_restartWithTransform);
@@ -54,12 +64,21 @@ class MidiPlayer {
 
   static final MidiPlayer instance = MidiPlayer._();
 
+  @visibleForTesting
+  factory MidiPlayer.forTesting(
+          {required bool useNative,
+          required Future<File> Function(String, int) recordingFile}) =>
+      MidiPlayer._(useNative: useNative, recordingFile: recordingFile);
+
+  final Future<File> Function(String, int) _recordingFile;
+
   final ValueNotifier<List<({int index, String name})>> parts =
       ValueNotifier([]);
   final ValueNotifier<Set<int>> mutedParts = ValueNotifier({});
   final ValueNotifier<Set<int>> soloParts = ValueNotifier({});
   bool _preview = false;
   bool get _practice => MusicOptions.instance.choirPractice && !_preview;
+  int _stopGeneration = 0;
   Future<void> _operations = Future.value();
   Future<void> _enqueue(Future<void> Function() action) {
     final next = _operations.then((_) => action());
@@ -123,11 +142,15 @@ class MidiPlayer {
 
   /// True when playback goes through the native iOS channel engine. Host
   /// test runs report Platform.isIOS == false and keep the audioplayers path.
-  static final bool _useChannel = !kIsWeb && Platform.isIOS;
+  final bool _useChannel;
 
   static const MethodChannel _channel = MethodChannel('sdahymnal/midi');
 
-  /// Created lazily so the iOS engine never spins up an audioplayers player.
+  bool _recording = false;
+  bool get _nativeActive => _useChannel && !_recording;
+  final ValueNotifier<bool> loading = ValueNotifier(false);
+
+  /// Also plays instrumental recordings on iOS.
   late final AudioPlayer _player = AudioPlayer();
 
   /// Polls getPosition while the channel engine is audibly playing.
@@ -184,6 +207,9 @@ class MidiPlayer {
 
   static bool hasMidi(Hymn hymn) =>
       hymnMidiAsset(hymn.version, hymn.number) != null;
+
+  static bool hasMusic(Hymn hymn) =>
+      hasMidi(hymn) || HymnRecordings.contains(hymn.version, hymn.number);
 
   static bool isCurrent(MidiPlayback? playback, Hymn hymn) =>
       playback?.version == hymn.version && playback?.n == hymn.number;
@@ -319,6 +345,9 @@ class MidiPlayer {
   /// (audioplayers engine only): the bare asset when both are at their
   /// defaults, otherwise the cached render from [_renderFile].
   Future<Source> _source(String version, int n) async {
+    if (hymnMidiAsset(version, n) == null) {
+      return DeviceFileSource((await _recordingFile(version, n)).path);
+    }
     if (transpose.value == 0 &&
         !InstrumentTheme.instance.transforms &&
         !_practice &&
@@ -409,7 +438,7 @@ class MidiPlayer {
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
   Future<void> toggle(Hymn hymn) async {
-    if (!hasMidi(hymn)) return;
+    if (!hasMusic(hymn)) return;
     final before = current.value;
     final starting = !isCurrent(before, hymn);
     final watch = Stopwatch()..start();
@@ -449,8 +478,14 @@ class MidiPlayer {
   }
 
   Future<void> _toggle(Hymn hymn) async {
-    if (!hasMidi(hymn)) return;
-    if (_useChannel) return _channelToggle(hymn);
+    if (!hasMusic(hymn)) return;
+    if (!isCurrent(current.value, hymn)) {
+      final preview = _preview;
+      await _stop();
+      _preview = preview;
+      _recording = !hasMidi(hymn);
+    }
+    if (_nativeActive) return _channelToggle(hymn);
     final cur = current.value;
     if (isCurrent(cur, hymn)) {
       if (cur!.paused) {
@@ -469,10 +504,17 @@ class MidiPlayer {
     duration.value = Duration.zero;
     current.value = (version: hymn.version, n: hymn.number, paused: false);
     try {
-      await _player.play(await _source(hymn.version, hymn.number));
+      loading.value = true;
+      final generation = _stopGeneration;
+      final source = await _source(hymn.version, hymn.number);
+      if (generation != _stopGeneration) return;
+      await _player.play(source);
       await _applySpeed();
     } catch (_) {
       current.value = null;
+      rethrow;
+    } finally {
+      loading.value = false;
     }
   }
 
@@ -543,6 +585,7 @@ class MidiPlayer {
 
   Future<void> _restartNow() async {
     await _republishChords();
+    if (_recording) return;
     if (_useChannel) return _channelRestartWithTransform();
     final cur = current.value;
     if (cur == null) return;
@@ -615,7 +658,7 @@ class MidiPlayer {
     final cur = current.value;
     if (cur == null || cur.paused) return;
     try {
-      if (_useChannel) {
+      if (_nativeActive) {
         await _channel.invokeMethod('setRate', speed.value);
       } else {
         await _player.setPlaybackRate(speed.value);
@@ -637,7 +680,7 @@ class MidiPlayer {
         : (max > Duration.zero && target > max)
             ? max
             : target;
-    if (_useChannel) {
+    if (_nativeActive) {
       try {
         await _channel.invokeMethod('seek', _toSeconds(clamped));
       } catch (_) {
@@ -654,16 +697,20 @@ class MidiPlayer {
     position.value = clamped;
   }
 
-  Future<void> stop() => _enqueue(_stop);
+  Future<void> stop() {
+    _stopGeneration++;
+    return _enqueue(_stop);
+  }
 
   Future<void> _stop() async {
     _preview = false;
     final stopped = current.value;
+    current.value = null;
     if (stopped != null) {
       AppAnalytics.instance
           .event('play_stop', hymn: stopped.n, edition: stopped.version);
     }
-    if (_useChannel) {
+    if (_nativeActive) {
       _stopPositionPolling();
       try {
         await _channel.invokeMethod('stop');

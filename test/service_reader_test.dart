@@ -19,6 +19,8 @@ void main() {
       number: 7, version: 'new', title: 'Opening and closing', body: 'Lyrics');
   final spanish =
       Hymn(number: 7, version: 'sda-es-2009', title: 'Español', body: 'Letra');
+  final silent =
+      Hymn(number: 7, version: 'sda-ru-1997', title: 'Russian', body: 'Lyrics');
   const reading = AdditionalReading(
       id: 'r701',
       edition: 'new',
@@ -33,10 +35,16 @@ void main() {
         id: 'sda-es-2009',
         languageTag: 'es',
         displayName: 'Español',
-        year: 2009)
+        year: 2009),
+    HymnalEdition(
+        id: 'sda-ru-1997',
+        languageTag: 'ru',
+        displayName: 'Russian',
+        year: 1997)
   ], hymns: [
     hymn,
-    spanish
+    spanish,
+    silent
   ], readings: [
     reading
   ]);
@@ -79,7 +87,7 @@ void main() {
       () {
     for (final barrier in [
       reading.ref,
-      spanish.ref,
+      silent.ref,
       HymnRef(bookId: 'missing', itemId: '7')
     ]) {
       final session = reader([hymn.ref, barrier, hymn.ref]);
@@ -90,6 +98,13 @@ void main() {
           isNull);
       expect(first.sequence!.page(1), isNotNull);
     }
+    final recorded = reader([hymn.ref, spanish.ref]);
+    final opening = recorded.page(0) as HymnPage;
+    final continuation = opening.sequence!
+        .page(1, continuation: HymnContinuation.midi) as HymnPage;
+    expect(continuation.hymn, spanish);
+    expect(opening.sequence!.page(1, continuation: HymnContinuation.video),
+        isNull);
     final session = reader([hymn.ref, hymn.ref]);
     final first = session.page(0) as HymnPage;
     final repeat = first.sequence!.page(1, continuation: HymnContinuation.midi)

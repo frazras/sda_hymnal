@@ -160,7 +160,7 @@ class _HymnPageState extends State<HymnPage> {
         _showVideo();
       } else if (widget.continuation == HymnContinuation.midi &&
           MidiPlayer.instance.current.value == null) {
-        await MidiPlayer.instance.toggle(widget.hymn);
+        await _toggleMusic();
       }
     });
     // Reading is the one place worth fighting the lock timer: the phone is
@@ -223,7 +223,7 @@ class _HymnPageState extends State<HymnPage> {
         widget.hymn,
         (h) => medium == HymnContinuation.video
             ? h.video != null
-            : MidiPlayer.hasMidi(h));
+            : MidiPlayer.hasMusic(h));
     if (target == null) return;
     _advancing = true;
     Navigator.pushReplacement(
@@ -390,7 +390,7 @@ class _HymnPageState extends State<HymnPage> {
                                         () => _sheetMusicVisible = false),
                                   ),
                                 ),
-                                if (MidiPlayer.hasMidi(widget.hymn) &&
+                                if (MidiPlayer.hasMusic(widget.hymn) &&
                                     _showPlayer &&
                                     !_videoVisible)
                                   Padding(
@@ -411,7 +411,7 @@ class _HymnPageState extends State<HymnPage> {
                                         Expanded(
                                             child: _scrollArea(
                                                 t, controller, scrollControls)),
-                                        if (MidiPlayer.hasMidi(widget.hymn) &&
+                                        if (MidiPlayer.hasMusic(widget.hymn) &&
                                             _showPlayer &&
                                             !_videoVisible)
                                           Padding(
@@ -425,7 +425,8 @@ class _HymnPageState extends State<HymnPage> {
                                           Positioned.fill(
                                               child: _scrollArea(t, controller,
                                                   scrollControls)),
-                                          if (MidiPlayer.hasMidi(widget.hymn) &&
+                                          if (MidiPlayer.hasMusic(
+                                                  widget.hymn) &&
                                               _showPlayer &&
                                               !_videoVisible)
                                             Positioned(
@@ -438,7 +439,9 @@ class _HymnPageState extends State<HymnPage> {
                                       ),
                               ),
                       ),
-                      if (!MidiPlayer.hasMidi(widget.hymn))
+                      if (!MidiPlayer.hasMusic(widget.hymn) ||
+                          !_showPlayer ||
+                          _videoVisible)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -631,7 +634,7 @@ class _HymnPageState extends State<HymnPage> {
                   _videoVisible ? 'Restart hymn video' : 'Play hymn video',
                 ),
               ),
-            if (MidiPlayer.hasMidi(widget.hymn))
+            if (MidiPlayer.hasMusic(widget.hymn))
               PopupMenuItem(
                 key: const ValueKey('hymn-player-visibility'),
                 value: _ReaderAction.player,
@@ -644,7 +647,7 @@ class _HymnPageState extends State<HymnPage> {
                 ),
               ),
             if (!_sheetMusicVisible &&
-                (MidiPlayer.hasMidi(widget.hymn) ||
+                (MidiPlayer.hasMusic(widget.hymn) ||
                     !widget.hymn.isEnglishEdition))
               PopupMenuItem(
                 key: const ValueKey('hymn-scroll-speed-menu-item'),
@@ -771,7 +774,7 @@ class _HymnPageState extends State<HymnPage> {
                       24,
                       16,
                       24,
-                      MidiPlayer.hasMidi(widget.hymn) &&
+                      MidiPlayer.hasMusic(widget.hymn) &&
                               _showPlayer &&
                               !_videoVisible
                           ? 150
@@ -941,7 +944,8 @@ class _HymnPageState extends State<HymnPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ChoirPartsButton(hymn: widget.hymn),
+                if (MidiPlayer.hasMidi(widget.hymn))
+                  ChoirPartsButton(hymn: widget.hymn),
                 _chordStrip(t),
                 _progressLine(t),
                 // FittedBox lets the whole control strip scale down as one
@@ -953,11 +957,12 @@ class _HymnPageState extends State<HymnPage> {
                     children: [
                       _circleButton(
                         t,
+                        key: const ValueKey('reader-previous'),
                         onTap: () => _move(-1),
                         icon: HymnalIcons.backChevron(t.ink, size: 16),
                       ),
                       const SizedBox(width: 10),
-                      _keyPill(t),
+                      if (MidiPlayer.hasMidi(widget.hymn)) _keyPill(t),
                       const SizedBox(width: 10),
                       _seekButton(t, forward: false),
                       const SizedBox(width: 10),
@@ -969,6 +974,7 @@ class _HymnPageState extends State<HymnPage> {
                       const SizedBox(width: 10),
                       _circleButton(
                         t,
+                        key: const ValueKey('reader-next'),
                         onTap: () => _move(1),
                         icon: HymnalIcons.forwardChevron(t.ink, size: 16),
                       ),
@@ -1377,7 +1383,7 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   Widget _seekButton(HymnalTokens t, {required bool forward}) {
-    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    final canPlay = MidiPlayer.hasMusic(widget.hymn);
     return Opacity(
       opacity: canPlay ? 1.0 : 0.45,
       child: Pressable(
@@ -1405,7 +1411,7 @@ class _HymnPageState extends State<HymnPage> {
   /// Current-speed pill (mockup's "1.0×" placeholder, now live): tap opens
   /// the speed picker sheet.
   Widget _speedPill(HymnalTokens t) {
-    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    final canPlay = MidiPlayer.hasMusic(widget.hymn);
     return Opacity(
       opacity: canPlay ? 1.0 : 0.45,
       child: ValueListenableBuilder<double>(
@@ -1709,8 +1715,9 @@ class _HymnPageState extends State<HymnPage> {
   }
 
   Widget _circleButton(HymnalTokens t,
-      {required VoidCallback onTap, required Widget icon}) {
+      {Key? key, required VoidCallback onTap, required Widget icon}) {
     return Pressable(
+      key: key,
       onTap: onTap,
       pressedScale: 0.92,
       builder: (context, pressed) => Container(
@@ -1723,10 +1730,22 @@ class _HymnPageState extends State<HymnPage> {
     );
   }
 
+  Future<void> _toggleMusic() async {
+    try {
+      await MidiPlayer.instance.toggle(widget.hymn);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content:
+            Text('Could not load music. Check your connection and try again.'),
+      ));
+    }
+  }
+
   Widget _playButton(HymnalTokens t) {
     // Both bundled editions have MIDI; malformed/out-of-range records remain
     // dimmed and inert.
-    final canPlay = MidiPlayer.hasMidi(widget.hymn);
+    final canPlay = MidiPlayer.hasMusic(widget.hymn);
     return ValueListenableBuilder<MidiPlayback?>(
       valueListenable: MidiPlayer.instance.current,
       builder: (context, cur, _) {
@@ -1741,9 +1760,7 @@ class _HymnPageState extends State<HymnPage> {
             opacity: canPlay ? 1.0 : 0.45,
             child: Pressable(
               key: const ValueKey('hymn-play-pause'),
-              onTap: canPlay
-                  ? () => MidiPlayer.instance.toggle(widget.hymn)
-                  : null,
+              onTap: canPlay ? _toggleMusic : null,
               pressedScale: 0.92,
               builder: (context, pressed) => Container(
                 width: 44,
@@ -1754,9 +1771,19 @@ class _HymnPageState extends State<HymnPage> {
                   shape: BoxShape.circle,
                   boxShadow: t.playShadow,
                 ),
-                child: isPlaying
-                    ? HymnalIcons.pauseBars(t.onAccent)
-                    : HymnalIcons.playTriangle(t.onAccent),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: MidiPlayer.instance.loading,
+                  builder: (context, loading, _) =>
+                      loading && MidiPlayer.isCurrent(cur, widget.hymn)
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: t.onAccent))
+                          : isPlaying
+                              ? HymnalIcons.pauseBars(t.onAccent)
+                              : HymnalIcons.playTriangle(t.onAccent),
+                ),
               ),
             ),
           ),

@@ -21,8 +21,7 @@ recognized for ranking. Displayed titles and lyrics are never normalized.
 
 The interface remains English. Hymn text, titles, credits, and topics retain
 their source language. UI translation and audio are separate roadmap items.
-Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Music controls appear only for verified mappings: Spanish New #303 now has
-three-verse instrumental playback; other foreign entries remain silent. Cyrillic labels use a bundled font fallback.
+Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Both Spanish editions now offer instrumental recordings for every hymn (614 New and 527 Old). Spanish New #303 prefers its verified three-verse MIDI, retaining styles, choir parts, and key changes. Other Spanish hymns use the same player with recording-supported controls; other foreign editions remain silent. Recordings download on first play into a bounded temporary cache, so first use requires a connection. Cyrillic labels use a bundled font fallback.
 
 Foreign per-hymn analytics are suppressed while the deployed collector still
 accepts only English aliases. Content reports use its existing general-report
@@ -178,3 +177,30 @@ The structured Tagalog and Cebuano files both use 19, 143, 201, 237, 269 and
 twelve title/number pairs and the alternate source URL, byte size and checksum.
 This corroborates a source conflict; it does not establish which label matches
 the printed book. Both staging manifests preserve the structured source labels.
+
+
+### Spanish instrumental recordings (2026-10-07)
+
+`assets/hymnals/spanish_recordings.json` pins 1,141 edition-specific files from
+`isax5/hymnal` revision `dc744acaa3971fa630e6d68193d9ddfb4c11a710`.
+The source settings explicitly associate Spanish 2009 and 1962 with their own
+instrumental directories. This is not a cross-language number match.
+All files were downloaded and checked against source byte counts and Git blob
+hashes; M4A headers and positive audio durations were checked with macOS afinfo.
+The per-file results are in `tool/data/spanish_recording_audit.json`.
+Re-run the network audit with `python3 tool/validate_spanish_recordings.py`.
+It downloads about 1.8 GiB; it is intentionally separate from routine checks.
+
+These checks establish source integrity and complete file coverage, not a manual
+musical review of every recording. The supplied performances vary in duration;
+some Old hymns are short and may cover only one verse. No inferred repetition,
+transposition, or style transformation is applied to recordings. Complete MIDI
+coverage and individual musical/form review remain open work.
+
+Playback validates each download before use, retains up to 128 MiB in temporary
+storage, and repairs corrupt cached files. The OS may clear this cache. Permanent
+offline downloads remain a separate roadmap item. Loading and connection failures
+are visible in the existing player. Recordings use the media player on iOS;
+verified MIDI continues through the native soundfont player. Only the active
+engine can publish completion events. Autoplay remains opt-in and starts only
+after manual playback; pausing does not advance the queue.

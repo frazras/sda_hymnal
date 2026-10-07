@@ -128,6 +128,8 @@ def report(root=ROOT):
             expected[extra['book']['id']] = extra['expectedNumbers']
     midi_catalog = root / 'assets/midi/verified_tunes.json'
     midi_mappings = json.loads(midi_catalog.read_text())['mappings'] if midi_catalog.exists() else []
+    recording_catalog = root / 'assets/hymnals/spanish_recordings.json'
+    recording_books = json.loads(recording_catalog.read_text())['books'] if recording_catalog.exists() else []
     books = []
     for entry in catalog['books']:
         try:
@@ -174,6 +176,8 @@ def report(root=ROOT):
                 'scoreHymns': len(available & item_ids),
                 'missingScoreItemIds': sorted(item_ids - available, key=lambda x: (len(x), x)),
                 'verifiedInstrumentalItemIds': instrumental,
+                'instrumentalRecordingItemIds': [i['itemId'] for b in recording_books
+                    if b['bookId'] == entry['id'] for i in b['items']],
                 'vocals': 'No verified sung recordings in these language packs.'}
         except (OSError, ValueError, KeyError, TypeError) as exc:
             result = {'bookId': entry.get('id'), 'errors': [

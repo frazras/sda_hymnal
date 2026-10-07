@@ -224,7 +224,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   bool get _supportsTiming =>
       MidiPlayer.hasMidi(widget.hymn) || !widget.hymn.isEnglishEdition;
   bool get _loaded =>
-      MidiPlayer.hasMidi(widget.hymn) &&
+      MidiPlayer.hasMusic(widget.hymn) &&
       MidiPlayer.isCurrent(_player.current.value, widget.hymn);
   Duration? get _duration => _loaded && _player.duration.value > Duration.zero
       ? _player.duration.value

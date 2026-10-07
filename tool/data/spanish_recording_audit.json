@@ -1,0 +1,6858 @@
+{
+  "revision": "dc744acaa3971fa630e6d68193d9ddfb4c11a710",
+  "items": [
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "1",
+      "durationSeconds": 143.29,
+      "gitBlobSha1": "88cb5a34e1bc60ac3978025ade9e6340921b5d46"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "2",
+      "durationSeconds": 158.266984,
+      "gitBlobSha1": "4be78c98c31e7463a18833631ad03154a59357c6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "3",
+      "durationSeconds": 114.07898,
+      "gitBlobSha1": "d0924d70e9deeea1ccedb2990957f94737216ffe"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "4",
+      "durationSeconds": 126.965986,
+      "gitBlobSha1": "7aa1a75d076e48a3706187c8bf33dfa5e4763912"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "5",
+      "durationSeconds": 159.195986,
+      "gitBlobSha1": "aa6169ff761fc2d9ff81fa766b1262dc757ece4d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "6",
+      "durationSeconds": 73.513991,
+      "gitBlobSha1": "ed6153f21c3feadf548ddf75ef9b7757a1abc134"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "7",
+      "durationSeconds": 89.094966,
+      "gitBlobSha1": "36f0251805d90fb28d8e7dffa275147df329f9b2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "8",
+      "durationSeconds": 185.503991,
+      "gitBlobSha1": "d19e694ae0513e2d96ca6ec058e67aa720fa9a5f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "9",
+      "durationSeconds": 58.147982,
+      "gitBlobSha1": "06490591754b52da627f945d54757a6b9225f085"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "10",
+      "durationSeconds": 144.705986,
+      "gitBlobSha1": "64c8495352f8b0c347bc126225412e8e290cfdeb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "11",
+      "durationSeconds": 139.040998,
+      "gitBlobSha1": "e45b1ac8d018b64a5ec43a181b2485129249ba75"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "12",
+      "durationSeconds": 81.547982,
+      "gitBlobSha1": "573a0dc9dbf3205ace2d5ac73c6c9650633863ec"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "13",
+      "durationSeconds": 139.18,
+      "gitBlobSha1": "75377f819d57f0ccdcdfdbc06e45faddc9a7d7fd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "14",
+      "durationSeconds": 140.781995,
+      "gitBlobSha1": "8094dfeaf10ebfd1b666bdd0dfcaa22eb3a7b917"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "15",
+      "durationSeconds": 109.016984,
+      "gitBlobSha1": "f3b7ddffcedb54b01249ce59e193baed3bbdee4a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "16",
+      "durationSeconds": 122.043991,
+      "gitBlobSha1": "72840153f268a9d0fee9997ded5039612eec9bf1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "17",
+      "durationSeconds": 106.207982,
+      "gitBlobSha1": "fd1e4a56379843421ec1fd742d8dbfc704734d04"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "18",
+      "durationSeconds": 92.16,
+      "gitBlobSha1": "06149c3421781b9f66a162ab393c20b8e6bb166f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "19",
+      "durationSeconds": 104.35,
+      "gitBlobSha1": "cab8e4eede53ac0a1ba1ec80758ef95a5d774170"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "20",
+      "durationSeconds": 57.991995,
+      "gitBlobSha1": "425629f5c94924879ec885ebe1ac3f5f1827db68"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "21",
+      "durationSeconds": 53.995986,
+      "gitBlobSha1": "eba3f98406729892b51ff7130714ebc7cc0d0e26"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "22",
+      "durationSeconds": 85.611973,
+      "gitBlobSha1": "f4618aca616b126b92eb1b169b1a2671eb130082"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "23",
+      "durationSeconds": 162.376984,
+      "gitBlobSha1": "c128d6e6dd304b3b39dff561b31933e052b5b72e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "24",
+      "durationSeconds": 95.247982,
+      "gitBlobSha1": "3543da7cf99d2136ac78d52ae4251b0cd53ee947"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "25",
+      "durationSeconds": 55.040998,
+      "gitBlobSha1": "07c96a12c2c6423eaaec8b88a3f1f6224bc1bee1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "26",
+      "durationSeconds": 111.640998,
+      "gitBlobSha1": "c2c153d7c4db128b1db6687b0ee23ac7765f7d87"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "27",
+      "durationSeconds": 138.552993,
+      "gitBlobSha1": "eec6e5917b4401a2732f17922c162367a55191fc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "28",
+      "durationSeconds": 171.107846,
+      "gitBlobSha1": "39dd3d182a030d45416ac7eb21f8c7edf6ceb7ac"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "29",
+      "durationSeconds": 160.286984,
+      "gitBlobSha1": "6bfe37c977173ac6aa91648ebfc37ce7cbd0c3e1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "30",
+      "durationSeconds": 84.984989,
+      "gitBlobSha1": "bcfbaedef4848075984fbb30576dc34d5546e1d3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "31",
+      "durationSeconds": 77.205986,
+      "gitBlobSha1": "a40b1b645bffc95f9cd25d40bbef0c86f4c77729"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "32",
+      "durationSeconds": 58.670998,
+      "gitBlobSha1": "68d78f4d1cd83c25a9cd2139fc6453b07cb4beb2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "33",
+      "durationSeconds": 80.340998,
+      "gitBlobSha1": "c0ca642212d1059caa6db705adaf77c9a5bf36f2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "34",
+      "durationSeconds": 80.386984,
+      "gitBlobSha1": "681f7ca25feac60e5ae0ffc717e027dbfe3e2df8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "35",
+      "durationSeconds": 57.834989,
+      "gitBlobSha1": "d561a70bc581045c7c0fbcc803179522ad5dbe21"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "36",
+      "durationSeconds": 74.28,
+      "gitBlobSha1": "7399a113728cbe98a6e14e0b41713222be4248a9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "37",
+      "durationSeconds": 210.279909,
+      "gitBlobSha1": "0347c31207b077e4829626b2585df413966b0517"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "38",
+      "durationSeconds": 113.242993,
+      "gitBlobSha1": "ca64e786b742ac8672a187216b8662c21ae0bcae"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "39",
+      "durationSeconds": 54.152993,
+      "gitBlobSha1": "589f597156f963786230f7c8ceda03b067fcfa6c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "40",
+      "durationSeconds": 90.650703,
+      "gitBlobSha1": "3fade7def5fa9a6b54c063730ca1c4318d6644ca"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "41",
+      "durationSeconds": 82.01288,
+      "gitBlobSha1": "e1f5d5c0e4e3e301bb643fcd440d2df464a30a2c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "42",
+      "durationSeconds": 65.253991,
+      "gitBlobSha1": "67e3108233b716bb6ee9926e7ba02ef5a5f030c6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "43",
+      "durationSeconds": 68.010998,
+      "gitBlobSha1": "af28428762f9b37a5329a457a9daf3e31b457693"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "44",
+      "durationSeconds": 42.030998,
+      "gitBlobSha1": "90b03bf83de0ac6fa0f3884ae2e838bd0b244722"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "45",
+      "durationSeconds": 134.326984,
+      "gitBlobSha1": "da9e2666c39290208826faf4e6b9890fbd219355"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "46",
+      "durationSeconds": 124.969796,
+      "gitBlobSha1": "251c0434edcad395c8133a0e0b6c7a56d79b0fec"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "47",
+      "durationSeconds": 107.716984,
+      "gitBlobSha1": "8a32e8b2e65b679d4e41d886726e331ad5fc0aef"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "48",
+      "durationSeconds": 125.874989,
+      "gitBlobSha1": "d1d6823c843003277dec1a1b926e15cc57c02f03"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "49",
+      "durationSeconds": 123.784989,
+      "gitBlobSha1": "7dadea43b1cd08221ae3f4e380e0265cce1fbc29"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "50",
+      "durationSeconds": 193.630998,
+      "gitBlobSha1": "e42925e0886869c3db0d4cfe4300692646a81f3d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "51",
+      "durationSeconds": 189.845986,
+      "gitBlobSha1": "8f46953ad99bb415f41a1bccab25bc321b72feca"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "52",
+      "durationSeconds": 174.543991,
+      "gitBlobSha1": "30d34dea894e5d94f9d188b4a590062f9c594a14"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "53",
+      "durationSeconds": 212.36898,
+      "gitBlobSha1": "930bb7ec00c1431b14c606063c9328e19f09e89d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "54",
+      "durationSeconds": 70.587982,
+      "gitBlobSha1": "bf720d470c6ca2b96f7caa8bdeb614d63817a850"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "55",
+      "durationSeconds": 218.684989,
+      "gitBlobSha1": "aeb8258ec3abfb3acda0067a98c5031460298c66"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "56",
+      "durationSeconds": 49.866984,
+      "gitBlobSha1": "1ad49d227a4eb4e3fad33e337b6d4058f9e5933b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "57",
+      "durationSeconds": 106.764989,
+      "gitBlobSha1": "c4ca9f4f76ad07f8954ce370862395bfcfeb3ba3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "58",
+      "durationSeconds": 158.405986,
+      "gitBlobSha1": "a713a0a1326a6aad20b7fe785c756f8b1f63c99c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "59",
+      "durationSeconds": 54.30898,
+      "gitBlobSha1": "43b157dabb21f7272e6f689206c767f436fb591a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "60",
+      "durationSeconds": 201.734966,
+      "gitBlobSha1": "18994f0e5047819cbef3a356e97bad80c795c764"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "61",
+      "durationSeconds": 145.332993,
+      "gitBlobSha1": "1247baf30169f08253a7e326e16e95b2b3045298"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "62",
+      "durationSeconds": 133.90898,
+      "gitBlobSha1": "cf16d211fbb4f1c2fe44a0dc57beebc95a99484f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "63",
+      "durationSeconds": 133.444989,
+      "gitBlobSha1": "307e911eeed342e2a3ac583c6555ec72e18e0f98"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "64",
+      "durationSeconds": 138.877982,
+      "gitBlobSha1": "eb00edab1f5e8ce3b7e9dbaec8d080ae76718493"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "65",
+      "durationSeconds": 155.874989,
+      "gitBlobSha1": "beabd9162332c94d235acb0cc97b4afafcfafe98"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "66",
+      "durationSeconds": 130.356825,
+      "gitBlobSha1": "6ca842bd91a1246d878f8eda5aa793c89316f3e9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "67",
+      "durationSeconds": 172.987982,
+      "gitBlobSha1": "ac5329fd6a8a589843d2415cda978bb3cf22d4df"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "68",
+      "durationSeconds": 202.152925,
+      "gitBlobSha1": "60041648b52f66aa5ee84e1bed7487468c8cb0ea"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "69",
+      "durationSeconds": 224.373991,
+      "gitBlobSha1": "7e99808db1d2dd15b6e11c07df09936b7ed3e969"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "70",
+      "durationSeconds": 74.326984,
+      "gitBlobSha1": "aafb430d47f8efd08993ceb94b1d185c76387aa0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "71",
+      "durationSeconds": 208.676984,
+      "gitBlobSha1": "23f0dea39bbe1e2869b9caf5b39854904e608972"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "72",
+      "durationSeconds": 183.042902,
+      "gitBlobSha1": "0a055c69bb6aef62e44b74d1d6e32ee0b5454d94"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "73",
+      "durationSeconds": 220.19483,
+      "gitBlobSha1": "d7ee19966403bc750e5bbf1c555ba1f6588cb614"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "74",
+      "durationSeconds": 129.636984,
+      "gitBlobSha1": "441729956a002aeef690992d6591aa184e82f4da"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "75",
+      "durationSeconds": 119.047982,
+      "gitBlobSha1": "6ffd7478f50819da89b0a548945d3d51a0f72e5e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "76",
+      "durationSeconds": 106.718912,
+      "gitBlobSha1": "fe991f9eca5020514077b31f2c3b8656653d3d8f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "77",
+      "durationSeconds": 55.667982,
+      "gitBlobSha1": "85d180a64356023c04ae1819bc87b2e4f0d0bb43"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "78",
+      "durationSeconds": 99.473991,
+      "gitBlobSha1": "e65f44fc467bef433bb3443563fdc9717dec4a0a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "79",
+      "durationSeconds": 160.031927,
+      "gitBlobSha1": "fa46cf8afdbf08891f0c238eb157d70e4f967a32"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "80",
+      "durationSeconds": 100.425986,
+      "gitBlobSha1": "af2d9e3fdb1cac3afb03387117c91b796b9dee62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "81",
+      "durationSeconds": 132.027982,
+      "gitBlobSha1": "ab8934a64f49c6ea7258ec64e622cb79db709f05"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "82",
+      "durationSeconds": 99.380998,
+      "gitBlobSha1": "f73bf11a529b64c80bd7bf199b3eb5a146e86eb4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "83",
+      "durationSeconds": 219.683991,
+      "gitBlobSha1": "6e02efc4fa3bda4f032dd8323a6488e827fab0aa"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "84",
+      "durationSeconds": 138.46,
+      "gitBlobSha1": "189c0705de8df4ab59f27f4decc6c40c0d5cdfbc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "85",
+      "durationSeconds": 120.72,
+      "gitBlobSha1": "3b2d37e715e9a5d19fe576c79c31340b299db490"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "86",
+      "durationSeconds": 134.582857,
+      "gitBlobSha1": "6122173a2547bdfbf54020886b98200fe97bb911"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "87",
+      "durationSeconds": 172.360998,
+      "gitBlobSha1": "3b0582aeaeb17d2d25989a246be1a8658b223cd4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "88",
+      "durationSeconds": 148.42195,
+      "gitBlobSha1": "46a29fa4c673b6e4511d6088a2d9793cb5f04f1d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "89",
+      "durationSeconds": 122.461995,
+      "gitBlobSha1": "2c67efe41d61a8eb3b1f2da7e81a6cdf6982b225"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "90",
+      "durationSeconds": 199.063991,
+      "gitBlobSha1": "af03a57512204b22bcab1020f1db7810b0816be5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "91",
+      "durationSeconds": 155.526984,
+      "gitBlobSha1": "1cf9f3d36c9985f52ba07a4e39d33fca7d51c765"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "92",
+      "durationSeconds": 122.623991,
+      "gitBlobSha1": "1d25ad57c00dec37816c5ae3e155cce875b4a8e7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "93",
+      "durationSeconds": 158.94,
+      "gitBlobSha1": "6076af1f1d838ae7b631fa8f95aee52a351878fa"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "94",
+      "durationSeconds": 99.79898,
+      "gitBlobSha1": "ce5328beb17f0394348666ced0d36920daa5970a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "95",
+      "durationSeconds": 238.932993,
+      "gitBlobSha1": "3028111bb96ccf2cecbc5971da139c567428e837"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "96",
+      "durationSeconds": 158.730998,
+      "gitBlobSha1": "1e9e703fe2b985d5d569fd4363f9dae34ab90710"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "97",
+      "durationSeconds": 273.089887,
+      "gitBlobSha1": "d13cc6c6b48e6a3fe90bcdc37c1475a1b4aa62e8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "98",
+      "durationSeconds": 134.164898,
+      "gitBlobSha1": "a715af5f6236d6e6632059c1c7c35e63c91acd21"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "99",
+      "durationSeconds": 188.057982,
+      "gitBlobSha1": "d4d3bac2c25f7d487df98cfce49389766a49a0a2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "100",
+      "durationSeconds": 172.19898,
+      "gitBlobSha1": "e10f2972613995e703e9b90b5e1084ddaf9c9559"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "101",
+      "durationSeconds": 157.685986,
+      "gitBlobSha1": "d9f90a56c76160f66cd288ea5eb7a8e4811ee54a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "102",
+      "durationSeconds": 169.644989,
+      "gitBlobSha1": "33fe339dca0e9d938d9ec867194e674dfaefc4c9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "103",
+      "durationSeconds": 287.601995,
+      "gitBlobSha1": "c6e4444321c75a29dd3b3e07dbcb0c4ce52d2ee1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "104",
+      "durationSeconds": 166.463855,
+      "gitBlobSha1": "bf628647758e623981a0414179b530f2eb222bd6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "105",
+      "durationSeconds": 164.117982,
+      "gitBlobSha1": "004c1af6e4a2c4cad386f3dbe0ec707bb44ddb84"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "106",
+      "durationSeconds": 213.297982,
+      "gitBlobSha1": "efe5b1ceeb1a3e39b72d58078225ccfa7d9bc974"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "107",
+      "durationSeconds": 192.840998,
+      "gitBlobSha1": "99737db152943a434abaf38f450030e0322f01c7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "108",
+      "durationSeconds": 175.58898,
+      "gitBlobSha1": "6ec4732d425a7e52d109e9de674ea8a1609e4e6b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "109",
+      "durationSeconds": 156.153991,
+      "gitBlobSha1": "64912e290d04db21f4c51acdeb1dfb915805020d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "110",
+      "durationSeconds": 210.952993,
+      "gitBlobSha1": "01c298f10060c55689b27180611ddc086e90a01d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "111",
+      "durationSeconds": 172.895782,
+      "gitBlobSha1": "880bce5999425339a70ef06bf81fae31a78d7b51"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "112",
+      "durationSeconds": 181.857982,
+      "gitBlobSha1": "966762bb271c6028dbb3f6854e012fe17ded891f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "113",
+      "durationSeconds": 144.752993,
+      "gitBlobSha1": "7f70de965be308b62217114cdd9e9c9e3eac920d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "114",
+      "durationSeconds": 217.593991,
+      "gitBlobSha1": "ecc76fe2b026fcbe40e45fc6e84b70fc50c77689"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "115",
+      "durationSeconds": 57.573991,
+      "gitBlobSha1": "3d77dae156711491982bf12dd456a1ebeec26d66"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "116",
+      "durationSeconds": 194.187982,
+      "gitBlobSha1": "8045e17052eafe71ff7ebeefa62db651dc442cb2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "117",
+      "durationSeconds": 284.095986,
+      "gitBlobSha1": "662ab7fd824c5e64f1b00018a641569956d00ca0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "118",
+      "durationSeconds": 175.797982,
+      "gitBlobSha1": "6f8d61b70856bc63cfa66fa6c52acb541248a4f7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "119",
+      "durationSeconds": 120.255986,
+      "gitBlobSha1": "271338f8e1cb7b71492d1e4d5fef94344fc337ad"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "120",
+      "durationSeconds": 141.153991,
+      "gitBlobSha1": "4c0f8c83ea485869d6f21e57858128ae87ceb1a7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "121",
+      "durationSeconds": 188.127982,
+      "gitBlobSha1": "bafad41a1ed94542e4aae86a5bea518bb64b0343"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "122",
+      "durationSeconds": 173.777982,
+      "gitBlobSha1": "aa07c05d52197bea3b10a2e7c6305504ae9fdd83"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "123",
+      "durationSeconds": 103.769977,
+      "gitBlobSha1": "d683a57a937d4a441c3eaf3aae3addc963995ab5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "124",
+      "durationSeconds": 239.141995,
+      "gitBlobSha1": "a1f5021465b75eb2e473e95f3b9ccb80c69cebc5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "125",
+      "durationSeconds": 87.423129,
+      "gitBlobSha1": "54bf9807a9873ff86ad354e4220e5b47424278a3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "126",
+      "durationSeconds": 192.330884,
+      "gitBlobSha1": "2de963a89507cdb232cee46366d00226e44b87ba"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "127",
+      "durationSeconds": 112.151995,
+      "gitBlobSha1": "591696c4ebe36c5a00f85ab9aed5bb235a11c1dc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "128",
+      "durationSeconds": 167.136984,
+      "gitBlobSha1": "81f25f4f04f46c53508fb972986f8375cdfae089"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "129",
+      "durationSeconds": 186.501995,
+      "gitBlobSha1": "9e3ed97f0b57274ff4aaa2d6777c80f920afcb11"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "130",
+      "durationSeconds": 87.724989,
+      "gitBlobSha1": "7d44a764cfc1e1e46aaf4323396e222a6113c3de"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "131",
+      "durationSeconds": 163.374989,
+      "gitBlobSha1": "569d2ad27253518743bcbc6d8a548699c90fa948"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "132",
+      "durationSeconds": 193.25898,
+      "gitBlobSha1": "0f0618be6b83f74df43ef73ff0255451ef5cd4e6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "133",
+      "durationSeconds": 116.540952,
+      "gitBlobSha1": "8b8c7206ad1c3bc77afecdd443fa894c025849b4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "134",
+      "durationSeconds": 197.554989,
+      "gitBlobSha1": "d0c55ca40d0e8a2e0c22cfb7239d061c2068c23d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "135",
+      "durationSeconds": 55.353991,
+      "gitBlobSha1": "8b7dc4680fec14b9d31b98eea31e0507af857325"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "136",
+      "durationSeconds": 114.984989,
+      "gitBlobSha1": "535ee54ea109cfd4bbd7c9debf448a6f1ab8a229"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "137",
+      "durationSeconds": 169.690998,
+      "gitBlobSha1": "d46035576a2dcf868f37d271acbbe8cb487ae812"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "138",
+      "durationSeconds": 205.542993,
+      "gitBlobSha1": "38d7a500f92b9b8e6b170f0fe5f3cbae5aea5c0a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "139",
+      "durationSeconds": 215.387982,
+      "gitBlobSha1": "9543af743216d41b91754a0b30e2cee474a0daf9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "140",
+      "durationSeconds": 178.514989,
+      "gitBlobSha1": "3c24a0dee8371e90c9fd7a868b36e928bca10d50"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "141",
+      "durationSeconds": 209.118912,
+      "gitBlobSha1": "6e9a07e20975f3aee34223885fc2ff2cd77a5088"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "142",
+      "durationSeconds": 241.115986,
+      "gitBlobSha1": "cb1b6d0f2d70196451831738093d35c8562894b3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "143",
+      "durationSeconds": 141.455964,
+      "gitBlobSha1": "cb30206589fe4afeaedb196e6424db33319e4baf"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "144",
+      "durationSeconds": 81.895986,
+      "gitBlobSha1": "bf35dc3f1e397807222823c1ca648e5ec9ff5410"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "145",
+      "durationSeconds": 191.192993,
+      "gitBlobSha1": "2a99572b969ee20d1d332a41f396796a8b396fae"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "146",
+      "durationSeconds": 92.694059,
+      "gitBlobSha1": "dd6746b4f96929e5e401ca9f1c6507174acac875"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "147",
+      "durationSeconds": 219.613991,
+      "gitBlobSha1": "be3f4c6a7e1612f6d06f6fdfa2745ecf1c55826f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "148",
+      "durationSeconds": 56.921995,
+      "gitBlobSha1": "715e5891f5700c772ed8b071b073a0e0c54643e9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "149",
+      "durationSeconds": 188.127982,
+      "gitBlobSha1": "b049d37df7dc6449288c4e1f68dad70b8277d909"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "150",
+      "durationSeconds": 168.506984,
+      "gitBlobSha1": "9ac7d4936c8ace81f24a686ee34aa9b71938aa9e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "151",
+      "durationSeconds": 72.166984,
+      "gitBlobSha1": "f07109fba66e71f816519cdeaf5a4905e15fa9d7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "152",
+      "durationSeconds": 72.213991,
+      "gitBlobSha1": "7fbcf9bfa31ee8f9a1c60ad48eace3a70a3c2300"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "153",
+      "durationSeconds": 178.653991,
+      "gitBlobSha1": "ef9706610d9fbf03c7b22ea889b7beab3d800157"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "154",
+      "durationSeconds": 141.942993,
+      "gitBlobSha1": "d425e072355a405e5e6fdd7a53079831ab7138b6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "155",
+      "durationSeconds": 152.182993,
+      "gitBlobSha1": "45dc20055155e4de186f604765f2277ff3c59d65"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "156",
+      "durationSeconds": 126.594989,
+      "gitBlobSha1": "58f7951686edf24e93962bae3e68fbc89d09a2d2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "157",
+      "durationSeconds": 95.154989,
+      "gitBlobSha1": "d7990d4a09ff73aeb15534b94c930fbcff3c9110"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "158",
+      "durationSeconds": 191.401995,
+      "gitBlobSha1": "b625b71ac1cc9c2a74a6d024c78b4ab78405eea1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "159",
+      "durationSeconds": 208.351995,
+      "gitBlobSha1": "8093188dfe50b5b59881fd269110daf2d4556a37"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "160",
+      "durationSeconds": 241.626848,
+      "gitBlobSha1": "eecce4d27fcc1c1cb3688e29123350a30dd6c211"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "161",
+      "durationSeconds": 206.540998,
+      "gitBlobSha1": "93fcd4edc22f392c81686dd31de9fe5bd6edc0ff"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "162",
+      "durationSeconds": 255.000998,
+      "gitBlobSha1": "91ff1bdaac357825667e76eae0a84904c5022435"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "163",
+      "durationSeconds": 182.833923,
+      "gitBlobSha1": "ecce519a177f66fd3355aa4ba2555ba6a7f40fbe"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "164",
+      "durationSeconds": 158.057982,
+      "gitBlobSha1": "5f207edd889fa3932096c8c696c2ba10261d5139"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "165",
+      "durationSeconds": 217.26898,
+      "gitBlobSha1": "d77bf75d6a6b1fea88d3f133e24d06ef79692b73"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "166",
+      "durationSeconds": 121.462993,
+      "gitBlobSha1": "3bc382524540a76401d411cb5efe6dd8fad11f93"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "167",
+      "durationSeconds": 202.500998,
+      "gitBlobSha1": "021104ed0a8d657c9ff8335ec765433cde4cec64"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "168",
+      "durationSeconds": 198.274989,
+      "gitBlobSha1": "d02ffda498f792ba6f8b796334faa8c0b5a4f5c5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "169",
+      "durationSeconds": 182.36898,
+      "gitBlobSha1": "faf3631c6712cd7acdfd06d26103996ec118460e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "170",
+      "durationSeconds": 235.472993,
+      "gitBlobSha1": "8ba4cf6e1a68e60e2caea3ba71cd095313138aaf"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "171",
+      "durationSeconds": 250.078912,
+      "gitBlobSha1": "5b41230c5f234624941092ee57d67e8c33bb8d4e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "172",
+      "durationSeconds": 195.14,
+      "gitBlobSha1": "ce39fc89133d1881a23d9b51ca00626dc9399289"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "173",
+      "durationSeconds": 192.585986,
+      "gitBlobSha1": "55ff15cea53b8948b94780b57ac57f9edef417e4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "174",
+      "durationSeconds": 148.096871,
+      "gitBlobSha1": "1d995078a9539cce4e2803186b21535bde02c524"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "175",
+      "durationSeconds": 135.27898,
+      "gitBlobSha1": "77cfbbdb515304de0570a1ae66b4c34505742db3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "176",
+      "durationSeconds": 104.790998,
+      "gitBlobSha1": "60a349d47c65648a98ae8d2323bf0646b2618985"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "177",
+      "durationSeconds": 143.196984,
+      "gitBlobSha1": "5f78ab46307c7fddfa3ac4524a966c6f5794f3c7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "178",
+      "durationSeconds": 140.897982,
+      "gitBlobSha1": "3ca7eef5ab12ff99b9b56ed0739d4948bf056dff"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "179",
+      "durationSeconds": 136.323991,
+      "gitBlobSha1": "b4f83fde771dbdfb95220848790f7718b6225ffa"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "180",
+      "durationSeconds": 109.38898,
+      "gitBlobSha1": "fa2c9313e681ed37a80f57f7533175468853384f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "181",
+      "durationSeconds": 176.981995,
+      "gitBlobSha1": "cfdb5cec70b624b3ed7b8646a92e37f8b1788858"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "182",
+      "durationSeconds": 211.115828,
+      "gitBlobSha1": "2ad512caa3999808b978ce4d661c256695dfc4eb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "183",
+      "durationSeconds": 210.372789,
+      "gitBlobSha1": "7111d0a7cb630084dd31f4cf5e8cb29fcff30266"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "184",
+      "durationSeconds": 134.373878,
+      "gitBlobSha1": "568389ed7c16b1aad8562e71e5822c4cf125b922"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "185",
+      "durationSeconds": 157.430998,
+      "gitBlobSha1": "1297d2762fde57b7b17b0dbe9fcd87cb0aa737ed"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "186",
+      "durationSeconds": 195.255986,
+      "gitBlobSha1": "d8bfd4ecbb769bfba443e7a1af1787e7e904da71"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "187",
+      "durationSeconds": 173.36,
+      "gitBlobSha1": "2af2d007cc6cf0d130524033cba0e87be0efdf29"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "188",
+      "durationSeconds": 158.475986,
+      "gitBlobSha1": "ae8397d841a0438b00d40717e5dc9e2470837f8f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "189",
+      "durationSeconds": 55.562993,
+      "gitBlobSha1": "5d6c647e2f8c284d78fe2e3c83f90b6fe1bb4d9b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "190",
+      "durationSeconds": 158.150998,
+      "gitBlobSha1": "49a4afa86f91c1c5e0cb4dafa95a9c753e952906"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "191",
+      "durationSeconds": 314.7,
+      "gitBlobSha1": "eddaf776f0215c79080b9ad8e9f09702af4f566d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "192",
+      "durationSeconds": 66.193991,
+      "gitBlobSha1": "45037f88ea2710f87a0c64b6ddb92c93d9306b16"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "193",
+      "durationSeconds": 162.910998,
+      "gitBlobSha1": "133c51419a1f5eb3e63e15ed16fd858ac654a427"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "194",
+      "durationSeconds": 155.317982,
+      "gitBlobSha1": "54f37335224a33af5a270b6f4289b730398647f5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "195",
+      "durationSeconds": 182.995986,
+      "gitBlobSha1": "a94caf36dfeb21a38506cbb870881f66b7361e69"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "196",
+      "durationSeconds": 117.956984,
+      "gitBlobSha1": "5cb849f1c49afde9ac88997c69fc853ead12b432"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "197",
+      "durationSeconds": 122.74,
+      "gitBlobSha1": "53887e016768b40a921b432533a2f5b49a8c90be"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "198",
+      "durationSeconds": 135.371995,
+      "gitBlobSha1": "4789bbe2ad9beeaea1b79b88e1d7729a11778ee5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "199",
+      "durationSeconds": 121.253991,
+      "gitBlobSha1": "e42fb858b2f06846752965c9f878948e3c1b2860"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "200",
+      "durationSeconds": 111.524989,
+      "gitBlobSha1": "a9f57e90529c96cbe9ca70177f0bed7629602cc4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "201",
+      "durationSeconds": 186.757982,
+      "gitBlobSha1": "5a60137ccb266ed5dcd84dd09f4f8419b6407c90"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "202",
+      "durationSeconds": 167.36898,
+      "gitBlobSha1": "fc1ed8c7dc5a4a7afbb3e943222891ecde26c03e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "203",
+      "durationSeconds": 114.287982,
+      "gitBlobSha1": "0b944f84df42e40f0ab59ed523abc39e961aec91"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "204",
+      "durationSeconds": 174.241995,
+      "gitBlobSha1": "415f365f4dce5960901cb5fe31ff48284a111d8b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "205",
+      "durationSeconds": 185.55,
+      "gitBlobSha1": "fa7ce79d6a8fa1fcf6dfc5f4a01b210137648074"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "206",
+      "durationSeconds": 148.72381,
+      "gitBlobSha1": "989247126c4c4c582a8b24a35a6057270bfdec5f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "207",
+      "durationSeconds": 193.421995,
+      "gitBlobSha1": "6d94ce85a0682e84600c98ceada173f52929fe03"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "208",
+      "durationSeconds": 135.79,
+      "gitBlobSha1": "90c4ffdc5b5fd4e855459f4afc86293e9d0e5f91"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "209",
+      "durationSeconds": 307.361995,
+      "gitBlobSha1": "d75cc1b8c08cb908f69e69d287dbd0af6003921d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "210",
+      "durationSeconds": 155.526984,
+      "gitBlobSha1": "90d0979d9f19f9ec249fbd2d07fa40b69106ea0e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "211",
+      "durationSeconds": 225.581859,
+      "gitBlobSha1": "d76fbda3dd08366cec96d458b03df66bd995445e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "212",
+      "durationSeconds": 142.616961,
+      "gitBlobSha1": "19aaa9ac0b4cf8f29904ef70aa91ec4cbfef2d53"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "213",
+      "durationSeconds": 200.201995,
+      "gitBlobSha1": "e1616c77ba5ade5922fd1897a46a2a3db81a293a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "214",
+      "durationSeconds": 150.975986,
+      "gitBlobSha1": "4bda88e28d2d0fddf795a2a5099a5170f5eaeac2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "215",
+      "durationSeconds": 122.88,
+      "gitBlobSha1": "f33bb1252e012bf401e9c1ec704b33489203f094"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "216",
+      "durationSeconds": 184.365986,
+      "gitBlobSha1": "a4052eeade28aba97d7112864135126814010123"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "217",
+      "durationSeconds": 163.955986,
+      "gitBlobSha1": "72d1653823f5f794a8e16bc931571d46f06878f7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "218",
+      "durationSeconds": 142.291882,
+      "gitBlobSha1": "d4f6fa8315f256f11efc15299ddcce4d25a584c1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "219",
+      "durationSeconds": 279.706984,
+      "gitBlobSha1": "4bcbaf282d59a9ce970e43e4bf8d250ef3fbb857"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "220",
+      "durationSeconds": 154.156984,
+      "gitBlobSha1": "81df58d95bea34376339913d9e1b95a39e5399d8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "221",
+      "durationSeconds": 163.490998,
+      "gitBlobSha1": "84b6fdeb06ccc2f7a1c6982a6f1561b076a0f6a6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "222",
+      "durationSeconds": 219.613991,
+      "gitBlobSha1": "8169f4f9c008c17f8d72b18c9aefb8a01443eb9a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "223",
+      "durationSeconds": 167.252993,
+      "gitBlobSha1": "edd10e862cce4d694b24b2f39f2e61667f026acf"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "224",
+      "durationSeconds": 221.494989,
+      "gitBlobSha1": "8774e3d95336b3261c2358ed2571a52b56bcd795"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "225",
+      "durationSeconds": 218.63898,
+      "gitBlobSha1": "a4dff5c61d0c23eeab70aaee69c790406e1828b7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "226",
+      "durationSeconds": 115.820998,
+      "gitBlobSha1": "64719d7c8df3f82cc0d3b3dd5844b2789fa51d3c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "227",
+      "durationSeconds": 195.975986,
+      "gitBlobSha1": "902c7fbf356679e5d3981553c5127471198a1d3f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "228",
+      "durationSeconds": 69.960998,
+      "gitBlobSha1": "e6ac3bdc7dd071c066226f3ebd512e6b495aca25"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "229",
+      "durationSeconds": 218.777982,
+      "gitBlobSha1": "2d188a7d2d16193895f5f38a4ac02f5e8bbddb4e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "230",
+      "durationSeconds": 80.433923,
+      "gitBlobSha1": "027f5b5d9e87228339e54f545832d55efa438fa1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "231",
+      "durationSeconds": 209.071995,
+      "gitBlobSha1": "9d787642e283a8c5db1d4d4b148030d739d1de9f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "232",
+      "durationSeconds": 49.292993,
+      "gitBlobSha1": "8b5abc7c0c39a070a51c17f80eae7be9d48ce7b1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "233",
+      "durationSeconds": 194.303991,
+      "gitBlobSha1": "9495e297f69fae9124bf14b20c868eee235c4484"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "234",
+      "durationSeconds": 145.123991,
+      "gitBlobSha1": "f03c682d546b6797b2ec5c62f1cebb80c66b9292"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "235",
+      "durationSeconds": 169.272993,
+      "gitBlobSha1": "7fd3354aa8325491af1df2471806c6bc3e06ebc4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "236",
+      "durationSeconds": 148.72381,
+      "gitBlobSha1": "12592a3a6a0b60f26a135eb4151fa40222aabe0c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "237",
+      "durationSeconds": 150.093787,
+      "gitBlobSha1": "3e22b4322e698d841a57c66b2fecc9f515322bb9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "238",
+      "durationSeconds": 154.156984,
+      "gitBlobSha1": "2d4f20b811ff9f51c0dc6e0dd20ff1a6a6ce8997"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "239",
+      "durationSeconds": 195.046984,
+      "gitBlobSha1": "5677230e6d48e785625c3037b623c58a92f8f383"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "240",
+      "durationSeconds": 197.066984,
+      "gitBlobSha1": "6410e42683ad493b87741dbd183ea9183050b623"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "241",
+      "durationSeconds": 167.182993,
+      "gitBlobSha1": "f10333d70334ecad6aa1bab5e71121a49760ea5a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "242",
+      "durationSeconds": 184.667982,
+      "gitBlobSha1": "ebaf3b2eb9261d9fbbffa32d2a9136d391d7bdf3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "243",
+      "durationSeconds": 170.17898,
+      "gitBlobSha1": "43117f59b35537b0d7552b20fed5c5b8cba8afe5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "244",
+      "durationSeconds": 160.147982,
+      "gitBlobSha1": "de967bb617aec32317fd3a6c6d99297f2d3df23a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "245",
+      "durationSeconds": 128.42898,
+      "gitBlobSha1": "89c0c425b8458b9cd74fab982b50b81301ac1a17"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "246",
+      "durationSeconds": 162.747982,
+      "gitBlobSha1": "61cdec43d235264883595ff6bf1b6ef0b78ed925"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "247",
+      "durationSeconds": 179.02585,
+      "gitBlobSha1": "a5351e816de2d520e8f6ab15c65a1f844d627585"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "248",
+      "durationSeconds": 221.146848,
+      "gitBlobSha1": "0ad7a1ac132258e4d4ea177736dcdeeea2483c13"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "249",
+      "durationSeconds": 164.42,
+      "gitBlobSha1": "07a82848962ad03124ac0af3576fcb3ffa195e6c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "250",
+      "durationSeconds": 176.772993,
+      "gitBlobSha1": "73b649c41d836ffdfd0dfb96327eaca03922014e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "251",
+      "durationSeconds": 203.080998,
+      "gitBlobSha1": "6885468ba895f02e7e6919fa8e36e7d3bef02ac4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "252",
+      "durationSeconds": 180.743991,
+      "gitBlobSha1": "98bc982533c08f4642709ad4274c8a7cab379272"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "253",
+      "durationSeconds": 206.053878,
+      "gitBlobSha1": "de3a1ae36f3d5c9aebd05c07229da56aa037437e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "254",
+      "durationSeconds": 203.49898,
+      "gitBlobSha1": "65757c4107e1fe82bedbf29a239483b90dbd34d1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "255",
+      "durationSeconds": 234.427982,
+      "gitBlobSha1": "46df7fb517f93b864ffb97d62a8a72081b76032c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "256",
+      "durationSeconds": 216.803991,
+      "gitBlobSha1": "65cb78f31570f2e7869e414fa2805651ed47b0ed"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "257",
+      "durationSeconds": 177.47,
+      "gitBlobSha1": "b96d80fa97a84a0ad345c6a18a57d59023f193cb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "258",
+      "durationSeconds": 236.726984,
+      "gitBlobSha1": "787df1b7f910e4f6612b83257ebf5b04fd395590"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "259",
+      "durationSeconds": 144.86898,
+      "gitBlobSha1": "dadc5c85c30e2566c0e3ed50201f3907b45d5cb9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "260",
+      "durationSeconds": 149.094989,
+      "gitBlobSha1": "3a58f5b2adf6484b7a9f1f836aae626c11123e49"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "261",
+      "durationSeconds": 216.176984,
+      "gitBlobSha1": "89cff539ade2ffaadb175612b10825ccb4542762"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "262",
+      "durationSeconds": 148.351995,
+      "gitBlobSha1": "9a416299cbfd470b02764ba1df70d8a85b173dd7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "263",
+      "durationSeconds": 131.400998,
+      "gitBlobSha1": "1eaacce0f0d39e3098331390be7f5f0858076b78"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "264",
+      "durationSeconds": 191.145986,
+      "gitBlobSha1": "c6ec4cda29e22e3e1fd7dda0f652aecd3017e23e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "265",
+      "durationSeconds": 150.86,
+      "gitBlobSha1": "fe5d5eff28f960e9ebe7325caea35fdcc8df4b7f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "266",
+      "durationSeconds": 338.917982,
+      "gitBlobSha1": "42a60813149b36641d4c5b2fb9fdc7a5c6dd4a1a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "267",
+      "durationSeconds": 118.374989,
+      "gitBlobSha1": "273d83863f26323f9612d0f39f3a875363b55690"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "268",
+      "durationSeconds": 210.697868,
+      "gitBlobSha1": "7c30b1d701a70b61204751cdd8e04e6b0c1a8d64"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "269",
+      "durationSeconds": 249.242993,
+      "gitBlobSha1": "62f2a8f40df5b81454945e7bb8bd898260063095"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "270",
+      "durationSeconds": 210.952993,
+      "gitBlobSha1": "431f728aeff4edaafaf4f4c26d1ff398eeb8ec23"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "271",
+      "durationSeconds": 131.81898,
+      "gitBlobSha1": "1dc9a5c5711b984efaef94e4854ed2568238a480"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "272",
+      "durationSeconds": 190.054989,
+      "gitBlobSha1": "0c9df23a22d872b46b93514aad9f0fc69f0475ae"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "273",
+      "durationSeconds": 213.297982,
+      "gitBlobSha1": "61953313c94b1f99647ce528ba6ec2df7c952858"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "274",
+      "durationSeconds": 280.798912,
+      "gitBlobSha1": "464ae2c2d7139f7d1b6e63df5235274cf5da0edb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "275",
+      "durationSeconds": 66.611995,
+      "gitBlobSha1": "8abd458ff66567bea1c5598d6e834f81c7f69886"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "276",
+      "durationSeconds": 152.902993,
+      "gitBlobSha1": "23c1fef45803b7432cd10182626f86b7f7ac46af"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "277",
+      "durationSeconds": 203.243991,
+      "gitBlobSha1": "73fac91666883699ec95bb3e204af0cefa4f4661"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "278",
+      "durationSeconds": 142.500862,
+      "gitBlobSha1": "5fb406b82b9e56bdc3b23d7154c0ededdd0bd891"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "279",
+      "durationSeconds": 110.897982,
+      "gitBlobSha1": "fd15ce0a619bdfa8b5e7b87759bc75b3d18becd6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "280",
+      "durationSeconds": 136.323991,
+      "gitBlobSha1": "dcdf0995ceef7a16af001875b36d332299ca1203"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "281",
+      "durationSeconds": 77.577868,
+      "gitBlobSha1": "434f1744b945d405bc9d134e5e3b99f4f68e6e3b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "282",
+      "durationSeconds": 161.192925,
+      "gitBlobSha1": "bf6f7ff4b406cb955febb081c7749f3fda5643f2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "283",
+      "durationSeconds": 65.253991,
+      "gitBlobSha1": "cf668f582eccb306acc826d811184f729f64372f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "284",
+      "durationSeconds": 226.091995,
+      "gitBlobSha1": "39122193a95d4ae4ef03902d411332b0f2203ddb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "285",
+      "durationSeconds": 148.676984,
+      "gitBlobSha1": "469f0ba7633a32a14edf6980ffa5e6c168c3a122"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "286",
+      "durationSeconds": 187.175986,
+      "gitBlobSha1": "a97aa61e7401601d3f28551719e9e0311c9d2c00"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "287",
+      "durationSeconds": 167.925986,
+      "gitBlobSha1": "eb568f9e609bff77f05a197d7fb09405b4400685"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "288",
+      "durationSeconds": 220.031995,
+      "gitBlobSha1": "7dce13318f60b05774337dc43502424cf19be3bc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "289",
+      "durationSeconds": 142.987982,
+      "gitBlobSha1": "3b79244f259e45a322c5c8d532017d17657d4226"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "290",
+      "durationSeconds": 145.425986,
+      "gitBlobSha1": "534d634dbd998b9991f0e88c90e5fbd44a65b29a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "291",
+      "durationSeconds": 195.255986,
+      "gitBlobSha1": "2965d4f4edb6e780f6da6891b614c9b569dad436"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "292",
+      "durationSeconds": 147.051973,
+      "gitBlobSha1": "e59872058056c562806585db662ac1b53cacccb4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "293",
+      "durationSeconds": 153.274921,
+      "gitBlobSha1": "bc5aa9540e5816248c9d0eaac121811063d90421"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "294",
+      "durationSeconds": 146.540998,
+      "gitBlobSha1": "e51dec4dd863d5ce9c483eba91c012162d0d4f7a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "295",
+      "durationSeconds": 131.772993,
+      "gitBlobSha1": "a09813425600287611437d9a5095d2cba2e803ae"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "296",
+      "durationSeconds": 158.405986,
+      "gitBlobSha1": "79a3174207dac15d5521cbf3e8202d044b4805e2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "297",
+      "durationSeconds": 139.435828,
+      "gitBlobSha1": "6ebc03f20a876d40688a17175a53baa513b5dd48"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "298",
+      "durationSeconds": 186.037982,
+      "gitBlobSha1": "d866ab3c30b2a9706941154b36839fd081480a50"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "299",
+      "durationSeconds": 159.404989,
+      "gitBlobSha1": "462bb67e184b4bac15fce85e40f20ab42857d01f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "300",
+      "durationSeconds": 201.362993,
+      "gitBlobSha1": "864074343273db262748f2c1c93d9ac8c8ab51a8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "301",
+      "durationSeconds": 190.147982,
+      "gitBlobSha1": "ca80828f2026f0b2a6ec511b2e95e6d4e2ad80ed"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "302",
+      "durationSeconds": 278.824989,
+      "gitBlobSha1": "638b14d3f52b1e979b848364545981df5c83f93b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "303",
+      "durationSeconds": 132.283991,
+      "gitBlobSha1": "fa0f2293ce7b8caca9a2c7067e90ba193180b48c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "304",
+      "durationSeconds": 275.76,
+      "gitBlobSha1": "8a988497d98e84e77db24422642deb6aedbdc79e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "305",
+      "durationSeconds": 175.263991,
+      "gitBlobSha1": "8cef8a0061e6b7e3f21d108def2f54fc0b719a7d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "306",
+      "durationSeconds": 218.104989,
+      "gitBlobSha1": "58a2860b1b02cf6c4d93405a2cc9247d4be63924"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "307",
+      "durationSeconds": 97.081995,
+      "gitBlobSha1": "db4dd6105e92df68352076e479f8b2133e50fb62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "308",
+      "durationSeconds": 255.627982,
+      "gitBlobSha1": "c9e424ad4e61c6cd1056236bf748f270b3cbe89d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "309",
+      "durationSeconds": 197.020998,
+      "gitBlobSha1": "f2b82ee4fbbf15fc71553cf2acf8401c1258c398"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "310",
+      "durationSeconds": 141.037982,
+      "gitBlobSha1": "197bf67c4fb86ba8c4bf0f81605fae8f7ddea793"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "311",
+      "durationSeconds": 144.079819,
+      "gitBlobSha1": "b83165a771b71299bd72ea3ec06145e526625216"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "312",
+      "durationSeconds": 134.233991,
+      "gitBlobSha1": "a03a39b0ebd0abeadb6b416c87da84f63ed7bfe1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "313",
+      "durationSeconds": 213.08898,
+      "gitBlobSha1": "f30748c860e0abd58270f91dfc8c0a5b71c55c94"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "314",
+      "durationSeconds": 123.575986,
+      "gitBlobSha1": "b70541717b3809671eb114bfe1cf2058eab10884"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "315",
+      "durationSeconds": 186.385986,
+      "gitBlobSha1": "8cb734c5d79baa88c736186bbe8b1b99a4624a88"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "316",
+      "durationSeconds": 153.227982,
+      "gitBlobSha1": "37378384f3dfdd8416746ba1d4fec181ae923330"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "317",
+      "durationSeconds": 156.153991,
+      "gitBlobSha1": "4822f5d41857e09519ce658ee310e75016473ad2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "318",
+      "durationSeconds": 184.621859,
+      "gitBlobSha1": "1748525973cbbfb87f29f744e94a1c3877886e8f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "319",
+      "durationSeconds": 187.500998,
+      "gitBlobSha1": "d8f9563c2d8730cefd76cf0f790d278e7503cfed"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "320",
+      "durationSeconds": 133.490998,
+      "gitBlobSha1": "af9c5ca64d66908f3d4a5141d69a61a0f2298e64"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "321",
+      "durationSeconds": 212.926984,
+      "gitBlobSha1": "8ce96eead23adc0d045c9896746a21d48c5b0bd9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "322",
+      "durationSeconds": 129.636984,
+      "gitBlobSha1": "512e9cfc957e925dcc29b0157e3529546e12a873"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "323",
+      "durationSeconds": 228.901995,
+      "gitBlobSha1": "97464a7ec324e0e09720c512d66b205cc9500e42"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "324",
+      "durationSeconds": 152.81,
+      "gitBlobSha1": "1bbb17b5a405cc654ea1f0eb725f4a952cabce03"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "325",
+      "durationSeconds": 156.710998,
+      "gitBlobSha1": "ffd3bb55f1d72b391505651bfffbaf6357a1fc59"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "326",
+      "durationSeconds": 187.71,
+      "gitBlobSha1": "30ce46188aefe0b49023573218034e134dd29eec"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "327",
+      "durationSeconds": 185.75898,
+      "gitBlobSha1": "8167c8991c399c5fbdd4bae0172d667a312ef83f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "328",
+      "durationSeconds": 210.279909,
+      "gitBlobSha1": "cabe31d1299c9b602776ecabc4eaa00ced68c847"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "329",
+      "durationSeconds": 139.9,
+      "gitBlobSha1": "a3e7fe933ebbdf84559628b432192fa3f2af244a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "330",
+      "durationSeconds": 105.092993,
+      "gitBlobSha1": "bbd19f945f32be7f9677d81919fd2acbc4ff86b5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "331",
+      "durationSeconds": 109.063991,
+      "gitBlobSha1": "6c43e46642a565d4aefd3740d147cc2fce70c842"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "332",
+      "durationSeconds": 139.736984,
+      "gitBlobSha1": "7ccd598f03fd2781d2fea150ffbe6e6cc882f9a4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "333",
+      "durationSeconds": 197.066984,
+      "gitBlobSha1": "638ba1e2217e0d4aec5e2a5179d40c698f22e335"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "334",
+      "durationSeconds": 179.977868,
+      "gitBlobSha1": "cd29b5cb3ea21e863e7a87588ce94c6dd12bfa55"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "335",
+      "durationSeconds": 188.429932,
+      "gitBlobSha1": "b2f732189f3103ab2fb766935e615abbbea1f17e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "336",
+      "durationSeconds": 212.995986,
+      "gitBlobSha1": "aa89c8c7c16c2b7b36c8624ab92152966d063425"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "337",
+      "durationSeconds": 275.132993,
+      "gitBlobSha1": "1a0638fd575ba0df3d97470106f232d595815580"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "338",
+      "durationSeconds": 150.023991,
+      "gitBlobSha1": "24ba87f0ce7666c3ed79e76b13c4b369193f1c64"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "339",
+      "durationSeconds": 191.563991,
+      "gitBlobSha1": "301fb5d3ef7d8e2f7640904343fff12a294ffa50"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "340",
+      "durationSeconds": 133.235986,
+      "gitBlobSha1": "63a0c1604be7ed17dd8b1885fa135df9b3e11372"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "341",
+      "durationSeconds": 123.877982,
+      "gitBlobSha1": "d79ae755b72a65fb4c0625dcb47e3656d4b688a6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "342",
+      "durationSeconds": 224.907982,
+      "gitBlobSha1": "5032a47816b6a2c5e7225df214cb0e8b06ff2cf4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "343",
+      "durationSeconds": 188.382993,
+      "gitBlobSha1": "93cbd555b4380c9d5f7c6b2289bea05a62c79961"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "344",
+      "durationSeconds": 211.161995,
+      "gitBlobSha1": "eb5b40cc0d9b91817b365973fb0df91463435b9d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "345",
+      "durationSeconds": 70.587982,
+      "gitBlobSha1": "63ae813ac0c9698d802eb57a8c8b89d1fbf2c387"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "346",
+      "durationSeconds": 172.941995,
+      "gitBlobSha1": "7cc01b1d0ba212299a662e61e6f06a4fa4728c29"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "347",
+      "durationSeconds": 202.291995,
+      "gitBlobSha1": "6c8185d4690342fd8c199ab13fa43eea58a00d24"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "348",
+      "durationSeconds": 176.68,
+      "gitBlobSha1": "fb12ab7ec071f6813566faf1d1f796cf7ca2ec61"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "349",
+      "durationSeconds": 179.860998,
+      "gitBlobSha1": "1c60502d30ab9a7847f8bd18c55355c27bb51c11"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "350",
+      "durationSeconds": 161.656984,
+      "gitBlobSha1": "31682797f48fe1d4edc1f6aafef01f32b1c5ca06"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "351",
+      "durationSeconds": 66.350998,
+      "gitBlobSha1": "7fa1d6b90e9db16ebbfb9a8e1712dae7db5a1db3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "352",
+      "durationSeconds": 170.898866,
+      "gitBlobSha1": "9987aa6b84362a7a749bb4d4d84c43408606e93b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "353",
+      "durationSeconds": 129.682993,
+      "gitBlobSha1": "67ca35c230bfe38e0ec2dff275db82aa11d986cd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "354",
+      "durationSeconds": 70.030998,
+      "gitBlobSha1": "de533ff07f3daeda6411dd59c779569fc395ab2e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "355",
+      "durationSeconds": 132.561995,
+      "gitBlobSha1": "94a521ae418e81c932eddaeb45efe54c2ad99c66"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "356",
+      "durationSeconds": 74.233991,
+      "gitBlobSha1": "62c7c1b490e5d12d9ea8dffe0cacbe69370887de"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "357",
+      "durationSeconds": 205.797982,
+      "gitBlobSha1": "d355b642cee62e5780019a525b5f693fc89451bc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "358",
+      "durationSeconds": 260.991995,
+      "gitBlobSha1": "b0d363d0e4147c09aacd016a750b4c9ca166e976"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "359",
+      "durationSeconds": 35.917982,
+      "gitBlobSha1": "9fee41b9c90596cbce3d83dc3c3f7c7cb486efc8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "360",
+      "durationSeconds": 180.905986,
+      "gitBlobSha1": "43e0b507e8d19eea6510a6558d843c77391014f9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "361",
+      "durationSeconds": 188.545986,
+      "gitBlobSha1": "2d37609da554e8be675a96a97c69cb324feed31f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "362",
+      "durationSeconds": 174.543991,
+      "gitBlobSha1": "135f7b4284d0b097257feb2cb6a198387af1e62a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "363",
+      "durationSeconds": 175.170998,
+      "gitBlobSha1": "52a7c44f6491232ba8fdd142bc217fd57f3e9d3f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "364",
+      "durationSeconds": 112.894989,
+      "gitBlobSha1": "cd11921d673e1d6f070d50ad57bbcefa1b36846e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "365",
+      "durationSeconds": 151.764989,
+      "gitBlobSha1": "1dcccf4625120d6c47c82bc303903e009a51187c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "366",
+      "durationSeconds": 162.237823,
+      "gitBlobSha1": "c8beab27a4250d24ccf705c2f7f8b8d99384683a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "367",
+      "durationSeconds": 39.522993,
+      "gitBlobSha1": "bd58058f51db4ffd9ff75bd4f1e8958b859182bc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "368",
+      "durationSeconds": 157.221995,
+      "gitBlobSha1": "7d21491c553c37cfda38429b19ec926d9e9def8d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "369",
+      "durationSeconds": 57.025986,
+      "gitBlobSha1": "49ca7635481c88a78b785ef38520ee7073e3e3f6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "370",
+      "durationSeconds": 142.871995,
+      "gitBlobSha1": "6d46750916b6d3a4d4abf2b4d7c02d6a350adff3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "371",
+      "durationSeconds": 125.967982,
+      "gitBlobSha1": "d85905a0de94727f44f0931b2a490cdd3e7f1fd4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "372",
+      "durationSeconds": 183.15898,
+      "gitBlobSha1": "2f334bf157e6459bf8c3f5c21781a16ced6ddc08"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "373",
+      "durationSeconds": 185.665986,
+      "gitBlobSha1": "9f6aaa984354a361363f38326b63dd86f65eea44"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "374",
+      "durationSeconds": 148.467982,
+      "gitBlobSha1": "940917561106ee08e13b277fbfcdc964fc5ba2e8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "375",
+      "durationSeconds": 132.863991,
+      "gitBlobSha1": "2d6bd958dff5392bf2d79994b14d2906d607fb62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "376",
+      "durationSeconds": 187.547574,
+      "gitBlobSha1": "c30f3ba624cafc4fa10112aac9d401b7f94583ca"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "377",
+      "durationSeconds": 175.472993,
+      "gitBlobSha1": "17ee655020eb539f7e57dff86d67f5e26512e7ea"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "378",
+      "durationSeconds": 171.850884,
+      "gitBlobSha1": "1b186ef7ef783fe62199e3ac9bf7f420d35d3363"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "379",
+      "durationSeconds": 228.73898,
+      "gitBlobSha1": "ffcfa7db4099ba0c24207dd48679cab9e1a2e10f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "380",
+      "durationSeconds": 171.014966,
+      "gitBlobSha1": "a7866d7fad5eac1782b5b4223f14a85204798bae"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "381",
+      "durationSeconds": 46.993991,
+      "gitBlobSha1": "09f2765b2aad86e5cd024b4239234c702978ac98"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "382",
+      "durationSeconds": 194.466984,
+      "gitBlobSha1": "9dcdb37073ebcab0cccc726363f2541f7bf240a4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "383",
+      "durationSeconds": 76.83483,
+      "gitBlobSha1": "d10cd507830e108bfb13c8ab8239f38221800050"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "384",
+      "durationSeconds": 249.869932,
+      "gitBlobSha1": "53e0f096877ce838db0816e5a171ec3e6ff6dd6b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "385",
+      "durationSeconds": 34.062993,
+      "gitBlobSha1": "6a31b9f5061f6607ecae39438a049f395c3914cc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "386",
+      "durationSeconds": 126.92,
+      "gitBlobSha1": "6dbe3977e4e0fde71892fa1c099b9ac1651bf6e6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "387",
+      "durationSeconds": 149.605986,
+      "gitBlobSha1": "f493a390c2b32b5b188ab38de97326cb0b1ea792"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "388",
+      "durationSeconds": 174.473991,
+      "gitBlobSha1": "c32e40bef48eb36a50e61d82cac55590538f6fcc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "389",
+      "durationSeconds": 70.030998,
+      "gitBlobSha1": "3167d3ca3f1059cf4edcaa911cc656e752618f62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "390",
+      "durationSeconds": 56.86898,
+      "gitBlobSha1": "09b1f1eb6f015dfa614c1fca98b23a28640b3b8a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "391",
+      "durationSeconds": 219.776871,
+      "gitBlobSha1": "39cede25458f0680a94f05d2c13fa93d30ed2f52"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "392",
+      "durationSeconds": 208.676984,
+      "gitBlobSha1": "929f58d8cd1a3230cf30af475143a5208c9f9f2d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "393",
+      "durationSeconds": 131.23898,
+      "gitBlobSha1": "4f4a17ed2946d15a2384ab7b9479bee2cdb85686"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "394",
+      "durationSeconds": 196.022857,
+      "gitBlobSha1": "32f3dc0e762bd5630829f86dad252913b520f125"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "395",
+      "durationSeconds": 158.614989,
+      "gitBlobSha1": "e5c93be3cab12a7a68576b6f97064eb57f197f79"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "396",
+      "durationSeconds": 223.166984,
+      "gitBlobSha1": "ae39f123ba31820f35aff139caef51c217789f01"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "397",
+      "durationSeconds": 130.356825,
+      "gitBlobSha1": "a9f0b6cb1572af12c4c6ad5256acd3430c0bed62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "398",
+      "durationSeconds": 157.430998,
+      "gitBlobSha1": "8489aabdc4fecc58096cdd8a040bfd47405bde62"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "399",
+      "durationSeconds": 171.316825,
+      "gitBlobSha1": "3b249805192a2d76a973f068e418d6503279165a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "400",
+      "durationSeconds": 266.982993,
+      "gitBlobSha1": "d32ddb9db20601136cedd0ea8d674ea26f10b4c8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "401",
+      "durationSeconds": 156.617982,
+      "gitBlobSha1": "ee30c2ef7fa1e70b67e4ebd6e3ea126641e45b47"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "402",
+      "durationSeconds": 260.805986,
+      "gitBlobSha1": "49f3f0ed91c859c9cbc698834c0e2e98ae593ac6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "403",
+      "durationSeconds": 207.005896,
+      "gitBlobSha1": "b28e2d6ccb6871298d9a7d8699248b86eee3ba9e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "404",
+      "durationSeconds": 157.105986,
+      "gitBlobSha1": "acbc3dfaf38ea8f6e15a878a8ee4c379809c6a49"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "405",
+      "durationSeconds": 98.753991,
+      "gitBlobSha1": "b04c4915092afc6437f72f87cce2f45be709e132"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "406",
+      "durationSeconds": 200.69,
+      "gitBlobSha1": "4ec6545eb4a1b263fbb35617fa139f6db98ec34a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "407",
+      "durationSeconds": 167.43898,
+      "gitBlobSha1": "7a45928667ad3d620b32f1b6a7c04eec3958103c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "408",
+      "durationSeconds": 271.417982,
+      "gitBlobSha1": "cfa221b429a446f55bf4cd6553d3ad02f3c3ce7e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "409",
+      "durationSeconds": 187.91898,
+      "gitBlobSha1": "97ef85f42bfdbb95fad7308247fb23e18f9f9a2b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "410",
+      "durationSeconds": 201.525986,
+      "gitBlobSha1": "ee19e77b7f10cff8b044317e78066a70ca2870a8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "411",
+      "durationSeconds": 228.413991,
+      "gitBlobSha1": "d601b93341b193de3b54e05f3a99165e47681c3a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "412",
+      "durationSeconds": 125.804989,
+      "gitBlobSha1": "5cca98ef13e88751b21514b701bbeb5af048060f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "413",
+      "durationSeconds": 181.997982,
+      "gitBlobSha1": "d6828023ae5eafd8506fae4fa14e0eed387dd89b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "414",
+      "durationSeconds": 253.955986,
+      "gitBlobSha1": "9fbcb36243d753152d332ef508d4aa1a7f292eac"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "415",
+      "durationSeconds": 195.093991,
+      "gitBlobSha1": "a2fbb84f2b805abd3fb0022707e86898d7cb3105"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "416",
+      "durationSeconds": 135.79,
+      "gitBlobSha1": "9e6f3612c455fe67b89e1a8299d8af42b448ab0a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "417",
+      "durationSeconds": 188.847891,
+      "gitBlobSha1": "7f5feb24da4679d23270d6aac8d1f46acb3175ee"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "418",
+      "durationSeconds": 222.121995,
+      "gitBlobSha1": "4823ec3c89040b7bf95d41b56c2021e39997c76e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "419",
+      "durationSeconds": 117.213991,
+      "gitBlobSha1": "1d0d9e6d38e4189409b887dfdc469acdc05fd335"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "420",
+      "durationSeconds": 181.857982,
+      "gitBlobSha1": "ce840b43fc707d11eb43e75e3f601e05e1b52dbc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "421",
+      "durationSeconds": 144.288798,
+      "gitBlobSha1": "ec0baa4beaac6c2c4414f109e9f996bea920e5a0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "422",
+      "durationSeconds": 175.472993,
+      "gitBlobSha1": "42291410aff7f43e7f64314eae2d9a3fa8799f08"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "423",
+      "durationSeconds": 219.776871,
+      "gitBlobSha1": "16b992565733e118d021ee4c1d200ce2c97bcdb2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "424",
+      "durationSeconds": 248.313991,
+      "gitBlobSha1": "3ed9f55ce63d2adefe442a64ada9814f6b75df7f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "425",
+      "durationSeconds": 189.311995,
+      "gitBlobSha1": "90929e04df7a94e01f5891800ff0f8f69a310490"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "426",
+      "durationSeconds": 228.622993,
+      "gitBlobSha1": "e793e0c55b91e9c3373dab4a9cc467815816ce87"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "427",
+      "durationSeconds": 158.94,
+      "gitBlobSha1": "dd7ffa2e477fa78a7a95e8461c5811331a605ccf"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "428",
+      "durationSeconds": 68.521995,
+      "gitBlobSha1": "f6b8d09c73e4e07291ab106a6c394e188105d87a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "429",
+      "durationSeconds": 59.035986,
+      "gitBlobSha1": "d0fb1b06fccd07c9bcad2c13c057a57ec6c7639d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "430",
+      "durationSeconds": 145.843991,
+      "gitBlobSha1": "84fd4fcd255d09aca926f934226453e0d7350d19"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "431",
+      "durationSeconds": 121.253991,
+      "gitBlobSha1": "e490bfb7d3ac0c827733b4685e6b763efb97daaa"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "432",
+      "durationSeconds": 190.844807,
+      "gitBlobSha1": "5caeb35d788099ca6927fa39c4419e6b614778be"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "433",
+      "durationSeconds": 240.48898,
+      "gitBlobSha1": "7792158580eb5f73eb2a8bb22c32058cd9c3f47a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "434",
+      "durationSeconds": 193.375782,
+      "gitBlobSha1": "592d44ef3e9f10594c86de2d7f339447f8f739db"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "435",
+      "durationSeconds": 202.825986,
+      "gitBlobSha1": "8c22e165b336533fa7966572ef4f8eb9f8dfe1f9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "436",
+      "durationSeconds": 193.25898,
+      "gitBlobSha1": "0fdb2b0a3b7de8a055e520890163490ad9e49983"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "437",
+      "durationSeconds": 58.356984,
+      "gitBlobSha1": "c04d0fda3500e3f0e1c857d9d204de43a52cf67d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "438",
+      "durationSeconds": 170.433991,
+      "gitBlobSha1": "a3448a6189815a3418c93122258120ab943beebf"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "439",
+      "durationSeconds": 117.91093,
+      "gitBlobSha1": "dbd0bc1a3c40ec860832ae5a3933e047e95d087b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "440",
+      "durationSeconds": 139.945986,
+      "gitBlobSha1": "6a09ad5eaacf4c221ebee9775a517a3b5440ebd2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "441",
+      "durationSeconds": 208.305986,
+      "gitBlobSha1": "10403c883885e89c16b07da56e8fc63659dd23ee"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "442",
+      "durationSeconds": 141.246984,
+      "gitBlobSha1": "c56808ebf28562c3845622e6276d302211752a19"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "443",
+      "durationSeconds": 173.777982,
+      "gitBlobSha1": "b1caa707fea92c6a8a32c043aa59f140b4fe3837"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "444",
+      "durationSeconds": 169.017982,
+      "gitBlobSha1": "b8ab731b81061b10689e5e8c5f345c5b34960585"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "445",
+      "durationSeconds": 181.532993,
+      "gitBlobSha1": "22725e642071a6476c196394599a885396b4af11"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "446",
+      "durationSeconds": 237.307937,
+      "gitBlobSha1": "2958c4dfbec5f323eec66e21bcab0491b14df88e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "447",
+      "durationSeconds": 119.256984,
+      "gitBlobSha1": "a7749772a75d502bafb6392209e403d462f7a421"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "448",
+      "durationSeconds": 169.38898,
+      "gitBlobSha1": "9055ae1344edb16572c11b8cba02b3d892f00657"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "449",
+      "durationSeconds": 144.450998,
+      "gitBlobSha1": "80beb0617136370cf80c9aeb43366a45a2205ffd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "450",
+      "durationSeconds": 193.723991,
+      "gitBlobSha1": "0c07063d8052fcdbbbc86e49bd16a223c1b435d6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "451",
+      "durationSeconds": 275.295782,
+      "gitBlobSha1": "1694acf719fe0f4b951a11755ec288848bd05f5e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "452",
+      "durationSeconds": 164.884898,
+      "gitBlobSha1": "5668a56fbc37c447d275e3fb24d740b8eb99b87f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "453",
+      "durationSeconds": 169.435986,
+      "gitBlobSha1": "c0d9bb4e7c6ed58ac41a716d44fcafbe93f18da5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "454",
+      "durationSeconds": 173.614989,
+      "gitBlobSha1": "fa41ba02b670c7637a582380d3a90a36808dcf79"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "455",
+      "durationSeconds": 130.356825,
+      "gitBlobSha1": "8eeca467f6ce4fc29afb3822ca5370b936e58cdb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "456",
+      "durationSeconds": 144.914989,
+      "gitBlobSha1": "c97cee3667cf46c89629529c2697227cfc781741"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "457",
+      "durationSeconds": 45.635986,
+      "gitBlobSha1": "41471516c8044268d335ba4871b8170e03c1b290"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "458",
+      "durationSeconds": 214.180862,
+      "gitBlobSha1": "4becd676682fa0d695adcf402aa67a83e005acd0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "459",
+      "durationSeconds": 163.84,
+      "gitBlobSha1": "f9855a519400ae35e8ad3c5b9bf727e90c40e619"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "460",
+      "durationSeconds": 197.902993,
+      "gitBlobSha1": "ad88dcbc2696b71d42fffa2946483a60b7d236ac"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "461",
+      "durationSeconds": 180.860227,
+      "gitBlobSha1": "78a51662eb68b992f14c1367e3722a6de95eaabd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "462",
+      "durationSeconds": 153.73898,
+      "gitBlobSha1": "33128c0d2b3a81c3a4a7c26620668a788b3ee5e3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "463",
+      "durationSeconds": 86.86585,
+      "gitBlobSha1": "90bc4416fb9b9b30dac4fde7b92f1e2b497ef993"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "464",
+      "durationSeconds": 141.40898,
+      "gitBlobSha1": "2ca2311e22b4d27939091af16996d458539d717c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "465",
+      "durationSeconds": 171.850884,
+      "gitBlobSha1": "0cdcb36e970009a5c5054f37288d6f92b2e87202"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "466",
+      "durationSeconds": 167.182993,
+      "gitBlobSha1": "4e38df570352fcc2e7495254623292a5f9e4e94c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "467",
+      "durationSeconds": 169.272993,
+      "gitBlobSha1": "178a85c2d76b27ac2615a119a3cdfc4d77c9377e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "468",
+      "durationSeconds": 142.244989,
+      "gitBlobSha1": "02263f43f67a6e42f9a73f2b5a542ae354dd8dab"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "469",
+      "durationSeconds": 252.121995,
+      "gitBlobSha1": "f97508fee5631f293c67c6b9895b9ca52f999bb2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "470",
+      "durationSeconds": 64.67898,
+      "gitBlobSha1": "d5fa0657ee84b50a3793940200ccbadeb4b9e5a7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "471",
+      "durationSeconds": 142.453991,
+      "gitBlobSha1": "c69f936e8ebeabcde0223bf148bf523b4029dff0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "472",
+      "durationSeconds": 117.91093,
+      "gitBlobSha1": "04c98800932c19945c51ce4b4231f1184eee4015"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "473",
+      "durationSeconds": 83.312993,
+      "gitBlobSha1": "cbbfb9d12ef34815d4a48cea1d6a2f302f686069"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "474",
+      "durationSeconds": 190.51898,
+      "gitBlobSha1": "9a71f039574cbd1f814af2d142816cfbfb6d4ad0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "475",
+      "durationSeconds": 194.512993,
+      "gitBlobSha1": "30e93e8626f1c1a83f33ec19fb1ce9cac1f819df"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "476",
+      "durationSeconds": 166.207982,
+      "gitBlobSha1": "38954675c1e37a11e21eea300310255d8624e473"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "477",
+      "durationSeconds": 149.55898,
+      "gitBlobSha1": "7473b134a75f3e142cdeaaf174327039009d3d5d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "478",
+      "durationSeconds": 140.061995,
+      "gitBlobSha1": "d5e32c917cbdb6920495c9b56e4164f7d7b78ec7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "479",
+      "durationSeconds": 119.373787,
+      "gitBlobSha1": "b915d10132fc312d143a429f59c4890020809a77"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "480",
+      "durationSeconds": 180.023991,
+      "gitBlobSha1": "3cf7520173d60b8311336bf2c7c724301ec70095"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "481",
+      "durationSeconds": 130.820998,
+      "gitBlobSha1": "ba0c37830e6543692aeb744df6e8a305d66b6bb2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "482",
+      "durationSeconds": 149.55898,
+      "gitBlobSha1": "b57791827e5f684d4fd6ab35f1307f4124b65b14"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "483",
+      "durationSeconds": 129.311927,
+      "gitBlobSha1": "ebd569cdf747b6710ff3930d021788df7be171b9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "484",
+      "durationSeconds": 153.784989,
+      "gitBlobSha1": "dc65020ee4aa9d3803cdd803bdfb38497930e40c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "485",
+      "durationSeconds": 123.46,
+      "gitBlobSha1": "46066d78e6222466b74f35131bc38041fe504562"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "486",
+      "durationSeconds": 97.383991,
+      "gitBlobSha1": "20125cbfe3b8a5bfbf76a8d7a5dd4880b934bb51"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "487",
+      "durationSeconds": 157.314989,
+      "gitBlobSha1": "6a70b709bfd74104ee7d31194ac24b5a6a41eecb"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "488",
+      "durationSeconds": 197.345986,
+      "gitBlobSha1": "a1081132055cab564b22ab8d0dfbebebd0bdb587"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "489",
+      "durationSeconds": 132.143991,
+      "gitBlobSha1": "9105a9eace4a4a6cdc9977c52a2a8bba12d287a2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "490",
+      "durationSeconds": 181.370998,
+      "gitBlobSha1": "03dc057c30497d66219e972a2431a65065cd700c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "491",
+      "durationSeconds": 129.01,
+      "gitBlobSha1": "098c06ed19505f2ee52309480cdc4bcd186badc2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "492",
+      "durationSeconds": 177.051995,
+      "gitBlobSha1": "0f0855f091c3548ca13d8333618d111e018014b6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "493",
+      "durationSeconds": 127.894989,
+      "gitBlobSha1": "5cf917cbc120e4e777f1af63c4121733b046dc91"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "494",
+      "durationSeconds": 171.060998,
+      "gitBlobSha1": "6d5b4c5241c3b76cd10744d7f06f5136222b0892"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "495",
+      "durationSeconds": 149.094989,
+      "gitBlobSha1": "db9a0c4ec7ef3afe8e15d08f712f915ef1d5edf5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "496",
+      "durationSeconds": 118.746848,
+      "gitBlobSha1": "43ab682523269eef364aa44545d35ca02891903a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "497",
+      "durationSeconds": 148.63093,
+      "gitBlobSha1": "d582ea690316bf9171f5b7ed19e9666993ad9e7c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "498",
+      "durationSeconds": 101.09898,
+      "gitBlobSha1": "ac998b606af97abe30deef060f245bba1de51704"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "499",
+      "durationSeconds": 67.10898,
+      "gitBlobSha1": "30c8533dddb70f006d038b48c68ed434b25c597a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "500",
+      "durationSeconds": 53.890998,
+      "gitBlobSha1": "6cda1578076d6119d4e9349ef5d994fdb0f126ff"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "501",
+      "durationSeconds": 52.61,
+      "gitBlobSha1": "98f2f8b382c6f28fc556f6cf191d6ecbd76886a0"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "502",
+      "durationSeconds": 138.08898,
+      "gitBlobSha1": "551ed6e9417bb16f41e8d44d72ce7f7e3b694202"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "503",
+      "durationSeconds": 141.362993,
+      "gitBlobSha1": "145ce037f6c1a0b96553fd9d480ba8a4f69db303"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "504",
+      "durationSeconds": 143.870839,
+      "gitBlobSha1": "7b45c092a5254afac2cfbc9e9d3fe9bf3cb6ed70"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "505",
+      "durationSeconds": 119.721995,
+      "gitBlobSha1": "d052caa9919a402a788e5ff6c9a64ae7027cfbb8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "506",
+      "durationSeconds": 188.963991,
+      "gitBlobSha1": "7371a732d6aa0555b0cf813fa191c274e624fc1a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "507",
+      "durationSeconds": 177.724989,
+      "gitBlobSha1": "cefb4a2658f426d1ed30ff7269ae37ce448c3491"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "508",
+      "durationSeconds": 175.425986,
+      "gitBlobSha1": "9f53452aaa04ff9d6bf7fbf964b0ba0d02f13c26"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "509",
+      "durationSeconds": 149.767982,
+      "gitBlobSha1": "1057cb178a194ad49c9cf4ae52abd4c047dd95a3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "510",
+      "durationSeconds": 236.006984,
+      "gitBlobSha1": "a8f52836b1dc8d13a4d0b111e650f163a4bb59e6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "511",
+      "durationSeconds": 187.082993,
+      "gitBlobSha1": "d4c061e0d6cdb57c61396ee7ad23333697f240bd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "512",
+      "durationSeconds": 188.382993,
+      "gitBlobSha1": "c197573d33f0edd271b621765879906ea4869766"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "513",
+      "durationSeconds": 108.180998,
+      "gitBlobSha1": "544eb3f30d7fce98acbed8f1a8a65ff06d9fbff6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "514",
+      "durationSeconds": 190.890998,
+      "gitBlobSha1": "f8c16878f06b52ad53dd0e4a5633d900616ceaf6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "515",
+      "durationSeconds": 112.987982,
+      "gitBlobSha1": "924bfd0b4d35ee2bef275d6c626ab57ea8bd3f9f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "516",
+      "durationSeconds": 276.641995,
+      "gitBlobSha1": "c916a7556073850355902b06325cc981d9434617"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "517",
+      "durationSeconds": 102.886984,
+      "gitBlobSha1": "b8f754d5c6f3f120022eff4a2d48d4f7900d0e4b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "518",
+      "durationSeconds": 308.035918,
+      "gitBlobSha1": "d264f044ecd7217a2ae12396a36d13c47235f00a"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "519",
+      "durationSeconds": 94.945986,
+      "gitBlobSha1": "c41ca251ebb5c47975a81ec57305b8509562da96"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "520",
+      "durationSeconds": 128.800998,
+      "gitBlobSha1": "e96872a9c9389d91e15fcae4eea886e5cabc1e42"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "521",
+      "durationSeconds": 184.2039,
+      "gitBlobSha1": "c4b9a27d4a84d164407b04a28c25c580fb646de7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "522",
+      "durationSeconds": 150.557982,
+      "gitBlobSha1": "f35da2998acff350fed8a6d77d2da5051ef45854"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "523",
+      "durationSeconds": 142.407982,
+      "gitBlobSha1": "be5cafcabc8060acd9fc542c6ad8b6e5cf252764"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "524",
+      "durationSeconds": 183.994921,
+      "gitBlobSha1": "1a1ece26784569a723df8c5ab58889fc5f94805f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "525",
+      "durationSeconds": 79.132993,
+      "gitBlobSha1": "81d3678c7626adfde2264db85c7303a2421910f4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "526",
+      "durationSeconds": 155.410998,
+      "gitBlobSha1": "d90221aaca3514c78f4fecf3767329cd22224763"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "527",
+      "durationSeconds": 137.252993,
+      "gitBlobSha1": "676d0aedd13568f189115d8646ec282743059735"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "528",
+      "durationSeconds": 238.816984,
+      "gitBlobSha1": "f136fa99c3cd37e215b86e7930ce972c282cafe4"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "529",
+      "durationSeconds": 113.986757,
+      "gitBlobSha1": "881624fc7cf1269c57d079360b7a8f65dce3fd68"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "530",
+      "durationSeconds": 75.20898,
+      "gitBlobSha1": "42e2e556e6eec7a747be9f0521573cd46bb94bac"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "531",
+      "durationSeconds": 88.816327,
+      "gitBlobSha1": "ffb78f39b18bf351b35126155e9b1614600dc403"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "532",
+      "durationSeconds": 120.92898,
+      "gitBlobSha1": "8ed5a0da14da20051fbbc83964d7e6a045ef9a55"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "533",
+      "durationSeconds": 60.97,
+      "gitBlobSha1": "59987f611e2b5b29e7f72ae35b17d187a1d5606e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "534",
+      "durationSeconds": 140.410998,
+      "gitBlobSha1": "ae38ea8b4ce799d50feaae07fef600f6e8e54c15"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "535",
+      "durationSeconds": 115.541995,
+      "gitBlobSha1": "0d81a149289d726e5c2c3df70e807d938c2ee3ed"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "536",
+      "durationSeconds": 149.094989,
+      "gitBlobSha1": "e63cc6ddc666f67b3c61abec08c504bbda3a6c1d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "537",
+      "durationSeconds": 185.921995,
+      "gitBlobSha1": "14d134ac01baa4d2cfe5ac57fa9f6c965b00c8db"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "538",
+      "durationSeconds": 142.77898,
+      "gitBlobSha1": "2c89478e8e1339e45bf5a82781a59e8994cd9730"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "539",
+      "durationSeconds": 175.263991,
+      "gitBlobSha1": "bc2930cc51ac1d19c9b56922e2bb32943f58bf86"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "540",
+      "durationSeconds": 92.647619,
+      "gitBlobSha1": "514c6962b975cb846b0d88618886aeddb42ed3fe"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "541",
+      "durationSeconds": 174.752993,
+      "gitBlobSha1": "3f6a0c1d38b211b7b222b768f810314ad62c6392"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "542",
+      "durationSeconds": 148.932789,
+      "gitBlobSha1": "4dccd3a62c995907b3ddf5af83df379f035bd0e1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "543",
+      "durationSeconds": 185.039819,
+      "gitBlobSha1": "3a85ec63e2528c2cd4e1fbe3a2bf72533bda9105"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "544",
+      "durationSeconds": 79.38898,
+      "gitBlobSha1": "0918f92324d6ab88b2d3c3ee3b05dc6e71e068cc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "545",
+      "durationSeconds": 154.9,
+      "gitBlobSha1": "ae84a87efb4b241b82b989fe566bcd0d92c9b4d2"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "546",
+      "durationSeconds": 113.150839,
+      "gitBlobSha1": "a71df41917b938c5b809c2ee242e1fd4475776fc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "547",
+      "durationSeconds": 62.11898,
+      "gitBlobSha1": "9944b44402b0cf043dd8ae8c018762776f70ce6b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "548",
+      "durationSeconds": 129.938866,
+      "gitBlobSha1": "23aec82cf8cc42ac4d0fcf07d5a71566b21a822c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "549",
+      "durationSeconds": 200.271995,
+      "gitBlobSha1": "92eb6af7e34330e2049b1e17addcb78ab8229a50"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "550",
+      "durationSeconds": 131.935782,
+      "gitBlobSha1": "7777237a61799cc394ff4c2b20a3a316ddcd79de"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "551",
+      "durationSeconds": 167.600998,
+      "gitBlobSha1": "8a1e2f92d0e7fddb69ece198fbc93874d22b541e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "552",
+      "durationSeconds": 163.374989,
+      "gitBlobSha1": "a1d008df868ce68a1733fce7c4950441733b4712"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "553",
+      "durationSeconds": 146.68,
+      "gitBlobSha1": "fbf492cb46a28f649765b252cdbcfad7e7ec7598"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "554",
+      "durationSeconds": 139.435828,
+      "gitBlobSha1": "025b29e76826ccdbd70fc1116d97747a64fc7313"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "555",
+      "durationSeconds": 159.66,
+      "gitBlobSha1": "88bfad5eaefdbd3a7c8be97663476d5ffafb15c1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "556",
+      "durationSeconds": 37.014989,
+      "gitBlobSha1": "27da5ddfbc1cf3378726e803683bfc53255001c9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "557",
+      "durationSeconds": 158.56898,
+      "gitBlobSha1": "0edd8ae93e8631e48e6ef525f1165d879661d7a8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "558",
+      "durationSeconds": 172.941995,
+      "gitBlobSha1": "1178886dd36043e196674498350b62652425ced6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "559",
+      "durationSeconds": 204.961995,
+      "gitBlobSha1": "407913cd4b9e754350999d03d0038e739369e70b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "560",
+      "durationSeconds": 207.841814,
+      "gitBlobSha1": "360d7c0e038e19d05149efc3fbb7cdbf3c51be04"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "561",
+      "durationSeconds": 209.49,
+      "gitBlobSha1": "817279cacf5a7ac149da1f385d0b3d27d9b876be"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "562",
+      "durationSeconds": 123.924898,
+      "gitBlobSha1": "2b698eea3f0901eb7cd06b0ae1b4fcb7c5134ee5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "563",
+      "durationSeconds": 146.331995,
+      "gitBlobSha1": "6450839ae9a49eefd4fb40c61a745a53b047db53"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "564",
+      "durationSeconds": 188.847891,
+      "gitBlobSha1": "f44326787e13e5b48c4d5b1949f1cd5778f55fd6"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "565",
+      "durationSeconds": 281.170431,
+      "gitBlobSha1": "69fd4bd3a55cd505f353f52aca1e1cc07f87ca81"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "566",
+      "durationSeconds": 169.853968,
+      "gitBlobSha1": "1641b750e34afc806c2d79ead4ee48c8c578447d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "567",
+      "durationSeconds": 344.467982,
+      "gitBlobSha1": "6349b8dcad844a40153d7dbf56ab49e43bedb5af"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "568",
+      "durationSeconds": 272.160998,
+      "gitBlobSha1": "3cfab9daf939f916be7c4411557c5d5ac8d8d882"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "569",
+      "durationSeconds": 191.30898,
+      "gitBlobSha1": "a5b35dc97539a2e5497419eb564a7610fc885286"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "570",
+      "durationSeconds": 125.085896,
+      "gitBlobSha1": "419788b2af5d77489debbb4b753df7706860dc28"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "571",
+      "durationSeconds": 149.048889,
+      "gitBlobSha1": "d478fff61ab44e51e1157b9d238b0938526f5eb9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "572",
+      "durationSeconds": 154.272993,
+      "gitBlobSha1": "77be324426162f6d294bb9ca52e88d863ee7cbfa"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "573",
+      "durationSeconds": 148.467982,
+      "gitBlobSha1": "acc57fd49852e4cb630a2dcb78bc7d850bada1f3"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "574",
+      "durationSeconds": 142.082902,
+      "gitBlobSha1": "fd8a780a3916f2e80e60bbbe5190261ede2a01fd"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "575",
+      "durationSeconds": 176.1,
+      "gitBlobSha1": "c700586c0b0e738976d0a1ad4f16200206b7f15d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "576",
+      "durationSeconds": 176.006984,
+      "gitBlobSha1": "b1ecf4ccbb78a3f0376279a1cd16c095104d8901"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "577",
+      "durationSeconds": 149.930998,
+      "gitBlobSha1": "ff32f1edeb0729b3c2e9eda55e02f3f30187c21c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "578",
+      "durationSeconds": 134.535986,
+      "gitBlobSha1": "28783da5b7336c91694d683bab8cdc744f8bd399"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "579",
+      "durationSeconds": 188.266984,
+      "gitBlobSha1": "8a2c3514b883fd20dae86e6533bfaceeac1bad70"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "580",
+      "durationSeconds": 152.647982,
+      "gitBlobSha1": "15b42515c01ef0e813231f568dd9c9d15e980bdc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "581",
+      "durationSeconds": 166.300998,
+      "gitBlobSha1": "795f39dae613ff2ac9b7208ca1c1d9e71504d102"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "582",
+      "durationSeconds": 113.986757,
+      "gitBlobSha1": "25a9179e9a01e0fa6c6fc96393323340ebfeedb9"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "583",
+      "durationSeconds": 142.244989,
+      "gitBlobSha1": "2f4090fb6479401c9ffbc37173e5d4fc019d6735"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "584",
+      "durationSeconds": 190.51898,
+      "gitBlobSha1": "ff86389ffce474d3c071ed9a85dba284f86af0f5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "585",
+      "durationSeconds": 186.54898,
+      "gitBlobSha1": "c403043477bfceef08a748bc881f3fa8d4a0ef40"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "586",
+      "durationSeconds": 184.713991,
+      "gitBlobSha1": "be5df24dd8564ef2d38880eca44678bc2b3f1d49"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "587",
+      "durationSeconds": 91.115102,
+      "gitBlobSha1": "bf90e964a36915709e639b4e88fb129a0a79fd00"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "588",
+      "durationSeconds": 163.32898,
+      "gitBlobSha1": "8603642543d0eb8f8ca801a53e46f2258f46018d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "589",
+      "durationSeconds": 153.69288,
+      "gitBlobSha1": "ebcc7ef52f11199cd4c6acc75e560d09fd38d3e1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "590",
+      "durationSeconds": 201.618866,
+      "gitBlobSha1": "78ff0f55cc872b39e9ad769946a6a2bcaae3403f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "591",
+      "durationSeconds": 236.1,
+      "gitBlobSha1": "90a76927ee0ed7e5202e40bac9b7e9a20b96fc79"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "592",
+      "durationSeconds": 116.865986,
+      "gitBlobSha1": "34ea61ca574020be3d339ba3f34c3904da9fcb9d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "593",
+      "durationSeconds": 284.095986,
+      "gitBlobSha1": "410c739b5d62e0a056782ddbbd826291bea7824e"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "594",
+      "durationSeconds": 91.277642,
+      "gitBlobSha1": "d007552cc37675fe9ab3b62fbd7cad28fd4acf0f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "595",
+      "durationSeconds": 176.935986,
+      "gitBlobSha1": "f2196cf2d6f58b333fc2231ea54ad8880f7ec75c"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "596",
+      "durationSeconds": 159.241995,
+      "gitBlobSha1": "f27af1b1fca0a3a49728df8478f17211b10a2725"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "597",
+      "durationSeconds": 118.05,
+      "gitBlobSha1": "af4dbb4ebb2de193326f997e4abba5218aaa82cc"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "598",
+      "durationSeconds": 103.931995,
+      "gitBlobSha1": "570d28aa4b172180d4ccd66c0e9bb46029af54f7"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "599",
+      "durationSeconds": 168.80898,
+      "gitBlobSha1": "d8f1a04540258f5c138254205910942a8d183823"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "600",
+      "durationSeconds": 202.779864,
+      "gitBlobSha1": "7d202e5c5009869d9d4c9e6f66adbdc31dd2d87f"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "601",
+      "durationSeconds": 120.626984,
+      "gitBlobSha1": "3eeb1b7349153ab30db54b7c04aa70fe0f6f7d87"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "602",
+      "durationSeconds": 169.551995,
+      "gitBlobSha1": "245029d4892b05f42815f8326e4bfeccc4a0baac"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "603",
+      "durationSeconds": 159.775986,
+      "gitBlobSha1": "6c2e177259e02c48bd4bc1079ffc6760be996d4d"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "604",
+      "durationSeconds": 178.607891,
+      "gitBlobSha1": "02788e11e5f65750c832f1bc24dfd806e9847aa8"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "605",
+      "durationSeconds": 63.790998,
+      "gitBlobSha1": "f002b7aadf86e3fc45c8500669f18200fd3d71ce"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "606",
+      "durationSeconds": 158.057982,
+      "gitBlobSha1": "d4d226c281db00eae886795ae20b72d5ae2ced3b"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "607",
+      "durationSeconds": 189.26585,
+      "gitBlobSha1": "d3bf95ffa37d51d124f430cd601e5f816e7b8773"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "608",
+      "durationSeconds": 169.597982,
+      "gitBlobSha1": "11c9e5c7cef3b6cd448b766ddd196964894cf1de"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "609",
+      "durationSeconds": 227.020998,
+      "gitBlobSha1": "bbf42e46e385d3a73938186954fae5abb2d9e369"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "610",
+      "durationSeconds": 243.321905,
+      "gitBlobSha1": "e7f74127147acb6de8c5d90344c7117132ceeb87"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "611",
+      "durationSeconds": 69.960998,
+      "gitBlobSha1": "c7876c90a494a7577125d4c02b5ab94e19f61ae5"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "612",
+      "durationSeconds": 93.274558,
+      "gitBlobSha1": "5fe8cc90a2c8a6c4cf02863c4b39ef0c59d50db1"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "613",
+      "durationSeconds": 225.37288,
+      "gitBlobSha1": "148d42eabb910da6dea6c9a82b0fe64ad7c2d626"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "614",
+      "durationSeconds": 15.69898,
+      "gitBlobSha1": "fdc1ff9945773fa3c920560cb709f968ca4072d3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "1",
+      "durationSeconds": 91.230998,
+      "gitBlobSha1": "9d4a4e23c19163900e5090bea29323b03fb89bb4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "2",
+      "durationSeconds": 125.990998,
+      "gitBlobSha1": "5a0945a40bad96cc08b56fa207e12b1447dd8a38"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "3",
+      "durationSeconds": 213.622993,
+      "gitBlobSha1": "ea346e956c3f83c9b88bb9eee57862320059e7f9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "4",
+      "durationSeconds": 153.413991,
+      "gitBlobSha1": "5d1d36fdd51c8ece94f5fba0ae253743fbae2696"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "5",
+      "durationSeconds": 122.670998,
+      "gitBlobSha1": "1a5bb10624360516733fcb053c396a210d9f3df7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "6",
+      "durationSeconds": 215.04,
+      "gitBlobSha1": "11030e3cf961c1072cf6e211c4693486953dd427"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "7",
+      "durationSeconds": 100.588844,
+      "gitBlobSha1": "f5da01ffa4ab9dc306d508d650a15050125cc247"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "8",
+      "durationSeconds": 100.030998,
+      "gitBlobSha1": "f0deefda890b761aff35a33532e96388a2f2854a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "9",
+      "durationSeconds": 135.696984,
+      "gitBlobSha1": "a414b219b8ad7e4906b2347ee02fb4a20a0e6967"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "10",
+      "durationSeconds": 134.140998,
+      "gitBlobSha1": "f692cf946555ff644f1109c4b649fb926839644c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "11",
+      "durationSeconds": 109.620998,
+      "gitBlobSha1": "17af7d53153e7caa66715c7cd7b0962f3275dc91"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "12",
+      "durationSeconds": 147.515986,
+      "gitBlobSha1": "c78548e4d707b60c13b0a257ddb628c804344e0e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "13",
+      "durationSeconds": 32.4,
+      "gitBlobSha1": "655f79be8e1153c71ba15caabbe430adaffa8776"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "14",
+      "durationSeconds": 159.404989,
+      "gitBlobSha1": "fb63a1c741ef8c6a7d9228f333172abe4a12d2e3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "15",
+      "durationSeconds": 92.74,
+      "gitBlobSha1": "690d9839104e9dcde3383fc20ba17f6bcac53ccd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "16",
+      "durationSeconds": 205.913991,
+      "gitBlobSha1": "fb77998a62825dd7f355c5f6bc0353eaaffc4fd9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "17",
+      "durationSeconds": 135.34898,
+      "gitBlobSha1": "d80c2f73045ac212316991479b4876d2a3a6ac44"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "18",
+      "durationSeconds": 160.634989,
+      "gitBlobSha1": "65460ce2f075c03ce5b2186345795ac7e6bb68ae"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "19",
+      "durationSeconds": 128.24381,
+      "gitBlobSha1": "925bdbac8c053a4f28e5072aea910a02ee9833e5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "20",
+      "durationSeconds": 159.450998,
+      "gitBlobSha1": "77d15592773a923dfa284bd1ffaa8e726a09a605"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "21",
+      "durationSeconds": 175.51898,
+      "gitBlobSha1": "45d2943d95aae008ffd03ca48d02e412c012ca61"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "22",
+      "durationSeconds": 125.03898,
+      "gitBlobSha1": "d2dea23bb9d8ff35069d964414e7361305d0dbb7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "23",
+      "durationSeconds": 93.134989,
+      "gitBlobSha1": "00e34b3ad4c16301e7fe5a935e7cff17ab33199f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "24",
+      "durationSeconds": 117.817982,
+      "gitBlobSha1": "eb17bf8e6158adbe20325b798dcfdce1bdcf93d2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "25",
+      "durationSeconds": 19.2,
+      "gitBlobSha1": "f3234c29c64f582b8bc6051f51d5900e85cfdf8a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "26",
+      "durationSeconds": 109.876825,
+      "gitBlobSha1": "4c774510e3fa1b84c68e071a85593c47b66897d1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "27",
+      "durationSeconds": 184.41288,
+      "gitBlobSha1": "536e364cba871c4664311f975c606575bf15e3c6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "28",
+      "durationSeconds": 136.811973,
+      "gitBlobSha1": "50e306496ff1cc0e3a44d67bc994de7b90110ed3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "29",
+      "durationSeconds": 75.301995,
+      "gitBlobSha1": "b2f2d80ad919d430a4e72065cd51fcbd9ac8bd18"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "30",
+      "durationSeconds": 73.211995,
+      "gitBlobSha1": "b39f558f29c356a04f8eda75c3c15befa93fe5f7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "31",
+      "durationSeconds": 136.811973,
+      "gitBlobSha1": "50e306496ff1cc0e3a44d67bc994de7b90110ed3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "32",
+      "durationSeconds": 17.332993,
+      "gitBlobSha1": "66f783726db0823cf8b68e6904d355889af88d5d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "33",
+      "durationSeconds": 153.993991,
+      "gitBlobSha1": "1ae66d77387de42da93431dac3ec7b71c7188bd6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "34",
+      "durationSeconds": 109.690998,
+      "gitBlobSha1": "35d1f438f7213f2846ff839bfd7db0b7b785a0cd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "35",
+      "durationSeconds": 140.944989,
+      "gitBlobSha1": "672ac81a9af0d8523e3535f7e499f72efaa207c6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "36",
+      "durationSeconds": 195.720998,
+      "gitBlobSha1": "8729112511c79c803c8d85a8ec48dede8a8ffd9f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "37",
+      "durationSeconds": 101.749841,
+      "gitBlobSha1": "da83af66547cf8150b50e80a5ca04d102251d723"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "38",
+      "durationSeconds": 89.187846,
+      "gitBlobSha1": "7bb8b0aa0731f57878e78c3f8d941a4882fbde27"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "39",
+      "durationSeconds": 105.533991,
+      "gitBlobSha1": "55ae3c329e30f512668650dc213f27828eeb1b73"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "40",
+      "durationSeconds": 120.580998,
+      "gitBlobSha1": "69229a2927f8d906c9990ba10ad04746c9b58c95"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "41",
+      "durationSeconds": 86.09898,
+      "gitBlobSha1": "7904efb95cf874757dd7f00e20eb965748b31727"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "42",
+      "durationSeconds": 114.194989,
+      "gitBlobSha1": "5da6e28ccf807c2b1b5dcc1e80134753b803e746"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "43",
+      "durationSeconds": 98.521995,
+      "gitBlobSha1": "7ab321c094c8ea59e9ff0006bb45b30203b6e85e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "44",
+      "durationSeconds": 92.22898,
+      "gitBlobSha1": "edfa9f3e1c5ce47b8dacd6a20a3a244816cb3954"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "45",
+      "durationSeconds": 172.802902,
+      "gitBlobSha1": "70b5c1db9ac4047bca3517b85570be6c31dae8c4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "46",
+      "durationSeconds": 61.034989,
+      "gitBlobSha1": "a62f9c7c062ba8b8f0f254f2644442edb993584b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "47",
+      "durationSeconds": 143.591995,
+      "gitBlobSha1": "1b318df33a544adc96d9c0e25a1583a0a46a4e9f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "48",
+      "durationSeconds": 163.374989,
+      "gitBlobSha1": "4081f944244a28e17d773a4a240051d30df17ecf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "49",
+      "durationSeconds": 54.791995,
+      "gitBlobSha1": "3602aae06f421d43abd59d315c7839beec36ffb4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "50",
+      "durationSeconds": 121.021995,
+      "gitBlobSha1": "1bf47ab359dfa2d25633908ab633a7fca3ade68e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "51",
+      "durationSeconds": 40.81898,
+      "gitBlobSha1": "9cc9acb9103124e53494c4563c7715fabc5c02c7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "52",
+      "durationSeconds": 54.587982,
+      "gitBlobSha1": "9140262842e2f13eca83d915edb25beacea6fc37"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "53",
+      "durationSeconds": 75.092993,
+      "gitBlobSha1": "642c369d22aec6336bfac02efe2cdada7042293e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "54",
+      "durationSeconds": 33.6,
+      "gitBlobSha1": "b3b3c1c7d712b2fdfcd79ba92490f3fdcb04d8a9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "55",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "8695ce7a2c4716d191cba9e42f2e2a9b9b1c115f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "56",
+      "durationSeconds": 54.224989,
+      "gitBlobSha1": "72491673e279524b4514ed55dea17ecb2f32dce3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "57",
+      "durationSeconds": 73.165986,
+      "gitBlobSha1": "c669b4286fe70d800d45b3e100eb9d35261fc81b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "58",
+      "durationSeconds": 46.724989,
+      "gitBlobSha1": "91acdb2f964aad594b2d08a1dbeadb240e70a064"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "59",
+      "durationSeconds": 45.0,
+      "gitBlobSha1": "b973c72242e1b7674cd0080c1e8ab52503826151"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "60",
+      "durationSeconds": 92.22898,
+      "gitBlobSha1": "64bd0665624d3138f8e8cda3ab78aa9deffd0bdf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "61",
+      "durationSeconds": 215.317982,
+      "gitBlobSha1": "8f837c01f5d9da0d49c0363afeb19b643ed2e106"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "62",
+      "durationSeconds": 195.41898,
+      "gitBlobSha1": "884b1c96b4668aa758593f7588fbda4736bee6d2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "63",
+      "durationSeconds": 122.321995,
+      "gitBlobSha1": "f77818adc764b8d7220591a42b1a8b5b0a7c42cc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "64",
+      "durationSeconds": 82.848798,
+      "gitBlobSha1": "cc80096a8abf3eda608a53d3e79ffb33a5805b35"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "65",
+      "durationSeconds": 122.29898,
+      "gitBlobSha1": "55999a7ccbf724e9e0cd46fb04389c9694d4c7e6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "66",
+      "durationSeconds": 162.47,
+      "gitBlobSha1": "72606a91573aae9f28d35d1dd51524b38ff675e3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "67",
+      "durationSeconds": 268.979955,
+      "gitBlobSha1": "4de3c1245923a5363d9e6e3397b34bf24fbd7401"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "68",
+      "durationSeconds": 128.707982,
+      "gitBlobSha1": "e8aef970380165a88d9dbce554108a1287b5ffdc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "69",
+      "durationSeconds": 122.716984,
+      "gitBlobSha1": "3d4124662c0daf8d55643da11cb1c1ff0255cd3b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "70",
+      "durationSeconds": 137.043991,
+      "gitBlobSha1": "6dc38691ea9d12deb2eb7f6432b0652395b89572"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "71",
+      "durationSeconds": 129.241995,
+      "gitBlobSha1": "8e471eed438bf93353d0d9f1878a4a054f655b32"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "72",
+      "durationSeconds": 94.992834,
+      "gitBlobSha1": "c430ab23eadb8e1866137f9a354c1bad65f85069"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "73",
+      "durationSeconds": 98.15,
+      "gitBlobSha1": "78b1250b036c53ae6e6fa756240ba2acd91231c2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "74",
+      "durationSeconds": 131.563991,
+      "gitBlobSha1": "75b865ec83d46bb7d07a7de35444d7ec777a9370"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "75",
+      "durationSeconds": 70.286803,
+      "gitBlobSha1": "a68bc956b718bb1bbf3dc4dbf4a65759d74886b3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "76",
+      "durationSeconds": 140.665986,
+      "gitBlobSha1": "865faad461414c30ad878fc750284807ad1cdf17"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "77",
+      "durationSeconds": 124.806984,
+      "gitBlobSha1": "b30ceb6d47aa02cf98891e43596f2483e0eb9012"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "78",
+      "durationSeconds": 132.004989,
+      "gitBlobSha1": "7289168a1e4b4efad976ad1304a54e01595c7642"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "79",
+      "durationSeconds": 94.806984,
+      "gitBlobSha1": "81b3c91c208cf15ec07108ae6b8e0be875d7be28"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "80",
+      "durationSeconds": 104.605896,
+      "gitBlobSha1": "cd6198727c4593e49059021ab563b428ae12ff21"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "81",
+      "durationSeconds": 197.23,
+      "gitBlobSha1": "109bc7a0e5df9049734bee44489eb877da9c2231"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "82",
+      "durationSeconds": 100.402993,
+      "gitBlobSha1": "a1684aec8fcdcf96ab288c7b754edc5d6282ec73"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "83",
+      "durationSeconds": 82.848798,
+      "gitBlobSha1": "a6bf4060ce8a85374863a502225a1adc4e011db8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "84",
+      "durationSeconds": 165.000998,
+      "gitBlobSha1": "21686c447acd02ab7cbabe531391092525976ed0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "85",
+      "durationSeconds": 96.78,
+      "gitBlobSha1": "25e23e3e44f9e2c2b3b273f4666091e0361844ec"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "86",
+      "durationSeconds": 138.947982,
+      "gitBlobSha1": "47ce65a7f55873b489414df6fcf35fefd068f71b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "87",
+      "durationSeconds": 43.75,
+      "gitBlobSha1": "c030a8b86d2258d426b3f62113bb9ab35b9ebf0c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "88",
+      "durationSeconds": 180.255986,
+      "gitBlobSha1": "e832add8ceea47ca7bc7aa2d041e3eb9477f262f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "89",
+      "durationSeconds": 136.950998,
+      "gitBlobSha1": "c1ad105c51fce3db17a20d5ce4d1afc51bdf3715"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "90",
+      "durationSeconds": 204.334989,
+      "gitBlobSha1": "9e3a4282f139618802ccb55f432891ef4b6f012a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "91",
+      "durationSeconds": 176.23898,
+      "gitBlobSha1": "868a6a5e773b59c7fe0c832970321298dcd6e741"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "92",
+      "durationSeconds": 179.23483,
+      "gitBlobSha1": "8ce89261760ed82679a242cf32ac327fe9c08c5b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "93",
+      "durationSeconds": 179.02585,
+      "gitBlobSha1": "d9a0dfcb63fa5c2a67ee5373c2f194161f5dd18c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "94",
+      "durationSeconds": 206.053878,
+      "gitBlobSha1": "7ba1964578cacc377b57ff03860d8a72cb1e49ce"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "95",
+      "durationSeconds": 18.6,
+      "gitBlobSha1": "f9b05d5559f5489029e98528ab32f7491e98dc4c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "96",
+      "durationSeconds": 215.387982,
+      "gitBlobSha1": "e288bc9bcc71ca1b2d29fda92e3c80f11f101c3c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "97",
+      "durationSeconds": 135.835986,
+      "gitBlobSha1": "c397c6d483beb913c93099c59c9d8a804e154e92"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "98",
+      "durationSeconds": 197.043991,
+      "gitBlobSha1": "2b3f2f0d76857050dd125ebee9510d8a97bd3279"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "99",
+      "durationSeconds": 155.433991,
+      "gitBlobSha1": "105fa129ecbcd818736fd84e97061dcd96f2be2f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "100",
+      "durationSeconds": 210.395986,
+      "gitBlobSha1": "d9e61149b010e266a986e4c5e44d93fc3bcb9e32"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "101",
+      "durationSeconds": 103.351995,
+      "gitBlobSha1": "557f2780a9f1da799aca3e11e2904b34da70184a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "102",
+      "durationSeconds": 162.353923,
+      "gitBlobSha1": "f92844e48b07fcf8a2f5b29c508c8c9cd0d1a39f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "103",
+      "durationSeconds": 40.8,
+      "gitBlobSha1": "70305c03f834dbdf1e73bebea47f97c497530fc6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "104",
+      "durationSeconds": 174.891995,
+      "gitBlobSha1": "03b7b4116f46c63c78d042d89c329782dc910fb2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "105",
+      "durationSeconds": 195.023991,
+      "gitBlobSha1": "8c976c51fa73dab2545a44b58365d5c28ea9d7dc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "106",
+      "durationSeconds": 181.347846,
+      "gitBlobSha1": "ac99aabb77fcd7197503afd3628f1e5d1ed11709"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "107",
+      "durationSeconds": 123.784989,
+      "gitBlobSha1": "7c87e4f6306c7b6670f879b5dd4c09ec1dc86f57"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "108",
+      "durationSeconds": 196.51,
+      "gitBlobSha1": "e7e10f8805a0da77256f27262f61c48a1c5a648d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "109",
+      "durationSeconds": 163.815986,
+      "gitBlobSha1": "babd46287d45c1f38ff53d6bf0b7423e5c07e776"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "110",
+      "durationSeconds": 332.276984,
+      "gitBlobSha1": "be64c852be02693abc0bab38df39b7ef6afe6ac9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "111",
+      "durationSeconds": 19.2,
+      "gitBlobSha1": "46f62e1553f3b93dc74d40572b7f21243c781bcb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "112",
+      "durationSeconds": 190.054989,
+      "gitBlobSha1": "3582d05437542d074ce6ea91b381904c77da6b3b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "113",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "ee92ae37115581e9db4f27b2ba249b1fa73f1ea7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "114",
+      "durationSeconds": 142.77898,
+      "gitBlobSha1": "7897e01bd39a4e1d5ab897d983d67834ec20475b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "115",
+      "durationSeconds": 140.572993,
+      "gitBlobSha1": "b2f632a9edce99b95e757688622fb04cbb4e19aa"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "116",
+      "durationSeconds": 193.746984,
+      "gitBlobSha1": "919b9fa1def0dfd43b4285886cdf956a6e9e24b3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "117",
+      "durationSeconds": 39.0,
+      "gitBlobSha1": "33ffae16e778c7be43e213f150874fc8683768c9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "118",
+      "durationSeconds": 15.3,
+      "gitBlobSha1": "802c22156a4dd48ba0369fb191b5351cffb95178"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "119",
+      "durationSeconds": 42.3,
+      "gitBlobSha1": "07751a58da0faadd924431f16d85b0050ccc2996"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "120",
+      "durationSeconds": 41.832993,
+      "gitBlobSha1": "c1eb64407416cddc9009eea0423010eea6900cde"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "121",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "b1a2123dd246bae289b4ebeef6d8b501c45fd3de"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "122",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "3dbc185a6864ead831fc0373b4cf5187706029eb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "123",
+      "durationSeconds": 179.04898,
+      "gitBlobSha1": "34445ecdf3effe91367f1e141e0b14c8ad61cf97"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "124",
+      "durationSeconds": 154.760998,
+      "gitBlobSha1": "c9413cd5012e81c012ae8eb967991b004366eceb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "125",
+      "durationSeconds": 28.5,
+      "gitBlobSha1": "7f6a1c9b7e3040212cb487233e2bb26a4ac0326a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "126",
+      "durationSeconds": 84.914989,
+      "gitBlobSha1": "d38c26c6eb3711292683a6c177aacbc6b680547e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "127",
+      "durationSeconds": 136.950998,
+      "gitBlobSha1": "0e7d7ec5da9b4d59c67e5ae4cff0a027bb744641"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "128",
+      "durationSeconds": 117.143991,
+      "gitBlobSha1": "855bfdf286c854585a29513992800bbd24a39319"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "129",
+      "durationSeconds": 190.077982,
+      "gitBlobSha1": "54628fda7004752e2b3ce43f4128956399a249f3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "130",
+      "durationSeconds": 133.165986,
+      "gitBlobSha1": "2deab29fe264091a42f67836e5b75d7135b2ced9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "131",
+      "durationSeconds": 133.583991,
+      "gitBlobSha1": "945a2686e3bda84dc92da79dcc2cbac0aed1ace4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "132",
+      "durationSeconds": 25.8,
+      "gitBlobSha1": "85417dd6792e98b3113a5ec799689b6d066d50d6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "133",
+      "durationSeconds": 159.311995,
+      "gitBlobSha1": "08020a98c27463b7be572e6745b8264ad6d6d4d2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "134",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "9e8bc33e39333c1cc7dde2354f85b0a83c6dfbfd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "135",
+      "durationSeconds": 28.5,
+      "gitBlobSha1": "477d0c4d48bc904dcc3238c85d960a22831579af"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "136",
+      "durationSeconds": 61.2,
+      "gitBlobSha1": "50d5a45a28f65ee052e7662e982b6b015936a3c3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "137",
+      "durationSeconds": 148.212971,
+      "gitBlobSha1": "32ab59ffd6208139260855a15690074ba86704de"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "138",
+      "durationSeconds": 26.1,
+      "gitBlobSha1": "50d02c82159cc6da09c0d4913be10fa92f73b23a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "139",
+      "durationSeconds": 154.295986,
+      "gitBlobSha1": "438d6fe42e55334e5f72690dae82af3b3d940855"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "140",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "8c7efea304c3786cc483503305692c1249923a5c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "141",
+      "durationSeconds": 175.727982,
+      "gitBlobSha1": "331c700edf4de95a0f79b0fc3eeb0f23d219c860"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "142",
+      "durationSeconds": 35.4,
+      "gitBlobSha1": "197ba72c9fa38cd5f8b7c0494518cdb3d62f2543"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "143",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "322e12348cdfcaff79972809bb329711a5150969"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "144",
+      "durationSeconds": 37.2,
+      "gitBlobSha1": "9148110ca85ba14cbcb43f3fa1c5a42c599ef526"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "145",
+      "durationSeconds": 126.989932,
+      "gitBlobSha1": "34cee46bb8be82d2a14f3e85729b505c6dcad38f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "146",
+      "durationSeconds": 167.43898,
+      "gitBlobSha1": "e05b4c5a6fdbe39a17e0d07ec739a305815f38bd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "147",
+      "durationSeconds": 236.30898,
+      "gitBlobSha1": "04d711798e7104eb423817b5b62a9eda64f5d54a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "148",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "bac06f5f8201f6644e5f68d852f40f255753af7b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "149",
+      "durationSeconds": 137.229932,
+      "gitBlobSha1": "29a2a17cf62838eddc43b02d0c5ac45009e2a34e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "150",
+      "durationSeconds": 101.145986,
+      "gitBlobSha1": "52d5d7e9013bfdef1936096e3a5888ee64c81af2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "151",
+      "durationSeconds": 26.4,
+      "gitBlobSha1": "e7fa8308f532b051476dedbbe9f60dc49c25172b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "152",
+      "durationSeconds": 247.78,
+      "gitBlobSha1": "ab53047078cb1fdb9b59909a685a94c06276ed15"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "153",
+      "durationSeconds": 25.2,
+      "gitBlobSha1": "bc2a0d13808c32cc21d37298258411e38c562b12"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "154",
+      "durationSeconds": 171.525805,
+      "gitBlobSha1": "0b1de78d4ab7d96f011bf91e0b398b03967af44c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "155",
+      "durationSeconds": 130.286984,
+      "gitBlobSha1": "b9b547ffe5c0145335795c7e66e7ffed50eb7e66"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "156",
+      "durationSeconds": 237.655986,
+      "gitBlobSha1": "497d2ff222e343957fae75bc1263794d5a2f7861"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "157",
+      "durationSeconds": 41.4,
+      "gitBlobSha1": "fd272111694b17eed9a747345827a7aea25c1614"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "158",
+      "durationSeconds": 147.771791,
+      "gitBlobSha1": "b969a622bbde5d6f27767ee57dbe093f5af5e00b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "159",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "3708e1d971632bd21ec3daa95b57a9e3273f9216"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "160",
+      "durationSeconds": 41.4,
+      "gitBlobSha1": "8ef4c3c827c27ae0a2ee7b6021fb99e2a87d6721"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "161",
+      "durationSeconds": 177.422993,
+      "gitBlobSha1": "ee7dd90dfd742767f6731be6cd2de041ae074abc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "162",
+      "durationSeconds": 308.05898,
+      "gitBlobSha1": "9d597b40b841b1eb2423c7b6aac2eadd3bd73382"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "163",
+      "durationSeconds": 42.0,
+      "gitBlobSha1": "01d412916d1e044a3d1a7f04fe3861fea87c4dd9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "164",
+      "durationSeconds": 45.824989,
+      "gitBlobSha1": "c1e3c75bce1ba92d9830eba4d813996a79474717"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "165",
+      "durationSeconds": 194.953991,
+      "gitBlobSha1": "9a04e696e341d0ddfc46abe1750391dc2e099a1b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "166",
+      "durationSeconds": 19.2,
+      "gitBlobSha1": "1236b348037f4183953cb37f18dba5d3df2f9a1c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "167",
+      "durationSeconds": 94.411995,
+      "gitBlobSha1": "c3cde2a6263b089146b39328269218a87be576ec"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "168",
+      "durationSeconds": 40.5,
+      "gitBlobSha1": "db451fa18ca238beb78a2186c2b8e8e4c2ddff11"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "169",
+      "durationSeconds": 75.510998,
+      "gitBlobSha1": "1b107dcbdf6c4e9bb6cb9e75a78bad414d2665fd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "170",
+      "durationSeconds": 143.94,
+      "gitBlobSha1": "6938406ca9a74336f326ff4ded2943211811758d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "171",
+      "durationSeconds": 187.593991,
+      "gitBlobSha1": "7289597ae1fd8a4c43b8db15e3e020f14caf0bb3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "172",
+      "durationSeconds": 158.127891,
+      "gitBlobSha1": "390fd1176568bb9e4d6e9cff897f90d3d8576a95"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "173",
+      "durationSeconds": 208.653991,
+      "gitBlobSha1": "16859f4d4e8d8a0dcbbb303e93470eb0dab04bc5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "174",
+      "durationSeconds": 114.891995,
+      "gitBlobSha1": "1476562b6d25994a3ffe24a3b3a3a144ec6ef6a0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "175",
+      "durationSeconds": 63.6,
+      "gitBlobSha1": "5db43d6a41ad54b34d451409381446580126b7fd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "176",
+      "durationSeconds": 132.585941,
+      "gitBlobSha1": "b996c1ab85c2f8d3adb03adc4da3e6b1c05ed908"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "177",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "fa05a4d7b9b3feb5d403cb8781e89316f162d71c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "178",
+      "durationSeconds": 210.673991,
+      "gitBlobSha1": "36d1e5b5a0b5dd98bcd7fc41749d56c4f9298361"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "179",
+      "durationSeconds": 217.245896,
+      "gitBlobSha1": "1fb6ae3fe7b23a91580a86b815035fe04cc16a4d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "180",
+      "durationSeconds": 170.201995,
+      "gitBlobSha1": "6e197adead4b967ea28f454ee22f4faf1cc91aa3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "181",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "39a970884e6ed8a1a5390ddfa563f543f0f829a4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "182",
+      "durationSeconds": 44.4,
+      "gitBlobSha1": "dcf2bfa2ad1b3c74e9e00c6f19312f1b2487aacb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "183",
+      "durationSeconds": 175.425986,
+      "gitBlobSha1": "2c8b8bd4d6b29c66af47d9f0afefce6f2a796984"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "184",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "127e663771a34e0f524f825125c60ee9e898cc67"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "185",
+      "durationSeconds": 141.548844,
+      "gitBlobSha1": "52834cfde97be461924cce76b1337236079af415"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "186",
+      "durationSeconds": 30.6,
+      "gitBlobSha1": "d323bfeb77c5e1ffecb0b0c241c4a996d2352e1b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "187",
+      "durationSeconds": 209.582993,
+      "gitBlobSha1": "8472214f45197f4238761463606e024eb34f31b1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "188",
+      "durationSeconds": 253.630998,
+      "gitBlobSha1": "44e41ebc810f949dee6e89cfb809b87d0488c052"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "189",
+      "durationSeconds": 118.83898,
+      "gitBlobSha1": "911d4954f11c11f786ea0637eb18bd62a9440f13"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "190",
+      "durationSeconds": 140.62,
+      "gitBlobSha1": "7d1c33769f2f64d877381d026e71e71c60403617"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "191",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "db3b5fa5cdc0b343233e895433ded583160c3b7f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "192",
+      "durationSeconds": 260.852971,
+      "gitBlobSha1": "2e03b855ae3ad98dacbd54b8f8157aab7c7ad337"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "193",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "052bee161bc07a88c6774ede6eaa9dfcd722c192"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "194",
+      "durationSeconds": 25.2,
+      "gitBlobSha1": "27be6a227478c5c6aff35fae933d1f5392b42bae"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "195",
+      "durationSeconds": 19.2,
+      "gitBlobSha1": "3851d3d51d6b46de4148768114ee1dd49581c217"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "196",
+      "durationSeconds": 241.742948,
+      "gitBlobSha1": "5a4640f95758c1a2cd0548fe53710a617ff2ba02"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "197",
+      "durationSeconds": 164.582993,
+      "gitBlobSha1": "bd393ffe3c6f0474e81c4343019356f244cb9281"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "198",
+      "durationSeconds": 116.865986,
+      "gitBlobSha1": "808cc6bd3732f835cb2024db02346c72fdc27e24"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "199",
+      "durationSeconds": 134.582857,
+      "gitBlobSha1": "d1bd1024b765b8e32e4863cf959c5b4fb9444ccb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "200",
+      "durationSeconds": 109.922993,
+      "gitBlobSha1": "68a92198697c8183f870682817fc1939fce1781b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "201",
+      "durationSeconds": 173.684989,
+      "gitBlobSha1": "6b1705f84f899806cd3dd359d57f5f9449ddc6a8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "202",
+      "durationSeconds": 77.066984,
+      "gitBlobSha1": "a2856fd0788b813ab89f7a2a62da89d006c55aab"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "203",
+      "durationSeconds": 58.8,
+      "gitBlobSha1": "70ce09de577436cfd1068967f8d944810f8347a2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "204",
+      "durationSeconds": 26.4,
+      "gitBlobSha1": "088e366565af9db048c3300f313b15ad0fbaf362"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "205",
+      "durationSeconds": 130.565805,
+      "gitBlobSha1": "78b5fe3d9595f887dea7850b0589bceb87331d40"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "206",
+      "durationSeconds": 151.532993,
+      "gitBlobSha1": "f8ba70cacc99eb4af086c0a1cbd3f1bffabf9fdf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "207",
+      "durationSeconds": 161.88898,
+      "gitBlobSha1": "79c180411236f1fb019707f5e712995257a72f2d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "208",
+      "durationSeconds": 106.857982,
+      "gitBlobSha1": "ce93de4e01df048329df15cf732e58e9f367a7d0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "209",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "98ee9fb0a39841ee379e8bb19065cf2d831812cd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "210",
+      "durationSeconds": 115.797914,
+      "gitBlobSha1": "bdb4de6c4633b004322696096fd330831c9f7a3b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "211",
+      "durationSeconds": 107.46195,
+      "gitBlobSha1": "6501d40c1b399d0b52d513d76448e69668719d57"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "212",
+      "durationSeconds": 147.213991,
+      "gitBlobSha1": "7ed3973225f180c79d93e74d829585e26a1767be"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "213",
+      "durationSeconds": 118.25898,
+      "gitBlobSha1": "0d6144a1b4734ba5c1473d89e38c17f14fa84285"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "214",
+      "durationSeconds": 123.111995,
+      "gitBlobSha1": "52aa9617425b7b824784519b75074954f4ad7e19"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "215",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "1c1ef916a5370e143164711dd3c7c09321688102"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "216",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "d3d6c44d7ee6af31e869ef7e6bb96ada0fdc91c1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "217",
+      "durationSeconds": 195.511995,
+      "gitBlobSha1": "076306b1cf6beabd3a12a385ec4183cee3f8158a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "218",
+      "durationSeconds": 61.2,
+      "gitBlobSha1": "12fade9236f49c4c7a47d1fb5b7ac543eda03d76"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "219",
+      "durationSeconds": 40.8,
+      "gitBlobSha1": "eab977cddb3c95732037e7c11991f9d763516f3e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "220",
+      "durationSeconds": 138.993991,
+      "gitBlobSha1": "7936923c69c8551d1fc6d264f816101906c42900"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "221",
+      "durationSeconds": 139.342948,
+      "gitBlobSha1": "fcb670ae93a3803ba6651b9ea105a9d6f72dd0df"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "222",
+      "durationSeconds": 46.614989,
+      "gitBlobSha1": "0194743aba47e21108cb9e9466e21fc5fde12d45"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "223",
+      "durationSeconds": 38.4,
+      "gitBlobSha1": "cc8e047640a08d287a970954fa58c5abbf37990d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "224",
+      "durationSeconds": 45.0,
+      "gitBlobSha1": "2d3904a734147dce392882af29942c00e66e7956"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "225",
+      "durationSeconds": 57.0,
+      "gitBlobSha1": "4b448cc5c7ddf5d48992ef2fe845a84e2256e1ca"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "226",
+      "durationSeconds": 109.620998,
+      "gitBlobSha1": "4dab60347b78f5a2bc57268a2ff18fc6f14c6ad7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "227",
+      "durationSeconds": 166.021995,
+      "gitBlobSha1": "b170b0d09e85e5c34a8144dca4a674e3cf0bec42"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "228",
+      "durationSeconds": 170.456984,
+      "gitBlobSha1": "757fedd5031443dadc094053f218d154c5d20925"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "229",
+      "durationSeconds": 197.624989,
+      "gitBlobSha1": "9dd502ca9442778b5161688c4b224f2afbd5e78e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "230",
+      "durationSeconds": 39.6,
+      "gitBlobSha1": "2b923e52488eda2c1cc6ac819f28300bcd853938"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "231",
+      "durationSeconds": 152.09,
+      "gitBlobSha1": "7a8efb62c695152e0d8d1cc56f1b778376713938"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "232",
+      "durationSeconds": 43.2,
+      "gitBlobSha1": "8db64ef824db5872b0bbb25f7d7e5e3323a5aa86"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "233",
+      "durationSeconds": 36.0,
+      "gitBlobSha1": "8c79ae32e5298a0ac159e32c3d2315322d0914bc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "234",
+      "durationSeconds": 126.780952,
+      "gitBlobSha1": "d260e1d67cba834d35be8e76da539b5a6304c315"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "235",
+      "durationSeconds": 42.0,
+      "gitBlobSha1": "e5417ce77a495a4a59a975b5b9bcd9613b7f94a5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "236",
+      "durationSeconds": 86.702993,
+      "gitBlobSha1": "358a32041e13aba3af081399382821c6a714c510"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "237",
+      "durationSeconds": 143.684989,
+      "gitBlobSha1": "be3749160021aca9f263a8c2e33c70622c0a48e9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "238",
+      "durationSeconds": 168.297982,
+      "gitBlobSha1": "c5fca233467de04c83da2b33721b2f4bb389405c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "239",
+      "durationSeconds": 184.133991,
+      "gitBlobSha1": "dbaf4d5c59923ed2b77f35d232eb705f332d73d4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "240",
+      "durationSeconds": 101.88898,
+      "gitBlobSha1": "3901972118969fcdf2827b842a609216d7d035db"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "241",
+      "durationSeconds": 39.3,
+      "gitBlobSha1": "fb978b713d05716c0a72e5723ecf77f0d33f5dd3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "242",
+      "durationSeconds": 116.191995,
+      "gitBlobSha1": "4db94cb5e037c6c1be103374690b72c74bb231de"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "243",
+      "durationSeconds": 114.032993,
+      "gitBlobSha1": "3abf9a64dbae29547042f5e7bca4bd725c8e60d8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "244",
+      "durationSeconds": 35.1,
+      "gitBlobSha1": "c8b05aa95ffef7613edbca6273344df9d0289474"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "245",
+      "durationSeconds": 59.4,
+      "gitBlobSha1": "af6652a9fd91eb32b26ef32336d2e2852e6166b3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "246",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "516f0bfa8cc580a78538b3026b0a4330a0507bb7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "247",
+      "durationSeconds": 240.070998,
+      "gitBlobSha1": "f9d73e5fdfd8a0f6454d052ebe61177310fe447c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "248",
+      "durationSeconds": 138.599909,
+      "gitBlobSha1": "c879f1289ada47669ac0f155ba57ec81554c1133"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "249",
+      "durationSeconds": 131.447982,
+      "gitBlobSha1": "e2ed58f7baa9ad72cfbf5b95064d35fc25198599"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "250",
+      "durationSeconds": 122.205986,
+      "gitBlobSha1": "1c401b93fb8d49925058d1383929fdd87f71b23c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "251",
+      "durationSeconds": 22.5,
+      "gitBlobSha1": "ddf3434f09ad3971b5a28dd3bae3ce7345398b06"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "252",
+      "durationSeconds": 57.6,
+      "gitBlobSha1": "47829158c9cd3926e30dd719f74e846f1bbe9cfe"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "253",
+      "durationSeconds": 29.7,
+      "gitBlobSha1": "28459404cdd80e450be87fdaf166bf32f1a9b702"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "254",
+      "durationSeconds": 117.515986,
+      "gitBlobSha1": "d4584de22218513f57ccddf019c6fb4a76f2d82d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "255",
+      "durationSeconds": 157.523991,
+      "gitBlobSha1": "9fd4cad3a56b831a53393ea0f97f8cdf9f6e3f11"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "256",
+      "durationSeconds": 26.4,
+      "gitBlobSha1": "45935b5335292636554db58b96c94173107fe6fc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "257",
+      "durationSeconds": 58.2,
+      "gitBlobSha1": "72151ff56e29cbc0f6a6570552048492dc548aa9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "258",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "84b98954bdd891a4decd30f1cde14d161b3b4255"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "259",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "6f9870529e3f1dd6c904207f76f77299bba05ef4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "260",
+      "durationSeconds": 139.83,
+      "gitBlobSha1": "562ab7061a76531cab911d3b68fdd7795857b248"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "261",
+      "durationSeconds": 114.612993,
+      "gitBlobSha1": "6e5e93eb645e8826dde6d79f312586520197a9f0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "262",
+      "durationSeconds": 230.457982,
+      "gitBlobSha1": "314c0826c1968ca1e5914d7ae4d1a1e2e15e337b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "263",
+      "durationSeconds": 31.8,
+      "gitBlobSha1": "c873d1033c0a5c0363a5e7c49f6f41ce39ebd1ab"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "264",
+      "durationSeconds": 168.390998,
+      "gitBlobSha1": "9b5a5b6ee42e21104b430b0e6f570dc5db0d5050"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "265",
+      "durationSeconds": 160.147982,
+      "gitBlobSha1": "440b95930dfb34d9c04c4ed6ebd96ee508ec9f10"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "266",
+      "durationSeconds": 150.673991,
+      "gitBlobSha1": "00ac46aa5986003ea5b2b0af5c1f8e27eb0e16bc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "267",
+      "durationSeconds": 134.024989,
+      "gitBlobSha1": "436d663f154f1b17eaff52b91ae4b45a362d89ca"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "268",
+      "durationSeconds": 104.837982,
+      "gitBlobSha1": "45d3197707d3eaae69c9af9d2770402793d16074"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "269",
+      "durationSeconds": 169.713991,
+      "gitBlobSha1": "ae55bd71b2802facf58883879d50a37fa145ca18"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "270",
+      "durationSeconds": 182.322993,
+      "gitBlobSha1": "235ee320f666327ced451fbb81005e4e03aeda5b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "271",
+      "durationSeconds": 151.207982,
+      "gitBlobSha1": "d0348faee6ea8d6a20a40247f09d6b61ecbf03e5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "272",
+      "durationSeconds": 148.862993,
+      "gitBlobSha1": "28c1d6184ed06554ac9079fe5eb3949e87cea847"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "273",
+      "durationSeconds": 181.091995,
+      "gitBlobSha1": "fde102f87305c1833aac6fc54d4ef503e4ab8384"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "274",
+      "durationSeconds": 193.746984,
+      "gitBlobSha1": "013df4227bdb5106f86d1a20a01b5dd7dadd967e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "275",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "c15d7318ae9f550e0f46bcb7897def9b111dcd90"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "276",
+      "durationSeconds": 105.441814,
+      "gitBlobSha1": "8f077db4a0d0903a05847dbb69dba6f7a36468bb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "277",
+      "durationSeconds": 191.354989,
+      "gitBlobSha1": "0f808081ede9819102d50ad9e960b1cc394e5632"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "278",
+      "durationSeconds": 238.816984,
+      "gitBlobSha1": "16995447b85ff7046613270038db26553824a25d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "279",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "928f62d618fdb965fbea77dcfd84d9974b1a13ad"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "280",
+      "durationSeconds": 38.4,
+      "gitBlobSha1": "c7d235283e6d0a3b8371a6cd964544d02c525ac6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "281",
+      "durationSeconds": 126.037914,
+      "gitBlobSha1": "b451cf05df21c84377ed318a34541fe76f6973eb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "282",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "6a7fa5bddfd60ffe76ff833c530dd3b4ed5bd00a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "283",
+      "durationSeconds": 97.70898,
+      "gitBlobSha1": "bcb0a547c0e0568ec78dfb6204a274bb9d406a7e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "284",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "04993ca7566c4d1c442e9af357a26c4055a41053"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "285",
+      "durationSeconds": 163.05,
+      "gitBlobSha1": "005d8e96212bb176311d1ccbfb744a98c245e443"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "286",
+      "durationSeconds": 131.331995,
+      "gitBlobSha1": "9d2767f49ef23fffccebc72d69acd302f1cd7935"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "287",
+      "durationSeconds": 44.4,
+      "gitBlobSha1": "1630dc9440524a8734845d8d819b4cb3fb75208d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "288",
+      "durationSeconds": 136.253991,
+      "gitBlobSha1": "55d75d182919dd35f70a3021bb3d18c694819152"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "289",
+      "durationSeconds": 123.53,
+      "gitBlobSha1": "7b4a2786ea49ef50c7352e3196b851f61ecd7b59"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "290",
+      "durationSeconds": 125.75898,
+      "gitBlobSha1": "e7b3ac68e3cbbf627a4eff2b50d14821520a3ea1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "291",
+      "durationSeconds": 93.343991,
+      "gitBlobSha1": "e587dcc217ea64455265199d13c5c05eae2d27f8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "292",
+      "durationSeconds": 41.4,
+      "gitBlobSha1": "a4d289898f0ff18de68c4e6bf5d1de126a7dd314"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "293",
+      "durationSeconds": 146.493991,
+      "gitBlobSha1": "3975797edcafb00da81b347b22d23affe6080030"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "294",
+      "durationSeconds": 146.586984,
+      "gitBlobSha1": "960678b894ff065c3bc26e7b65a71ee7a2e575a2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "295",
+      "durationSeconds": 121.973991,
+      "gitBlobSha1": "2b79e92574d3a86796fce57845d29e6cef4c3def"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "296",
+      "durationSeconds": 109.249887,
+      "gitBlobSha1": "ee72dc959c1d516e5d2070b4e9bd56de78ba95ca"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "297",
+      "durationSeconds": 37.2,
+      "gitBlobSha1": "af02a8675e81da21ff057019f77e1f594907b636"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "298",
+      "durationSeconds": 148.467982,
+      "gitBlobSha1": "ac33ffb5c7d144ac0b1143d66dfdb738646e05ab"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "299",
+      "durationSeconds": 172.57,
+      "gitBlobSha1": "ff6d93921398da1ab801d85781a68a6de7822a52"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "300",
+      "durationSeconds": 152.600998,
+      "gitBlobSha1": "5ebf0fd4e694bedc305f5a72379b39e360e53bd4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "301",
+      "durationSeconds": 114.66,
+      "gitBlobSha1": "b53d4310604c93cc404fcb9e3751cfcb1a3f660c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "302",
+      "durationSeconds": 181.184989,
+      "gitBlobSha1": "bf5c6dd22b30a76b5a5633d0198d7292c4bbabe2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "303",
+      "durationSeconds": 160.750998,
+      "gitBlobSha1": "6f6b73e46a3a9a6a0382596c2754754128022a42"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "304",
+      "durationSeconds": 199.92381,
+      "gitBlobSha1": "44e0018af73eaf50ea1058340b1953dba848127b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "305",
+      "durationSeconds": 198.6,
+      "gitBlobSha1": "b7342f101f9b2ee9e81ea528518d6fcd7b66b2d1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "306",
+      "durationSeconds": 183.924989,
+      "gitBlobSha1": "c45ccd5ccd34c220496009ffc22fdbf64e73b991"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "307",
+      "durationSeconds": 113.591995,
+      "gitBlobSha1": "f07dc8b074ef46b12ee5187abb2971fbd20f5148"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "308",
+      "durationSeconds": 91.810998,
+      "gitBlobSha1": "631af84c439b4ce9ad5b345b9484b59faeeeedb4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "309",
+      "durationSeconds": 74.55898,
+      "gitBlobSha1": "1ab56ad1c2dadbd806d2d83edbc02bf0bbb55bd3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "310",
+      "durationSeconds": 113.475918,
+      "gitBlobSha1": "f03767d8219c7ec68742e76effb4f60f1bf5f4e6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "311",
+      "durationSeconds": 100.262993,
+      "gitBlobSha1": "e9a1b315d4715cf37935d125d1fcf5b6e28156c8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "312",
+      "durationSeconds": 19.2,
+      "gitBlobSha1": "68dadf11e955713e2b8334d30fcb6991ba6133ea"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "313",
+      "durationSeconds": 209.721995,
+      "gitBlobSha1": "fb45ee988644b35b4aeb4e3dff2e4671b73b6f12"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "314",
+      "durationSeconds": 178.073832,
+      "gitBlobSha1": "75d0f5daf3ce94b0d5845bb4f9304ad5ab30e736"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "315",
+      "durationSeconds": 203.243991,
+      "gitBlobSha1": "0b6fd00e8bd955084cfed97a9af9ec2d1a752af6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "316",
+      "durationSeconds": 31.2,
+      "gitBlobSha1": "262540dc992ce4213fe2fac1b2d489cd2d97eaec"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "317",
+      "durationSeconds": 107.484989,
+      "gitBlobSha1": "d8a7a9703b02686cfb00b1dda38cd82eb0ed9597"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "318",
+      "durationSeconds": 161.517982,
+      "gitBlobSha1": "13069671f1448bda6f9c1ea36d520e32d4480037"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "319",
+      "durationSeconds": 152.995986,
+      "gitBlobSha1": "5d0236e2446a4cdcb44a114d77c53d2ffcdce582"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "320",
+      "durationSeconds": 154.411995,
+      "gitBlobSha1": "c1df141416d8633a92dceeb3409588c77f5da2b6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "321",
+      "durationSeconds": 100.541995,
+      "gitBlobSha1": "c52e3dfea8d96e4488261f4a384c9fc6873964c0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "322",
+      "durationSeconds": 167.23,
+      "gitBlobSha1": "e0e88a8c723a933d4f6c4a014c114be842334268"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "323",
+      "durationSeconds": 158.730998,
+      "gitBlobSha1": "20321302ccc6f15d96b11e36a244246f7f6355ec"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "324",
+      "durationSeconds": 233.197982,
+      "gitBlobSha1": "13781760f85f1f03d6e0f5da8aa752b70f162bfe"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "325",
+      "durationSeconds": 115.797914,
+      "gitBlobSha1": "628986493d48f79f6c542f52403b745b98241469"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "326",
+      "durationSeconds": 39.6,
+      "gitBlobSha1": "0273a463ffc12e907f70586a67b418f2faf18f17"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "327",
+      "durationSeconds": 209.094989,
+      "gitBlobSha1": "f5704c3fc7f3dbe43de951242d62574afc5697e0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "328",
+      "durationSeconds": 146.702993,
+      "gitBlobSha1": "0e68a93475e75a8574a4ace2de45e3d587f5657a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "329",
+      "durationSeconds": 245.271995,
+      "gitBlobSha1": "c72de9827fca15e5f9b8632e162c7ac39a4a5e0c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "330",
+      "durationSeconds": 170.781995,
+      "gitBlobSha1": "2493ba17572268f1a4ddaa41f9d9767e069c06cf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "331",
+      "durationSeconds": 195.070839,
+      "gitBlobSha1": "dda1654b44994549dfe60847aed697a0c8d60dce"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "332",
+      "durationSeconds": 142.825941,
+      "gitBlobSha1": "072b4a3e719d1cae5eb9098b7a6948473713d8cc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "333",
+      "durationSeconds": 156.315986,
+      "gitBlobSha1": "38799566832a13988030c430d4344bb4aa086ae2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "334",
+      "durationSeconds": 160.007982,
+      "gitBlobSha1": "b9e90a58dc1df1f229fb62790915b33a34c31258"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "335",
+      "durationSeconds": 120.185986,
+      "gitBlobSha1": "e9dfe333c7c68b05f9734cf6238d738bace57a19"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "336",
+      "durationSeconds": 158.56898,
+      "gitBlobSha1": "62211483cc902a6a082eb4485e5b41b1c4e88ce1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "337",
+      "durationSeconds": 171.246984,
+      "gitBlobSha1": "6540b676e6d010130386f6045e725c4a598cf368"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "338",
+      "durationSeconds": 148.467982,
+      "gitBlobSha1": "4fbd0f6a153f2ac1d5d8491871209f29c54cf9f1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "339",
+      "durationSeconds": 117.445986,
+      "gitBlobSha1": "d9e5f7c178d0c6b54511b7ae68211022e9f1fa2f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "340",
+      "durationSeconds": 156.432834,
+      "gitBlobSha1": "c5812fb936dd1c9c93290b32328a1eef9481aa92"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "341",
+      "durationSeconds": 126.780952,
+      "gitBlobSha1": "c4316ea73e2cf86dc39dbb7acfe1c7b104e0a4dd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "342",
+      "durationSeconds": 116.493991,
+      "gitBlobSha1": "aa505533074b586cb05fd8f5d1b6bd18d9213873"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "343",
+      "durationSeconds": 119.42,
+      "gitBlobSha1": "1d7f2f6664524608598b72406e95f76ffe3cf1a7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "344",
+      "durationSeconds": 149.001995,
+      "gitBlobSha1": "1c253a81e3d1ef8603b99feaa529e0bb0e9f997e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "345",
+      "durationSeconds": 117.051791,
+      "gitBlobSha1": "81e54b72956dba81caf250be4f5186313872357f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "346",
+      "durationSeconds": 139.342948,
+      "gitBlobSha1": "1b5fbc4976265a48747136026f9a0f69345999f4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "347",
+      "durationSeconds": 87.422993,
+      "gitBlobSha1": "b9716ec70e524e295af1253621f78e867a505524"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "348",
+      "durationSeconds": 101.191995,
+      "gitBlobSha1": "615e844617494e7275f50b7434a9991bf82058bf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "349",
+      "durationSeconds": 134.512993,
+      "gitBlobSha1": "548a68045c9f1ff721663ef910bbb5fa436835e5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "350",
+      "durationSeconds": 158.986984,
+      "gitBlobSha1": "e41cd852902375a0b44e00de7fe69e4ccccf85b3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "351",
+      "durationSeconds": 128.707982,
+      "gitBlobSha1": "5b2677bd1ae42f0e26fd0014788a9e2ea125ae8b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "352",
+      "durationSeconds": 98.893787,
+      "gitBlobSha1": "00c6d910b9dbc8c882763ae76890ab8f2a040792"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "353",
+      "durationSeconds": 173.9639,
+      "gitBlobSha1": "e45eccce957af16ea0d3c2992d0551271c79ac07"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "354",
+      "durationSeconds": 130.541995,
+      "gitBlobSha1": "9b2ce6cd210f55c120f457d423fb32ab0838ed47"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "355",
+      "durationSeconds": 119.465986,
+      "gitBlobSha1": "4e948aee2f0c9245ae28ac116505875ce2198586"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "356",
+      "durationSeconds": 132.933991,
+      "gitBlobSha1": "a21815d22966d835b6fedc116ea750734543a264"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "357",
+      "durationSeconds": 163.25898,
+      "gitBlobSha1": "85b5526bf810a2f453215398d588ec32222b3795"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "358",
+      "durationSeconds": 158.405986,
+      "gitBlobSha1": "788ec98555dfe969be3041314241210479c06885"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "359",
+      "durationSeconds": 129.914989,
+      "gitBlobSha1": "e6cb2c8141b6942a5841c6bbf082155c7cb9dca8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "360",
+      "durationSeconds": 29.1,
+      "gitBlobSha1": "1f2d8984f5fea6ce01ef3339061fe543a73c7d72"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "361",
+      "durationSeconds": 112.894989,
+      "gitBlobSha1": "0559793cf5b4c7cb0928df381b7442f2dd80450d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "362",
+      "durationSeconds": 33.6,
+      "gitBlobSha1": "fb930f3baf5d7629e49af73c41d7fe855c7fe982"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "363",
+      "durationSeconds": 221.076984,
+      "gitBlobSha1": "b1988312f280eb9c95b7523649319f89a5edd2ee"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "364",
+      "durationSeconds": 161.633991,
+      "gitBlobSha1": "c9b75107b7ecca7afaf16d3dec0894e32692340c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "365",
+      "durationSeconds": 170.82898,
+      "gitBlobSha1": "deb0aa393a395f5f141ca93f2f28c44a3a5ed068"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "366",
+      "durationSeconds": 37.2,
+      "gitBlobSha1": "8ce7af7a9acbc4464356b226746de72cde753b2d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "367",
+      "durationSeconds": 147.236984,
+      "gitBlobSha1": "373a8936ab6c5c5d218ca916a7f45ee40dd623b0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "368",
+      "durationSeconds": 130.820998,
+      "gitBlobSha1": "c8046c16552d3e7d066ff801e571308a0c0e7404"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "369",
+      "durationSeconds": 305.597823,
+      "gitBlobSha1": "35a8348cd24402821e83ceb85e9db3c53805d5b7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "370",
+      "durationSeconds": 38.4,
+      "gitBlobSha1": "fd0c1352f11857cb36919ae6fa3e5ccfabeed3b1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "371",
+      "durationSeconds": 157.384853,
+      "gitBlobSha1": "4c708162bb915251f88e440d92122469d6b339ea"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "372",
+      "durationSeconds": 137.88,
+      "gitBlobSha1": "45d70291b821a793404983a13c5a72e20e15b3b7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "373",
+      "durationSeconds": 148.026984,
+      "gitBlobSha1": "48762f587337f424b5dec04a383dc609ef9a439f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "374",
+      "durationSeconds": 30.6,
+      "gitBlobSha1": "5bbd8ccec2b78a51ee97f34f30bad2c7aae0b2ee"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "375",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "043fb809dc4688514f1a293d31e235bd7c109d13"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "376",
+      "durationSeconds": 18.9,
+      "gitBlobSha1": "667e85e4928590ce343b4cca9a713f6774e5eb9c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "377",
+      "durationSeconds": 170.364807,
+      "gitBlobSha1": "ffab0b659eecfffa882c07505ebcf7adce7c0aa4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "378",
+      "durationSeconds": 225.232993,
+      "gitBlobSha1": "6b49596e0b9bb21528a3ee393729d13e14622175"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "379",
+      "durationSeconds": 167.16,
+      "gitBlobSha1": "96b09691a12537aae385dbef0976e38ae4c0a963"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "380",
+      "durationSeconds": 143.266984,
+      "gitBlobSha1": "aff9fac641890ae4ed65b0ea4f5a3ea0a6e37696"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "381",
+      "durationSeconds": 40.8,
+      "gitBlobSha1": "7bcc6ffe3a9e6e12b66d7da103544e789692e860"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "382",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "429df36af04b4c10930455459685182198935e80"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "383",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "f4bffaac30d030b357328f7f65654f701961de95"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "384",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "6f91caf727f85804addd663faad5440fbd325ae7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "385",
+      "durationSeconds": 159.915828,
+      "gitBlobSha1": "8dda4ab82aeb76f05faddac5423c6aa9e33fd378"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "386",
+      "durationSeconds": 48.0,
+      "gitBlobSha1": "d782e8babf93bd065e86daed3ef196c40101f96c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "387",
+      "durationSeconds": 135.232993,
+      "gitBlobSha1": "86f05bca9a11eba3a73e9c490f3872bf4bcce6ab"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "388",
+      "durationSeconds": 114.334989,
+      "gitBlobSha1": "60b57d03214ea6a9ed50dcb6181f7a9f322a4e01"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "389",
+      "durationSeconds": 180.79,
+      "gitBlobSha1": "8faf0293c6ffa81ccb0a532a46d63598f55f8528"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "390",
+      "durationSeconds": 103.18898,
+      "gitBlobSha1": "0dd23bc6c04e63327400c217f8ab31b97c760018"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "391",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "f35e6191245d9484dbc025390de3eae5c5062eed"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "392",
+      "durationSeconds": 37.2,
+      "gitBlobSha1": "4355d830377af3f3e40b018fecf9096a62d05d57"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "393",
+      "durationSeconds": 145.913991,
+      "gitBlobSha1": "0f784f044e51eb71a3366e4a3728771f95986427"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "394",
+      "durationSeconds": 147.469932,
+      "gitBlobSha1": "8d0747a1dbb115a19d4db27ddeb0da2759695393"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "395",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "e56e0f0ae4fdb685d82423c0cb28f357817d2b74"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "396",
+      "durationSeconds": 163.815986,
+      "gitBlobSha1": "5da6786a48203aaa97ad7cff6843988ad976c990"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "397",
+      "durationSeconds": 143.870839,
+      "gitBlobSha1": "7106d9915c46c796049acb3a2a5e4f2d40b66e1c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "398",
+      "durationSeconds": 38.4,
+      "gitBlobSha1": "1a24dd008a38ff34ace3e19556e10fa9c7fb51f8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "399",
+      "durationSeconds": 57.0,
+      "gitBlobSha1": "91240bbedcdde4fd8dd564612f109bf45d014695"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "400",
+      "durationSeconds": 114.264989,
+      "gitBlobSha1": "49e4633461191b24976673977e3b8a1360473210"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "401",
+      "durationSeconds": 85.24,
+      "gitBlobSha1": "017685eb106186ba9ef3a53fb71317351d946083"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "402",
+      "durationSeconds": 128.196984,
+      "gitBlobSha1": "016bbc3573d13b145aacb5facf5baa71c11d797c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "403",
+      "durationSeconds": 124.202993,
+      "gitBlobSha1": "c8e4c9489642ca574373c44cab071c900c4d01bd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "404",
+      "durationSeconds": 204.28898,
+      "gitBlobSha1": "6e5251006d7203cd6b30bc1bb8cc4ed681b02bdb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "405",
+      "durationSeconds": 98.29,
+      "gitBlobSha1": "dbc4e1a3ae2fd3ba4f035dd6949dfc1d145c937f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "406",
+      "durationSeconds": 145.843991,
+      "gitBlobSha1": "2ef15327c3bd2c24e807b45452b2d16edafa3b3b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "407",
+      "durationSeconds": 151.230998,
+      "gitBlobSha1": "ea8b4f2b9cd7f3f8aa55ef7530cf840acf832efa"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "408",
+      "durationSeconds": 223.39898,
+      "gitBlobSha1": "20701c3d2e70eb9f7fb01945ea399f57a83503af"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "409",
+      "durationSeconds": 116.331973,
+      "gitBlobSha1": "bc29dd376605c2985c8f388efd39485ff170d539"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "410",
+      "durationSeconds": 62.053991,
+      "gitBlobSha1": "8764d5aba88b2a6dceb517313586da3663a014b0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "411",
+      "durationSeconds": 109.922993,
+      "gitBlobSha1": "f72de6b1e7cbab863ea9212ab4fe9a4910dd02f5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "412",
+      "durationSeconds": 99.961905,
+      "gitBlobSha1": "e07d8fafb65ff626d8d2801d09f7b0c4170448c4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "413",
+      "durationSeconds": 216.734989,
+      "gitBlobSha1": "7cf0360c32df53dbad069ec92eb0cc864481c4c1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "414",
+      "durationSeconds": 34.05,
+      "gitBlobSha1": "1df2860d915631ffe51d76f8a3089a920637a07e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "415",
+      "durationSeconds": 96.640998,
+      "gitBlobSha1": "9211bb7d26c59b5410818b1f989c092e6d28078c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "416",
+      "durationSeconds": 98.103991,
+      "gitBlobSha1": "a8be36b8dddf5253a53da96d4d08d2d786387194"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "417",
+      "durationSeconds": 52.2,
+      "gitBlobSha1": "4785e9f8c925c11d6061d8f495d0f84dd002f073"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "418",
+      "durationSeconds": 128.405986,
+      "gitBlobSha1": "5eff95ec927fe25cf90932a7ab0e61cc291e459a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "419",
+      "durationSeconds": 47.4,
+      "gitBlobSha1": "b2cd736bbec85bfea9df23d268ebd143d17e6ac2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "420",
+      "durationSeconds": 145.356916,
+      "gitBlobSha1": "2a66a5ae1e67f1959519ba6bff0e9611e289010f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "421",
+      "durationSeconds": 129.729887,
+      "gitBlobSha1": "e00988b25c7c1fdf9aa58c42ff2bf0995997b176"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "422",
+      "durationSeconds": 30.0,
+      "gitBlobSha1": "61eb540963d005cc3b96d63629937d05323f9b90"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "423",
+      "durationSeconds": 178.723991,
+      "gitBlobSha1": "4bcf88fb789e5c1bcc1d34cfe5836c70882b4aeb"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "424",
+      "durationSeconds": 139.45898,
+      "gitBlobSha1": "0a2c34130376dd11634827d3189ee7dc381ffb1b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "425",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "9cf6d8d425c653debd89de9661348ef86ca91290"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "426",
+      "durationSeconds": 168.761995,
+      "gitBlobSha1": "4e8c8083a6841fcc05553761d6856da67bee452d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "427",
+      "durationSeconds": 114.543991,
+      "gitBlobSha1": "4cb569a3c5a35a33185bfcc403178038ef1bb2be"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "428",
+      "durationSeconds": 132.004989,
+      "gitBlobSha1": "c0fe1de454a240aa5b93101e95b5d2df28fe76d4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "429",
+      "durationSeconds": 108.01898,
+      "gitBlobSha1": "1ce6ab0ac59f8cf40ca222cc14ed85752315a50d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "430",
+      "durationSeconds": 171.130998,
+      "gitBlobSha1": "588165246bb66bec5bc818cfeb0abd461a3f62b7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "431",
+      "durationSeconds": 115.146984,
+      "gitBlobSha1": "dc6877f37b26aa95ecc43772e247fd419b7b91ee"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "432",
+      "durationSeconds": 116.331973,
+      "gitBlobSha1": "88ba64baec9a408ea39a6af959c2971a29a1921f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "433",
+      "durationSeconds": 44.4,
+      "gitBlobSha1": "2e448acdbdc76de836c8f3f9539889d60938a42b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "434",
+      "durationSeconds": 128.614989,
+      "gitBlobSha1": "7d6579ed08ce108bb6dcdbcbc0051c3391a73f9e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "435",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "416bfdabf1fd170d9b1b27c09e67a55541da492b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "436",
+      "durationSeconds": 24.6,
+      "gitBlobSha1": "04a8251e9f1490591385332481f6018a7311458d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "437",
+      "durationSeconds": 21.0,
+      "gitBlobSha1": "15cd6a0ddf739e6a5f0a218729f41393610e5fbf"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "438",
+      "durationSeconds": 98.29,
+      "gitBlobSha1": "c16c85543761971e004c2ec25a83d687f3bf341c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "439",
+      "durationSeconds": 132.283991,
+      "gitBlobSha1": "164843de95d6976e6b30d8fbffc8fdfdf1fd4ca2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "440",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "9693123597bb45243f5ec9f56c147a49488d7869"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "441",
+      "durationSeconds": 146.006984,
+      "gitBlobSha1": "b3e0be0ef7f77b62e313ea167c5adbea0cd97ef3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "442",
+      "durationSeconds": 46.5,
+      "gitBlobSha1": "c21c53b8fdef1d9f0148b99b70603531fd0297b4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "443",
+      "durationSeconds": 186.455986,
+      "gitBlobSha1": "a78fb2c5efaf3f81515e441fb8bb78495fb5dded"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "444",
+      "durationSeconds": 292.384989,
+      "gitBlobSha1": "59fb14eb20fd1deb62d2e3e75db3fbb880f4d0ae"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "445",
+      "durationSeconds": 167.113991,
+      "gitBlobSha1": "3aebd2c4a55d7e8527e96cb022d9ff6f1116eb04"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "446",
+      "durationSeconds": 140.154989,
+      "gitBlobSha1": "dcc1367fcd94ab33b4eaa0a04bda05a993ecda1a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "447",
+      "durationSeconds": 119.256984,
+      "gitBlobSha1": "4e945fb516e1d1035249e7c036037ec499d07908"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "448",
+      "durationSeconds": 210.07093,
+      "gitBlobSha1": "16135a5fa7cdc50e32ed80121210a11d5ad501c7"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "449",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "1b2d6f566bf29812e89742310537d7c9380f2a5d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "450",
+      "durationSeconds": 221.587982,
+      "gitBlobSha1": "8e4c9b92da5c45fc93323fda242ebf5809931a3b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "451",
+      "durationSeconds": 45.0,
+      "gitBlobSha1": "e8d05c3f08d3e801b0c8b9dfbaeeee55f4bc2265"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "452",
+      "durationSeconds": 223.84,
+      "gitBlobSha1": "a80d47f72e7c17426e492d920bebd730dcd7dabe"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "453",
+      "durationSeconds": 169.713991,
+      "gitBlobSha1": "f37b38709c9355d48d00b3db8341f795878adb62"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "454",
+      "durationSeconds": 84.217982,
+      "gitBlobSha1": "b823c2c5d3d545044d2f52293dd4fc5f805b5b44"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "455",
+      "durationSeconds": 194.3278,
+      "gitBlobSha1": "bc3377851ed78b9e119583a74d9b63162aa718b2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "456",
+      "durationSeconds": 69.984943,
+      "gitBlobSha1": "57868b9364f1de2048cc5aaed0046e9db569f6be"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "457",
+      "durationSeconds": 182.902993,
+      "gitBlobSha1": "9b5b8a6f4326faf48e3120bea1150d7bd42e79f3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "458",
+      "durationSeconds": 67.546848,
+      "gitBlobSha1": "087db7f2b25d5485dc4c91af4be646fd4edb0bcd"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "459",
+      "durationSeconds": 129.311927,
+      "gitBlobSha1": "5456622740f7ca093033472de414fb6adf375b23"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "460",
+      "durationSeconds": 150.325986,
+      "gitBlobSha1": "432dde9fbaa6abbf0ef1547081a50cff7c31677e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "461",
+      "durationSeconds": 151.393991,
+      "gitBlobSha1": "4c2900139fd00b961881419901d5f820120d5ed4"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "462",
+      "durationSeconds": 127.198912,
+      "gitBlobSha1": "835f3b6be66e1182bf170e5c0e76a531714f74fc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "463",
+      "durationSeconds": 143.800998,
+      "gitBlobSha1": "4809bf2ca046099e211d2be52a2fc15e23a18040"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "464",
+      "durationSeconds": 114.752993,
+      "gitBlobSha1": "953927fd46033d724575062dd6480677436c6269"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "465",
+      "durationSeconds": 134.883991,
+      "gitBlobSha1": "d4d472b7f57c19b6e6569356afb2439b1d33da6b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "466",
+      "durationSeconds": 85.564989,
+      "gitBlobSha1": "f8536ad58d117d9ddfbfa74a3be79b1b7100ff74"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "467",
+      "durationSeconds": 171.664989,
+      "gitBlobSha1": "67944b6fbb90f5d9357c822f44cbc3a5dc71642b"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "468",
+      "durationSeconds": 121.253991,
+      "gitBlobSha1": "ef63ebaffdf2f8c52ff5b7f3482455ec2b97dcd1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "469",
+      "durationSeconds": 83.87,
+      "gitBlobSha1": "57b7e7e4abfd87f062d5da75efffef57a9886ad2"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "470",
+      "durationSeconds": 65.477982,
+      "gitBlobSha1": "aa2b752408ec973ab0fc6dfa7879089c88545595"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "471",
+      "durationSeconds": 120.603991,
+      "gitBlobSha1": "5c71e8652da4413a7cfe966dfe0dc8e7379c32a1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "472",
+      "durationSeconds": 127.221995,
+      "gitBlobSha1": "e9985c6f2db4fe9a074fda1a0d38e7fa465b3684"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "473",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "bdf1c19d65625e953c8c59c4f91f8a52db69759e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "474",
+      "durationSeconds": 117.886984,
+      "gitBlobSha1": "1fbc432d59e2be097a7466af8dee973f25cfeb0f"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "475",
+      "durationSeconds": 150.766984,
+      "gitBlobSha1": "aefb63840f77ffde4f926396f402ed21ee8b93e9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "476",
+      "durationSeconds": 102.236984,
+      "gitBlobSha1": "aece6cf3dc665b68e33d2b9acc476bc8e2a4506c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "477",
+      "durationSeconds": 37.8,
+      "gitBlobSha1": "c6e376af7591eb004650d56a670bb4145739087e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "478",
+      "durationSeconds": 125.665986,
+      "gitBlobSha1": "4789f0e36a89698e9903282966c12b3a6d7dcfc3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "479",
+      "durationSeconds": 127.198912,
+      "gitBlobSha1": "8d414a6e17e863472d8e1bc34d092fa6505611ab"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "480",
+      "durationSeconds": 76.83483,
+      "gitBlobSha1": "6ede4e69ef8e7eb74c51268e8213bb891736c920"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "481",
+      "durationSeconds": 15.6,
+      "gitBlobSha1": "af9b0257a874e33eac6148bec9f8ae05ea3e497a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "482",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "63a66e958bb23cfcd54d0a2318dc44beb485694c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "483",
+      "durationSeconds": 91.276984,
+      "gitBlobSha1": "a43daa8da063ceac10301ba65aab9077aea0756e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "484",
+      "durationSeconds": 99.194989,
+      "gitBlobSha1": "c8252ee39f198f61a59d761141936d7773097789"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "485",
+      "durationSeconds": 168.227982,
+      "gitBlobSha1": "de3603a23c6b38da98587769d79db4e2429f1210"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "486",
+      "durationSeconds": 57.6,
+      "gitBlobSha1": "cebee3e8a8eb74d60d18fb677156ae26968aa4d0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "487",
+      "durationSeconds": 131.191995,
+      "gitBlobSha1": "01a83c3e1d46a2caf8fac8ea43683fb13243a5e5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "488",
+      "durationSeconds": 38.4,
+      "gitBlobSha1": "458dd0b5dab0a77b2035ad1ece2f60bfeb02ffe3"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "489",
+      "durationSeconds": 31.2,
+      "gitBlobSha1": "880f59bf9672fb90c8ea981ff900fd58a37a7681"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "490",
+      "durationSeconds": 127.337982,
+      "gitBlobSha1": "bcb604d69fabbd2808383537609bafddab1d4356"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "491",
+      "durationSeconds": 121.996984,
+      "gitBlobSha1": "24c887e59ade79671482cb78989fd8b51349c211"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "492",
+      "durationSeconds": 163.7239,
+      "gitBlobSha1": "ad93bad197cb8fc005f013958ec510311ee1efb1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "493",
+      "durationSeconds": 120.325805,
+      "gitBlobSha1": "fad4c9161e55dfaa20521a15b9782b2fcf3973ea"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "494",
+      "durationSeconds": 123.181859,
+      "gitBlobSha1": "aef734f6a58a4b49c519854c0109958d8b34e4ef"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "495",
+      "durationSeconds": 85.820952,
+      "gitBlobSha1": "e28d8e011820113dd397cf05af9e4b5df7aa57a8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "496",
+      "durationSeconds": 164.187982,
+      "gitBlobSha1": "550dc7ebe78031027b51e9cbb7da7035b0859d60"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "497",
+      "durationSeconds": 40.2,
+      "gitBlobSha1": "4bdce0b631575633564259259d5fecf59d901797"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "498",
+      "durationSeconds": 60.6,
+      "gitBlobSha1": "e6320ce13a206fd170be4e12310658e97e94a065"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "499",
+      "durationSeconds": 30.6,
+      "gitBlobSha1": "172999c3e92b47e6983e47287f8784739bc620ad"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "500",
+      "durationSeconds": 219.056984,
+      "gitBlobSha1": "58434eb4beadc16b235ffd26cb8eb5b333608f1a"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "501",
+      "durationSeconds": 26.4,
+      "gitBlobSha1": "88121d2a31e14abd362ef30420a6b757e9f2b56d"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "502",
+      "durationSeconds": 163.165986,
+      "gitBlobSha1": "f2976da5e00c0c2aad23843ece3444c6e36dfda5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "503",
+      "durationSeconds": 125.317982,
+      "gitBlobSha1": "c4e8983e9f100f4eae28265e6a99c4b5b486425e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "504",
+      "durationSeconds": 156.896984,
+      "gitBlobSha1": "dd76f339154101a7b260a1ce0f4bcf042cf9b65e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "505",
+      "durationSeconds": 175.727982,
+      "gitBlobSha1": "c6c4c25b7d2ea906a27b6609e7f2bd9c861145f1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "506",
+      "durationSeconds": 120.023946,
+      "gitBlobSha1": "e4861d0b9058ce94659a25d2e77a7a01138b14e5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "507",
+      "durationSeconds": 108.482993,
+      "gitBlobSha1": "65736a713ec59b3da9aac1bc903be665561fe6a9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "508",
+      "durationSeconds": 128.173991,
+      "gitBlobSha1": "e4e20c0ef9a93cbbc6b76d695c79730e318ea74c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "509",
+      "durationSeconds": 236.564898,
+      "gitBlobSha1": "d0f4be2d41159c2b754b17cf7f7f7e88d08dbac0"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "510",
+      "durationSeconds": 202.291995,
+      "gitBlobSha1": "b4b4561fa737d858ee623e8cdad5dce7208fa5a9"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "511",
+      "durationSeconds": 57.0,
+      "gitBlobSha1": "aa509f6a272593b8d21935052b35c6115f6774e1"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "512",
+      "durationSeconds": 141.455964,
+      "gitBlobSha1": "2a3d224e12358c3234e9551fb7f5e3b138d1b4b6"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "513",
+      "durationSeconds": 74.256984,
+      "gitBlobSha1": "c852845b4bfbf1862f42870e6c53b4e135cd768c"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "514",
+      "durationSeconds": 119.187982,
+      "gitBlobSha1": "36c48771ed5b01700cdc17d282610bbefcc5be49"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "515",
+      "durationSeconds": 144.334989,
+      "gitBlobSha1": "8e263cc5586e42480644e9cbf9fe4b27a054d284"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "516",
+      "durationSeconds": 74.930794,
+      "gitBlobSha1": "98ce63ca99dab5b26d46149d91d8144915ea65d5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "517",
+      "durationSeconds": 28.2,
+      "gitBlobSha1": "e7a9ac62d6d17b5da00acf702bfaa133d5ac03ea"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "518",
+      "durationSeconds": 89.55898,
+      "gitBlobSha1": "d676e84721b2c63a02f77e900d56c99314bbc8f8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "519",
+      "durationSeconds": 103.165986,
+      "gitBlobSha1": "e5154bebf764bd541a55d6fe65584b61f2af13d8"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "520",
+      "durationSeconds": 116.307982,
+      "gitBlobSha1": "19dffe7ecdd1729508526df7d7f72013835e49f5"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "521",
+      "durationSeconds": 140.131995,
+      "gitBlobSha1": "199a3e825e154f3e94f4e0f0687711ccbc1f17fc"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "522",
+      "durationSeconds": 21.0,
+      "gitBlobSha1": "fa88d1bc32909419504c0dce8ca42a0b0da4d53e"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "523",
+      "durationSeconds": 15.3,
+      "gitBlobSha1": "325857561e3c9e7481e9f3383ac466a4e8602360"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "524",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "f177fd23c83fa8732e81144c4e9a97d2acd15512"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "525",
+      "durationSeconds": 28.8,
+      "gitBlobSha1": "9edc811b4ad34a294a3bb0c029a013ca56aec541"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "526",
+      "durationSeconds": 88.815986,
+      "gitBlobSha1": "efe9beb8afd33f5a852a0115d23bb0b2b935feda"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "itemId": "527",
+      "durationSeconds": 256.765986,
+      "gitBlobSha1": "3dc2df5f797b34d6dee9d6f41013fc122ef07571"
+    }
+  ],
+  "validatedOn": "2026-10-07",
+  "checks": [
+    "expected byte count",
+    "pinned Git blob SHA-1",
+    "M4A ftyp header",
+    "afinfo positive duration"
+  ]
+}

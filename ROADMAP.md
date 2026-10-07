@@ -97,7 +97,10 @@ Items below are plans, not claims that multilingual content is already installed
       bass, especially for choir practice. Opt-in original-MIDI track controls
       support naming, per-track instruments, mute, solo, and reset wherever separate tracks exist;
       musical styles are bypassed during practice.
-- [ ] Offer recorded instrumental and sung versions where verified recordings
+- [x] Add on-demand Spanish instrumental recordings for all 614 New and 527 Old
+      hymns, with checked source files, bounded caching, shared playback controls,
+      and active-engine completion handling. Retain MIDI controls for verified MIDI.
+- [ ] Offer sung versions and expand instrumental recordings where verified recordings
       exist, alongside MIDI and video. Support optional offline downloads and
       the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
       matching hymn numbers across languages; musical styles and choir controls

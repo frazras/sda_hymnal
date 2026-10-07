@@ -24,7 +24,7 @@ class ServiceReader {
     final reading = repository.reading(entry.ref);
     if (continuation != null) {
       if (entry.ref.kind != HymnalItemKind.hymn || hymn == null) return null;
-      if (continuation == HymnContinuation.midi && !MidiPlayer.hasMidi(hymn)) {
+      if (continuation == HymnContinuation.midi && !MidiPlayer.hasMusic(hymn)) {
         return null;
       }
       if (continuation == HymnContinuation.video && hymn.video == null) {
