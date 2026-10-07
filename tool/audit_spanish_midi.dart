@@ -32,8 +32,9 @@ void main(List<String> args) {
       try {
         midiTrackChunks(bytes);
         final original = readMidiDuration(bytes);
-        if (original <= Duration.zero)
+        if (original <= Duration.zero) {
           throw const FormatException('No positive duration');
+        }
         item['durationMs'] = original.inMilliseconds;
         item['key'] = readKeySignature(bytes)?.label;
         item['parts'] = [
@@ -48,8 +49,9 @@ void main(List<String> args) {
                   renderHymnMidi(bytes, theme: style, forAppleSynth: apple);
               midiTrackChunks(rendered);
               final duration = readMidiDuration(rendered);
-              if (duration <= Duration.zero)
+              if (duration <= Duration.zero) {
                 throw const FormatException('No positive rendered duration');
+              }
               renders[key] = {
                 'durationMs': duration.inMilliseconds,
                 'bytes': rendered.length
