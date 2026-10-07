@@ -67,3 +67,31 @@ The same tune may have different harmony or verse rhythm across editions. Such
 pairs can share the underlying tune without claiming that every existing
 recording or MIDI arrangement is interchangeable. Keep uncertain candidates out
 of automatic playback until reviewed.
+
+## Spanish Old MIDI candidate audit (2026-10-07)
+
+The edition-specific [1962 MIDI index](https://4eange.org/espagnol/CAN/ESP/MID/Index.htm)
+lists 527 hymns and has a corresponding
+[score index](https://4eange.org/espagnol/CAN/ESP/JPG/Index.htm).
+The stopped download batch yielded 249 actual MIDI files (1–247, 350, 527),
+101 HTML challenge responses masquerading as `.mid` files (248–348), and
+177 items without a downloaded file. Do not retry the batch blindly or import
+HTML responses. No candidate in this audit is automatically enabled for playback.
+
+`tool/data/spanish_old_midi_candidates.json` pins the downloaded bytes and records
+actual renderer results. All 249 MIDI candidates produce positive-duration files
+in all six music styles with both the portable and iOS rendering paths: 2,988
+successful renders. This verifies structural compatibility only. The files still
+need melody, meter, pickup, refrain/repeat, and verse-form review against their
+edition's scores before replacing recordings or enabling style controls.
+
+Reproduce against the existing downloaded directory with:
+
+```sh
+dart tool/audit_spanish_midi.dart tmp/spanish_music_audit tool/data/spanish_old_midi_candidates.json
+```
+
+The [Old/New correlation project](https://github.com/Alexisvt/correlacion-himnario)
+is an additional candidate-identification resource. Number/title correlations
+must not be treated as proof that two editions use identical music or performance
+form. Review the printed scores before sharing any MIDI arrangement.
