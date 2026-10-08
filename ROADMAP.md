@@ -78,7 +78,9 @@ Items below are plans, not claims that multilingual content is already installed
       English books available offline.
 - [ ] Localize the app interface independently of the selected book, starting
       with Spanish, Portuguese, and Russian; add a reviewed community translation
-      workflow. Support script/font needs and future right-to-left books.
+      workflow. The independent preference, Flutter delegates, and initial four
+      translation catalogs are staged; shared-screen integration and fluent review
+      remain before exposing a language switch. Support future right-to-left books.
 - [x] Improve multilingual search with Unicode normalization, accent-insensitive
       matching where appropriate, book filters, and localized refrain handling.
       Retain exact-number/title ranking and benchmark a large installed catalog.

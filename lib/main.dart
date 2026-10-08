@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:sdahymnal/l10n/app_localizations.dart';
+import 'package:sdahymnal/services/app_language.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -10,6 +13,7 @@ import 'package:sdahymnal/ui/tabs.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppLanguage.instance.load();
   await ThemeController.instance.load();
   await AppDesignController.instance.load();
   await FontSizeController.instance.load();
@@ -76,11 +80,15 @@ class _HymnalState extends State<Hymnal> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
+        AppLanguage.instance,
         ThemeController.instance,
         AppDesignController.instance,
       ]),
       builder: (context, _) => MaterialApp(
         title: 'Old & New SDA Hymnal',
+        locale: AppLanguage.instance.value,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         debugShowCheckedModeBanner: false,
         theme: buildHymnalTheme(HymnalTokens.light,
             classic: AppDesignController.instance.value == AppDesign.classic),
