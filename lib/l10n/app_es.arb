@@ -224,5 +224,18 @@
   "hymnStory": "Historia del himno",
   "storyPublisherHelp": "Este editor ofrece una historia complementaria completa.",
   "pageOfTotal": "{page} de {total}",
-  "scorePageDescription": "Partitura del himno {number}, página {page} de {total}"
+  "scorePageDescription": "Partitura del himno {number}, página {page} de {total}",
+  "reportSubmitted": "Gracias. Tu informe de error se ha enviado.",
+  "reportSendError": "No se pudo enviar tu informe. Revisa tu conexión e inténtalo de nuevo. Tu texto sigue aquí.",
+  "reportGeneralInstead": "Informar de un problema general de la aplicación",
+  "reportTitle": "Título",
+  "reportTitleHint": "¿De qué trata el error?",
+  "reportTitleRequired": "Escribe un título",
+  "reportDescription": "Describe el error",
+  "reportDescriptionHint": "Cuéntanos qué está mal y, si es posible, qué debería decir.",
+  "reportPrivacyHelp": "Tu informe se enviará a los administradores de la aplicación. No incluyas información personal ni confidencial.",
+  "sendingReport": "Enviando…",
+  "submitReport": "Enviar informe",
+  "hymnLabel": "Himno",
+  "reportSubject": "{book} · {kind} {number}"
 }

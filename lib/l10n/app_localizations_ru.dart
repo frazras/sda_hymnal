@@ -797,4 +797,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String scorePageDescription(int number, int page, int total) {
     return 'Ноты гимна $number, страница $page из $total';
   }
+
+  @override
+  String get reportSubmitted => 'Спасибо. Сообщение об ошибке отправлено.';
+
+  @override
+  String get reportSendError =>
+      'Не удалось отправить сообщение. Проверьте подключение и повторите попытку. Ваш текст сохранён в форме.';
+
+  @override
+  String get reportGeneralInstead => 'Сообщить об общей проблеме приложения';
+
+  @override
+  String get reportTitle => 'Заголовок';
+
+  @override
+  String get reportTitleHint => 'В чём ошибка?';
+
+  @override
+  String get reportTitleRequired => 'Введите заголовок';
+
+  @override
+  String get reportDescription => 'Опишите ошибку';
+
+  @override
+  String get reportDescriptionHint =>
+      'Расскажите, что неверно и, если возможно, как должно быть.';
+
+  @override
+  String get reportPrivacyHelp =>
+      'Сообщение будет отправлено администраторам приложения. Не включайте личную или конфиденциальную информацию.';
+
+  @override
+  String get sendingReport => 'Отправка…';
+
+  @override
+  String get submitReport => 'Отправить сообщение';
+
+  @override
+  String get hymnLabel => 'Гимн';
+
+  @override
+  String reportSubject(String book, String kind, int number) {
+    return '$book · $kind $number';
+  }
 }

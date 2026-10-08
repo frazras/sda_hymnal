@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 225-message
+not claim that the app interface is fully translated. The 238-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -80,3 +80,9 @@ at compact width and larger text; it preserves favorites, category membership,
 and selected book. Localized score controls turn real pages, zoom/reset, and
 return to lyrics in both designs. Printed scores and story source text remain
 unchanged.
+
+The error-report form now translates labels, validation, privacy guidance,
+submission status, failures, and success messages. Compact tests exercise failed
+submission followed by retry in all four locales, both designs and both themes
+with larger text. Source titles/descriptions and stable report IDs stay unchanged.
+Tests inject a mock submitter and never send feedback to administrators.

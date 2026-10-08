@@ -788,4 +788,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String scorePageDescription(int number, int page, int total) {
     return 'Partitura do hino $number, página $page de $total';
   }
+
+  @override
+  String get reportSubmitted => 'Obrigado. Seu relato de erro foi enviado.';
+
+  @override
+  String get reportSendError =>
+      'Não foi possível enviar seu relato. Verifique sua conexão e tente novamente. Seu texto continua aqui.';
+
+  @override
+  String get reportGeneralInstead => 'Relatar um problema geral do aplicativo';
+
+  @override
+  String get reportTitle => 'Título';
+
+  @override
+  String get reportTitleHint => 'Sobre o que é o erro?';
+
+  @override
+  String get reportTitleRequired => 'Digite um título';
+
+  @override
+  String get reportDescription => 'Descreva o erro';
+
+  @override
+  String get reportDescriptionHint =>
+      'Diga o que está errado e, se possível, como deveria estar.';
+
+  @override
+  String get reportPrivacyHelp =>
+      'Seu relato será enviado aos administradores do aplicativo. Não inclua informações pessoais ou sensíveis.';
+
+  @override
+  String get sendingReport => 'Enviando…';
+
+  @override
+  String get submitReport => 'Enviar relato';
+
+  @override
+  String get hymnLabel => 'Hino';
+
+  @override
+  String reportSubject(String book, String kind, int number) {
+    return '$book · $kind $number';
+  }
 }

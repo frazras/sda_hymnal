@@ -1451,6 +1451,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Printed score for hymn {number}, page {page} of {total}'**
   String scorePageDescription(int number, int page, int total);
+
+  /// No description provided for @reportSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. Your error report has been submitted.'**
+  String get reportSubmitted;
+
+  /// No description provided for @reportSendError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send your report. Check your connection and try again. Your text is still here.'**
+  String get reportSendError;
+
+  /// No description provided for @reportGeneralInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a general app issue instead'**
+  String get reportGeneralInstead;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get reportTitle;
+
+  /// No description provided for @reportTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the error about?'**
+  String get reportTitleHint;
+
+  /// No description provided for @reportTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title'**
+  String get reportTitleRequired;
+
+  /// No description provided for @reportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the error'**
+  String get reportDescription;
+
+  /// No description provided for @reportDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what is wrong and, if possible, what it should say.'**
+  String get reportDescriptionHint;
+
+  /// No description provided for @reportPrivacyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report will be sent to the app administrators. Please do not include personal or sensitive information.'**
+  String get reportPrivacyHelp;
+
+  /// No description provided for @sendingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get sendingReport;
+
+  /// No description provided for @submitReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get submitReport;
+
+  /// No description provided for @hymnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymn'**
+  String get hymnLabel;
+
+  /// No description provided for @reportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'{book} · {kind} {number}'**
+  String reportSubject(String book, String kind, int number);
 }
 
 class _AppLocalizationsDelegate

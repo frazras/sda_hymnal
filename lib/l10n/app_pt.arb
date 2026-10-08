@@ -224,5 +224,18 @@
   "hymnStory": "História do hino",
   "storyPublisherHelp": "Uma história complementar completa está disponível com este editor.",
   "pageOfTotal": "{page} de {total}",
-  "scorePageDescription": "Partitura do hino {number}, página {page} de {total}"
+  "scorePageDescription": "Partitura do hino {number}, página {page} de {total}",
+  "reportSubmitted": "Obrigado. Seu relato de erro foi enviado.",
+  "reportSendError": "Não foi possível enviar seu relato. Verifique sua conexão e tente novamente. Seu texto continua aqui.",
+  "reportGeneralInstead": "Relatar um problema geral do aplicativo",
+  "reportTitle": "Título",
+  "reportTitleHint": "Sobre o que é o erro?",
+  "reportTitleRequired": "Digite um título",
+  "reportDescription": "Descreva o erro",
+  "reportDescriptionHint": "Diga o que está errado e, se possível, como deveria estar.",
+  "reportPrivacyHelp": "Seu relato será enviado aos administradores do aplicativo. Não inclua informações pessoais ou sensíveis.",
+  "sendingReport": "Enviando…",
+  "submitReport": "Enviar relato",
+  "hymnLabel": "Hino",
+  "reportSubject": "{book} · {kind} {number}"
 }

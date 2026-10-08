@@ -224,5 +224,18 @@
   "hymnStory": "История гимна",
   "storyPublisherHelp": "Полная дополнительная история доступна у этого издателя.",
   "pageOfTotal": "{page} из {total}",
-  "scorePageDescription": "Ноты гимна {number}, страница {page} из {total}"
+  "scorePageDescription": "Ноты гимна {number}, страница {page} из {total}",
+  "reportSubmitted": "Спасибо. Сообщение об ошибке отправлено.",
+  "reportSendError": "Не удалось отправить сообщение. Проверьте подключение и повторите попытку. Ваш текст сохранён в форме.",
+  "reportGeneralInstead": "Сообщить об общей проблеме приложения",
+  "reportTitle": "Заголовок",
+  "reportTitleHint": "В чём ошибка?",
+  "reportTitleRequired": "Введите заголовок",
+  "reportDescription": "Опишите ошибку",
+  "reportDescriptionHint": "Расскажите, что неверно и, если возможно, как должно быть.",
+  "reportPrivacyHelp": "Сообщение будет отправлено администраторам приложения. Не включайте личную или конфиденциальную информацию.",
+  "sendingReport": "Отправка…",
+  "submitReport": "Отправить сообщение",
+  "hymnLabel": "Гимн",
+  "reportSubject": "{book} · {kind} {number}"
 }

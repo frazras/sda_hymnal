@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import '../services/analytics_store.dart' show analyticsId;
 import '../services/error_reports.dart';
@@ -43,15 +44,13 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
       if (!mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Thank you. Your error report has been submitted.')),
+        SnackBar(content: Text(context.appText.reportSubmitted)),
       );
     } catch (_) {
       if (mounted) {
         setState(() {
           _sending = false;
-          _error =
-              'Could not send your report. Check your connection and try again. Your text is still here.';
+          _error = context.appText.reportSendError;
         });
       }
     }
@@ -61,15 +60,23 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
   Widget build(BuildContext context) => PopScope(
         canPop: !_sending,
         child: Scaffold(
-          appBar: AppBar(title: const Text('Report Errors')),
+          appBar: AppBar(title: Text(context.appText.reportErrors)),
           body: Form(
               key: _form,
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
                   if (widget.subject.kind != 'general') ...[
-                    Text(
-                        '${widget.subject.edition == 'old' ? 'Old' : 'New'} hymnal · ${widget.subject.kind} ${widget.subject.number}'),
+                    Text(context.appText.reportSubject(
+                        switch (widget.subject.edition) {
+                          'old' => context.appText.oldHymnal,
+                          'new' => context.appText.newHymnal,
+                          _ => widget.subject.edition,
+                        },
+                        widget.subject.kind == 'reading'
+                            ? context.appText.reading
+                            : context.appText.hymnLabel,
+                        widget.subject.number)),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton(
@@ -82,7 +89,7 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
                                         ReportErrorPage(submit: widget.submit),
                                   ),
                                 ),
-                        child: const Text('Report a general app issue instead'),
+                        child: Text(context.appText.reportGeneralInstead),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -91,12 +98,12 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
                       controller: _title,
                       enabled: !_sending,
                       maxLength: 200,
-                      decoration: const InputDecoration(
-                          labelText: 'Title',
-                          hintText: 'What is the error about?'),
+                      decoration: InputDecoration(
+                          labelText: context.appText.reportTitle,
+                          hintText: context.appText.reportTitleHint),
                       validator: (value) =>
                           value == null || value.trim().isEmpty
-                              ? 'Enter a title'
+                              ? context.appText.reportTitleRequired
                               : null),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -105,17 +112,15 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
                       minLines: 5,
                       maxLines: 10,
                       maxLength: 5000,
-                      decoration: const InputDecoration(
-                          labelText: 'Describe the error',
-                          hintText:
-                              'Tell us what is wrong and, if possible, what it should say.'),
+                      decoration: InputDecoration(
+                          labelText: context.appText.reportDescription,
+                          hintText: context.appText.reportDescriptionHint),
                       validator: (value) =>
                           value == null || value.trim().isEmpty
-                              ? 'Describe the error'
+                              ? context.appText.reportDescription
                               : null),
                   const SizedBox(height: 12),
-                  const Text(
-                      'Your report will be sent to the app administrators. Please do not include personal or sensitive information.'),
+                  Text(context.appText.reportPrivacyHelp),
                   if (_error != null)
                     Padding(
                         padding: const EdgeInsets.only(top: 16),
@@ -123,7 +128,9 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
                   const SizedBox(height: 20),
                   FilledButton(
                       onPressed: _sending ? null : _send,
-                      child: Text(_sending ? 'Sending…' : 'Submit report')),
+                      child: Text(_sending
+                          ? context.appText.sendingReport
+                          : context.appText.submitReport)),
                 ],
               )),
         ),

@@ -1,6 +1,6 @@
 # Error reporting
 
-Every hymn reader has **Report Errors** in its options menu. Additional readings have the same entry in their options menu. The form starts with the selected title and submits its stable ID, edition and number alongside the user's description. **Settings → More → Report Errors** opens a general report with no selected content.
+Every hymn reader has **Report Errors** in its options menu. Additional readings have the same entry in their options menu. The form starts with the selected title. English hymns and additional readings submit their stable ID, edition and number alongside the user's description. Non-English hymn readers currently open a general report with the native book label, number and title prefilled, because the deployed API accepts only `old`/`new` edition IDs. Native-book report schema deployment remains a roadmap item. **Settings → More → Report Errors** opens a general report with no selected content.
 
 Submission is explicit, requires internet access, and works independently of the usage-statistics switch. A failed submission keeps the form open with its text. Retrying that form uses the same random report ID so a lost response does not create a duplicate. Closing an unsent form discards its text.
 
@@ -28,3 +28,8 @@ node --test analytics/tests/error_reports.test.mjs
 ```
 
 After deployment, submit a report on a controlled app build, check that the authenticated admin list and CSV contain it, and confirm unauthenticated admin requests fail.
+
+The form follows the interface language while preserving source titles and user
+descriptions. A locale change does not translate submitted content or alter API
+field names. Translation tests cover validation, failed submission, retained text,
+and retry IDs across compact Modern/Classic light/dark layouts.
