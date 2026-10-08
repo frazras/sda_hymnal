@@ -67,7 +67,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get more => 'More';
 
   @override
-  String get fontSize => 'Font size';
+  String get fontSize => 'Font Size';
 
   @override
   String get keepScreenOn => 'Keep screen on';
@@ -110,10 +110,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readingHistory => 'Reading history';
 
   @override
-  String get reportErrors => 'Report errors';
+  String get reportErrors => 'Report Errors';
 
   @override
-  String get aboutUs => 'About us';
+  String get aboutUs => 'About Us';
 
   @override
   String get whatsNew => 'What’s new';
@@ -187,4 +187,223 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get musicLoadError =>
       'Could not load music. Check your connection and try again.';
+
+  @override
+  String get readerOptions => 'Reader options';
+
+  @override
+  String get copyOrShareLyrics => 'Copy or share lyrics';
+
+  @override
+  String get previousItem => 'Previous item';
+
+  @override
+  String get nextItem => 'Next item';
+
+  @override
+  String get swipeToTurn => 'Swipe to turn the page';
+
+  @override
+  String get addFavorite => 'Add favorite';
+
+  @override
+  String get removeFavorite => 'Remove favorite';
+
+  @override
+  String get saveToFavoriteLists => 'Save to favorites and categories';
+
+  @override
+  String get endOfHymn => 'End of hymn';
+
+  @override
+  String get hymnalHome => 'Hymnal home';
+
+  @override
+  String get searchHymns => 'Search Hymns';
+
+  @override
+  String get autoplayHelp =>
+      'After you press Play, continue through this list until paused';
+
+  @override
+  String get musiciansAndChoir => 'MUSICIANS & CHOIR';
+
+  @override
+  String get customizeInstruments => 'Customize musical style instruments';
+
+  @override
+  String get customizeInstrumentsHelp =>
+      'Choose instruments, volume and solos for each musical style';
+
+  @override
+  String get ensembleInstruments => 'Ensemble instruments';
+
+  @override
+  String get choirPracticeHelp =>
+      'Show vocal part controls in the hymn player. Uses original music, without styles.';
+
+  @override
+  String get choirPracticeOn =>
+      'Choir practice is on. It overrides the selected musical style and uses the original vocal parts.';
+
+  @override
+  String get choirPracticeOff =>
+      'Choir practice is off. Your selected musical style is active again.';
+
+  @override
+  String get reportGeneralIssue => 'Report a general app issue';
+
+  @override
+  String get whoMadeApp => 'Who made this app?';
+
+  @override
+  String get releaseFeatures => 'Features added in each version';
+
+  @override
+  String get otherProjects => 'Our Other Projects';
+
+  @override
+  String get otherProjectsHelp => 'Like this app? You will love our ministry!';
+
+  @override
+  String get privacyAndStatistics => 'PRIVACY & STATISTICS';
+
+  @override
+  String get communityStatistics => 'Community statistics';
+
+  @override
+  String get communityStatisticsHelp =>
+      'Popular hymns, repeat visits, and times of worship';
+
+  @override
+  String get shareStatistics => 'Share usage statistics';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get appDesign => 'App design';
+
+  @override
+  String get modern => 'Modern';
+
+  @override
+  String get classic => 'Classic';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get updatingIcon => 'Updating home-screen icon…';
+
+  @override
+  String get retryIcon => 'Retry icon change';
+
+  @override
+  String get simple => 'Simple';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get original => 'Original';
+
+  @override
+  String get simpleChordsHelp => 'Major and minor only';
+
+  @override
+  String get mediumChordsHelp => 'Sevenths where they resolve';
+
+  @override
+  String get originalChordsHelp => 'As detected';
+
+  @override
+  String get modernGospel => 'Modern Gospel';
+
+  @override
+  String get jazz => 'Jazz';
+
+  @override
+  String get islandReggae => 'Island Reggae';
+
+  @override
+  String get jamaicanGospel => 'Jamaican Gospel';
+
+  @override
+  String get steelPanCalypso => 'Steel Pan Calypso';
+
+  @override
+  String get cathedralOrgan => 'Cathedral Organ';
+
+  @override
+  String get strings => 'Strings';
+
+  @override
+  String get choir => 'Choir';
+
+  @override
+  String get musicBox => 'Music Box';
+
+  @override
+  String get appDesignHelp =>
+      'Choose the new look or the familiar original layout.\nThe home-screen icon changes to match. Your hymns, favorites and music settings stay the same.';
+
+  @override
+  String get statisticsHelp =>
+      'Help improve the hymnal and community trends. Enabled by default; you can turn this off anytime. Usage and error summaries are sent about weekly. Country is estimated from the upload connection. No names, search text, advertising, or personalized content.';
+
+  @override
+  String statisticsStatusHelp(String status) {
+    return '$status. Turning this off clears queued statistics and local analytics identifiers. Previously combined statistics follow the privacy policy retention periods.';
+  }
+
+  @override
+  String versionLabel(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get statisticsUnavailable => 'Statistics unavailable';
+
+  @override
+  String get statisticsOff => 'Off';
+
+  @override
+  String get statisticsWaiting => 'Waiting for weekly upload';
+
+  @override
+  String get statisticsUploading => 'Uploading';
+
+  @override
+  String get statisticsSent => 'Weekly statistics sent';
+
+  @override
+  String get statisticsQueued => 'More statistics queued';
+
+  @override
+  String get statisticsSavedOffline => 'Saved offline; upload will retry later';
+
+  @override
+  String get hymnsByOccasion => 'Hymns by occasion';
+
+  @override
+  String get additionalReadings => 'Additional readings';
+
+  @override
+  String get hymnOrReadingNumber => 'HYMN OR READING NUMBER';
+
+  @override
+  String get hymnNumberHeading => 'HYMN NUMBER';
+
+  @override
+  String get clearNumber => 'Clear number';
+
+  @override
+  String get deleteDigit => 'Delete digit';
 }

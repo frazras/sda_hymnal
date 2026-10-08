@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -352,13 +353,20 @@ class HymnalBottomNav extends StatelessWidget {
             children: [
               icon,
               const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 10.5,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                  color: isActive ? t.accent : t.faint,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 10.5,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                      color: isActive ? t.accent : t.faint,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -379,12 +387,13 @@ class HymnalBottomNav extends StatelessWidget {
       ),
       child: Row(
         children: [
-          item(0, 'Numbers', HymnalIcons.navNumbers(c(0))),
-          item(1, 'Search', HymnalIcons.magnifier(c(1), stroke: s(1))),
-          item(2, 'Favorites',
+          item(0, context.appText.numbers, HymnalIcons.navNumbers(c(0))),
+          item(1, context.appText.search,
+              HymnalIcons.magnifier(c(1), stroke: s(1))),
+          item(2, context.appText.favorites,
               HymnalIcons.heart(c(2), size: 22, filled: active == 2)),
-          item(
-              3, 'Settings', HymnalIcons.navSettings(c(3), t.bg, stroke: s(3))),
+          item(3, context.appText.settings,
+              HymnalIcons.navSettings(c(3), t.bg, stroke: s(3))),
         ],
       ),
     );

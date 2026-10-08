@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
@@ -28,7 +29,7 @@ void showMusicalStyleSheet(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionLabel('MUSICAL STYLE'),
+            SectionLabel(context.appText.musicalStyle.toUpperCase()),
             const SizedBox(height: 6),
             Flexible(
               child: Scrollbar(
@@ -79,7 +80,7 @@ Widget _instrumentRow(
         children: [
           Expanded(
             child: Text(
-              theme.$2,
+              context.appText.styleLabel(theme.$1),
               style: TextStyle(
                 fontFamily: kSans,
                 fontSize: 15,

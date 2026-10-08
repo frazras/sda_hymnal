@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'report_error.dart';
 import 'reading_history.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
@@ -34,7 +35,7 @@ class Settings extends StatelessWidget {
       key: const ValueKey('settings-list'),
       padding: const EdgeInsets.only(bottom: 20),
       children: [
-        const SectionLabel('READING',
+        SectionLabel(context.appText.reading.toUpperCase(),
             padding: EdgeInsets.fromLTRB(24, 18, 24, 8)),
         _card(
           t,
@@ -52,7 +53,7 @@ class Settings extends StatelessWidget {
                     color: t.muted,
                   ),
                 ),
-                title: 'Font Size',
+                title: context.appText.fontSize,
                 divider: true,
                 trailing: ValueListenableBuilder<double>(
                   valueListenable: FontSizeController.instance,
@@ -72,8 +73,8 @@ class Settings extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                 leading: HymnalIcons.sun(t.muted),
-                title: 'Keep screen on',
-                subtitle: 'Stay awake while a hymn is open',
+                title: context.appText.keepScreenOn,
+                subtitle: context.appText.keepScreenOnHelp,
                 divider: true,
                 trailing: _MiniSwitch(KeepScreenOn.instance),
                 chevron: false,
@@ -82,9 +83,8 @@ class Settings extends StatelessWidget {
               ),
               _SettingsRow(
                 leading: Icon(Icons.vertical_align_bottom, color: t.muted),
-                title: 'Auto-scroll',
-                subtitle:
-                    'Follow the hymn automatically, with or without music',
+                title: context.appText.autoScroll,
+                subtitle: context.appText.autoScrollHelp,
                 trailing: _MiniSwitch(AutoScroll.instance),
                 chevron: false,
                 onTap: () =>
@@ -93,7 +93,7 @@ class Settings extends StatelessWidget {
             ],
           ),
         ),
-        const SectionLabel('SOUND',
+        SectionLabel(context.appText.sound.toUpperCase(),
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(
           t,
@@ -103,13 +103,13 @@ class Settings extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                 leading: HymnalIcons.organPipes(t.muted),
-                title: 'Musical style',
-                subtitle: 'How hymn music sounds',
+                title: context.appText.musicalStyle,
+                subtitle: context.appText.musicalStyleHelp,
                 divider: true,
                 trailing: ValueListenableBuilder<String>(
                   valueListenable: InstrumentTheme.instance,
                   builder: (context, _, __) => Text(
-                    InstrumentTheme.instance.label,
+                    context.appText.styleLabel(InstrumentTheme.instance.value),
                     style: TextStyle(
                       fontFamily: kSans,
                       fontSize: 13,
@@ -121,9 +121,8 @@ class Settings extends StatelessWidget {
               ),
               _SettingsRow(
                 leading: Icon(Icons.play_circle_outline, color: t.muted),
-                title: 'Autoplay video and music',
-                subtitle:
-                    'After you press Play, continue through this list until paused',
+                title: context.appText.autoplay,
+                subtitle: context.appText.autoplayHelp,
                 divider: true,
                 trailing: _MiniSwitch(Autoplay.instance),
                 chevron: false,
@@ -141,8 +140,8 @@ class Settings extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 15),
                       leading: HymnalIcons.grid2x2(t.muted),
-                      title: 'Chord tabs',
-                      subtitle: 'Play-along chords for musicians',
+                      title: context.appText.chordTabs,
+                      subtitle: context.appText.chordTabsHelp,
                       divider: chordsOn,
                       trailing: _MiniSwitch(ChordTabs.instance),
                       chevron: false,
@@ -162,12 +161,13 @@ class Settings extends StatelessWidget {
                             color: t.muted,
                           ),
                         ),
-                        title: 'Chord difficulty',
-                        subtitle: 'Simplify chords for learners',
+                        title: context.appText.chordDifficulty,
+                        subtitle: context.appText.chordDifficultyHelp,
                         trailing: ValueListenableBuilder<String>(
                           valueListenable: ChordLevelPref.instance,
                           builder: (context, _, __) => Text(
-                            ChordLevelPref.instance.label,
+                            context.appText
+                                .chordLevelLabel(ChordLevelPref.instance.value),
                             style: TextStyle(
                               fontFamily: kSans,
                               fontSize: 13,
@@ -183,7 +183,7 @@ class Settings extends StatelessWidget {
             ],
           ),
         ),
-        const SectionLabel('MUSICIANS & CHOIR',
+        SectionLabel(context.appText.musiciansAndChoir,
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,
             child: AnimatedBuilder(
@@ -192,37 +192,35 @@ class Settings extends StatelessWidget {
                   color: Colors.transparent,
                   child: Column(children: [
                     SwitchListTile.adaptive(
-                      title: const Text('Customize musical style instruments'),
-                      subtitle: const Text(
-                          'Choose instruments, volume and solos for each musical style'),
+                      title: Text(context.appText.customizeInstruments),
+                      subtitle: Text(context.appText.customizeInstrumentsHelp),
                       value: MusicOptions.instance.customInstruments,
                       onChanged: MusicOptions.instance.setCustomInstruments,
                     ),
                     if (MusicOptions.instance.customInstruments)
                       ListTile(
-                          title: const Text('Ensemble instruments'),
+                          title: Text(context.appText.ensembleInstruments),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () => Navigator.push(context,
                               slideRoute(const EnsembleInstrumentsPage()))),
                     SwitchListTile.adaptive(
-                      title: const Text('Choir practice'),
-                      subtitle: const Text(
-                          'Show vocal part controls in the hymn player. Uses original music, without styles.'),
+                      title: Text(context.appText.choirPractice),
+                      subtitle: Text(context.appText.choirPracticeHelp),
                       value: MusicOptions.instance.choirPractice,
                       onChanged: (value) async {
                         await MusicOptions.instance.setChoirPractice(value);
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(value
-                              ? 'Choir practice is on. It overrides the selected musical style and uses the original vocal parts.'
-                              : 'Choir practice is off. Your selected musical style is active again.'),
+                              ? context.appText.choirPracticeOn
+                              : context.appText.choirPracticeOff),
                           duration: const Duration(seconds: 4),
                         ));
                       },
                     ),
                   ])),
             )),
-        const SectionLabel('APPEARANCE',
+        SectionLabel(context.appText.appearance.toUpperCase(),
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,
             padding: const EdgeInsets.all(16), child: const _DesignSelector()),
@@ -232,11 +230,12 @@ class Settings extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: const _ThemeSegmentedControl(),
         ),
-        const SectionLabel('MORE', padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
+        SectionLabel(context.appText.more.toUpperCase(),
+            padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,
             child: _SettingsRow(
               leading: const Icon(Icons.history),
-              title: 'Reading history',
+              title: context.appText.readingHistory,
               onTap: () => Navigator.push(context,
                   slideRoute(ReadingHistoryPage(hymns: historyHymns ?? hymns))),
             )),
@@ -246,16 +245,16 @@ class Settings extends StatelessWidget {
             children: [
               _SettingsRow(
                 leading: Icon(Icons.report_problem_outlined, color: t.muted),
-                title: 'Report Errors',
-                subtitle: 'Report a general app issue',
+                title: context.appText.reportErrors,
+                subtitle: context.appText.reportGeneralIssue,
                 divider: true,
                 onTap: () => Navigator.push(
                     context, slideRoute(const ReportErrorPage())),
               ),
               _SettingsRow(
                 leading: HymnalIcons.person(t.muted),
-                title: 'About Us',
-                subtitle: 'Who made this app?',
+                title: context.appText.aboutUs,
+                subtitle: context.appText.whoMadeApp,
                 divider: true,
                 onTap: () {
                   AppAnalytics.instance.event('screen_view', variant: 'about');
@@ -264,15 +263,15 @@ class Settings extends StatelessWidget {
               ),
               _SettingsRow(
                 leading: Icon(Icons.new_releases_outlined, color: t.muted),
-                title: 'What’s new',
-                subtitle: 'Features added in each version',
+                title: context.appText.whatsNew,
+                subtitle: context.appText.releaseFeatures,
                 divider: true,
                 onTap: () => ReleaseNotesService.instance.showHistory(context),
               ),
               _SettingsRow(
                 leading: HymnalIcons.grid2x2(t.muted),
-                title: 'Our Other Projects',
-                subtitle: 'Like this app? You will love our ministry!',
+                title: context.appText.otherProjects,
+                subtitle: context.appText.otherProjectsHelp,
                 onTap: () {
                   AppAnalytics.instance
                       .event('screen_view', variant: 'projects');
@@ -282,13 +281,13 @@ class Settings extends StatelessWidget {
             ],
           ),
         ),
-        const SectionLabel('PRIVACY & STATISTICS',
+        SectionLabel(context.appText.privacyAndStatistics,
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,
             child: _SettingsRow(
               leading: Icon(Icons.bar_chart_rounded, color: t.accent),
-              title: 'Community statistics',
-              subtitle: 'Popular hymns, repeat visits, and times of worship',
+              title: context.appText.communityStatistics,
+              subtitle: context.appText.communityStatisticsHelp,
               onTap: () => Navigator.push(
                   context, slideRoute(StatisticsPage(hymns: hymns))),
             )),
@@ -303,13 +302,8 @@ class Settings extends StatelessWidget {
                   builder: (context, _) => Column(children: [
                     SwitchListTile.adaptive(
                       key: const ValueKey('analytics-toggle'),
-                      title: const Text('Share usage statistics'),
-                      subtitle: const Text(
-                          'Help improve the hymnal and community trends. '
-                          'Enabled by default; you can turn this off anytime. '
-                          'Usage and error summaries are sent about weekly. '
-                          'Country is estimated from the upload connection. No names, '
-                          'search text, advertising, or personalized content.'),
+                      title: Text(context.appText.shareStatistics),
+                      subtitle: Text(context.appText.statisticsHelp),
                       value: AppAnalytics.instance.enabled,
                       onChanged: AppAnalytics.instance.available
                           ? AppAnalytics.instance.setEnabled
@@ -318,15 +312,15 @@ class Settings extends StatelessWidget {
                     Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                         child: Text(
-                            '${AppAnalytics.instance.status}. Turning this off '
-                            'clears queued statistics and local analytics identifiers. '
-                            'Previously combined statistics follow the privacy policy retention periods.',
+                            context.appText.statisticsStatusHelp(context.appText
+                                .statisticsStatus(
+                                    AppAnalytics.instance.status)),
                             style: TextStyle(fontSize: 12, color: t.muted))),
                     TextButton(
                         onPressed: () => launchUrl(
                             Uri.parse('$analyticsEndpoint/privacy-policy'),
                             mode: LaunchMode.externalApplication),
-                        child: const Text('Privacy policy')),
+                        child: Text(context.appText.privacyPolicy)),
                   ]),
                 ))),
         // Footer
@@ -353,7 +347,7 @@ class Settings extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Version $appReleaseVersion',
+                context.appText.versionLabel(appReleaseVersion),
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
@@ -385,11 +379,15 @@ class Settings extends StatelessWidget {
   }
 
   /// Chord-difficulty options: (pref id, label, description).
-  static const List<(String, String, String)> _chordLevels = [
-    ('simple', 'Simple', 'Major and minor only'),
-    ('medium', 'Medium', 'Sevenths where they resolve'),
-    ('original', 'Original', 'As detected'),
-  ];
+  List<(String, String, String)> _chordLevels(BuildContext context) => [
+        ('simple', context.appText.simple, context.appText.simpleChordsHelp),
+        ('medium', context.appText.medium, context.appText.mediumChordsHelp),
+        (
+          'original',
+          context.appText.original,
+          context.appText.originalChordsHelp
+        ),
+      ];
 
   /// Chord-difficulty picker sheet (same pattern as the instrument sheet):
   /// one row per level, tap applies and closes.
@@ -410,14 +408,14 @@ class Settings extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionLabel('CHORD DIFFICULTY'),
+              SectionLabel(context.appText.chordDifficulty.toUpperCase()),
               const SizedBox(height: 6),
-              for (final (i, level) in _chordLevels.indexed)
+              for (final (i, level) in _chordLevels(context).indexed)
                 _chordLevelRow(
                   t,
                   level,
                   sheetContext,
-                  divider: i < _chordLevels.length - 1,
+                  divider: i < _chordLevels(context).length - 1,
                 ),
             ],
           ),
@@ -503,14 +501,11 @@ class _DesignSelector extends StatelessWidget {
       builder: (context, _) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('App design',
+          Text(context.appText.appDesign,
               style: TextStyle(
                   color: t.ink, fontWeight: FontWeight.w600, fontSize: 16)),
           const SizedBox(height: 6),
-          Text(
-              'Choose the new look or the familiar original layout.\n'
-              'The home-screen icon changes to match. Your hymns, favorites '
-              'and music settings stay the same.',
+          Text(context.appText.appDesignHelp,
               style: TextStyle(color: t.muted, fontSize: 13)),
           const SizedBox(height: 12),
           Row(children: [
@@ -531,16 +526,17 @@ class _DesignSelector extends StatelessWidget {
                         controller.value == design ? t.accent : t.surface,
                     minimumSize: const Size(0, 48),
                   ),
-                  child:
-                      Text(design == AppDesign.modern ? 'Modern' : 'Classic'),
+                  child: Text(design == AppDesign.modern
+                      ? context.appText.modern
+                      : context.appText.classic),
                 ),
               )),
             ],
           ]),
           if (controller.iconBusy.value)
-            const Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: Text('Updating home-screen icon…'),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(context.appText.updatingIcon),
             ),
           if (controller.iconError.value case final String message) ...[
             const SizedBox(height: 8),
@@ -548,7 +544,7 @@ class _DesignSelector extends StatelessWidget {
             TextButton(
               key: const ValueKey('retry-app-icon'),
               onPressed: controller.iconBusy.value ? null : controller.syncIcon,
-              child: const Text('Retry icon change'),
+              child: Text(context.appText.retryIcon),
             ),
           ],
         ],
@@ -561,11 +557,11 @@ class _DesignSelector extends StatelessWidget {
 class _ThemeSegmentedControl extends StatelessWidget {
   const _ThemeSegmentedControl();
 
-  static const _options = [
-    ('light', 'Light'),
-    ('dark', 'Dark'),
-    ('system', 'System'),
-  ];
+  List<(String, String)> _options(BuildContext context) => [
+        ('light', context.appText.light),
+        ('dark', context.appText.dark),
+        ('system', context.appText.system),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -582,15 +578,15 @@ class _ThemeSegmentedControl extends StatelessWidget {
           ),
           child: Row(
             children: [
-              for (var i = 0; i < _options.length; i++) ...[
+              for (var i = 0; i < _options(context).length; i++) ...[
                 if (i > 0) const SizedBox(width: 4),
                 Expanded(
                   child: _segment(
                     t,
-                    label: _options[i].$2,
-                    selected: current == _options[i].$1,
-                    onTap: () =>
-                        ThemeController.instance.setPref(_options[i].$1),
+                    label: _options(context)[i].$2,
+                    selected: current == _options(context)[i].$1,
+                    onTap: () => ThemeController.instance
+                        .setPref(_options(context)[i].$1),
                   ),
                 ),
               ],

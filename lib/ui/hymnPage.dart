@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'dart:async';
 import '../services/playback_continuation.dart';
 import '../services/error_reports.dart';
@@ -448,20 +449,20 @@ class _HymnPageState extends State<HymnPage> {
                               IconButton(
                                   key: const ValueKey('reader-previous'),
                                   tooltip: widget.sequence == null
-                                      ? 'Previous hymn'
-                                      : 'Previous item',
+                                      ? context.appText.previousHymn
+                                      : context.appText.previousItem,
                                   onPressed:
                                       !_canMove(-1) ? null : () => _move(-1),
                                   icon: const Icon(Icons.chevron_left)),
-                              const Expanded(
-                                  child: Text('Swipe to turn the page',
+                              Expanded(
+                                  child: Text(context.appText.swipeToTurn,
                                       textAlign: TextAlign.center,
                                       maxLines: 2)),
                               IconButton(
                                   key: const ValueKey('reader-next'),
                                   tooltip: widget.sequence == null
-                                      ? 'Next hymn'
-                                      : 'Next item',
+                                      ? context.appText.nextHymn
+                                      : context.appText.nextItem,
                                   onPressed:
                                       !_canMove(1) ? null : () => _move(1),
                                   icon: const Icon(Icons.chevron_right)),
@@ -519,10 +520,10 @@ class _HymnPageState extends State<HymnPage> {
           return IconButton(
             key: const ValueKey('hymn-favorite-header-button'),
             tooltip: Favorites.instance.sublists.value.isNotEmpty
-                ? 'Save to favorites and categories'
+                ? context.appText.saveToFavoriteLists
                 : favorite
-                    ? 'Remove favorite'
-                    : 'Add favorite',
+                    ? context.appText.removeFavorite
+                    : context.appText.addFavorite,
             visualDensity: VisualDensity.compact,
             icon: FavoriteBurst(
               key: _favoriteBurst,
@@ -540,7 +541,7 @@ class _HymnPageState extends State<HymnPage> {
       builder: (context, chordsVisible, _) {
         return PopupMenuButton<_ReaderAction>(
           key: const ValueKey('hymn-reader-options'),
-          tooltip: 'Reader options',
+          tooltip: context.appText.readerOptions,
           color: t.isDark ? const Color(0xFF1C2721) : t.surface,
           surfaceTintColor: Colors.transparent,
           elevation: 8,
@@ -575,8 +576,8 @@ class _HymnPageState extends State<HymnPage> {
                 MusicOptions.instance.setChoirPractice(enabled);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(enabled
-                      ? 'Choir practice is on. Uses original vocal parts instead of musical styles.'
-                      : 'Choir practice is off. Your selected musical style is active again.'),
+                      ? context.appText.choirPracticeOn
+                      : context.appText.choirPracticeOff),
                 ));
               case _ReaderAction.video:
                 _showVideo();
@@ -606,20 +607,25 @@ class _HymnPageState extends State<HymnPage> {
               PopupMenuItem(
                 key: const ValueKey('hymn-sheet-music'),
                 value: _ReaderAction.sheetMusic,
-                child: _menuLabel(t, Icons.library_music_outlined,
-                    _sheetMusicVisible ? 'Show lyrics' : 'Sheet music'),
+                child: _menuLabel(
+                    t,
+                    Icons.library_music_outlined,
+                    _sheetMusicVisible
+                        ? context.appText.showLyrics
+                        : context.appText.sheetMusic),
               ),
             if (MidiPlayer.hasMidi(widget.hymn)) ...[
               PopupMenuItem(
                 key: const ValueKey('hymn-musical-style'),
                 value: _ReaderAction.musicalStyle,
-                child: _menuLabel(t, Icons.music_note, 'Musical style'),
+                child: _menuLabel(
+                    t, Icons.music_note, context.appText.musicalStyle),
               ),
               CheckedPopupMenuItem(
                 key: const ValueKey('hymn-choir-practice'),
                 value: _ReaderAction.choirPractice,
                 checked: MusicOptions.instance.choirPractice,
-                child: const Text('Choir practice'),
+                child: Text(context.appText.choirPractice),
               ),
             ],
             if (widget.hymn.video != null)
@@ -631,7 +637,9 @@ class _HymnPageState extends State<HymnPage> {
                   _videoVisible
                       ? Icons.smart_display
                       : Icons.smart_display_outlined,
-                  _videoVisible ? 'Restart hymn video' : 'Play hymn video',
+                  _videoVisible
+                      ? context.appText.restartHymnVideo
+                      : context.appText.playHymnVideo,
                 ),
               ),
             if (MidiPlayer.hasMusic(widget.hymn))
@@ -643,7 +651,9 @@ class _HymnPageState extends State<HymnPage> {
                   _showPlayer
                       ? Icons.music_off_outlined
                       : Icons.music_note_outlined,
-                  _showPlayer ? 'Hide music player' : 'Show music player',
+                  _showPlayer
+                      ? context.appText.hideMusicPlayer
+                      : context.appText.showMusicPlayer,
                 ),
               ),
             if (!_sheetMusicVisible &&
@@ -652,8 +662,12 @@ class _HymnPageState extends State<HymnPage> {
               PopupMenuItem(
                 key: const ValueKey('hymn-scroll-speed-menu-item'),
                 value: _ReaderAction.scrollSpeed,
-                child: _menuLabel(t, Icons.speed,
-                    AutoScroll.instance.value ? 'Scroll speed' : 'Auto-scroll'),
+                child: _menuLabel(
+                    t,
+                    Icons.speed,
+                    AutoScroll.instance.value
+                        ? context.appText.scrollSpeed
+                        : context.appText.autoScroll),
               ),
             if (MidiPlayer.hasMidi(widget.hymn))
               PopupMenuItem(
@@ -662,24 +676,27 @@ class _HymnPageState extends State<HymnPage> {
                 child: _menuLabel(
                   t,
                   Icons.piano,
-                  chordsVisible ? 'Hide chord tabs' : 'Show chord tabs',
+                  chordsVisible
+                      ? context.appText.hideChordTabs
+                      : context.appText.showChordTabs,
                 ),
               ),
             if (!_sheetMusicVisible)
               PopupMenuItem(
                 key: const ValueKey('hymn-font-size-button'),
                 value: _ReaderAction.fontSize,
-                child: _menuLabel(t, Icons.text_fields, 'Text size'),
+                child:
+                    _menuLabel(t, Icons.text_fields, context.appText.textSize),
               ),
             PopupMenuItem(
                 key: const ValueKey('hymn-share-lyrics'),
                 value: _ReaderAction.shareLyrics,
-                child: _menuLabel(
-                    t, Icons.share_outlined, 'Copy or share lyrics')),
+                child: _menuLabel(t, Icons.share_outlined,
+                    context.appText.copyOrShareLyrics)),
             PopupMenuItem(
                 value: _ReaderAction.reportError,
-                child: _menuLabel(
-                    t, Icons.report_problem_outlined, 'Report Errors')),
+                child: _menuLabel(t, Icons.report_problem_outlined,
+                    context.appText.reportErrors)),
           ],
         );
       },
@@ -814,7 +831,7 @@ class _HymnPageState extends State<HymnPage> {
                       key: const ValueKey('hymn-end-mark'),
                       padding: const EdgeInsets.only(top: 12, bottom: 8),
                       child: Semantics(
-                        label: 'End of hymn',
+                        label: context.appText.endOfHymn,
                         excludeSemantics: true,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -1735,9 +1752,8 @@ class _HymnPageState extends State<HymnPage> {
       await MidiPlayer.instance.toggle(widget.hymn);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content:
-            Text('Could not load music. Check your connection and try again.'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(context.appText.musicLoadError),
       ));
     }
   }
@@ -1755,7 +1771,8 @@ class _HymnPageState extends State<HymnPage> {
         return Semantics(
           button: true,
           enabled: canPlay,
-          label: isPlaying ? 'Pause hymn' : 'Play hymn',
+          label:
+              isPlaying ? context.appText.pauseHymn : context.appText.playHymn,
           child: Opacity(
             opacity: canPlay ? 1.0 : 0.45,
             child: Pressable(

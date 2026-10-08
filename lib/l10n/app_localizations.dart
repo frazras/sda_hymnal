@@ -219,7 +219,7 @@ abstract class AppLocalizations {
   /// No description provided for @fontSize.
   ///
   /// In en, this message translates to:
-  /// **'Font size'**
+  /// **'Font Size'**
   String get fontSize;
 
   /// No description provided for @keepScreenOn.
@@ -303,13 +303,13 @@ abstract class AppLocalizations {
   /// No description provided for @reportErrors.
   ///
   /// In en, this message translates to:
-  /// **'Report errors'**
+  /// **'Report Errors'**
   String get reportErrors;
 
   /// No description provided for @aboutUs.
   ///
   /// In en, this message translates to:
-  /// **'About us'**
+  /// **'About Us'**
   String get aboutUs;
 
   /// No description provided for @whatsNew.
@@ -455,6 +455,420 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load music. Check your connection and try again.'**
   String get musicLoadError;
+
+  /// No description provided for @readerOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Reader options'**
+  String get readerOptions;
+
+  /// No description provided for @copyOrShareLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy or share lyrics'**
+  String get copyOrShareLyrics;
+
+  /// No description provided for @previousItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous item'**
+  String get previousItem;
+
+  /// No description provided for @nextItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Next item'**
+  String get nextItem;
+
+  /// No description provided for @swipeToTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe to turn the page'**
+  String get swipeToTurn;
+
+  /// No description provided for @addFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add favorite'**
+  String get addFavorite;
+
+  /// No description provided for @removeFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove favorite'**
+  String get removeFavorite;
+
+  /// No description provided for @saveToFavoriteLists.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to favorites and categories'**
+  String get saveToFavoriteLists;
+
+  /// No description provided for @endOfHymn.
+  ///
+  /// In en, this message translates to:
+  /// **'End of hymn'**
+  String get endOfHymn;
+
+  /// No description provided for @hymnalHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymnal home'**
+  String get hymnalHome;
+
+  /// No description provided for @searchHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Hymns'**
+  String get searchHymns;
+
+  /// No description provided for @autoplayHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'After you press Play, continue through this list until paused'**
+  String get autoplayHelp;
+
+  /// No description provided for @musiciansAndChoir.
+  ///
+  /// In en, this message translates to:
+  /// **'MUSICIANS & CHOIR'**
+  String get musiciansAndChoir;
+
+  /// No description provided for @customizeInstruments.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize musical style instruments'**
+  String get customizeInstruments;
+
+  /// No description provided for @customizeInstrumentsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose instruments, volume and solos for each musical style'**
+  String get customizeInstrumentsHelp;
+
+  /// No description provided for @ensembleInstruments.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensemble instruments'**
+  String get ensembleInstruments;
+
+  /// No description provided for @choirPracticeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Show vocal part controls in the hymn player. Uses original music, without styles.'**
+  String get choirPracticeHelp;
+
+  /// No description provided for @choirPracticeOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir practice is on. It overrides the selected musical style and uses the original vocal parts.'**
+  String get choirPracticeOn;
+
+  /// No description provided for @choirPracticeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir practice is off. Your selected musical style is active again.'**
+  String get choirPracticeOff;
+
+  /// No description provided for @reportGeneralIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a general app issue'**
+  String get reportGeneralIssue;
+
+  /// No description provided for @whoMadeApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Who made this app?'**
+  String get whoMadeApp;
+
+  /// No description provided for @releaseFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features added in each version'**
+  String get releaseFeatures;
+
+  /// No description provided for @otherProjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Other Projects'**
+  String get otherProjects;
+
+  /// No description provided for @otherProjectsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Like this app? You will love our ministry!'**
+  String get otherProjectsHelp;
+
+  /// No description provided for @privacyAndStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIVACY & STATISTICS'**
+  String get privacyAndStatistics;
+
+  /// No description provided for @communityStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Community statistics'**
+  String get communityStatistics;
+
+  /// No description provided for @communityStatisticsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular hymns, repeat visits, and times of worship'**
+  String get communityStatisticsHelp;
+
+  /// No description provided for @shareStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Share usage statistics'**
+  String get shareStatistics;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @appDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'App design'**
+  String get appDesign;
+
+  /// No description provided for @modern.
+  ///
+  /// In en, this message translates to:
+  /// **'Modern'**
+  String get modern;
+
+  /// No description provided for @classic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get classic;
+
+  /// No description provided for @light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get light;
+
+  /// No description provided for @dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get dark;
+
+  /// No description provided for @system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get system;
+
+  /// No description provided for @updatingIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating home-screen icon…'**
+  String get updatingIcon;
+
+  /// No description provided for @retryIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry icon change'**
+  String get retryIcon;
+
+  /// No description provided for @simple.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple'**
+  String get simple;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @original.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get original;
+
+  /// No description provided for @simpleChordsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Major and minor only'**
+  String get simpleChordsHelp;
+
+  /// No description provided for @mediumChordsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sevenths where they resolve'**
+  String get mediumChordsHelp;
+
+  /// No description provided for @originalChordsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'As detected'**
+  String get originalChordsHelp;
+
+  /// No description provided for @modernGospel.
+  ///
+  /// In en, this message translates to:
+  /// **'Modern Gospel'**
+  String get modernGospel;
+
+  /// No description provided for @jazz.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz'**
+  String get jazz;
+
+  /// No description provided for @islandReggae.
+  ///
+  /// In en, this message translates to:
+  /// **'Island Reggae'**
+  String get islandReggae;
+
+  /// No description provided for @jamaicanGospel.
+  ///
+  /// In en, this message translates to:
+  /// **'Jamaican Gospel'**
+  String get jamaicanGospel;
+
+  /// No description provided for @steelPanCalypso.
+  ///
+  /// In en, this message translates to:
+  /// **'Steel Pan Calypso'**
+  String get steelPanCalypso;
+
+  /// No description provided for @cathedralOrgan.
+  ///
+  /// In en, this message translates to:
+  /// **'Cathedral Organ'**
+  String get cathedralOrgan;
+
+  /// No description provided for @strings.
+  ///
+  /// In en, this message translates to:
+  /// **'Strings'**
+  String get strings;
+
+  /// No description provided for @choir.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir'**
+  String get choir;
+
+  /// No description provided for @musicBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Music Box'**
+  String get musicBox;
+
+  /// No description provided for @appDesignHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the new look or the familiar original layout.\nThe home-screen icon changes to match. Your hymns, favorites and music settings stay the same.'**
+  String get appDesignHelp;
+
+  /// No description provided for @statisticsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help improve the hymnal and community trends. Enabled by default; you can turn this off anytime. Usage and error summaries are sent about weekly. Country is estimated from the upload connection. No names, search text, advertising, or personalized content.'**
+  String get statisticsHelp;
+
+  /// No description provided for @statisticsStatusHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'{status}. Turning this off clears queued statistics and local analytics identifiers. Previously combined statistics follow the privacy policy retention periods.'**
+  String statisticsStatusHelp(String status);
+
+  /// No description provided for @versionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String versionLabel(String version);
+
+  /// No description provided for @statisticsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics unavailable'**
+  String get statisticsUnavailable;
+
+  /// No description provided for @statisticsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get statisticsOff;
+
+  /// No description provided for @statisticsWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for weekly upload'**
+  String get statisticsWaiting;
+
+  /// No description provided for @statisticsUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading'**
+  String get statisticsUploading;
+
+  /// No description provided for @statisticsSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly statistics sent'**
+  String get statisticsSent;
+
+  /// No description provided for @statisticsQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'More statistics queued'**
+  String get statisticsQueued;
+
+  /// No description provided for @statisticsSavedOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved offline; upload will retry later'**
+  String get statisticsSavedOffline;
+
+  /// No description provided for @hymnsByOccasion.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns by occasion'**
+  String get hymnsByOccasion;
+
+  /// No description provided for @additionalReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional readings'**
+  String get additionalReadings;
+
+  /// No description provided for @hymnOrReadingNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'HYMN OR READING NUMBER'**
+  String get hymnOrReadingNumber;
+
+  /// No description provided for @hymnNumberHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'HYMN NUMBER'**
+  String get hymnNumberHeading;
+
+  /// No description provided for @clearNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear number'**
+  String get clearNumber;
+
+  /// No description provided for @deleteDigit.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete digit'**
+  String get deleteDigit;
 }
 
 class _AppLocalizationsDelegate

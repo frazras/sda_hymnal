@@ -187,4 +187,226 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get musicLoadError =>
       'No se pudo cargar la música. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get readerOptions => 'Opciones de lectura';
+
+  @override
+  String get copyOrShareLyrics => 'Copiar o compartir letra';
+
+  @override
+  String get previousItem => 'Elemento anterior';
+
+  @override
+  String get nextItem => 'Elemento siguiente';
+
+  @override
+  String get swipeToTurn => 'Desliza para pasar la página';
+
+  @override
+  String get addFavorite => 'Añadir a favoritos';
+
+  @override
+  String get removeFavorite => 'Quitar de favoritos';
+
+  @override
+  String get saveToFavoriteLists => 'Guardar en favoritos y categorías';
+
+  @override
+  String get endOfHymn => 'Fin del himno';
+
+  @override
+  String get hymnalHome => 'Inicio del himnario';
+
+  @override
+  String get searchHymns => 'Buscar himnos';
+
+  @override
+  String get autoplayHelp =>
+      'Después de pulsar Reproducir, continúa esta lista hasta que pauses';
+
+  @override
+  String get musiciansAndChoir => 'MÚSICOS Y CORO';
+
+  @override
+  String get customizeInstruments =>
+      'Personalizar instrumentos del estilo musical';
+
+  @override
+  String get customizeInstrumentsHelp =>
+      'Elige instrumentos, volumen y solos para cada estilo musical';
+
+  @override
+  String get ensembleInstruments => 'Instrumentos del conjunto';
+
+  @override
+  String get choirPracticeHelp =>
+      'Muestra los controles de las voces en el reproductor. Usa la música original, sin estilos.';
+
+  @override
+  String get choirPracticeOn =>
+      'La práctica de coro está activada. Sustituye el estilo musical seleccionado y usa las voces originales.';
+
+  @override
+  String get choirPracticeOff =>
+      'La práctica de coro está desactivada. El estilo musical seleccionado vuelve a estar activo.';
+
+  @override
+  String get reportGeneralIssue => 'Informar de un problema de la aplicación';
+
+  @override
+  String get whoMadeApp => '¿Quién creó esta aplicación?';
+
+  @override
+  String get releaseFeatures => 'Funciones añadidas en cada versión';
+
+  @override
+  String get otherProjects => 'Nuestros otros proyectos';
+
+  @override
+  String get otherProjectsHelp =>
+      '¿Te gusta esta aplicación? ¡Conoce nuestro ministerio!';
+
+  @override
+  String get privacyAndStatistics => 'PRIVACIDAD Y ESTADÍSTICAS';
+
+  @override
+  String get communityStatistics => 'Estadísticas de la comunidad';
+
+  @override
+  String get communityStatisticsHelp =>
+      'Himnos populares, visitas recurrentes y horarios de culto';
+
+  @override
+  String get shareStatistics => 'Compartir estadísticas de uso';
+
+  @override
+  String get privacyPolicy => 'Política de privacidad';
+
+  @override
+  String get appDesign => 'Diseño de la aplicación';
+
+  @override
+  String get modern => 'Moderno';
+
+  @override
+  String get classic => 'Clásico';
+
+  @override
+  String get light => 'Claro';
+
+  @override
+  String get dark => 'Oscuro';
+
+  @override
+  String get system => 'Sistema';
+
+  @override
+  String get updatingIcon => 'Actualizando el icono de inicio…';
+
+  @override
+  String get retryIcon => 'Reintentar cambio de icono';
+
+  @override
+  String get simple => 'Sencillo';
+
+  @override
+  String get medium => 'Intermedio';
+
+  @override
+  String get original => 'Original';
+
+  @override
+  String get simpleChordsHelp => 'Solo mayores y menores';
+
+  @override
+  String get mediumChordsHelp => 'Séptimas donde se resuelven';
+
+  @override
+  String get originalChordsHelp => 'Tal como se detectaron';
+
+  @override
+  String get modernGospel => 'Góspel moderno';
+
+  @override
+  String get jazz => 'Jazz';
+
+  @override
+  String get islandReggae => 'Reggae isleño';
+
+  @override
+  String get jamaicanGospel => 'Góspel jamaicano';
+
+  @override
+  String get steelPanCalypso => 'Calipso con tambores metálicos';
+
+  @override
+  String get cathedralOrgan => 'Órgano de catedral';
+
+  @override
+  String get strings => 'Cuerdas';
+
+  @override
+  String get choir => 'Coro';
+
+  @override
+  String get musicBox => 'Caja de música';
+
+  @override
+  String get appDesignHelp =>
+      'Elige el nuevo diseño o la disposición original.\nEl icono de inicio cambiará para coincidir. Tus himnos, favoritos y ajustes de música se conservarán.';
+
+  @override
+  String get statisticsHelp =>
+      'Ayuda a mejorar el himnario y las tendencias de la comunidad. Está activado de forma predeterminada; puedes desactivarlo cuando quieras. Los resúmenes de uso y errores se envían aproximadamente cada semana. El país se estima a partir de la conexión de envío. No se incluyen nombres, texto de búsquedas, publicidad ni contenido personalizado.';
+
+  @override
+  String statisticsStatusHelp(String status) {
+    return '$status. Al desactivarlo se borran las estadísticas pendientes y los identificadores de análisis locales. Las estadísticas ya agregadas siguen los plazos de conservación de la política de privacidad.';
+  }
+
+  @override
+  String versionLabel(String version) {
+    return 'Versión $version';
+  }
+
+  @override
+  String get statisticsUnavailable => 'Estadísticas no disponibles';
+
+  @override
+  String get statisticsOff => 'Desactivadas';
+
+  @override
+  String get statisticsWaiting => 'Esperando el envío semanal';
+
+  @override
+  String get statisticsUploading => 'Enviando';
+
+  @override
+  String get statisticsSent => 'Estadísticas semanales enviadas';
+
+  @override
+  String get statisticsQueued => 'Más estadísticas pendientes';
+
+  @override
+  String get statisticsSavedOffline =>
+      'Guardadas sin conexión; se volverá a intentar el envío';
+
+  @override
+  String get hymnsByOccasion => 'Himnos por ocasión';
+
+  @override
+  String get additionalReadings => 'Lecturas adicionales';
+
+  @override
+  String get hymnOrReadingNumber => 'NÚMERO DE HIMNO O LECTURA';
+
+  @override
+  String get hymnNumberHeading => 'NÚMERO DE HIMNO';
+
+  @override
+  String get clearNumber => 'Borrar número';
+
+  @override
+  String get deleteDigit => 'Borrar dígito';
 }

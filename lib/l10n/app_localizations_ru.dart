@@ -187,4 +187,225 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get musicLoadError =>
       'Не удалось загрузить музыку. Проверьте подключение и повторите попытку.';
+
+  @override
+  String get readerOptions => 'Параметры чтения';
+
+  @override
+  String get copyOrShareLyrics => 'Копировать текст или поделиться';
+
+  @override
+  String get previousItem => 'Предыдущий элемент';
+
+  @override
+  String get nextItem => 'Следующий элемент';
+
+  @override
+  String get swipeToTurn => 'Листайте страницы смахиванием';
+
+  @override
+  String get addFavorite => 'Добавить в избранное';
+
+  @override
+  String get removeFavorite => 'Убрать из избранного';
+
+  @override
+  String get saveToFavoriteLists => 'Сохранить в избранном и категориях';
+
+  @override
+  String get endOfHymn => 'Конец гимна';
+
+  @override
+  String get hymnalHome => 'Главная страница сборника';
+
+  @override
+  String get searchHymns => 'Поиск гимнов';
+
+  @override
+  String get autoplayHelp =>
+      'После нажатия «Воспроизвести» продолжать список до паузы';
+
+  @override
+  String get musiciansAndChoir => 'МУЗЫКАНТЫ И ХОР';
+
+  @override
+  String get customizeInstruments => 'Настроить инструменты музыкального стиля';
+
+  @override
+  String get customizeInstrumentsHelp =>
+      'Выберите инструменты, громкость и соло для каждого стиля';
+
+  @override
+  String get ensembleInstruments => 'Инструменты ансамбля';
+
+  @override
+  String get choirPracticeHelp =>
+      'Показывать управление голосовыми партиями. Используется исходная музыка без стилей.';
+
+  @override
+  String get choirPracticeOn =>
+      'Репетиция хора включена. Вместо выбранного стиля используются исходные голосовые партии.';
+
+  @override
+  String get choirPracticeOff =>
+      'Репетиция хора выключена. Снова используется выбранный музыкальный стиль.';
+
+  @override
+  String get reportGeneralIssue => 'Сообщить о проблеме приложения';
+
+  @override
+  String get whoMadeApp => 'Кто создал это приложение?';
+
+  @override
+  String get releaseFeatures => 'Новые функции каждой версии';
+
+  @override
+  String get otherProjects => 'Другие наши проекты';
+
+  @override
+  String get otherProjectsHelp =>
+      'Нравится приложение? Познакомьтесь с нашим служением!';
+
+  @override
+  String get privacyAndStatistics => 'КОНФИДЕНЦИАЛЬНОСТЬ И СТАТИСТИКА';
+
+  @override
+  String get communityStatistics => 'Статистика сообщества';
+
+  @override
+  String get communityStatisticsHelp =>
+      'Популярные гимны, повторные посещения и время богослужений';
+
+  @override
+  String get shareStatistics => 'Делиться статистикой использования';
+
+  @override
+  String get privacyPolicy => 'Политика конфиденциальности';
+
+  @override
+  String get appDesign => 'Дизайн приложения';
+
+  @override
+  String get modern => 'Современный';
+
+  @override
+  String get classic => 'Классический';
+
+  @override
+  String get light => 'Светлая';
+
+  @override
+  String get dark => 'Тёмная';
+
+  @override
+  String get system => 'Системная';
+
+  @override
+  String get updatingIcon => 'Обновление значка на главном экране…';
+
+  @override
+  String get retryIcon => 'Повторить смену значка';
+
+  @override
+  String get simple => 'Простые';
+
+  @override
+  String get medium => 'Средние';
+
+  @override
+  String get original => 'Исходные';
+
+  @override
+  String get simpleChordsHelp => 'Только мажорные и минорные';
+
+  @override
+  String get mediumChordsHelp => 'Септаккорды в местах разрешения';
+
+  @override
+  String get originalChordsHelp => 'Как определено';
+
+  @override
+  String get modernGospel => 'Современный госпел';
+
+  @override
+  String get jazz => 'Джаз';
+
+  @override
+  String get islandReggae => 'Островное регги';
+
+  @override
+  String get jamaicanGospel => 'Ямайский госпел';
+
+  @override
+  String get steelPanCalypso => 'Калипсо со стальными барабанами';
+
+  @override
+  String get cathedralOrgan => 'Соборный орган';
+
+  @override
+  String get strings => 'Струнные';
+
+  @override
+  String get choir => 'Хор';
+
+  @override
+  String get musicBox => 'Музыкальная шкатулка';
+
+  @override
+  String get appDesignHelp =>
+      'Выберите новый вид или привычное оформление.\nЗначок на главном экране изменится соответственно. Гимны, избранное и настройки музыки сохранятся.';
+
+  @override
+  String get statisticsHelp =>
+      'Помогите улучшить сборник и статистику сообщества. Включено по умолчанию; можно отключить в любое время. Сводки использования и ошибок отправляются примерно раз в неделю. Страна определяется по соединению при отправке. Без имён, текста поиска, рекламы или персонализированного контента.';
+
+  @override
+  String statisticsStatusHelp(String status) {
+    return '$status. При отключении удаляются ожидающая отправки статистика и локальные идентификаторы аналитики. Для ранее объединённой статистики действуют сроки хранения из политики конфиденциальности.';
+  }
+
+  @override
+  String versionLabel(String version) {
+    return 'Версия $version';
+  }
+
+  @override
+  String get statisticsUnavailable => 'Статистика недоступна';
+
+  @override
+  String get statisticsOff => 'Выключено';
+
+  @override
+  String get statisticsWaiting => 'Ожидание еженедельной отправки';
+
+  @override
+  String get statisticsUploading => 'Отправка';
+
+  @override
+  String get statisticsSent => 'Еженедельная статистика отправлена';
+
+  @override
+  String get statisticsQueued => 'Ещё статистика ожидает отправки';
+
+  @override
+  String get statisticsSavedOffline =>
+      'Сохранено без подключения; отправка будет повторена позже';
+
+  @override
+  String get hymnsByOccasion => 'Гимны по случаю';
+
+  @override
+  String get additionalReadings => 'Дополнительные чтения';
+
+  @override
+  String get hymnOrReadingNumber => 'НОМЕР ГИМНА ИЛИ ЧТЕНИЯ';
+
+  @override
+  String get hymnNumberHeading => 'НОМЕР ГИМНА';
+
+  @override
+  String get clearNumber => 'Очистить номер';
+
+  @override
+  String get deleteDigit => 'Удалить цифру';
 }

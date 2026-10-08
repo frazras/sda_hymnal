@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -37,20 +38,20 @@ class ClassicHeader extends StatelessWidget {
                 child: SvgPicture.asset('assets/logo.svg',
                     height: 72,
                     fit: BoxFit.contain,
-                    semanticsLabel: 'Hymnal home'),
+                    semanticsLabel: context.appText.hymnalHome),
               ),
             )),
             IconButton(
-                tooltip: 'Favorites',
+                tooltip: context.appText.favorites,
                 onPressed: onFavorites,
                 icon: const Icon(Icons.favorite_border, color: Colors.black)),
           ]),
         ),
         Row(children: [
-          for (final item in const [
-            (0, 'Numbers', Icons.keyboard),
-            (1, 'Search', Icons.search),
-            (3, 'Settings', Icons.settings),
+          for (final item in [
+            (0, context.appText.numbers, Icons.keyboard),
+            (1, context.appText.search, Icons.search),
+            (3, context.appText.settings, Icons.settings),
           ])
             Expanded(
                 child: Semantics(
@@ -281,7 +282,7 @@ class ClassicSearchControls extends StatelessWidget {
             decoration: InputDecoration(
               filled: true,
               fillColor: const Color(0xFF222222),
-              hintText: 'Search Hymns',
+              hintText: context.appText.searchHymns,
               hintStyle:
                   const TextStyle(color: Color(0xFF00FF00), fontSize: 20),
               prefixIcon: const Icon(Icons.search, color: Color(0xFF00FF00)),

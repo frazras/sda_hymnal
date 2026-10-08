@@ -186,4 +186,226 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get musicLoadError =>
       'Não foi possível carregar a música. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get readerOptions => 'Opções de leitura';
+
+  @override
+  String get copyOrShareLyrics => 'Copiar ou compartilhar letra';
+
+  @override
+  String get previousItem => 'Item anterior';
+
+  @override
+  String get nextItem => 'Próximo item';
+
+  @override
+  String get swipeToTurn => 'Deslize para virar a página';
+
+  @override
+  String get addFavorite => 'Adicionar aos favoritos';
+
+  @override
+  String get removeFavorite => 'Remover dos favoritos';
+
+  @override
+  String get saveToFavoriteLists => 'Salvar nos favoritos e categorias';
+
+  @override
+  String get endOfHymn => 'Fim do hino';
+
+  @override
+  String get hymnalHome => 'Início do hinário';
+
+  @override
+  String get searchHymns => 'Buscar hinos';
+
+  @override
+  String get autoplayHelp =>
+      'Após tocar em Reproduzir, continue esta lista até pausar';
+
+  @override
+  String get musiciansAndChoir => 'MÚSICOS E CORAL';
+
+  @override
+  String get customizeInstruments =>
+      'Personalizar instrumentos do estilo musical';
+
+  @override
+  String get customizeInstrumentsHelp =>
+      'Escolha instrumentos, volume e solos para cada estilo musical';
+
+  @override
+  String get ensembleInstruments => 'Instrumentos do conjunto';
+
+  @override
+  String get choirPracticeHelp =>
+      'Mostre os controles das vozes no reprodutor. Usa a música original, sem estilos.';
+
+  @override
+  String get choirPracticeOn =>
+      'O ensaio do coral está ativado. Substitui o estilo musical selecionado e usa as vozes originais.';
+
+  @override
+  String get choirPracticeOff =>
+      'O ensaio do coral está desativado. O estilo musical selecionado está ativo novamente.';
+
+  @override
+  String get reportGeneralIssue => 'Relatar um problema do aplicativo';
+
+  @override
+  String get whoMadeApp => 'Quem criou este aplicativo?';
+
+  @override
+  String get releaseFeatures => 'Recursos adicionados em cada versão';
+
+  @override
+  String get otherProjects => 'Nossos outros projetos';
+
+  @override
+  String get otherProjectsHelp =>
+      'Gostou deste aplicativo? Conheça nosso ministério!';
+
+  @override
+  String get privacyAndStatistics => 'PRIVACIDADE E ESTATÍSTICAS';
+
+  @override
+  String get communityStatistics => 'Estatísticas da comunidade';
+
+  @override
+  String get communityStatisticsHelp =>
+      'Hinos populares, visitas recorrentes e horários de culto';
+
+  @override
+  String get shareStatistics => 'Compartilhar estatísticas de uso';
+
+  @override
+  String get privacyPolicy => 'Política de privacidade';
+
+  @override
+  String get appDesign => 'Design do aplicativo';
+
+  @override
+  String get modern => 'Moderno';
+
+  @override
+  String get classic => 'Clássico';
+
+  @override
+  String get light => 'Claro';
+
+  @override
+  String get dark => 'Escuro';
+
+  @override
+  String get system => 'Sistema';
+
+  @override
+  String get updatingIcon => 'Atualizando o ícone da tela inicial…';
+
+  @override
+  String get retryIcon => 'Tentar mudar o ícone novamente';
+
+  @override
+  String get simple => 'Simples';
+
+  @override
+  String get medium => 'Intermediário';
+
+  @override
+  String get original => 'Original';
+
+  @override
+  String get simpleChordsHelp => 'Somente maiores e menores';
+
+  @override
+  String get mediumChordsHelp => 'Sétimas onde se resolvem';
+
+  @override
+  String get originalChordsHelp => 'Como detectados';
+
+  @override
+  String get modernGospel => 'Gospel moderno';
+
+  @override
+  String get jazz => 'Jazz';
+
+  @override
+  String get islandReggae => 'Reggae caribenho';
+
+  @override
+  String get jamaicanGospel => 'Gospel jamaicano';
+
+  @override
+  String get steelPanCalypso => 'Calipso com tambores de aço';
+
+  @override
+  String get cathedralOrgan => 'Órgão de catedral';
+
+  @override
+  String get strings => 'Cordas';
+
+  @override
+  String get choir => 'Coral';
+
+  @override
+  String get musicBox => 'Caixa de música';
+
+  @override
+  String get appDesignHelp =>
+      'Escolha o novo visual ou o layout original.\nO ícone da tela inicial muda para combinar. Seus hinos, favoritos e configurações de música permanecem iguais.';
+
+  @override
+  String get statisticsHelp =>
+      'Ajude a melhorar o hinário e as tendências da comunidade. Ativado por padrão; você pode desativar a qualquer momento. Resumos de uso e erros são enviados aproximadamente uma vez por semana. O país é estimado pela conexão de envio. Sem nomes, texto de buscas, publicidade ou conteúdo personalizado.';
+
+  @override
+  String statisticsStatusHelp(String status) {
+    return '$status. Desativar limpa as estatísticas pendentes e os identificadores locais de análise. As estatísticas já agregadas seguem os prazos de retenção da política de privacidade.';
+  }
+
+  @override
+  String versionLabel(String version) {
+    return 'Versão $version';
+  }
+
+  @override
+  String get statisticsUnavailable => 'Estatísticas indisponíveis';
+
+  @override
+  String get statisticsOff => 'Desativadas';
+
+  @override
+  String get statisticsWaiting => 'Aguardando envio semanal';
+
+  @override
+  String get statisticsUploading => 'Enviando';
+
+  @override
+  String get statisticsSent => 'Estatísticas semanais enviadas';
+
+  @override
+  String get statisticsQueued => 'Mais estatísticas pendentes';
+
+  @override
+  String get statisticsSavedOffline =>
+      'Salvas sem conexão; o envio será tentado novamente';
+
+  @override
+  String get hymnsByOccasion => 'Hinos por ocasião';
+
+  @override
+  String get additionalReadings => 'Leituras adicionais';
+
+  @override
+  String get hymnOrReadingNumber => 'NÚMERO DO HINO OU LEITURA';
+
+  @override
+  String get hymnNumberHeading => 'NÚMERO DO HINO';
+
+  @override
+  String get clearNumber => 'Limpar número';
+
+  @override
+  String get deleteDigit => 'Apagar dígito';
 }

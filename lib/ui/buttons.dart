@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/popular_hymns.dart';
 import 'package:sdahymnal/services/trends.dart';
@@ -198,7 +199,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
           oldLabel: widget.oldLabel,
           showOld: widget.hymnsOld.isNotEmpty,
           hasReadings: widget.english,
-          occasionsLabel: widget.english ? 'Hymns by occasion' : 'Topics',
+          occasionsLabel: widget.english
+              ? context.appText.hymnsByOccasion
+              : context.appText.topics,
           discoveryRows: Column(children: [_recentsRow(t), _popularRow(t)]),
           display: _display,
           oldTitle: _titleFor(widget.hymnsOld, n),
@@ -309,7 +312,10 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                           ),
               icon:
                   Icon(Icons.library_music_outlined, size: 17, color: t.accent),
-              label: Text(widget.english ? 'Hymns by occasion' : 'Topics',
+              label: Text(
+                  widget.english
+                      ? context.appText.hymnsByOccasion
+                      : context.appText.topics,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: linkStyle),
@@ -328,7 +334,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                               catalog: widget.additionalReadings)),
                         ),
                 icon: Icon(Icons.menu_book_outlined, size: 17, color: t.accent),
-                label: Text('Additional readings',
+                label: Text(context.appText.additionalReadings,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: linkStyle),
@@ -345,8 +351,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     return Column(
       children: [
         Center(
-            child: SectionLabel(
-                widget.english ? 'HYMN OR READING NUMBER' : 'HYMN NUMBER')),
+            child: SectionLabel(widget.english
+                ? context.appText.hymnOrReadingNumber
+                : context.appText.hymnNumberHeading)),
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: numSize * 1.15),
           child: Row(
@@ -411,7 +418,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                 // flex gap 6 + label margin-right 2.
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
-                  'Recent',
+                  context.appText.recent,
                   style: TextStyle(
                     fontFamily: kSans,
                     fontSize: 11,
@@ -465,7 +472,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
         spacing: 6,
         runSpacing: 6,
         children: [
-          Text('Popular',
+          Text(context.appText.popular,
               style:
                   TextStyle(fontFamily: kSans, fontSize: 11, color: t.muted)),
           for (final hymn in _popular)
@@ -585,7 +592,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                 color: t.tint,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: Text('READING',
+              child: Text(context.appText.reading,
                   style: TextStyle(
                     fontFamily: kSans,
                     fontSize: 8,
