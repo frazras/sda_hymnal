@@ -1169,6 +1169,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retryLoading;
+
+  /// No description provided for @playbackSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get playbackSpeed;
+
+  /// No description provided for @key.
+  ///
+  /// In en, this message translates to:
+  /// **'Key'**
+  String get key;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @chords.
+  ///
+  /// In en, this message translates to:
+  /// **'Chords'**
+  String get chords;
+
+  /// No description provided for @end.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get end;
+
+  /// No description provided for @notDocumented.
+  ///
+  /// In en, this message translates to:
+  /// **'Not documented'**
+  String get notDocumented;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
+
+  /// No description provided for @lyricsSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyrics size'**
+  String get lyricsSize;
+
+  /// No description provided for @autoScrollSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-scroll speed'**
+  String get autoScrollSpeed;
+
+  /// No description provided for @slowerScroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Slower  0.5×'**
+  String get slowerScroll;
+
+  /// No description provided for @fasterScroll.
+  ///
+  /// In en, this message translates to:
+  /// **'2.0×  Faster'**
+  String get fasterScroll;
+
+  /// No description provided for @pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// No description provided for @autoScrollNoMidi.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-scroll unavailable: no MIDI'**
+  String get autoScrollNoMidi;
+
+  /// No description provided for @loadingScrollTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading auto-scroll timing…'**
+  String get loadingScrollTiming;
+
+  /// No description provided for @autoScrollNoTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-scroll unavailable: no MIDI timing'**
+  String get autoScrollNoTiming;
+
+  /// No description provided for @entireHymnFits.
+  ///
+  /// In en, this message translates to:
+  /// **'Entire hymn fits on screen'**
+  String get entireHymnFits;
+
+  /// No description provided for @scrollMusicPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-scroll • music paused'**
+  String get scrollMusicPaused;
+
+  /// No description provided for @startAutoScroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Start auto-scroll'**
+  String get startAutoScroll;
+
+  /// No description provided for @wordsCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Words: {names}'**
+  String wordsCredit(String names);
+
+  /// No description provided for @musicCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Music: {names}'**
+  String musicCredit(String names);
+
+  /// No description provided for @keyValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Key · {value}'**
+  String keyValue(String value);
+
+  /// No description provided for @keyOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Key of {value}'**
+  String keyOf(String value);
+
+  /// No description provided for @originalKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Original · {value}'**
+  String originalKey(String value);
+
+  /// No description provided for @resetScrollSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to {speed}'**
+  String resetScrollSpeed(String speed);
+
+  /// No description provided for @scrollSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll {speed}'**
+  String scrollSpeedLabel(String speed);
+
+  /// No description provided for @scrollSpeedTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-scroll: {speed}'**
+  String scrollSpeedTooltip(String speed);
+
+  /// No description provided for @readStories.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Read story} other{Read {count} stories}}'**
+  String readStories(num count);
 }
 
 class _AppLocalizationsDelegate

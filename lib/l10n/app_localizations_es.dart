@@ -611,4 +611,114 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get retryLoading => 'Reintentar';
+
+  @override
+  String get playbackSpeed => 'Velocidad de reproducción';
+
+  @override
+  String get key => 'Tonalidad';
+
+  @override
+  String get reset => 'Restablecer';
+
+  @override
+  String get chords => 'Acordes';
+
+  @override
+  String get end => 'Fin';
+
+  @override
+  String get notDocumented => 'No documentado';
+
+  @override
+  String get preview => 'Vista previa';
+
+  @override
+  String get lyricsSize => 'Tamaño de la letra';
+
+  @override
+  String get autoScrollSpeed => 'Velocidad de desplazamiento';
+
+  @override
+  String get slowerScroll => 'Más lento  0.5×';
+
+  @override
+  String get fasterScroll => '2.0×  Más rápido';
+
+  @override
+  String get pause => 'Pausar';
+
+  @override
+  String get autoScrollNoMidi => 'Desplazamiento no disponible: no hay MIDI';
+
+  @override
+  String get loadingScrollTiming => 'Cargando duración de desplazamiento…';
+
+  @override
+  String get autoScrollNoTiming =>
+      'Desplazamiento no disponible: falta la duración MIDI';
+
+  @override
+  String get entireHymnFits => 'Todo el himno cabe en la pantalla';
+
+  @override
+  String get scrollMusicPaused => 'Desplazamiento • música en pausa';
+
+  @override
+  String get startAutoScroll => 'Iniciar desplazamiento';
+
+  @override
+  String wordsCredit(String names) {
+    return 'Letra: $names';
+  }
+
+  @override
+  String musicCredit(String names) {
+    return 'Música: $names';
+  }
+
+  @override
+  String keyValue(String value) {
+    return 'Tonalidad · $value';
+  }
+
+  @override
+  String keyOf(String value) {
+    return 'Tonalidad de $value';
+  }
+
+  @override
+  String originalKey(String value) {
+    return 'Original · $value';
+  }
+
+  @override
+  String resetScrollSpeed(String speed) {
+    return 'Restablecer a $speed';
+  }
+
+  @override
+  String scrollSpeedLabel(String speed) {
+    return 'Desplazar $speed';
+  }
+
+  @override
+  String scrollSpeedTooltip(String speed) {
+    return 'Desplazamiento automático: $speed';
+  }
+
+  @override
+  String readStories(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Leer $countString historias',
+      one: 'Leer historia',
+    );
+    return '$_temp0';
+  }
 }

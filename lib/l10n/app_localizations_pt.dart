@@ -610,4 +610,113 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get retryLoading => 'Tentar novamente';
+
+  @override
+  String get playbackSpeed => 'Velocidade de reprodução';
+
+  @override
+  String get key => 'Tonalidade';
+
+  @override
+  String get reset => 'Redefinir';
+
+  @override
+  String get chords => 'Acordes';
+
+  @override
+  String get end => 'Fim';
+
+  @override
+  String get notDocumented => 'Não documentado';
+
+  @override
+  String get preview => 'Prévia';
+
+  @override
+  String get lyricsSize => 'Tamanho da letra';
+
+  @override
+  String get autoScrollSpeed => 'Velocidade de rolagem';
+
+  @override
+  String get slowerScroll => 'Mais lento  0.5×';
+
+  @override
+  String get fasterScroll => '2.0×  Mais rápido';
+
+  @override
+  String get pause => 'Pausar';
+
+  @override
+  String get autoScrollNoMidi => 'Rolagem indisponível: sem MIDI';
+
+  @override
+  String get loadingScrollTiming => 'Carregando duração da rolagem…';
+
+  @override
+  String get autoScrollNoTiming => 'Rolagem indisponível: falta a duração MIDI';
+
+  @override
+  String get entireHymnFits => 'O hino inteiro cabe na tela';
+
+  @override
+  String get scrollMusicPaused => 'Rolagem • música pausada';
+
+  @override
+  String get startAutoScroll => 'Iniciar rolagem';
+
+  @override
+  String wordsCredit(String names) {
+    return 'Letra: $names';
+  }
+
+  @override
+  String musicCredit(String names) {
+    return 'Música: $names';
+  }
+
+  @override
+  String keyValue(String value) {
+    return 'Tonalidade · $value';
+  }
+
+  @override
+  String keyOf(String value) {
+    return 'Tonalidade de $value';
+  }
+
+  @override
+  String originalKey(String value) {
+    return 'Original · $value';
+  }
+
+  @override
+  String resetScrollSpeed(String speed) {
+    return 'Redefinir para $speed';
+  }
+
+  @override
+  String scrollSpeedLabel(String speed) {
+    return 'Rolar $speed';
+  }
+
+  @override
+  String scrollSpeedTooltip(String speed) {
+    return 'Rolagem automática: $speed';
+  }
+
+  @override
+  String readStories(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ler $countString histórias',
+      one: 'Ler história',
+    );
+    return '$_temp0';
+  }
 }

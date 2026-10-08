@@ -607,4 +607,113 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retryLoading => 'Retry';
+
+  @override
+  String get playbackSpeed => 'Playback speed';
+
+  @override
+  String get key => 'Key';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get chords => 'Chords';
+
+  @override
+  String get end => 'End';
+
+  @override
+  String get notDocumented => 'Not documented';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get lyricsSize => 'Lyrics size';
+
+  @override
+  String get autoScrollSpeed => 'Auto-scroll speed';
+
+  @override
+  String get slowerScroll => 'Slower  0.5×';
+
+  @override
+  String get fasterScroll => '2.0×  Faster';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get autoScrollNoMidi => 'Auto-scroll unavailable: no MIDI';
+
+  @override
+  String get loadingScrollTiming => 'Loading auto-scroll timing…';
+
+  @override
+  String get autoScrollNoTiming => 'Auto-scroll unavailable: no MIDI timing';
+
+  @override
+  String get entireHymnFits => 'Entire hymn fits on screen';
+
+  @override
+  String get scrollMusicPaused => 'Auto-scroll • music paused';
+
+  @override
+  String get startAutoScroll => 'Start auto-scroll';
+
+  @override
+  String wordsCredit(String names) {
+    return 'Words: $names';
+  }
+
+  @override
+  String musicCredit(String names) {
+    return 'Music: $names';
+  }
+
+  @override
+  String keyValue(String value) {
+    return 'Key · $value';
+  }
+
+  @override
+  String keyOf(String value) {
+    return 'Key of $value';
+  }
+
+  @override
+  String originalKey(String value) {
+    return 'Original · $value';
+  }
+
+  @override
+  String resetScrollSpeed(String speed) {
+    return 'Reset to $speed';
+  }
+
+  @override
+  String scrollSpeedLabel(String speed) {
+    return 'Scroll $speed';
+  }
+
+  @override
+  String scrollSpeedTooltip(String speed) {
+    return 'Auto-scroll: $speed';
+  }
+
+  @override
+  String readStories(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Read $countString stories',
+      one: 'Read story',
+    );
+    return '$_temp0';
+  }
 }

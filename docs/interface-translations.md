@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 178-message
+not claim that the app interface is fully translated. The 205-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -65,3 +65,10 @@ to translated presentation messages.
 Long storage warnings place the retry action beneath the message. The reorder
 page scrolls warnings and instructions together with the hymn list, preserving
 access to content on compact screens and with larger text.
+
+Reader key/speed/chord labels, author/composer prefixes, story links, ending
+label, font-size controls, and auto-scroll controls now use the catalogs. Source
+names and musical note names stay unchanged. Font and auto-scroll controls are
+checked across all four locales, both designs and both themes at compact width
+with 1.3 text scale, including slider/reset/start behavior. Reader regression
+checks retain playback, transposition, page turning, and choir controls.

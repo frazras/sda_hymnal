@@ -618,4 +618,116 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get retryLoading => 'Повторить';
+
+  @override
+  String get playbackSpeed => 'Скорость воспроизведения';
+
+  @override
+  String get key => 'Тональность';
+
+  @override
+  String get reset => 'Сбросить';
+
+  @override
+  String get chords => 'Аккорды';
+
+  @override
+  String get end => 'Конец';
+
+  @override
+  String get notDocumented => 'Не указано';
+
+  @override
+  String get preview => 'Предпросмотр';
+
+  @override
+  String get lyricsSize => 'Размер текста';
+
+  @override
+  String get autoScrollSpeed => 'Скорость прокрутки';
+
+  @override
+  String get slowerScroll => 'Медленнее  0.5×';
+
+  @override
+  String get fasterScroll => '2.0×  Быстрее';
+
+  @override
+  String get pause => 'Пауза';
+
+  @override
+  String get autoScrollNoMidi => 'Прокрутка недоступна: нет MIDI';
+
+  @override
+  String get loadingScrollTiming => 'Загрузка времени прокрутки…';
+
+  @override
+  String get autoScrollNoTiming =>
+      'Прокрутка недоступна: нет данных о времени MIDI';
+
+  @override
+  String get entireHymnFits => 'Весь гимн помещается на экране';
+
+  @override
+  String get scrollMusicPaused => 'Прокрутка • музыка на паузе';
+
+  @override
+  String get startAutoScroll => 'Начать прокрутку';
+
+  @override
+  String wordsCredit(String names) {
+    return 'Слова: $names';
+  }
+
+  @override
+  String musicCredit(String names) {
+    return 'Музыка: $names';
+  }
+
+  @override
+  String keyValue(String value) {
+    return 'Тональность · $value';
+  }
+
+  @override
+  String keyOf(String value) {
+    return 'Тональность $value';
+  }
+
+  @override
+  String originalKey(String value) {
+    return 'Исходная · $value';
+  }
+
+  @override
+  String resetScrollSpeed(String speed) {
+    return 'Сбросить до $speed';
+  }
+
+  @override
+  String scrollSpeedLabel(String speed) {
+    return 'Прокрутка $speed';
+  }
+
+  @override
+  String scrollSpeedTooltip(String speed) {
+    return 'Автопрокрутка: $speed';
+  }
+
+  @override
+  String readStories(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Читать $countString истории',
+      many: 'Читать $countString историй',
+      few: 'Читать $countString истории',
+      one: 'Читать $countString историю',
+    );
+    return '$_temp0';
+  }
 }

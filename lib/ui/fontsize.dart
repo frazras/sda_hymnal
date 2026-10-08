@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
@@ -32,7 +33,7 @@ class FontSizer extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SubPageHeader(title: 'Font Size'),
+            SubPageHeader(title: context.appText.fontSize),
             Expanded(
               child: ValueListenableBuilder<double>(
                 valueListenable: FontSizeController.instance,
@@ -43,7 +44,7 @@ class FontSizer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _SliderCard(fs: fs),
-                        const SectionLabel('PREVIEW',
+                        SectionLabel(context.appText.preview.toUpperCase(),
                             padding: EdgeInsets.fromLTRB(24, 2, 24, 6)),
                         Center(
                           child: ConstrainedBox(
@@ -108,15 +109,17 @@ class _SliderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                'Lyrics size',
+              Expanded(
+                  child: Text(
+                context.appText.lyricsSize,
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: t.muted,
                 ),
-              ),
+              )),
+              const SizedBox(width: 8),
               Text(
                 '${fs.round()} pt',
                 style: TextStyle(

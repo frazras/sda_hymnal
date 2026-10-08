@@ -12,6 +12,8 @@ import 'package:sdahymnal/ui/hymnal_browser.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/favorite_lists.dart';
 import 'package:sdahymnal/ui/favorite_order.dart';
+import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/hymn_auto_scroll.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/models/hymn.dart';
 
@@ -291,5 +293,69 @@ void main() {
       }
     }
     await tester.pumpWidget(const SizedBox.shrink());
+  });
+  testWidgets('font and scroll controls fit translated compact layouts',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final classic in [false, true]) {
+        for (final dark in [false, true]) {
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pumpWidget(MaterialApp(
+            locale: locale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            theme: buildHymnalTheme(
+                dark ? HymnalTokens.dark : HymnalTokens.light,
+                classic: classic),
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(1.3)),
+              child: child!,
+            ),
+            home: const FontSizer(),
+          ));
+          await tester.pumpAndSettle();
+          final context = tester.element(find.byType(FontSizer));
+          final text = context.appText;
+          expect(find.text(text.fontSize), findsOneWidget);
+          expect(find.text(text.lyricsSize), findsOneWidget);
+          expect(tester.takeException(), isNull,
+              reason: '${locale.languageCode} font');
+          var speed = 1.0;
+          var toggles = 0;
+          final controls = HymnAutoScrollControl(
+            speed: speed,
+            defaultSpeed: 1,
+            running: false,
+            canToggle: true,
+            status: text.startAutoScroll,
+            onToggle: () => toggles++,
+            onSpeedChanged: (value) => speed = value,
+          );
+          controls.showControls(context);
+          await tester.pumpAndSettle();
+          expect(find.text(text.autoScrollSpeed), findsOneWidget);
+          await tester.drag(
+              find.byKey(const ValueKey('hymn-scroll-speed-slider')),
+              const Offset(40, 0));
+          await tester.pumpAndSettle();
+          expect(speed, greaterThan(1));
+          await tester
+              .tap(find.byKey(const ValueKey('hymn-scroll-speed-reset')));
+          await tester.pumpAndSettle();
+          expect(speed, 1);
+          await tester.tap(
+              find.byKey(const ValueKey('hymn-scroll-toggle-sheet-button')));
+          await tester.pumpAndSettle();
+          expect(toggles, 1);
+          expect(tester.takeException(), isNull,
+              reason: '${locale.languageCode} classic=$classic dark=$dark');
+        }
+      }
+    }
   });
 }

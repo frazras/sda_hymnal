@@ -841,7 +841,7 @@ class _HymnPageState extends State<HymnPage> {
                             HymnalIcons.logoMark(t, size: 22),
                             const SizedBox(width: 9),
                             Text(
-                              'End',
+                              context.appText.end,
                               style: TextStyle(
                                 fontFamily: 'PinyonScript',
                                 fontSize: 32,
@@ -896,14 +896,15 @@ class _HymnPageState extends State<HymnPage> {
         runSpacing: 0,
         children: [
           Text(
-            authors.isEmpty
-                ? 'Words: Not documented'
-                : 'Words: ${authors.join(', ')}',
+            context.appText.wordsCredit(authors.isEmpty
+                ? context.appText.notDocumented
+                : authors.join(', ')),
             style: textStyle,
           ),
           if (composers.isNotEmpty) Text('•', style: textStyle),
           if (composers.isNotEmpty)
-            Text('Music: ${composers.join(', ')}', style: textStyle),
+            Text(context.appText.musicCredit(composers.join(', ')),
+                style: textStyle),
           if (metadata.stories.isNotEmpty) Text('•', style: textStyle),
           if (metadata.stories.isNotEmpty)
             Semantics(
@@ -919,9 +920,7 @@ class _HymnPageState extends State<HymnPage> {
                   );
                 },
                 child: Text(
-                  metadata.stories.length == 1
-                      ? 'Read story'
-                      : 'Read ${metadata.stories.length} stories',
+                  context.appText.readStories(metadata.stories.length),
                   style: textStyle.copyWith(
                     color: t.accent,
                     decoration: TextDecoration.underline,
@@ -1261,7 +1260,7 @@ class _HymnPageState extends State<HymnPage> {
                       children: [
                         Row(
                           children: [
-                            const SectionLabel('CHORDS'),
+                            SectionLabel(context.appText.chords.toUpperCase()),
                             const Spacer(),
                             Text(
                               _chordMeta(track, semis),
@@ -1294,7 +1293,7 @@ class _HymnPageState extends State<HymnPage> {
     final meter = '${track.beatsPerBar}/4';
     return key == null
         ? meter
-        : 'Key of ${transposedKeyLabel(key, semis)} · $meter';
+        : '${context.appText.keyOf(transposedKeyLabel(key, semis))} · $meter';
   }
 
   /// Scrollable measure grid: one cell per measure, four per row, barline on
@@ -1475,7 +1474,7 @@ class _HymnPageState extends State<HymnPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'PLAYBACK SPEED',
+                context.appText.playbackSpeed.toUpperCase(),
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
@@ -1553,10 +1552,10 @@ class _HymnPageState extends State<HymnPage> {
           builder: (context, semis, _) {
             final shifted = semis != 0;
             final label = key != null
-                ? 'Key · ${transposedKeyLabel(key, semis)}'
+                ? context.appText.keyValue(transposedKeyLabel(key, semis))
                 : shifted
                     ? '${semis > 0 ? '+' : ''}$semis st'
-                    : 'Key';
+                    : context.appText.key;
             return Pressable(
               onTap: canPlay ? () => _showKeySheet(t) : null,
               pressedScale: 0.95,
@@ -1611,7 +1610,7 @@ class _HymnPageState extends State<HymnPage> {
                   Row(
                     children: [
                       Text(
-                        'KEY',
+                        context.appText.key.toUpperCase(),
                         style: TextStyle(
                           fontFamily: kSans,
                           fontSize: 11,
@@ -1626,7 +1625,7 @@ class _HymnPageState extends State<HymnPage> {
                           onTap: () => MidiPlayer.instance.setTranspose(0),
                           pressedScale: 0.95,
                           builder: (context, pressed) => Text(
-                            'Reset',
+                            context.appText.reset,
                             style: TextStyle(
                               fontFamily: kSans,
                               fontSize: 12.5,
@@ -1690,7 +1689,7 @@ class _HymnPageState extends State<HymnPage> {
         ),
         const SizedBox(height: 3),
         Text(
-          'Original · ${key?.label ?? '—'}',
+          context.appText.originalKey(key?.label ?? '—'),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: kSans,

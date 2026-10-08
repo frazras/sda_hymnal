@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart' show parseFragment;
 import 'package:sdahymnal/services/music_options.dart';
@@ -84,9 +85,9 @@ class HymnAutoScrollControl extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Auto-scroll speed',
+                      context.appText.autoScrollSpeed,
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
@@ -114,11 +115,12 @@ class HymnAutoScrollControl extends StatelessWidget {
               ),
               DefaultTextStyle.merge(
                 style: const TextStyle(fontSize: 12),
-                child: const Row(
+                child: Row(
                   children: [
-                    Expanded(child: Text('Slower  0.5×')),
+                    Expanded(child: Text(context.appText.slowerScroll)),
                     Expanded(
-                        child: Text('2.0×  Faster', textAlign: TextAlign.end)),
+                        child: Text(context.appText.fasterScroll,
+                            textAlign: TextAlign.end)),
                   ],
                 ),
               ),
@@ -138,7 +140,8 @@ class HymnAutoScrollControl extends StatelessWidget {
                             onSpeedChanged(defaultSpeed);
                             updateSheet(() {});
                           },
-                    child: Text('Reset to ${_label(defaultSpeed)}'),
+                    child: Text(
+                        context.appText.resetScrollSpeed(_label(defaultSpeed))),
                   ),
                   FilledButton.icon(
                     key: const ValueKey('hymn-scroll-toggle-sheet-button'),
@@ -154,7 +157,7 @@ class HymnAutoScrollControl extends StatelessWidget {
                           }
                         : null,
                     icon: Icon(isRunning ? Icons.pause : Icons.play_arrow),
-                    label: Text(isRunning ? 'Pause' : status),
+                    label: Text(isRunning ? context.appText.pause : status),
                   ),
                 ],
               ),
@@ -169,7 +172,7 @@ class HymnAutoScrollControl extends StatelessWidget {
   Widget build(BuildContext context) {
     final current = _label(speed);
     return Tooltip(
-      message: 'Auto-scroll: $current',
+      message: context.appText.scrollSpeedTooltip(current),
       child: Material(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
@@ -184,7 +187,8 @@ class HymnAutoScrollControl extends StatelessWidget {
               children: [
                 Icon(running ? Icons.pause : Icons.play_arrow, size: 14),
                 const SizedBox(width: 3),
-                Text('Scroll $current', style: const TextStyle(fontSize: 11)),
+                Text(context.appText.scrollSpeedLabel(current),
+                    style: const TextStyle(fontSize: 11)),
               ],
             ),
           ),
@@ -547,22 +551,22 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   Widget build(BuildContext context) {
     if (widget.previewOnly) {
       return widget.builder(
-          _scroll, _buildControls(context, 'Start auto-scroll'));
+          _scroll, _buildControls(context, context.appText.startAutoScroll));
     }
     _scheduleMetrics();
     final startTooltip = !_supportsTiming
-        ? 'Auto-scroll unavailable: no MIDI'
+        ? context.appText.autoScrollNoMidi
         : _loading
-            ? 'Loading auto-scroll timing…'
+            ? context.appText.loadingScrollTiming
             : _duration == null || _duration! <= Duration.zero
-                ? 'Auto-scroll unavailable: no MIDI timing'
+                ? context.appText.autoScrollNoTiming
                 : _extent <= 0
-                    ? 'Entire hymn fits on screen'
+                    ? context.appText.entireHymnFits
                     : _followingMusic &&
                             _requested &&
                             _player.current.value?.paused == true
-                        ? 'Auto-scroll • music paused'
-                        : 'Start auto-scroll';
+                        ? context.appText.scrollMusicPaused
+                        : context.appText.startAutoScroll;
     final controls = _buildControls(context, startTooltip);
     widget.controller?._attach(controls is HymnAutoScrollControl
         ? () => controls.showControls(context)

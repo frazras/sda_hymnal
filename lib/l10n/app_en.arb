@@ -260,5 +260,96 @@
       }
     }
   },
-  "retryLoading": "Retry"
+  "retryLoading": "Retry",
+  "playbackSpeed": "Playback speed",
+  "key": "Key",
+  "reset": "Reset",
+  "chords": "Chords",
+  "end": "End",
+  "notDocumented": "Not documented",
+  "preview": "Preview",
+  "lyricsSize": "Lyrics size",
+  "autoScrollSpeed": "Auto-scroll speed",
+  "slowerScroll": "Slower  0.5×",
+  "fasterScroll": "2.0×  Faster",
+  "pause": "Pause",
+  "autoScrollNoMidi": "Auto-scroll unavailable: no MIDI",
+  "loadingScrollTiming": "Loading auto-scroll timing…",
+  "autoScrollNoTiming": "Auto-scroll unavailable: no MIDI timing",
+  "entireHymnFits": "Entire hymn fits on screen",
+  "scrollMusicPaused": "Auto-scroll • music paused",
+  "startAutoScroll": "Start auto-scroll",
+  "wordsCredit": "Words: {names}",
+  "musicCredit": "Music: {names}",
+  "keyValue": "Key · {value}",
+  "keyOf": "Key of {value}",
+  "originalKey": "Original · {value}",
+  "resetScrollSpeed": "Reset to {speed}",
+  "scrollSpeedLabel": "Scroll {speed}",
+  "scrollSpeedTooltip": "Auto-scroll: {speed}",
+  "readStories": "{count, plural, =1{Read story} other{Read {count} stories}}",
+  "@wordsCredit": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "@musicCredit": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "@keyValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@keyOf": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@originalKey": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@resetScrollSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "@scrollSpeedLabel": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "@scrollSpeedTooltip": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "@readStories": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  }
 }
