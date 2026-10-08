@@ -841,4 +841,512 @@ class AppLocalizationsRu extends AppLocalizations {
   String reportSubject(String book, String kind, int number) {
     return '$book · $kind $number';
   }
+
+  @override
+  String get gmProgram0 => 'Рояль';
+
+  @override
+  String get gmProgram1 => 'Яркий рояль';
+
+  @override
+  String get gmProgram2 => 'Электрический рояль';
+
+  @override
+  String get gmProgram3 => 'Пианино хонки-тонк';
+
+  @override
+  String get gmProgram4 => 'Электропиано';
+
+  @override
+  String get gmProgram5 => 'Электропиано FM';
+
+  @override
+  String get gmProgram6 => 'Клавесин';
+
+  @override
+  String get gmProgram7 => 'Клавинет';
+
+  @override
+  String get gmProgram16 => 'Орган с регистрами';
+
+  @override
+  String get gmProgram17 => 'Перкуссионный орган';
+
+  @override
+  String get gmProgram18 => 'Рок-орган';
+
+  @override
+  String get gmProgram19 => 'Церковный орган';
+
+  @override
+  String get gmProgram20 => 'Язычковый орган';
+
+  @override
+  String get gmProgram21 => 'Аккордеон';
+
+  @override
+  String get gmProgram22 => 'Губная гармоника';
+
+  @override
+  String get gmProgram23 => 'Бандонеон';
+
+  @override
+  String get gmProgram24 => 'Гитара с нейлоновыми струнами';
+
+  @override
+  String get gmProgram25 => 'Гитара со стальными струнами';
+
+  @override
+  String get gmProgram26 => 'Джазовая гитара';
+
+  @override
+  String get gmProgram27 => 'Электрогитара с чистым звуком';
+
+  @override
+  String get gmProgram28 => 'Приглушённая гитара';
+
+  @override
+  String get gmProgram29 => 'Гитара с овердрайвом';
+
+  @override
+  String get gmProgram30 => 'Гитара с дисторшном';
+
+  @override
+  String get gmProgram31 => 'Гитарные флажолеты';
+
+  @override
+  String get gmProgram32 => 'Акустический бас';
+
+  @override
+  String get gmProgram33 => 'Бас пальцами';
+
+  @override
+  String get gmProgram34 => 'Бас медиатором';
+
+  @override
+  String get gmProgram35 => 'Безладовый бас';
+
+  @override
+  String get gmProgram36 => 'Слэп-бас 1';
+
+  @override
+  String get gmProgram37 => 'Слэп-бас 2';
+
+  @override
+  String get gmProgram38 => 'Синтезированный бас 1';
+
+  @override
+  String get gmProgram39 => 'Синтезированный бас 2';
+
+  @override
+  String get gmProgram40 => 'Скрипка';
+
+  @override
+  String get gmProgram41 => 'Альт';
+
+  @override
+  String get gmProgram42 => 'Виолончель';
+
+  @override
+  String get gmProgram43 => 'Контрабас';
+
+  @override
+  String get gmProgram44 => 'Струнные тремоло';
+
+  @override
+  String get gmProgram45 => 'Струнные пиццикато';
+
+  @override
+  String get gmProgram46 => 'Оркестровая арфа';
+
+  @override
+  String get gmProgram48 => 'Струнный ансамбль';
+
+  @override
+  String get gmProgram49 => 'Плавные струнные';
+
+  @override
+  String get gmProgram50 => 'Синтезированные струнные 1';
+
+  @override
+  String get gmProgram51 => 'Синтезированные струнные 2';
+
+  @override
+  String get gmProgram52 => 'Хоровые голоса';
+
+  @override
+  String get gmProgram53 => 'Голоса «у»';
+
+  @override
+  String get gmProgram54 => 'Синтезированный голос';
+
+  @override
+  String get gmProgram56 => 'Труба';
+
+  @override
+  String get gmProgram57 => 'Тромбон';
+
+  @override
+  String get gmProgram58 => 'Туба';
+
+  @override
+  String get gmProgram59 => 'Труба с сурдиной';
+
+  @override
+  String get gmProgram60 => 'Валторны';
+
+  @override
+  String get gmProgram61 => 'Медная духовая секция';
+
+  @override
+  String get gmProgram62 => 'Синтезированные медные 1';
+
+  @override
+  String get gmProgram63 => 'Синтезированные медные 2';
+
+  @override
+  String get gmProgram64 => 'Сопрано-саксофон';
+
+  @override
+  String get gmProgram65 => 'Альт-саксофон';
+
+  @override
+  String get gmProgram66 => 'Тенор-саксофон';
+
+  @override
+  String get gmProgram67 => 'Баритон-саксофон';
+
+  @override
+  String get gmProgram68 => 'Гобой';
+
+  @override
+  String get gmProgram69 => 'Английский рожок';
+
+  @override
+  String get gmProgram70 => 'Фагот';
+
+  @override
+  String get gmProgram71 => 'Кларнет';
+
+  @override
+  String get gmProgram72 => 'Пикколо';
+
+  @override
+  String get gmProgram73 => 'Флейта';
+
+  @override
+  String get gmProgram74 => 'Блокфлейта';
+
+  @override
+  String get gmProgram75 => 'Пан-флейта';
+
+  @override
+  String get gmProgram76 => 'Звук бутылки';
+
+  @override
+  String get gmProgram77 => 'Сякухати';
+
+  @override
+  String get gmProgram78 => 'Свисток';
+
+  @override
+  String get gmProgram79 => 'Окарина';
+
+  @override
+  String get gmProgram8 => 'Челеста';
+
+  @override
+  String get gmProgram9 => 'Колокольчики';
+
+  @override
+  String get gmProgram10 => 'Музыкальная шкатулка';
+
+  @override
+  String get gmProgram11 => 'Вибрафон';
+
+  @override
+  String get gmProgram12 => 'Маримба';
+
+  @override
+  String get gmProgram13 => 'Ксилофон';
+
+  @override
+  String get gmProgram14 => 'Трубчатые колокола';
+
+  @override
+  String get gmProgram15 => 'Дульцимер';
+
+  @override
+  String get gmProgram47 => 'Литавры';
+
+  @override
+  String get gmProgram112 => 'Колокольчик';
+
+  @override
+  String get gmProgram113 => 'Агого';
+
+  @override
+  String get gmProgram114 => 'Стальной барабан';
+
+  @override
+  String get gmProgram115 => 'Деревянный блок';
+
+  @override
+  String get gmProgram116 => 'Барабан тайко';
+
+  @override
+  String get gmProgram117 => 'Мелодический том';
+
+  @override
+  String get gmProgram118 => 'Синтезированный барабан';
+
+  @override
+  String get gmProgram119 => 'Обратный звук тарелки';
+
+  @override
+  String get gmProgram104 => 'Ситар';
+
+  @override
+  String get gmProgram105 => 'Банджо';
+
+  @override
+  String get gmProgram106 => 'Сямисэн';
+
+  @override
+  String get gmProgram107 => 'Кото';
+
+  @override
+  String get gmProgram108 => 'Калимба';
+
+  @override
+  String get gmProgram109 => 'Волынка';
+
+  @override
+  String get gmProgram110 => 'Народная скрипка';
+
+  @override
+  String get gmProgram111 => 'Шахнай';
+
+  @override
+  String get gmProgram80 => 'Лид квадратной волны';
+
+  @override
+  String get gmProgram81 => 'Лид пилообразной волны';
+
+  @override
+  String get gmProgram82 => 'Синтезированный каллиопа';
+
+  @override
+  String get gmProgram83 => 'Лид чиффер';
+
+  @override
+  String get gmProgram84 => 'Чаранг';
+
+  @override
+  String get gmProgram85 => 'Сольный голос';
+
+  @override
+  String get gmProgram86 => 'Пилообразная волна в квинту';
+
+  @override
+  String get gmProgram87 => 'Бас и лид';
+
+  @override
+  String get gmProgram88 => 'Фантазия';
+
+  @override
+  String get gmProgram89 => 'Тёплый пэд';
+
+  @override
+  String get gmProgram90 => 'Полисинтезатор';
+
+  @override
+  String get gmProgram91 => 'Космический голос';
+
+  @override
+  String get gmProgram92 => 'Стекло со смычком';
+
+  @override
+  String get gmProgram93 => 'Металлический пэд';
+
+  @override
+  String get gmProgram94 => 'Пэд ореол';
+
+  @override
+  String get gmProgram95 => 'Пэд свип';
+
+  @override
+  String get instrumentFamily0 => 'Пианино и клавишные';
+
+  @override
+  String get instrumentFamily1 => 'Органы и аккордеоны';
+
+  @override
+  String get instrumentFamily2 => 'Гитары';
+
+  @override
+  String get instrumentFamily3 => 'Бас';
+
+  @override
+  String get instrumentFamily4 => 'Струнные';
+
+  @override
+  String get instrumentFamily5 => 'Хор и голоса';
+
+  @override
+  String get instrumentFamily6 => 'Медные духовые';
+
+  @override
+  String get instrumentFamily7 => 'Деревянные духовые';
+
+  @override
+  String get instrumentFamily8 => 'Ударные';
+
+  @override
+  String get instrumentFamily9 => 'Народные инструменты';
+
+  @override
+  String get instrumentFamily10 => 'Синтезаторы';
+
+  @override
+  String instrumentNumber(int number) {
+    return 'Инструмент $number';
+  }
+
+  @override
+  String get backToInstrumentFamilies => 'Вернуться к категориям';
+
+  @override
+  String get instrumentCategory => 'Категория инструмента';
+
+  @override
+  String get steelpanRollHelp => 'Автоматическая дробь на длинных нотах';
+
+  @override
+  String get musicalStyleInstruments => 'Инструменты музыкального стиля';
+
+  @override
+  String get ensembleInstrumentHelp =>
+      'Выберите инструменты для каждого музыкального стиля. Эти настройки применяются ко всему ансамблю. Для хоровой практики выберите инструмент каждой дорожки в микшере гимна.';
+
+  @override
+  String get drumKit => 'Ударная установка';
+
+  @override
+  String get styleDefault => 'По умолчанию для стиля';
+
+  @override
+  String get solo => 'Соло';
+
+  @override
+  String get mute => 'Заглушить';
+
+  @override
+  String get previewError =>
+      'Не удалось воспроизвести пример. Повторите попытку.';
+
+  @override
+  String get stopPreview => 'Остановить пример';
+
+  @override
+  String previewHymn(String title) {
+    return 'Пример • $title';
+  }
+
+  @override
+  String get previewPlaybackHelp =>
+      'Пример заменяет текущий гимн и останавливается при выходе с этой страницы.';
+
+  @override
+  String get choirPartsOriginal => 'Хоровые партии • Исходная музыка';
+
+  @override
+  String get separatePartsUnavailable => 'Отдельные партии недоступны';
+
+  @override
+  String get choirMixerHelp =>
+      'Только исходные партии, без музыкальных стилей. Заглушение отключает партию. Соло позволяет слышать только выбранные партии. Заглушение имеет приоритет. Выберите инструмент для каждой дорожки. Изменения применяются к воспроизведению и сохраняются для этого гимна. Нажмите на название, чтобы изменить его.';
+
+  @override
+  String get noSeparateMidiTracks =>
+      'Этот MIDI не содержит отдельных воспроизводимых дорожек. Отдельные голоса нельзя выделить.';
+
+  @override
+  String get pauseParts => 'Приостановить партии';
+
+  @override
+  String get playParts => 'Воспроизвести партии';
+
+  @override
+  String get partsPlaybackError =>
+      'Не удалось воспроизвести партии. Повторите попытку.';
+
+  @override
+  String get namePart => 'Назвать эту партию';
+
+  @override
+  String get partNameHint => 'Сопрано, Альт, Тенор, Бас…';
+
+  @override
+  String get originalInstrument => 'Исходный инструмент';
+
+  @override
+  String get instrumentChangeError =>
+      'Не удалось изменить инструмент. Повторите попытку.';
+
+  @override
+  String get noMelodicInstrument =>
+      'У этой дорожки нет мелодического инструмента для замены.';
+
+  @override
+  String get noFreeMidiChannels =>
+      'В этом MIDI нет свободных каналов для ещё одного независимого инструмента.';
+
+  @override
+  String get resetChoirMix => 'Сбросить микшер • Слышать все партии';
+
+  @override
+  String volumeLabel(String name) {
+    return 'Громкость: $name';
+  }
+
+  @override
+  String volumePercent(String name, int value) {
+    return 'Громкость $name: $value процентов';
+  }
+
+  @override
+  String percentValue(int value) {
+    return '$value процентов';
+  }
+
+  @override
+  String get roleMelody => 'Мелодия';
+
+  @override
+  String get rolePianoChords => 'Фортепианные аккорды';
+
+  @override
+  String get roleWalkingBass => 'Шагающий бас';
+
+  @override
+  String get roleDescant => 'Дискант (если есть)';
+
+  @override
+  String get roleOffbeatOrgan => 'Орган на слабых долях';
+
+  @override
+  String get roleOffbeatChords => 'Аккорды на слабых долях';
+
+  @override
+  String get roleOrganBacking => 'Органное сопровождение';
+
+  @override
+  String get roleStrum => 'Бой по струнам';
+
+  @override
+  String get roleShimmer => 'Мерцание';
+
+  @override
+  String get roleAllMelodicParts => 'Все мелодические партии';
 }

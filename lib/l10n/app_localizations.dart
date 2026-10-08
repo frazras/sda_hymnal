@@ -1529,6 +1529,984 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{book} · {kind} {number}'**
   String reportSubject(String book, String kind, int number);
+
+  /// No description provided for @gmProgram0.
+  ///
+  /// In en, this message translates to:
+  /// **'Grand piano'**
+  String get gmProgram0;
+
+  /// No description provided for @gmProgram1.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright grand piano'**
+  String get gmProgram1;
+
+  /// No description provided for @gmProgram2.
+  ///
+  /// In en, this message translates to:
+  /// **'Electric grand piano'**
+  String get gmProgram2;
+
+  /// No description provided for @gmProgram3.
+  ///
+  /// In en, this message translates to:
+  /// **'Honky-tonk piano'**
+  String get gmProgram3;
+
+  /// No description provided for @gmProgram4.
+  ///
+  /// In en, this message translates to:
+  /// **'Electric piano'**
+  String get gmProgram4;
+
+  /// No description provided for @gmProgram5.
+  ///
+  /// In en, this message translates to:
+  /// **'FM electric piano'**
+  String get gmProgram5;
+
+  /// No description provided for @gmProgram6.
+  ///
+  /// In en, this message translates to:
+  /// **'Harpsichord'**
+  String get gmProgram6;
+
+  /// No description provided for @gmProgram7.
+  ///
+  /// In en, this message translates to:
+  /// **'Clavinet'**
+  String get gmProgram7;
+
+  /// No description provided for @gmProgram16.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawbar organ'**
+  String get gmProgram16;
+
+  /// No description provided for @gmProgram17.
+  ///
+  /// In en, this message translates to:
+  /// **'Percussive organ'**
+  String get gmProgram17;
+
+  /// No description provided for @gmProgram18.
+  ///
+  /// In en, this message translates to:
+  /// **'Rock organ'**
+  String get gmProgram18;
+
+  /// No description provided for @gmProgram19.
+  ///
+  /// In en, this message translates to:
+  /// **'Church organ'**
+  String get gmProgram19;
+
+  /// No description provided for @gmProgram20.
+  ///
+  /// In en, this message translates to:
+  /// **'Reed organ'**
+  String get gmProgram20;
+
+  /// No description provided for @gmProgram21.
+  ///
+  /// In en, this message translates to:
+  /// **'Accordion'**
+  String get gmProgram21;
+
+  /// No description provided for @gmProgram22.
+  ///
+  /// In en, this message translates to:
+  /// **'Harmonica'**
+  String get gmProgram22;
+
+  /// No description provided for @gmProgram23.
+  ///
+  /// In en, this message translates to:
+  /// **'Bandoneon'**
+  String get gmProgram23;
+
+  /// No description provided for @gmProgram24.
+  ///
+  /// In en, this message translates to:
+  /// **'Nylon guitar'**
+  String get gmProgram24;
+
+  /// No description provided for @gmProgram25.
+  ///
+  /// In en, this message translates to:
+  /// **'Steel-string guitar'**
+  String get gmProgram25;
+
+  /// No description provided for @gmProgram26.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz guitar'**
+  String get gmProgram26;
+
+  /// No description provided for @gmProgram27.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean electric guitar'**
+  String get gmProgram27;
+
+  /// No description provided for @gmProgram28.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted guitar'**
+  String get gmProgram28;
+
+  /// No description provided for @gmProgram29.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdrive guitar'**
+  String get gmProgram29;
+
+  /// No description provided for @gmProgram30.
+  ///
+  /// In en, this message translates to:
+  /// **'Distortion guitar'**
+  String get gmProgram30;
+
+  /// No description provided for @gmProgram31.
+  ///
+  /// In en, this message translates to:
+  /// **'Guitar harmonics'**
+  String get gmProgram31;
+
+  /// No description provided for @gmProgram32.
+  ///
+  /// In en, this message translates to:
+  /// **'Acoustic bass'**
+  String get gmProgram32;
+
+  /// No description provided for @gmProgram33.
+  ///
+  /// In en, this message translates to:
+  /// **'Finger bass'**
+  String get gmProgram33;
+
+  /// No description provided for @gmProgram34.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick bass'**
+  String get gmProgram34;
+
+  /// No description provided for @gmProgram35.
+  ///
+  /// In en, this message translates to:
+  /// **'Fretless bass'**
+  String get gmProgram35;
+
+  /// No description provided for @gmProgram36.
+  ///
+  /// In en, this message translates to:
+  /// **'Slap bass 1'**
+  String get gmProgram36;
+
+  /// No description provided for @gmProgram37.
+  ///
+  /// In en, this message translates to:
+  /// **'Slap bass 2'**
+  String get gmProgram37;
+
+  /// No description provided for @gmProgram38.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth bass 1'**
+  String get gmProgram38;
+
+  /// No description provided for @gmProgram39.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth bass 2'**
+  String get gmProgram39;
+
+  /// No description provided for @gmProgram40.
+  ///
+  /// In en, this message translates to:
+  /// **'Violin'**
+  String get gmProgram40;
+
+  /// No description provided for @gmProgram41.
+  ///
+  /// In en, this message translates to:
+  /// **'Viola'**
+  String get gmProgram41;
+
+  /// No description provided for @gmProgram42.
+  ///
+  /// In en, this message translates to:
+  /// **'Cello'**
+  String get gmProgram42;
+
+  /// No description provided for @gmProgram43.
+  ///
+  /// In en, this message translates to:
+  /// **'Double bass'**
+  String get gmProgram43;
+
+  /// No description provided for @gmProgram44.
+  ///
+  /// In en, this message translates to:
+  /// **'Tremolo strings'**
+  String get gmProgram44;
+
+  /// No description provided for @gmProgram45.
+  ///
+  /// In en, this message translates to:
+  /// **'Pizzicato strings'**
+  String get gmProgram45;
+
+  /// No description provided for @gmProgram46.
+  ///
+  /// In en, this message translates to:
+  /// **'Orchestral harp'**
+  String get gmProgram46;
+
+  /// No description provided for @gmProgram48.
+  ///
+  /// In en, this message translates to:
+  /// **'String ensemble'**
+  String get gmProgram48;
+
+  /// No description provided for @gmProgram49.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow strings'**
+  String get gmProgram49;
+
+  /// No description provided for @gmProgram50.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth strings 1'**
+  String get gmProgram50;
+
+  /// No description provided for @gmProgram51.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth strings 2'**
+  String get gmProgram51;
+
+  /// No description provided for @gmProgram52.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir voices'**
+  String get gmProgram52;
+
+  /// No description provided for @gmProgram53.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice oohs'**
+  String get gmProgram53;
+
+  /// No description provided for @gmProgram54.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth voice'**
+  String get gmProgram54;
+
+  /// No description provided for @gmProgram56.
+  ///
+  /// In en, this message translates to:
+  /// **'Trumpet'**
+  String get gmProgram56;
+
+  /// No description provided for @gmProgram57.
+  ///
+  /// In en, this message translates to:
+  /// **'Trombone'**
+  String get gmProgram57;
+
+  /// No description provided for @gmProgram58.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuba'**
+  String get gmProgram58;
+
+  /// No description provided for @gmProgram59.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted trumpet'**
+  String get gmProgram59;
+
+  /// No description provided for @gmProgram60.
+  ///
+  /// In en, this message translates to:
+  /// **'French horns'**
+  String get gmProgram60;
+
+  /// No description provided for @gmProgram61.
+  ///
+  /// In en, this message translates to:
+  /// **'Brass section'**
+  String get gmProgram61;
+
+  /// No description provided for @gmProgram62.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth brass 1'**
+  String get gmProgram62;
+
+  /// No description provided for @gmProgram63.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth brass 2'**
+  String get gmProgram63;
+
+  /// No description provided for @gmProgram64.
+  ///
+  /// In en, this message translates to:
+  /// **'Soprano sax'**
+  String get gmProgram64;
+
+  /// No description provided for @gmProgram65.
+  ///
+  /// In en, this message translates to:
+  /// **'Alto sax'**
+  String get gmProgram65;
+
+  /// No description provided for @gmProgram66.
+  ///
+  /// In en, this message translates to:
+  /// **'Tenor sax'**
+  String get gmProgram66;
+
+  /// No description provided for @gmProgram67.
+  ///
+  /// In en, this message translates to:
+  /// **'Baritone sax'**
+  String get gmProgram67;
+
+  /// No description provided for @gmProgram68.
+  ///
+  /// In en, this message translates to:
+  /// **'Oboe'**
+  String get gmProgram68;
+
+  /// No description provided for @gmProgram69.
+  ///
+  /// In en, this message translates to:
+  /// **'English horn'**
+  String get gmProgram69;
+
+  /// No description provided for @gmProgram70.
+  ///
+  /// In en, this message translates to:
+  /// **'Bassoon'**
+  String get gmProgram70;
+
+  /// No description provided for @gmProgram71.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarinet'**
+  String get gmProgram71;
+
+  /// No description provided for @gmProgram72.
+  ///
+  /// In en, this message translates to:
+  /// **'Piccolo'**
+  String get gmProgram72;
+
+  /// No description provided for @gmProgram73.
+  ///
+  /// In en, this message translates to:
+  /// **'Flute'**
+  String get gmProgram73;
+
+  /// No description provided for @gmProgram74.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorder'**
+  String get gmProgram74;
+
+  /// No description provided for @gmProgram75.
+  ///
+  /// In en, this message translates to:
+  /// **'Pan flute'**
+  String get gmProgram75;
+
+  /// No description provided for @gmProgram76.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle blow'**
+  String get gmProgram76;
+
+  /// No description provided for @gmProgram77.
+  ///
+  /// In en, this message translates to:
+  /// **'Shakuhachi'**
+  String get gmProgram77;
+
+  /// No description provided for @gmProgram78.
+  ///
+  /// In en, this message translates to:
+  /// **'Whistle'**
+  String get gmProgram78;
+
+  /// No description provided for @gmProgram79.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocarina'**
+  String get gmProgram79;
+
+  /// No description provided for @gmProgram8.
+  ///
+  /// In en, this message translates to:
+  /// **'Celeste'**
+  String get gmProgram8;
+
+  /// No description provided for @gmProgram9.
+  ///
+  /// In en, this message translates to:
+  /// **'Glockenspiel'**
+  String get gmProgram9;
+
+  /// No description provided for @gmProgram10.
+  ///
+  /// In en, this message translates to:
+  /// **'Music box'**
+  String get gmProgram10;
+
+  /// No description provided for @gmProgram11.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibraphone'**
+  String get gmProgram11;
+
+  /// No description provided for @gmProgram12.
+  ///
+  /// In en, this message translates to:
+  /// **'Marimba'**
+  String get gmProgram12;
+
+  /// No description provided for @gmProgram13.
+  ///
+  /// In en, this message translates to:
+  /// **'Xylophone'**
+  String get gmProgram13;
+
+  /// No description provided for @gmProgram14.
+  ///
+  /// In en, this message translates to:
+  /// **'Tubular bells'**
+  String get gmProgram14;
+
+  /// No description provided for @gmProgram15.
+  ///
+  /// In en, this message translates to:
+  /// **'Dulcimer'**
+  String get gmProgram15;
+
+  /// No description provided for @gmProgram47.
+  ///
+  /// In en, this message translates to:
+  /// **'Timpani'**
+  String get gmProgram47;
+
+  /// No description provided for @gmProgram112.
+  ///
+  /// In en, this message translates to:
+  /// **'Tinker bell'**
+  String get gmProgram112;
+
+  /// No description provided for @gmProgram113.
+  ///
+  /// In en, this message translates to:
+  /// **'Agogo'**
+  String get gmProgram113;
+
+  /// No description provided for @gmProgram114.
+  ///
+  /// In en, this message translates to:
+  /// **'Steelpan'**
+  String get gmProgram114;
+
+  /// No description provided for @gmProgram115.
+  ///
+  /// In en, this message translates to:
+  /// **'Wood block'**
+  String get gmProgram115;
+
+  /// No description provided for @gmProgram116.
+  ///
+  /// In en, this message translates to:
+  /// **'Taiko drum'**
+  String get gmProgram116;
+
+  /// No description provided for @gmProgram117.
+  ///
+  /// In en, this message translates to:
+  /// **'Melodic tom'**
+  String get gmProgram117;
+
+  /// No description provided for @gmProgram118.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth drum'**
+  String get gmProgram118;
+
+  /// No description provided for @gmProgram119.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse cymbal'**
+  String get gmProgram119;
+
+  /// No description provided for @gmProgram104.
+  ///
+  /// In en, this message translates to:
+  /// **'Sitar'**
+  String get gmProgram104;
+
+  /// No description provided for @gmProgram105.
+  ///
+  /// In en, this message translates to:
+  /// **'Banjo'**
+  String get gmProgram105;
+
+  /// No description provided for @gmProgram106.
+  ///
+  /// In en, this message translates to:
+  /// **'Shamisen'**
+  String get gmProgram106;
+
+  /// No description provided for @gmProgram107.
+  ///
+  /// In en, this message translates to:
+  /// **'Koto'**
+  String get gmProgram107;
+
+  /// No description provided for @gmProgram108.
+  ///
+  /// In en, this message translates to:
+  /// **'Kalimba'**
+  String get gmProgram108;
+
+  /// No description provided for @gmProgram109.
+  ///
+  /// In en, this message translates to:
+  /// **'Bagpipes'**
+  String get gmProgram109;
+
+  /// No description provided for @gmProgram110.
+  ///
+  /// In en, this message translates to:
+  /// **'Fiddle'**
+  String get gmProgram110;
+
+  /// No description provided for @gmProgram111.
+  ///
+  /// In en, this message translates to:
+  /// **'Shenai'**
+  String get gmProgram111;
+
+  /// No description provided for @gmProgram80.
+  ///
+  /// In en, this message translates to:
+  /// **'Square lead'**
+  String get gmProgram80;
+
+  /// No description provided for @gmProgram81.
+  ///
+  /// In en, this message translates to:
+  /// **'Saw lead'**
+  String get gmProgram81;
+
+  /// No description provided for @gmProgram82.
+  ///
+  /// In en, this message translates to:
+  /// **'Synth calliope'**
+  String get gmProgram82;
+
+  /// No description provided for @gmProgram83.
+  ///
+  /// In en, this message translates to:
+  /// **'Chiffer lead'**
+  String get gmProgram83;
+
+  /// No description provided for @gmProgram84.
+  ///
+  /// In en, this message translates to:
+  /// **'Charang'**
+  String get gmProgram84;
+
+  /// No description provided for @gmProgram85.
+  ///
+  /// In en, this message translates to:
+  /// **'Solo vox'**
+  String get gmProgram85;
+
+  /// No description provided for @gmProgram86.
+  ///
+  /// In en, this message translates to:
+  /// **'5th saw wave'**
+  String get gmProgram86;
+
+  /// No description provided for @gmProgram87.
+  ///
+  /// In en, this message translates to:
+  /// **'Bass & lead'**
+  String get gmProgram87;
+
+  /// No description provided for @gmProgram88.
+  ///
+  /// In en, this message translates to:
+  /// **'Fantasia'**
+  String get gmProgram88;
+
+  /// No description provided for @gmProgram89.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm pad'**
+  String get gmProgram89;
+
+  /// No description provided for @gmProgram90.
+  ///
+  /// In en, this message translates to:
+  /// **'Polysynth'**
+  String get gmProgram90;
+
+  /// No description provided for @gmProgram91.
+  ///
+  /// In en, this message translates to:
+  /// **'Space voice'**
+  String get gmProgram91;
+
+  /// No description provided for @gmProgram92.
+  ///
+  /// In en, this message translates to:
+  /// **'Bowed glass'**
+  String get gmProgram92;
+
+  /// No description provided for @gmProgram93.
+  ///
+  /// In en, this message translates to:
+  /// **'Metal pad'**
+  String get gmProgram93;
+
+  /// No description provided for @gmProgram94.
+  ///
+  /// In en, this message translates to:
+  /// **'Halo pad'**
+  String get gmProgram94;
+
+  /// No description provided for @gmProgram95.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweep pad'**
+  String get gmProgram95;
+
+  /// No description provided for @instrumentFamily0.
+  ///
+  /// In en, this message translates to:
+  /// **'Piano & Keyboards'**
+  String get instrumentFamily0;
+
+  /// No description provided for @instrumentFamily1.
+  ///
+  /// In en, this message translates to:
+  /// **'Organs & Accordions'**
+  String get instrumentFamily1;
+
+  /// No description provided for @instrumentFamily2.
+  ///
+  /// In en, this message translates to:
+  /// **'Guitars'**
+  String get instrumentFamily2;
+
+  /// No description provided for @instrumentFamily3.
+  ///
+  /// In en, this message translates to:
+  /// **'Bass'**
+  String get instrumentFamily3;
+
+  /// No description provided for @instrumentFamily4.
+  ///
+  /// In en, this message translates to:
+  /// **'Strings'**
+  String get instrumentFamily4;
+
+  /// No description provided for @instrumentFamily5.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir & Voices'**
+  String get instrumentFamily5;
+
+  /// No description provided for @instrumentFamily6.
+  ///
+  /// In en, this message translates to:
+  /// **'Brass'**
+  String get instrumentFamily6;
+
+  /// No description provided for @instrumentFamily7.
+  ///
+  /// In en, this message translates to:
+  /// **'Woodwinds'**
+  String get instrumentFamily7;
+
+  /// No description provided for @instrumentFamily8.
+  ///
+  /// In en, this message translates to:
+  /// **'Percussion'**
+  String get instrumentFamily8;
+
+  /// No description provided for @instrumentFamily9.
+  ///
+  /// In en, this message translates to:
+  /// **'Folk & Traditional'**
+  String get instrumentFamily9;
+
+  /// No description provided for @instrumentFamily10.
+  ///
+  /// In en, this message translates to:
+  /// **'Synthesizers'**
+  String get instrumentFamily10;
+
+  /// No description provided for @instrumentNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrument {number}'**
+  String instrumentNumber(int number);
+
+  /// No description provided for @backToInstrumentFamilies.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to categories'**
+  String get backToInstrumentFamilies;
+
+  /// No description provided for @instrumentCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrument category'**
+  String get instrumentCategory;
+
+  /// No description provided for @steelpanRollHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic rolls on sustained notes'**
+  String get steelpanRollHelp;
+
+  /// No description provided for @musicalStyleInstruments.
+  ///
+  /// In en, this message translates to:
+  /// **'Musical style instruments'**
+  String get musicalStyleInstruments;
+
+  /// No description provided for @ensembleInstrumentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose instruments for each musical style. These choices apply to the full ensemble. For Choir practice, choose each track’s instrument in the hymn’s choir mixer.'**
+  String get ensembleInstrumentHelp;
+
+  /// No description provided for @drumKit.
+  ///
+  /// In en, this message translates to:
+  /// **'Drum kit'**
+  String get drumKit;
+
+  /// No description provided for @styleDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Style default'**
+  String get styleDefault;
+
+  /// No description provided for @solo.
+  ///
+  /// In en, this message translates to:
+  /// **'Solo'**
+  String get solo;
+
+  /// No description provided for @mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get mute;
+
+  /// No description provided for @previewError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to play the preview. Please try again.'**
+  String get previewError;
+
+  /// No description provided for @stopPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop preview'**
+  String get stopPreview;
+
+  /// No description provided for @previewHymn.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview • {title}'**
+  String previewHymn(String title);
+
+  /// No description provided for @previewPlaybackHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview replaces any currently playing hymn and stops when you leave this page.'**
+  String get previewPlaybackHelp;
+
+  /// No description provided for @choirPartsOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir parts • Original music'**
+  String get choirPartsOriginal;
+
+  /// No description provided for @separatePartsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate parts unavailable'**
+  String get separatePartsUnavailable;
+
+  /// No description provided for @choirMixerHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Original parts only; musical styles are bypassed. Mute silences a part. Solo lets you hear just the selected parts. Mute takes priority. Choose an instrument for each track below. Changes apply to hymn playback and are saved for this hymn. Tap a name to rename it.'**
+  String get choirMixerHelp;
+
+  /// No description provided for @noSeparateMidiTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'This MIDI does not contain separate playable tracks. Individual voices cannot be isolated.'**
+  String get noSeparateMidiTracks;
+
+  /// No description provided for @pauseParts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause parts'**
+  String get pauseParts;
+
+  /// No description provided for @playParts.
+  ///
+  /// In en, this message translates to:
+  /// **'Play parts'**
+  String get playParts;
+
+  /// No description provided for @partsPlaybackError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to play the parts. Please try again.'**
+  String get partsPlaybackError;
+
+  /// No description provided for @namePart.
+  ///
+  /// In en, this message translates to:
+  /// **'Name this part'**
+  String get namePart;
+
+  /// No description provided for @partNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Soprano, Alto, Tenor, Bass…'**
+  String get partNameHint;
+
+  /// No description provided for @originalInstrument.
+  ///
+  /// In en, this message translates to:
+  /// **'Original instrument'**
+  String get originalInstrument;
+
+  /// No description provided for @instrumentChangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to change this instrument. Please try again.'**
+  String get instrumentChangeError;
+
+  /// No description provided for @noMelodicInstrument.
+  ///
+  /// In en, this message translates to:
+  /// **'This track has no melodic instrument to change.'**
+  String get noMelodicInstrument;
+
+  /// No description provided for @noFreeMidiChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'This MIDI has no free channels for another independent instrument.'**
+  String get noFreeMidiChannels;
+
+  /// No description provided for @resetChoirMix.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset mix • Hear all parts'**
+  String get resetChoirMix;
+
+  /// No description provided for @volumeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} volume'**
+  String volumeLabel(String name);
+
+  /// No description provided for @volumePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} volume {value} percent'**
+  String volumePercent(String name, int value);
+
+  /// No description provided for @percentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} percent'**
+  String percentValue(int value);
+
+  /// No description provided for @roleMelody.
+  ///
+  /// In en, this message translates to:
+  /// **'Melody'**
+  String get roleMelody;
+
+  /// No description provided for @rolePianoChords.
+  ///
+  /// In en, this message translates to:
+  /// **'Piano chords'**
+  String get rolePianoChords;
+
+  /// No description provided for @roleWalkingBass.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking bass'**
+  String get roleWalkingBass;
+
+  /// No description provided for @roleDescant.
+  ///
+  /// In en, this message translates to:
+  /// **'Descant (when present)'**
+  String get roleDescant;
+
+  /// No description provided for @roleOffbeatOrgan.
+  ///
+  /// In en, this message translates to:
+  /// **'Offbeat organ'**
+  String get roleOffbeatOrgan;
+
+  /// No description provided for @roleOffbeatChords.
+  ///
+  /// In en, this message translates to:
+  /// **'Offbeat chords'**
+  String get roleOffbeatChords;
+
+  /// No description provided for @roleOrganBacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Organ backing'**
+  String get roleOrganBacking;
+
+  /// No description provided for @roleStrum.
+  ///
+  /// In en, this message translates to:
+  /// **'Strum'**
+  String get roleStrum;
+
+  /// No description provided for @roleShimmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Shimmer'**
+  String get roleShimmer;
+
+  /// No description provided for @roleAllMelodicParts.
+  ///
+  /// In en, this message translates to:
+  /// **'All melodic parts'**
+  String get roleAllMelodicParts;
 }
 
 class _AppLocalizationsDelegate

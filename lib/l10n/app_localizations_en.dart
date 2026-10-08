@@ -828,4 +828,511 @@ class AppLocalizationsEn extends AppLocalizations {
   String reportSubject(String book, String kind, int number) {
     return '$book · $kind $number';
   }
+
+  @override
+  String get gmProgram0 => 'Grand piano';
+
+  @override
+  String get gmProgram1 => 'Bright grand piano';
+
+  @override
+  String get gmProgram2 => 'Electric grand piano';
+
+  @override
+  String get gmProgram3 => 'Honky-tonk piano';
+
+  @override
+  String get gmProgram4 => 'Electric piano';
+
+  @override
+  String get gmProgram5 => 'FM electric piano';
+
+  @override
+  String get gmProgram6 => 'Harpsichord';
+
+  @override
+  String get gmProgram7 => 'Clavinet';
+
+  @override
+  String get gmProgram16 => 'Drawbar organ';
+
+  @override
+  String get gmProgram17 => 'Percussive organ';
+
+  @override
+  String get gmProgram18 => 'Rock organ';
+
+  @override
+  String get gmProgram19 => 'Church organ';
+
+  @override
+  String get gmProgram20 => 'Reed organ';
+
+  @override
+  String get gmProgram21 => 'Accordion';
+
+  @override
+  String get gmProgram22 => 'Harmonica';
+
+  @override
+  String get gmProgram23 => 'Bandoneon';
+
+  @override
+  String get gmProgram24 => 'Nylon guitar';
+
+  @override
+  String get gmProgram25 => 'Steel-string guitar';
+
+  @override
+  String get gmProgram26 => 'Jazz guitar';
+
+  @override
+  String get gmProgram27 => 'Clean electric guitar';
+
+  @override
+  String get gmProgram28 => 'Muted guitar';
+
+  @override
+  String get gmProgram29 => 'Overdrive guitar';
+
+  @override
+  String get gmProgram30 => 'Distortion guitar';
+
+  @override
+  String get gmProgram31 => 'Guitar harmonics';
+
+  @override
+  String get gmProgram32 => 'Acoustic bass';
+
+  @override
+  String get gmProgram33 => 'Finger bass';
+
+  @override
+  String get gmProgram34 => 'Pick bass';
+
+  @override
+  String get gmProgram35 => 'Fretless bass';
+
+  @override
+  String get gmProgram36 => 'Slap bass 1';
+
+  @override
+  String get gmProgram37 => 'Slap bass 2';
+
+  @override
+  String get gmProgram38 => 'Synth bass 1';
+
+  @override
+  String get gmProgram39 => 'Synth bass 2';
+
+  @override
+  String get gmProgram40 => 'Violin';
+
+  @override
+  String get gmProgram41 => 'Viola';
+
+  @override
+  String get gmProgram42 => 'Cello';
+
+  @override
+  String get gmProgram43 => 'Double bass';
+
+  @override
+  String get gmProgram44 => 'Tremolo strings';
+
+  @override
+  String get gmProgram45 => 'Pizzicato strings';
+
+  @override
+  String get gmProgram46 => 'Orchestral harp';
+
+  @override
+  String get gmProgram48 => 'String ensemble';
+
+  @override
+  String get gmProgram49 => 'Slow strings';
+
+  @override
+  String get gmProgram50 => 'Synth strings 1';
+
+  @override
+  String get gmProgram51 => 'Synth strings 2';
+
+  @override
+  String get gmProgram52 => 'Choir voices';
+
+  @override
+  String get gmProgram53 => 'Voice oohs';
+
+  @override
+  String get gmProgram54 => 'Synth voice';
+
+  @override
+  String get gmProgram56 => 'Trumpet';
+
+  @override
+  String get gmProgram57 => 'Trombone';
+
+  @override
+  String get gmProgram58 => 'Tuba';
+
+  @override
+  String get gmProgram59 => 'Muted trumpet';
+
+  @override
+  String get gmProgram60 => 'French horns';
+
+  @override
+  String get gmProgram61 => 'Brass section';
+
+  @override
+  String get gmProgram62 => 'Synth brass 1';
+
+  @override
+  String get gmProgram63 => 'Synth brass 2';
+
+  @override
+  String get gmProgram64 => 'Soprano sax';
+
+  @override
+  String get gmProgram65 => 'Alto sax';
+
+  @override
+  String get gmProgram66 => 'Tenor sax';
+
+  @override
+  String get gmProgram67 => 'Baritone sax';
+
+  @override
+  String get gmProgram68 => 'Oboe';
+
+  @override
+  String get gmProgram69 => 'English horn';
+
+  @override
+  String get gmProgram70 => 'Bassoon';
+
+  @override
+  String get gmProgram71 => 'Clarinet';
+
+  @override
+  String get gmProgram72 => 'Piccolo';
+
+  @override
+  String get gmProgram73 => 'Flute';
+
+  @override
+  String get gmProgram74 => 'Recorder';
+
+  @override
+  String get gmProgram75 => 'Pan flute';
+
+  @override
+  String get gmProgram76 => 'Bottle blow';
+
+  @override
+  String get gmProgram77 => 'Shakuhachi';
+
+  @override
+  String get gmProgram78 => 'Whistle';
+
+  @override
+  String get gmProgram79 => 'Ocarina';
+
+  @override
+  String get gmProgram8 => 'Celeste';
+
+  @override
+  String get gmProgram9 => 'Glockenspiel';
+
+  @override
+  String get gmProgram10 => 'Music box';
+
+  @override
+  String get gmProgram11 => 'Vibraphone';
+
+  @override
+  String get gmProgram12 => 'Marimba';
+
+  @override
+  String get gmProgram13 => 'Xylophone';
+
+  @override
+  String get gmProgram14 => 'Tubular bells';
+
+  @override
+  String get gmProgram15 => 'Dulcimer';
+
+  @override
+  String get gmProgram47 => 'Timpani';
+
+  @override
+  String get gmProgram112 => 'Tinker bell';
+
+  @override
+  String get gmProgram113 => 'Agogo';
+
+  @override
+  String get gmProgram114 => 'Steelpan';
+
+  @override
+  String get gmProgram115 => 'Wood block';
+
+  @override
+  String get gmProgram116 => 'Taiko drum';
+
+  @override
+  String get gmProgram117 => 'Melodic tom';
+
+  @override
+  String get gmProgram118 => 'Synth drum';
+
+  @override
+  String get gmProgram119 => 'Reverse cymbal';
+
+  @override
+  String get gmProgram104 => 'Sitar';
+
+  @override
+  String get gmProgram105 => 'Banjo';
+
+  @override
+  String get gmProgram106 => 'Shamisen';
+
+  @override
+  String get gmProgram107 => 'Koto';
+
+  @override
+  String get gmProgram108 => 'Kalimba';
+
+  @override
+  String get gmProgram109 => 'Bagpipes';
+
+  @override
+  String get gmProgram110 => 'Fiddle';
+
+  @override
+  String get gmProgram111 => 'Shenai';
+
+  @override
+  String get gmProgram80 => 'Square lead';
+
+  @override
+  String get gmProgram81 => 'Saw lead';
+
+  @override
+  String get gmProgram82 => 'Synth calliope';
+
+  @override
+  String get gmProgram83 => 'Chiffer lead';
+
+  @override
+  String get gmProgram84 => 'Charang';
+
+  @override
+  String get gmProgram85 => 'Solo vox';
+
+  @override
+  String get gmProgram86 => '5th saw wave';
+
+  @override
+  String get gmProgram87 => 'Bass & lead';
+
+  @override
+  String get gmProgram88 => 'Fantasia';
+
+  @override
+  String get gmProgram89 => 'Warm pad';
+
+  @override
+  String get gmProgram90 => 'Polysynth';
+
+  @override
+  String get gmProgram91 => 'Space voice';
+
+  @override
+  String get gmProgram92 => 'Bowed glass';
+
+  @override
+  String get gmProgram93 => 'Metal pad';
+
+  @override
+  String get gmProgram94 => 'Halo pad';
+
+  @override
+  String get gmProgram95 => 'Sweep pad';
+
+  @override
+  String get instrumentFamily0 => 'Piano & Keyboards';
+
+  @override
+  String get instrumentFamily1 => 'Organs & Accordions';
+
+  @override
+  String get instrumentFamily2 => 'Guitars';
+
+  @override
+  String get instrumentFamily3 => 'Bass';
+
+  @override
+  String get instrumentFamily4 => 'Strings';
+
+  @override
+  String get instrumentFamily5 => 'Choir & Voices';
+
+  @override
+  String get instrumentFamily6 => 'Brass';
+
+  @override
+  String get instrumentFamily7 => 'Woodwinds';
+
+  @override
+  String get instrumentFamily8 => 'Percussion';
+
+  @override
+  String get instrumentFamily9 => 'Folk & Traditional';
+
+  @override
+  String get instrumentFamily10 => 'Synthesizers';
+
+  @override
+  String instrumentNumber(int number) {
+    return 'Instrument $number';
+  }
+
+  @override
+  String get backToInstrumentFamilies => 'Back to categories';
+
+  @override
+  String get instrumentCategory => 'Instrument category';
+
+  @override
+  String get steelpanRollHelp => 'Automatic rolls on sustained notes';
+
+  @override
+  String get musicalStyleInstruments => 'Musical style instruments';
+
+  @override
+  String get ensembleInstrumentHelp =>
+      'Choose instruments for each musical style. These choices apply to the full ensemble. For Choir practice, choose each track’s instrument in the hymn’s choir mixer.';
+
+  @override
+  String get drumKit => 'Drum kit';
+
+  @override
+  String get styleDefault => 'Style default';
+
+  @override
+  String get solo => 'Solo';
+
+  @override
+  String get mute => 'Mute';
+
+  @override
+  String get previewError => 'Unable to play the preview. Please try again.';
+
+  @override
+  String get stopPreview => 'Stop preview';
+
+  @override
+  String previewHymn(String title) {
+    return 'Preview • $title';
+  }
+
+  @override
+  String get previewPlaybackHelp =>
+      'Preview replaces any currently playing hymn and stops when you leave this page.';
+
+  @override
+  String get choirPartsOriginal => 'Choir parts • Original music';
+
+  @override
+  String get separatePartsUnavailable => 'Separate parts unavailable';
+
+  @override
+  String get choirMixerHelp =>
+      'Original parts only; musical styles are bypassed. Mute silences a part. Solo lets you hear just the selected parts. Mute takes priority. Choose an instrument for each track below. Changes apply to hymn playback and are saved for this hymn. Tap a name to rename it.';
+
+  @override
+  String get noSeparateMidiTracks =>
+      'This MIDI does not contain separate playable tracks. Individual voices cannot be isolated.';
+
+  @override
+  String get pauseParts => 'Pause parts';
+
+  @override
+  String get playParts => 'Play parts';
+
+  @override
+  String get partsPlaybackError =>
+      'Unable to play the parts. Please try again.';
+
+  @override
+  String get namePart => 'Name this part';
+
+  @override
+  String get partNameHint => 'Soprano, Alto, Tenor, Bass…';
+
+  @override
+  String get originalInstrument => 'Original instrument';
+
+  @override
+  String get instrumentChangeError =>
+      'Unable to change this instrument. Please try again.';
+
+  @override
+  String get noMelodicInstrument =>
+      'This track has no melodic instrument to change.';
+
+  @override
+  String get noFreeMidiChannels =>
+      'This MIDI has no free channels for another independent instrument.';
+
+  @override
+  String get resetChoirMix => 'Reset mix • Hear all parts';
+
+  @override
+  String volumeLabel(String name) {
+    return '$name volume';
+  }
+
+  @override
+  String volumePercent(String name, int value) {
+    return '$name volume $value percent';
+  }
+
+  @override
+  String percentValue(int value) {
+    return '$value percent';
+  }
+
+  @override
+  String get roleMelody => 'Melody';
+
+  @override
+  String get rolePianoChords => 'Piano chords';
+
+  @override
+  String get roleWalkingBass => 'Walking bass';
+
+  @override
+  String get roleDescant => 'Descant (when present)';
+
+  @override
+  String get roleOffbeatOrgan => 'Offbeat organ';
+
+  @override
+  String get roleOffbeatChords => 'Offbeat chords';
+
+  @override
+  String get roleOrganBacking => 'Organ backing';
+
+  @override
+  String get roleStrum => 'Strum';
+
+  @override
+  String get roleShimmer => 'Shimmer';
+
+  @override
+  String get roleAllMelodicParts => 'All melodic parts';
 }

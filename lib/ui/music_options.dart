@@ -1,3 +1,5 @@
+import 'package:sdahymnal/l10n/app_text.dart';
+import 'package:sdahymnal/l10n/instrument_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/midi_player.dart';
@@ -26,7 +28,7 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Musical style instruments')),
+        appBar: AppBar(title: Text(context.appText.musicalStyleInstruments)),
         body: AnimatedBuilder(
           animation: Listenable.merge([
             MusicOptions.instance,
@@ -39,18 +41,18 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
             final playing =
                 MidiPlayer.isCurrent(MidiPlayer.instance.current.value, sample);
             return ListView(padding: const EdgeInsets.all(20), children: [
-              const Text(
-                  'Choose instruments for each musical style. These choices apply to the full ensemble. For Choir practice, choose each track’s instrument in the hymn’s choir mixer.'),
+              Text(context.appText.ensembleInstrumentHelp),
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
                 initialValue: style,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Musical style'),
+                decoration:
+                    InputDecoration(labelText: context.appText.musicalStyle),
                 items: [
                   for (final theme in InstrumentTheme.themes)
                     DropdownMenuItem(
                         value: theme.$1,
-                        child: Text(theme.$2,
+                        child: Text(context.appText.styleLabel(theme.$1),
                             maxLines: 1, overflow: TextOverflow.ellipsis))
                 ],
                 onChanged: (value) {
@@ -64,17 +66,17 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (role.key == 9)
-                            const Align(
+                            Align(
                               alignment: Alignment.centerLeft,
-                              child: Text('Drum kit'),
+                              child: Text(context.appText.drumKit),
                             )
                           else
                             InstrumentPicker(
                               key: ValueKey(
                                   '$style-${role.key}-${options.programs(style)[role.key]}'),
                               program: options.programs(style)[role.key],
-                              defaultLabel: 'Style default',
-                              label: role.value,
+                              defaultLabel: context.appText.styleDefault,
+                              label: context.appText.instrumentRole(role.value),
                               onChanged: (value) =>
                                   options.setProgram(style, role.key, value),
                             ),
@@ -85,7 +87,10 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
                               label:
                                   '${options.styleVolumes(style)[role.key] ?? 100}%',
                               semanticFormatterCallback: (value) =>
-                                  '${role.value} volume ${value.round()} percent',
+                                  context.appText.volumePercent(
+                                      context.appText
+                                          .instrumentRole(role.value),
+                                      value.round()),
                               value:
                                   (options.styleVolumes(style)[role.key] ?? 100)
                                       .toDouble(),
@@ -97,7 +102,7 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
                             )),
                             FilterChip(
                                 key: ValueKey('style-solo-${role.key}'),
-                                label: const Text('Solo'),
+                                label: Text(context.appText.solo),
                                 selected:
                                     options.styleSolo(style).contains(role.key),
                                 onSelected: (value) => options.setStyleSolo(
@@ -121,21 +126,19 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
                           }
                         } catch (_) {
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Unable to play the preview. Please try again.')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(context.appText.previewError)));
                           }
                         } finally {
                           if (mounted) setState(() => busy = false);
                         }
                       },
                 icon: Icon(playing ? Icons.stop : Icons.play_arrow),
-                label:
-                    Text(playing ? 'Stop preview' : 'Preview • Amazing Grace'),
+                label: Text(playing
+                    ? context.appText.stopPreview
+                    : context.appText.previewHymn(sample.title)),
               ),
-              const Text(
-                  'Preview replaces any currently playing hymn and stops when you leave this page.'),
+              Text(context.appText.previewPlaybackHelp),
             ]);
           },
         ),
@@ -158,8 +161,8 @@ class ChoirPartsButton extends StatelessWidget {
             key: const ValueKey('choir-parts'),
             icon: const Icon(Icons.tune, size: 18),
             label: Text(available
-                ? 'Choir parts • Original music'
-                : 'Separate parts unavailable'),
+                ? context.appText.choirPartsOriginal
+                : context.appText.separatePartsUnavailable),
             onPressed: () => showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
@@ -191,15 +194,14 @@ class ChoirPartsPanel extends StatelessWidget {
       ]),
       builder: (context, _) =>
           ListView(padding: const EdgeInsets.all(20), children: [
-        Text('Choir practice', style: Theme.of(context).textTheme.titleLarge),
+        Text(context.appText.choirPractice,
+            style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
-        const Text(
-            'Original parts only; musical styles are bypassed. Mute silences a part. Solo lets you hear just the selected parts. Mute takes priority. Choose an instrument for each track below. Changes apply to hymn playback and are saved for this hymn. Tap a name to rename it.'),
+        Text(context.appText.choirMixerHelp),
         if (player.parts.value.length < 2)
-          const Padding(
+          Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
-              child: Text(
-                  'This MIDI does not contain separate playable tracks. Individual voices cannot be isolated.'))
+              child: Text(context.appText.noSeparateMidiTracks))
         else ...[
           FilledButton.icon(
             icon: Icon(MidiPlayer.isCurrent(player.current.value, hymn) &&
@@ -208,8 +210,8 @@ class ChoirPartsPanel extends StatelessWidget {
                 : Icons.play_arrow),
             label: Text(MidiPlayer.isCurrent(player.current.value, hymn) &&
                     !player.current.value!.paused
-                ? 'Pause parts'
-                : 'Play parts'),
+                ? context.appText.pauseParts
+                : context.appText.playParts),
             onPressed: () async {
               try {
                 await player.toggle(hymn);
@@ -218,9 +220,8 @@ class ChoirPartsPanel extends StatelessWidget {
                 }
               } catch (_) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content:
-                          Text('Unable to play the parts. Please try again.')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(context.appText.partsPlaybackError)));
                 }
               }
             },
@@ -232,70 +233,79 @@ class ChoirPartsPanel extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(children: [
-                          Expanded(
-                              child: TextButton(
-                            onPressed: () async {
-                              final id = '${hymn.version}:${hymn.number}';
-                              var editedName =
-                                  options.partName(id, part.index, part.name);
-                              final name = await showDialog<String>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: const Text('Name this part'),
-                                        content: TextFormField(
-                                            initialValue: editedName,
-                                            onChanged: (value) =>
-                                                editedName = value,
-                                            autofocus: true,
-                                            maxLength: 80,
-                                            decoration: const InputDecoration(
-                                                hintText:
-                                                    'Soprano, Alto, Tenor, Bass…')),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Cancel')),
-                                          TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  context, editedName),
-                                              child: const Text('Save'))
-                                        ],
-                                      ));
-                              if (name != null) {
-                                await options.renamePart(id, part.index, name);
-                              }
-                            },
-                            child: Text(
-                                options.partName(
-                                    '${hymn.version}:${hymn.number}',
-                                    part.index,
-                                    part.name),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis),
-                          )),
-                          Row(mainAxisSize: MainAxisSize.min, children: [
-                            FilterChip(
-                                label: const Text('Mute'),
-                                selected: player.mutedParts.value
-                                    .contains(part.index),
-                                onSelected: (value) =>
-                                    player.setPartMuted(part.index, value)),
-                            FilterChip(
-                                label: const Text('Solo'),
-                                selected:
-                                    player.soloParts.value.contains(part.index),
-                                onSelected: (value) =>
-                                    player.setPartSolo(part.index, value)),
-                          ]),
-                        ]),
+                        OverflowBar(
+                            alignment: MainAxisAlignment.spaceBetween,
+                            overflowAlignment: OverflowBarAlignment.end,
+                            spacing: 8,
+                            overflowSpacing: 4,
+                            children: [
+                              TextButton(
+                                onPressed: () async {
+                                  final id = '${hymn.version}:${hymn.number}';
+                                  var editedName = options.partName(
+                                      id, part.index, part.name);
+                                  final name = await showDialog<String>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            title:
+                                                Text(context.appText.namePart),
+                                            content: TextFormField(
+                                                initialValue: editedName,
+                                                onChanged: (value) =>
+                                                    editedName = value,
+                                                autofocus: true,
+                                                maxLength: 80,
+                                                decoration: InputDecoration(
+                                                    hintText: context
+                                                        .appText.partNameHint)),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: Text(
+                                                      context.appText.cancel)),
+                                              TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, editedName),
+                                                  child: Text(
+                                                      context.appText.save))
+                                            ],
+                                          ));
+                                  if (name != null) {
+                                    await options.renamePart(
+                                        id, part.index, name);
+                                  }
+                                },
+                                child: Text(
+                                    options.partName(
+                                        '${hymn.version}:${hymn.number}',
+                                        part.index,
+                                        part.name),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                              Wrap(spacing: 4, children: [
+                                FilterChip(
+                                    label: Text(context.appText.mute),
+                                    selected: player.mutedParts.value
+                                        .contains(part.index),
+                                    onSelected: (value) =>
+                                        player.setPartMuted(part.index, value)),
+                                FilterChip(
+                                    label: Text(context.appText.solo),
+                                    selected: player.soloParts.value
+                                        .contains(part.index),
+                                    onSelected: (value) =>
+                                        player.setPartSolo(part.index, value)),
+                              ]),
+                            ]),
                         InstrumentPicker(
                           key: ValueKey(
                               'part-instrument-${hymn.version}-${hymn.number}-${part.index}-${options.trackPrograms('${hymn.version}:${hymn.number}')[part.index]}'),
                           program: options.trackPrograms(
                               '${hymn.version}:${hymn.number}')[part.index],
-                          defaultLabel: 'Original instrument',
+                          defaultLabel: context.appText.originalInstrument,
                           onChanged: (value) async {
                             try {
                               await player.setPartInstrument(
@@ -303,10 +313,22 @@ class ChoirPartsPanel extends StatelessWidget {
                             } catch (error) {
                               // Restore the saved choice if the MIDI cannot isolate this track.
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text(error is FormatException
-                                        ? error.message.toString()
-                                        : 'Unable to change this instrument. Please try again.')));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(error is FormatException
+                                            ? switch (
+                                                error.message.toString()) {
+                                                'This track has no melodic instrument to change.' =>
+                                                  context.appText
+                                                      .noMelodicInstrument,
+                                                'This MIDI has no free channels for another independent instrument.' =>
+                                                  context.appText
+                                                      .noFreeMidiChannels,
+                                                _ => context.appText
+                                                    .instrumentChangeError,
+                                              }
+                                            : context.appText
+                                                .instrumentChangeError)));
                               }
                             }
                           },
@@ -327,7 +349,7 @@ class ChoirPartsPanel extends StatelessWidget {
                     ))),
           TextButton(
               onPressed: () => player.resetParts(hymn: hymn),
-              child: const Text('Reset mix • Hear all parts')),
+              child: Text(context.appText.resetChoirMix)),
         ],
       ]),
     );
@@ -370,7 +392,7 @@ class _TrackVolumeState extends State<_TrackVolume> {
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 16)),
             child: Semantics(
-                label: '${widget.name} volume',
+                label: context.appText.volumeLabel(widget.name),
                 child: Slider(
                   key: ValueKey('track-volume-${widget.track}'),
                   value: value,
@@ -378,7 +400,7 @@ class _TrackVolumeState extends State<_TrackVolume> {
                   max: 100,
                   divisions: 100,
                   semanticFormatterCallback: (value) =>
-                      '${value.round()} percent',
+                      context.appText.percentValue(value.round()),
                   onChanged: (value) => setState(() => _dragValue = value),
                   onChangeEnd: (value) async {
                     try {

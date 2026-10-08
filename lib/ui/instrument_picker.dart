@@ -1,3 +1,5 @@
+import 'package:sdahymnal/l10n/app_text.dart';
+import 'package:sdahymnal/l10n/instrument_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/instrument_catalog.dart';
 
@@ -40,8 +42,7 @@ class InstrumentPicker extends StatelessWidget {
                     if (label != null) label!,
                     program == null
                         ? defaultLabel
-                        : instrumentNames[program] ??
-                            'Instrument ${program! + 1}',
+                        : context.appText.instrumentName(program!),
                   ].join(' · '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis)),
@@ -66,17 +67,20 @@ class _InstrumentChoicesState extends State<_InstrumentChoices> {
           leading: category == null
               ? const Icon(Icons.piano)
               : IconButton(
-                  tooltip: 'Back to categories',
+                  tooltip: context.appText.backToInstrumentFamilies,
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => setState(() => category = null)),
-          title: Text(category ?? 'Instrument category'),
+          title: Text(category == null
+              ? context.appText.instrumentCategory
+              : context.appText.instrumentFamily(category!)),
           trailing: IconButton(
-              tooltip: 'Close',
+              tooltip: context.appText.close,
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.pop(context)),
         ),
         Expanded(
             child: ListView(
+                key: ValueKey(category ?? 'instrument-families'),
                 children: category == null
                     ? [
                         ListTile(
@@ -87,7 +91,8 @@ class _InstrumentChoicesState extends State<_InstrumentChoices> {
                             onTap: () => Navigator.pop(context, -1)),
                         for (final name in instrumentCategories.keys)
                           ListTile(
-                              title: Text(name),
+                              title:
+                                  Text(context.appText.instrumentFamily(name)),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () => setState(() => category = name)),
                       ]
@@ -95,10 +100,10 @@ class _InstrumentChoicesState extends State<_InstrumentChoices> {
                         for (final entry
                             in instrumentCategories[category]!.entries)
                           ListTile(
-                              title: Text(entry.value),
+                              title: Text(
+                                  context.appText.instrumentName(entry.key)),
                               subtitle: entry.key == 114
-                                  ? const Text(
-                                      'Automatic rolls on sustained notes')
+                                  ? Text(context.appText.steelpanRollHelp)
                                   : null,
                               trailing: widget.program == entry.key
                                   ? const Icon(Icons.check)

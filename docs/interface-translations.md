@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 238-message
+not claim that the app interface is fully translated. The 401-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -86,3 +86,16 @@ submission status, failures, and success messages. Compact tests exercise failed
 submission followed by retry in all four locales, both designs and both themes
 with larger text. Source titles/descriptions and stable report IDs stay unchanged.
 Tests inject a mock submitter and never send feedback to administrators.
+
+Instrument customization now translates every offered General MIDI preset
+(111 programs), 11 families, ensemble roles, and choir controls. The `gmProgramN`
+keys use zero-based bank IDs; their labels are translated, never the IDs. The
+`instrument_text.dart` adapter keeps mapping separate from the sound catalog.
+Coverage checks compare all English labels with the catalog and require mapped
+labels for every offered program in all four locales. Compact picker tests
+select/reset a real preset and reload preferences while retaining Jazz melody
+volume at 50%. Choir tests rename source tracks, mute/solo/reset by track ID, and
+retain custom names. Ensemble tests preserve style IDs, solo state, and volume.
+Instrument families open at the top of their own lists. Choir card actions wrap
+when larger text needs more room. These remain draft translations awaiting fluent
+review.
