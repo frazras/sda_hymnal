@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -118,22 +119,9 @@ class _HymnListState extends State<HymnList> {
     _filteredHymns = searchHymns(_currentHymns, _query);
   }
 
-  /// toLocaleString()-style thousands separator ("1,398").
-  static String _thousands(int n) {
-    final s = n.toString();
-    final b = StringBuffer();
-    for (var i = 0; i < s.length; i++) {
-      if (i > 0 && (s.length - i) % 3 == 0) b.write(',');
-      b.write(s[i]);
-    }
-    return b.toString();
-  }
-
-  String get _countText {
-    final count = _filteredHymns.length;
-    if (_query.trim().isEmpty) return '${_thousands(count)} hymns';
-    return '${_thousands(count)} ${count == 1 ? 'match' : 'matches'}';
-  }
+  String get _countText => _query.trim().isEmpty
+      ? context.appText.hymnCount(_filteredHymns.length)
+      : context.appText.matchCount(_filteredHymns.length);
 
   void _openHymn(Hymn hymn) {
     if (_searchTimer?.isActive ?? false) _recordSearch();
@@ -189,7 +177,7 @@ class _HymnListState extends State<HymnList> {
               decoration: InputDecoration(
                 isCollapsed: true,
                 border: InputBorder.none,
-                hintText: 'Search by title, lyrics or number',
+                hintText: context.appText.searchByTitleLyricsNumber,
                 hintStyle: TextStyle(
                   fontFamily: kSans,
                   fontSize: 15.5,
@@ -236,14 +224,24 @@ class _HymnListState extends State<HymnList> {
   Widget _chipsRow(HymnalTokens t) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-      child: Row(
+      child: Wrap(
+        spacing: 7,
+        runSpacing: 6,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          _chip(t, 'ALL', 'All'),
-          const SizedBox(width: 7),
-          _chip(t, 'NEW', widget.english ? 'New Hymnal' : 'Nuevo'),
-          const SizedBox(width: 7),
-          _chip(t, 'OLD', widget.english ? 'Old Hymnal' : 'Antiguo'),
-          const Spacer(),
+          _chip(t, 'ALL', context.appText.all),
+          _chip(
+              t,
+              'NEW',
+              widget.english
+                  ? context.appText.newHymnal
+                  : context.appText.newEdition),
+          _chip(
+              t,
+              'OLD',
+              widget.english
+                  ? context.appText.oldHymnal
+                  : context.appText.oldEdition),
           Text(
             _countText,
             style: TextStyle(fontFamily: kSans, fontSize: 12, color: t.faint),
@@ -337,13 +335,11 @@ class _HymnListState extends State<HymnList> {
           ClassicSearchControls(
               controller: _searchController,
               filter: _filter,
-              filterLabel: widget.english
-                  ? null
-                  : switch (_filter) {
-                      'NEW' => 'Nuevo',
-                      'OLD' => 'Antiguo',
-                      _ => 'All'
-                    },
+              filterLabel: switch (_filter) {
+                'NEW' => context.appText.newEdition.toUpperCase(),
+                'OLD' => context.appText.oldEdition.toUpperCase(),
+                _ => context.appText.all.toUpperCase(),
+              },
               onQuery: _setQuery,
               onFilter: () => setState(() {
                     _filter = switch (_filter) {
@@ -375,8 +371,12 @@ class _HymnListState extends State<HymnList> {
                                       HymnOccasionsPage(hymns: widget.hymns)));
                             },
                   icon: const Icon(Icons.library_music_outlined, size: 18),
-                  label: Text(widget.english ? 'Hymns by occasion' : 'Topics',
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                  label: Text(
+                      widget.english
+                          ? context.appText.hymnsByOccasion
+                          : context.appText.topics,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                 ),
               ),
               if (widget.english)
@@ -393,7 +393,7 @@ class _HymnListState extends State<HymnList> {
                             );
                           },
                     icon: const Icon(Icons.menu_book_outlined, size: 18),
-                    label: const Text('Additional readings',
+                    label: Text(context.appText.additionalReadings,
                         maxLines: 1, overflow: TextOverflow.ellipsis),
                   ),
                 ),

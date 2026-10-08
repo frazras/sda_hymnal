@@ -408,4 +408,102 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deleteDigit => 'Apagar dígito';
+
+  @override
+  String get all => 'Todos';
+
+  @override
+  String get newHymnal => 'Hinário novo';
+
+  @override
+  String get oldHymnal => 'Hinário antigo';
+
+  @override
+  String get newEdition => 'Novo';
+
+  @override
+  String get oldEdition => 'Antigo';
+
+  @override
+  String get hymnsLabel => 'Hinos';
+
+  @override
+  String get searchByTitleLyricsNumber => 'Buscar por título, letra ou número';
+
+  @override
+  String get hymnNumber => 'Número do hino';
+
+  @override
+  String get chooseHymnal => 'Escolher hinário';
+
+  @override
+  String get allLanguages => 'Todos os idiomas';
+
+  @override
+  String get searchAllLanguages => 'Buscar em todos os idiomas';
+
+  @override
+  String get allHymns => 'Todos os hinos';
+
+  @override
+  String get noMatchingHymns => 'Nenhum hino encontrado.';
+
+  @override
+  String get noHymnInEdition => 'Nenhum hino encontrado nesta edição.';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String hymnCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hinos',
+      one: '$countString hino',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String matchCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString resultados',
+      one: '$countString resultado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hymnCountScope(num count, String scope) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hinos',
+      one: '$countString hino',
+    );
+    return '$_temp0 · $scope';
+  }
+
+  @override
+  String hymnalFilter(String filter) {
+    return 'Filtro de hinário: $filter';
+  }
+
+  @override
+  String get titleLyricsNumber => 'Título, letra ou número';
 }

@@ -406,4 +406,102 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteDigit => 'Delete digit';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get newHymnal => 'New Hymnal';
+
+  @override
+  String get oldHymnal => 'Old Hymnal';
+
+  @override
+  String get newEdition => 'New';
+
+  @override
+  String get oldEdition => 'Old';
+
+  @override
+  String get hymnsLabel => 'Hymns';
+
+  @override
+  String get searchByTitleLyricsNumber => 'Search by title, lyrics or number';
+
+  @override
+  String get hymnNumber => 'Hymn number';
+
+  @override
+  String get chooseHymnal => 'Choose hymnal';
+
+  @override
+  String get allLanguages => 'All languages';
+
+  @override
+  String get searchAllLanguages => 'Search all languages';
+
+  @override
+  String get allHymns => 'All hymns';
+
+  @override
+  String get noMatchingHymns => 'No matching hymns.';
+
+  @override
+  String get noHymnInEdition => 'No hymn found in this edition.';
+
+  @override
+  String get offline => 'Offline';
+
+  @override
+  String hymnCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hymns',
+      one: '$countString hymn',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String matchCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString matches',
+      one: '$countString match',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hymnCountScope(num count, String scope) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hymns',
+      one: '$countString hymn',
+    );
+    return '$_temp0 · $scope';
+  }
+
+  @override
+  String hymnalFilter(String filter) {
+    return 'Hymnal filter: $filter';
+  }
+
+  @override
+  String get titleLyricsNumber => 'Title, lyrics or number';
 }

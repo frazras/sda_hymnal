@@ -141,5 +141,59 @@
   "hymnOrReadingNumber": "HYMN OR READING NUMBER",
   "hymnNumberHeading": "HYMN NUMBER",
   "clearNumber": "Clear number",
-  "deleteDigit": "Delete digit"
+  "deleteDigit": "Delete digit",
+  "all": "All",
+  "newHymnal": "New Hymnal",
+  "oldHymnal": "Old Hymnal",
+  "newEdition": "New",
+  "oldEdition": "Old",
+  "hymnsLabel": "Hymns",
+  "searchByTitleLyricsNumber": "Search by title, lyrics or number",
+  "hymnNumber": "Hymn number",
+  "chooseHymnal": "Choose hymnal",
+  "allLanguages": "All languages",
+  "searchAllLanguages": "Search all languages",
+  "allHymns": "All hymns",
+  "noMatchingHymns": "No matching hymns.",
+  "noHymnInEdition": "No hymn found in this edition.",
+  "offline": "Offline",
+  "hymnCount": "{count, plural, =1{{count} hymn} other{{count} hymns}}",
+  "matchCount": "{count, plural, =1{{count} match} other{{count} matches}}",
+  "hymnCountScope": "{count, plural, =1{{count} hymn} other{{count} hymns}} · {scope}",
+  "hymnalFilter": "Hymnal filter: {filter}",
+  "@hymnCount": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@matchCount": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@hymnCountScope": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "format": "decimalPattern"
+      },
+      "scope": {
+        "type": "String"
+      }
+    }
+  },
+  "@hymnalFilter": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "titleLyricsNumber": "Title, lyrics or number"
 }

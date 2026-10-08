@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymnal_pack.dart';
@@ -11,7 +12,7 @@ class HymnalTopicsPage extends StatelessWidget {
   const HymnalTopicsPage({super.key, required this.packs});
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Topics')),
+        appBar: AppBar(title: Text(context.appText.topics)),
         body: ListView(children: [
           for (final pack in packs) ...[
             if (packs.length > 1)
@@ -23,7 +24,8 @@ class HymnalTopicsPage extends StatelessWidget {
                 for (final topic in pack.topics.where((t) => t.group == group))
                   ListTile(
                       title: Text(topic.title),
-                      subtitle: Text('${topic.hymns.length} hymns'),
+                      subtitle:
+                          Text(context.appText.hymnCount(topic.hymns.length)),
                       onTap: () => Navigator.push(
                           context,
                           slideRoute(Scaffold(
@@ -56,11 +58,11 @@ class HymnalSelector extends StatelessWidget {
           key: const ValueKey('hymnal-selector'),
           value: value,
           isExpanded: true,
-          hint: const Text('Choose hymnal'),
+          hint: Text(context.appText.chooseHymnal),
           items: [
             if (allowAll)
-              const DropdownMenuItem(
-                  value: 'all', child: Text('All languages')),
+              DropdownMenuItem(
+                  value: 'all', child: Text(context.appText.allLanguages)),
             const DropdownMenuItem(
                 value: 'english',
                 child: Text('English · Old & New Hymnal',
@@ -112,11 +114,11 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
           controller: _query,
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
-              labelText: 'Search all languages',
+              labelText: context.appText.searchAllLanguages,
               prefixIcon: const Icon(Icons.search),
               border: const OutlineInputBorder(),
               suffixIcon: IconButton(
-                  tooltip: 'Clear',
+                  tooltip: context.appText.clearSearch,
                   icon: const Icon(Icons.clear),
                   onPressed: () => setState(_query.clear))),
         ),
@@ -124,16 +126,18 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
-          Expanded(child: Text('${results.length} hymns · All languages')),
+          Expanded(
+              child: Text(context.appText.hymnCountScope(
+                  results.length, context.appText.allLanguages))),
           if (widget.keyboardOpen)
             TextButton(
                 onPressed: () => FocusScope.of(context).unfocus(),
-                child: const Text('Done')),
+                child: Text(context.appText.done)),
         ]),
       ),
       Expanded(
           child: results.isEmpty
-              ? const Center(child: Text('No matching hymns.'))
+              ? Center(child: Text(context.appText.noMatchingHymns))
               : ListView.builder(
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
@@ -215,15 +219,15 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
         height: MediaQuery.sizeOf(context).height * .75,
         child: Column(children: [
           ListTile(
-              title: const Text('Topics'),
+              title: Text(context.appText.topics),
               trailing: IconButton(
-                  tooltip: 'Close',
+                  tooltip: context.appText.close,
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.pop(context))),
           Expanded(
               child: ListView(children: [
             ListTile(
-                title: const Text('All hymns'),
+                title: Text(context.appText.allHymns),
                 onTap: () => Navigator.pop(context, 'all')),
             for (final group in widget.pack.topics.map((t) => t.group).toSet())
               ExpansionTile(title: Text(group), children: [
@@ -231,7 +235,8 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
                     in widget.pack.topics.where((t) => t.group == group))
                   ListTile(
                       title: Text(topic.title),
-                      subtitle: Text('${topic.hymns.length} hymns'),
+                      subtitle:
+                          Text(context.appText.hymnCount(topic.hymns.length)),
                       onTap: () => Navigator.pop(context, topic.id)),
               ]),
           ])),
@@ -264,13 +269,14 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
               widget.numbersOnly ? TextInputType.number : TextInputType.text,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            labelText:
-                widget.numbersOnly ? 'Hymn number' : 'Title, lyrics or number',
+            labelText: widget.numbersOnly
+                ? context.appText.hymnNumber
+                : context.appText.titleLyricsNumber,
             prefixIcon: Icon(widget.numbersOnly ? Icons.numbers : Icons.search),
             suffixIcon: query.isEmpty
                 ? null
                 : IconButton(
-                    tooltip: 'Clear',
+                    tooltip: context.appText.clearSearch,
                     icon: const Icon(Icons.clear),
                     onPressed: () => setState(_query.clear)),
             border: const OutlineInputBorder(),
@@ -285,25 +291,27 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
           Expanded(
-              child: Text('${results.length} hymns · Offline',
+              child: Text(
+                  context.appText
+                      .hymnCountScope(results.length, context.appText.offline),
                   style: TextStyle(color: t.muted))),
           if (widget.keyboardOpen ||
               MediaQuery.viewInsetsOf(context).bottom > 0)
             TextButton(
                 onPressed: () => FocusScope.of(context).unfocus(),
-                child: const Text('Done')),
+                child: Text(context.appText.done)),
           if (widget.pack.topics.isNotEmpty)
             Flexible(
                 child: TextButton.icon(
                     onPressed: _chooseTopic,
                     icon: const Icon(Icons.list_alt),
-                    label: Text(_topic?.title ?? 'Topics',
+                    label: Text(_topic?.title ?? context.appText.topics,
                         maxLines: 2, overflow: TextOverflow.ellipsis))),
         ]),
       ),
       Expanded(
           child: results.isEmpty
-              ? const Center(child: Text('No hymn found in this edition.'))
+              ? Center(child: Text(context.appText.noHymnInEdition))
               : ListView.builder(
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,

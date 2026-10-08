@@ -408,4 +408,109 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deleteDigit => 'Удалить цифру';
+
+  @override
+  String get all => 'Все';
+
+  @override
+  String get newHymnal => 'Новый сборник';
+
+  @override
+  String get oldHymnal => 'Старый сборник';
+
+  @override
+  String get newEdition => 'Новый';
+
+  @override
+  String get oldEdition => 'Старый';
+
+  @override
+  String get hymnsLabel => 'Гимны';
+
+  @override
+  String get searchByTitleLyricsNumber =>
+      'Поиск по названию, тексту или номеру';
+
+  @override
+  String get hymnNumber => 'Номер гимна';
+
+  @override
+  String get chooseHymnal => 'Выберите сборник';
+
+  @override
+  String get allLanguages => 'Все языки';
+
+  @override
+  String get searchAllLanguages => 'Поиск на всех языках';
+
+  @override
+  String get allHymns => 'Все гимны';
+
+  @override
+  String get noMatchingHymns => 'Гимны не найдены.';
+
+  @override
+  String get noHymnInEdition => 'В этом сборнике гимны не найдены.';
+
+  @override
+  String get offline => 'Без интернета';
+
+  @override
+  String hymnCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString гимна',
+      many: '$countString гимнов',
+      few: '$countString гимна',
+      one: '$countString гимн',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String matchCount(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString результата',
+      many: '$countString результатов',
+      few: '$countString результата',
+      one: '$countString результат',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hymnCountScope(num count, String scope) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString гимна',
+      many: '$countString гимнов',
+      few: '$countString гимна',
+      one: '$countString гимн',
+    );
+    return '$_temp0 · $scope';
+  }
+
+  @override
+  String hymnalFilter(String filter) {
+    return 'Фильтр сборника: $filter';
+  }
+
+  @override
+  String get titleLyricsNumber => 'Название, текст или номер';
 }

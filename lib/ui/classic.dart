@@ -292,14 +292,15 @@ class ClassicSearchControls extends StatelessWidget {
           )),
           const SizedBox(width: 6),
           Semantics(
-              label: 'Hymnal filter: $filter',
+              label: context.appText.hymnalFilter(filterLabel ?? filter),
               child: ElevatedButton(
                 onPressed: onFilter,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(8)),
-                child: Text('${filterLabel ?? filter}\nHymns',
+                child: Text(
+                    '${filterLabel ?? filter}\n${context.appText.hymnsLabel}',
                     textAlign: TextAlign.center),
               )),
         ]),

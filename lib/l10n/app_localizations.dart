@@ -869,6 +869,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete digit'**
   String get deleteDigit;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @newHymnal.
+  ///
+  /// In en, this message translates to:
+  /// **'New Hymnal'**
+  String get newHymnal;
+
+  /// No description provided for @oldHymnal.
+  ///
+  /// In en, this message translates to:
+  /// **'Old Hymnal'**
+  String get oldHymnal;
+
+  /// No description provided for @newEdition.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newEdition;
+
+  /// No description provided for @oldEdition.
+  ///
+  /// In en, this message translates to:
+  /// **'Old'**
+  String get oldEdition;
+
+  /// No description provided for @hymnsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns'**
+  String get hymnsLabel;
+
+  /// No description provided for @searchByTitleLyricsNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by title, lyrics or number'**
+  String get searchByTitleLyricsNumber;
+
+  /// No description provided for @hymnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymn number'**
+  String get hymnNumber;
+
+  /// No description provided for @chooseHymnal.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose hymnal'**
+  String get chooseHymnal;
+
+  /// No description provided for @allLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'All languages'**
+  String get allLanguages;
+
+  /// No description provided for @searchAllLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Search all languages'**
+  String get searchAllLanguages;
+
+  /// No description provided for @allHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'All hymns'**
+  String get allHymns;
+
+  /// No description provided for @noMatchingHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching hymns.'**
+  String get noMatchingHymns;
+
+  /// No description provided for @noHymnInEdition.
+  ///
+  /// In en, this message translates to:
+  /// **'No hymn found in this edition.'**
+  String get noHymnInEdition;
+
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offline;
+
+  /// No description provided for @hymnCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} hymn} other{{count} hymns}}'**
+  String hymnCount(num count);
+
+  /// No description provided for @matchCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} match} other{{count} matches}}'**
+  String matchCount(num count);
+
+  /// No description provided for @hymnCountScope.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{count} hymn} other{{count} hymns}} · {scope}'**
+  String hymnCountScope(num count, String scope);
+
+  /// No description provided for @hymnalFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymnal filter: {filter}'**
+  String hymnalFilter(String filter);
+
+  /// No description provided for @titleLyricsNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Title, lyrics or number'**
+  String get titleLyricsNumber;
 }
 
 class _AppLocalizationsDelegate

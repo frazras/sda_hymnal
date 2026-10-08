@@ -13,11 +13,12 @@ values fall back to English without overwriting the saved value.
 
 The catalogs and Flutter localization delegates are in place. Navigation, main
 reader menu, musical style sheet, top-level settings, and keypad discovery labels
-now consume the messages. Search, favorites, and several reader/settings child
-screens still need coverage. **Do not expose the language selector until
+now consume the messages. Search labels, result counts, topic controls, and empty states also consume
+localized messages. Favorites and several reader/settings child screens still
+need coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 128-message
+not claim that the app interface is fully translated. The 148-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -47,3 +48,9 @@ Compact regression checks exercise translated navigation and the musical style
 sheet in all four locales, at 320×568 with 1.3 text scale and both design token
 sets in light/dark mode. Navigation labels stay on one line and scale down only
 when necessary. This does not certify coverage or layout of untranslated screens.
+
+Search regression checks preserve title-first accent-insensitive ranking in all
+four interface locales and both designs. Filters wrap on narrow screens; count
+messages use ICU plurals and locale-aware number formatting. All-book search
+actions are checked at 320×568 with 1.3 text scale and a 220px keyboard inset.
+Book titles, edition identities, topic titles, and lyrics remain source content.
