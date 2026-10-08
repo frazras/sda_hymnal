@@ -719,4 +719,73 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get clearHistoryQuestion => 'Limpar histórico de leitura?';
+
+  @override
+  String get clearHistoryHelp =>
+      'Isso remove os hinos abertos recentemente. Seus favoritos e categorias serão mantidos.';
+
+  @override
+  String get clear => 'Limpar';
+
+  @override
+  String get clearHistory => 'Limpar histórico';
+
+  @override
+  String get noRecentHymns => 'Nenhum hino aberto recentemente';
+
+  @override
+  String get lyrics => 'Letra';
+
+  @override
+  String get scoreLoadError => 'Não foi possível carregar a partitura.';
+
+  @override
+  String get scoreUnavailable =>
+      'A partitura deste hino ainda não está disponível.';
+
+  @override
+  String get scorePageError =>
+      'Não foi possível carregar esta página da partitura.';
+
+  @override
+  String get previousScorePage => 'Página anterior da partitura';
+
+  @override
+  String get nextScorePage => 'Próxima página da partitura';
+
+  @override
+  String get zoomOut => 'Diminuir zoom';
+
+  @override
+  String get zoomIn => 'Aumentar zoom';
+
+  @override
+  String get fitScore => 'Ajustar partitura à tela';
+
+  @override
+  String get printedScoreHelp =>
+      'Partitura original · Use dois dedos para ampliar';
+
+  @override
+  String get closeVideo => 'Fechar vídeo';
+
+  @override
+  String get hymnStory => 'História do hino';
+
+  @override
+  String get storyPublisherHelp =>
+      'Uma história complementar completa está disponível com este editor.';
+
+  @override
+  String pageOfTotal(int page, int total) {
+    return '$page de $total';
+  }
+
+  @override
+  String scorePageDescription(int number, int page, int total) {
+    return 'Partitura do hino $number, página $page de $total';
+  }
 }

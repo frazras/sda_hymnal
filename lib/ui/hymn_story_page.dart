@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
@@ -19,7 +20,7 @@ class HymnStoryPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SubPageHeader(title: 'Story Behind the Hymn'),
+            SubPageHeader(title: context.appText.hymnStory),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 22, 20, 36),
@@ -41,7 +42,7 @@ class HymnStoryPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${hymn.version == 'old' ? 'Old' : 'New'} Hymnal #${hymn.number}',
+                          '${hymn.bookLabel} #${hymn.number}',
                           style: TextStyle(
                             fontFamily: kSans,
                             fontSize: 13,
@@ -113,7 +114,7 @@ class _StoryCard extends StatelessWidget {
           ] else ...[
             const SizedBox(height: 10),
             Text(
-              'A full supplemental story is available from this publisher.',
+              context.appText.storyPublisherHelp,
               style: TextStyle(
                 fontFamily: kSerif,
                 fontSize: 16,

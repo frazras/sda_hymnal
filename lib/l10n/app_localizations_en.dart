@@ -716,4 +716,71 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get clearHistoryQuestion => 'Clear reading history?';
+
+  @override
+  String get clearHistoryHelp =>
+      'This removes recently opened hymns. Your favorites and categories will stay.';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get clearHistory => 'Clear history';
+
+  @override
+  String get noRecentHymns => 'No recently opened hymns';
+
+  @override
+  String get lyrics => 'Lyrics';
+
+  @override
+  String get scoreLoadError => 'Sheet music could not be loaded.';
+
+  @override
+  String get scoreUnavailable =>
+      'Sheet music is not available for this hymn yet.';
+
+  @override
+  String get scorePageError => 'This score page could not be loaded.';
+
+  @override
+  String get previousScorePage => 'Previous score page';
+
+  @override
+  String get nextScorePage => 'Next score page';
+
+  @override
+  String get zoomOut => 'Zoom out';
+
+  @override
+  String get zoomIn => 'Zoom in';
+
+  @override
+  String get fitScore => 'Fit score to screen';
+
+  @override
+  String get printedScoreHelp => 'Original printed score · Pinch to zoom';
+
+  @override
+  String get closeVideo => 'Close video';
+
+  @override
+  String get hymnStory => 'Story Behind the Hymn';
+
+  @override
+  String get storyPublisherHelp =>
+      'A full supplemental story is available from this publisher.';
+
+  @override
+  String pageOfTotal(int page, int total) {
+    return '$page of $total';
+  }
+
+  @override
+  String scorePageDescription(int number, int page, int total) {
+    return 'Printed score for hymn $number, page $page of $total';
+  }
 }

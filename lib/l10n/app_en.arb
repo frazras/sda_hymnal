@@ -351,5 +351,48 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "clearHistoryQuestion": "Clear reading history?",
+  "clearHistoryHelp": "This removes recently opened hymns. Your favorites and categories will stay.",
+  "clear": "Clear",
+  "clearHistory": "Clear history",
+  "noRecentHymns": "No recently opened hymns",
+  "lyrics": "Lyrics",
+  "scoreLoadError": "Sheet music could not be loaded.",
+  "scoreUnavailable": "Sheet music is not available for this hymn yet.",
+  "scorePageError": "This score page could not be loaded.",
+  "previousScorePage": "Previous score page",
+  "nextScorePage": "Next score page",
+  "zoomOut": "Zoom out",
+  "zoomIn": "Zoom in",
+  "fitScore": "Fit score to screen",
+  "printedScoreHelp": "Original printed score · Pinch to zoom",
+  "closeVideo": "Close video",
+  "hymnStory": "Story Behind the Hymn",
+  "storyPublisherHelp": "A full supplemental story is available from this publisher.",
+  "pageOfTotal": "{page} of {total}",
+  "scorePageDescription": "Printed score for hymn {number}, page {page} of {total}",
+  "@pageOfTotal": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@scorePageDescription": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

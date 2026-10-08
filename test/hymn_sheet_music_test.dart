@@ -9,6 +9,8 @@ import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymn_sheet_music.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/hymn_sheet_music.dart';
+import 'package:sdahymnal/l10n/app_localizations.dart';
+import 'package:sdahymnal/l10n/app_text.dart';
 
 class _ScoreAssets extends CachingAssetBundle {
   bool failCatalog = false;
@@ -213,5 +215,55 @@ void main() {
     expect(find.text('Sheet music is not available for this hymn yet.'),
         findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+  testWidgets('localized score controls fit and turn real pages',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final classic in [false, true]) {
+        await tester.pumpWidget(const SizedBox.shrink());
+        var lyricsOpened = false;
+        await tester.pumpWidget(MaterialApp(
+          locale: locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          theme: buildHymnalTheme(HymnalTokens.dark, classic: classic),
+          builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(1.3)),
+              child: child!),
+          home: DefaultAssetBundle(
+              bundle: _ScoreAssets(),
+              child: Scaffold(
+                body: HymnSheetMusic(
+                  hymn: Hymn(
+                      number: 663,
+                      version: 'new',
+                      title: 'Source hymn',
+                      body: ''),
+                  onLyrics: () => lyricsOpened = true,
+                ),
+              )),
+        ));
+        await tester.pumpAndSettle();
+        final context = tester.element(find.byType(HymnSheetMusic));
+        final text = context.appText;
+        expect(find.text(text.pageOfTotal(1, 6)), findsOneWidget);
+        await tester.tap(find.byTooltip(text.nextScorePage));
+        await tester.pumpAndSettle();
+        expect(find.text(text.pageOfTotal(2, 6)), findsOneWidget);
+        await tester.tap(find.byTooltip(text.zoomIn));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip(text.fitScore));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('score-show-lyrics')));
+        expect(lyricsOpened, isTrue);
+        expect(tester.takeException(), isNull,
+            reason: '${locale.languageCode} classic=$classic');
+      }
+    }
   });
 }

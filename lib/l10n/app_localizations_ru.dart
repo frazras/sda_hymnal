@@ -730,4 +730,71 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get clearHistoryQuestion => 'Очистить историю чтения?';
+
+  @override
+  String get clearHistoryHelp =>
+      'Недавно открытые гимны будут удалены из истории. Избранное и категории сохранятся.';
+
+  @override
+  String get clear => 'Очистить';
+
+  @override
+  String get clearHistory => 'Очистить историю';
+
+  @override
+  String get noRecentHymns => 'Нет недавно открытых гимнов';
+
+  @override
+  String get lyrics => 'Текст';
+
+  @override
+  String get scoreLoadError => 'Не удалось загрузить ноты.';
+
+  @override
+  String get scoreUnavailable => 'Ноты этого гимна пока недоступны.';
+
+  @override
+  String get scorePageError => 'Не удалось загрузить эту страницу нот.';
+
+  @override
+  String get previousScorePage => 'Предыдущая страница нот';
+
+  @override
+  String get nextScorePage => 'Следующая страница нот';
+
+  @override
+  String get zoomOut => 'Уменьшить';
+
+  @override
+  String get zoomIn => 'Увеличить';
+
+  @override
+  String get fitScore => 'Подогнать ноты к экрану';
+
+  @override
+  String get printedScoreHelp =>
+      'Оригинальные ноты · Масштабируйте двумя пальцами';
+
+  @override
+  String get closeVideo => 'Закрыть видео';
+
+  @override
+  String get hymnStory => 'История гимна';
+
+  @override
+  String get storyPublisherHelp =>
+      'Полная дополнительная история доступна у этого издателя.';
+
+  @override
+  String pageOfTotal(int page, int total) {
+    return '$page из $total';
+  }
+
+  @override
+  String scorePageDescription(int number, int page, int total) {
+    return 'Ноты гимна $number, страница $page из $total';
+  }
 }

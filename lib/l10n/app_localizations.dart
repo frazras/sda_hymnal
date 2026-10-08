@@ -1331,6 +1331,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{Read story} other{Read {count} stories}}'**
   String readStories(num count);
+
+  /// No description provided for @clearHistoryQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear reading history?'**
+  String get clearHistoryQuestion;
+
+  /// No description provided for @clearHistoryHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes recently opened hymns. Your favorites and categories will stay.'**
+  String get clearHistoryHelp;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @clearHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get clearHistory;
+
+  /// No description provided for @noRecentHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'No recently opened hymns'**
+  String get noRecentHymns;
+
+  /// No description provided for @lyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyrics'**
+  String get lyrics;
+
+  /// No description provided for @scoreLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sheet music could not be loaded.'**
+  String get scoreLoadError;
+
+  /// No description provided for @scoreUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Sheet music is not available for this hymn yet.'**
+  String get scoreUnavailable;
+
+  /// No description provided for @scorePageError.
+  ///
+  /// In en, this message translates to:
+  /// **'This score page could not be loaded.'**
+  String get scorePageError;
+
+  /// No description provided for @previousScorePage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous score page'**
+  String get previousScorePage;
+
+  /// No description provided for @nextScorePage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next score page'**
+  String get nextScorePage;
+
+  /// No description provided for @zoomOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom out'**
+  String get zoomOut;
+
+  /// No description provided for @zoomIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom in'**
+  String get zoomIn;
+
+  /// No description provided for @fitScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit score to screen'**
+  String get fitScore;
+
+  /// No description provided for @printedScoreHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Original printed score · Pinch to zoom'**
+  String get printedScoreHelp;
+
+  /// No description provided for @closeVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Close video'**
+  String get closeVideo;
+
+  /// No description provided for @hymnStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story Behind the Hymn'**
+  String get hymnStory;
+
+  /// No description provided for @storyPublisherHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A full supplemental story is available from this publisher.'**
+  String get storyPublisherHelp;
+
+  /// No description provided for @pageOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{page} of {total}'**
+  String pageOfTotal(int page, int total);
+
+  /// No description provided for @scorePageDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Printed score for hymn {number}, page {page} of {total}'**
+  String scorePageDescription(int number, int page, int total);
 }
 
 class _AppLocalizationsDelegate

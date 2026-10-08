@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
 import '../models/hymn.dart';
@@ -86,14 +87,14 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
         padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
         child: Row(children: [
           Expanded(
-            child: Text('Sheet music',
+            child: Text(context.appText.sheetMusic,
                 style: TextStyle(color: t.ink, fontWeight: FontWeight.w600)),
           ),
           TextButton.icon(
             key: const ValueKey('score-show-lyrics'),
             onPressed: widget.onLyrics,
             icon: const Icon(Icons.notes),
-            label: const Text('Lyrics'),
+            label: Text(context.appText.lyrics),
           ),
         ]),
       ),
@@ -102,7 +103,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
           future: _catalog,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return _message('Sheet music could not be loaded.', retry: true);
+              return _message(context.appText.scoreLoadError, retry: true);
             }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -110,8 +111,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
             final pages =
                 snapshot.data!.forHymn(widget.hymn.version, widget.hymn.number);
             if (pages.isEmpty) {
-              return _message(
-                  'Sheet music is not available for this hymn yet.');
+              return _message(context.appText.scoreUnavailable);
             }
             final page = pages[_page];
             return Column(children: [
@@ -130,10 +130,10 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
                           key: ValueKey(page.asset),
                           fit: BoxFit.contain,
                           filterQuality: FilterQuality.high,
-                          semanticLabel:
-                              'Printed score for hymn ${widget.hymn.number}, page ${_page + 1} of ${pages.length}',
+                          semanticLabel: context.appText.scorePageDescription(
+                              widget.hymn.number, _page + 1, pages.length),
                           errorBuilder: (_, __, ___) =>
-                              _message('This score page could not be loaded.'),
+                              _message(context.appText.scorePageError),
                         ),
                       ),
                     ),
@@ -144,34 +144,35 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(children: [
                   IconButton(
-                    tooltip: 'Previous score page',
+                    tooltip: context.appText.previousScorePage,
                     onPressed: _page > 0 ? () => _selectPage(_page - 1) : null,
                     icon: const Icon(Icons.chevron_left),
                   ),
                   Expanded(
-                    child: Text('${_page + 1} of ${pages.length}',
+                    child: Text(
+                        context.appText.pageOfTotal(_page + 1, pages.length),
                         textAlign: TextAlign.center,
                         style: TextStyle(color: t.ink)),
                   ),
                   IconButton(
-                    tooltip: 'Next score page',
+                    tooltip: context.appText.nextScorePage,
                     onPressed: _page + 1 < pages.length
                         ? () => _selectPage(_page + 1)
                         : null,
                     icon: const Icon(Icons.chevron_right),
                   ),
                   IconButton(
-                    tooltip: 'Zoom out',
+                    tooltip: context.appText.zoomOut,
                     onPressed: () => _zoom(1 / 1.5),
                     icon: const Icon(Icons.zoom_out),
                   ),
                   IconButton(
-                    tooltip: 'Zoom in',
+                    tooltip: context.appText.zoomIn,
                     onPressed: () => _zoom(1.5),
                     icon: const Icon(Icons.zoom_in),
                   ),
                   IconButton(
-                    tooltip: 'Fit score to screen',
+                    tooltip: context.appText.fitScore,
                     onPressed: _resetZoom,
                     icon: const Icon(Icons.fit_screen),
                   ),
@@ -179,7 +180,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
-                child: Text('Original printed score · Pinch to zoom',
+                child: Text(context.appText.printedScoreHelp,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: t.muted, fontSize: 12)),
               ),
@@ -200,7 +201,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
             if (retry)
               TextButton(
                   onPressed: () => setState(_load),
-                  child: const Text('Try again')),
+                  child: Text(context.appText.retry)),
           ]),
         ),
       );

@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 205-message
+not claim that the app interface is fully translated. The 225-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -72,3 +72,11 @@ names and musical note names stay unchanged. Font and auto-scroll controls are
 checked across all four locales, both designs and both themes at compact width
 with 1.3 text scale, including slider/reset/start behavior. Reader regression
 checks retain playback, transposition, page turning, and choir controls.
+
+Reading-history confirmation/empty states, score controls/loading messages,
+video close tooltip, and story heading/publisher guidance now consume translated
+messages. History clearing is checked in all four locales, designs, and themes
+at compact width and larger text; it preserves favorites, category membership,
+and selected book. Localized score controls turn real pages, zoom/reset, and
+return to lyrics in both designs. Printed scores and story source text remain
+unchanged.

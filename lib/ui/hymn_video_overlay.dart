@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'dart:async';
 import '../services/playback_continuation.dart';
 
@@ -121,7 +122,7 @@ class _HymnVideoOverlayState extends State<HymnVideoOverlay> {
                 ),
                 IconButton(
                   key: const ValueKey('close-hymn-youtube-player'),
-                  tooltip: 'Close video',
+                  tooltip: context.appText.closeVideo,
                   onPressed: widget.onClose,
                   icon: Icon(Icons.close, color: t.muted, size: 19),
                 ),

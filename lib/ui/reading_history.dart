@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -13,16 +14,15 @@ class ReadingHistoryPage extends StatelessWidget {
     final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-              title: const Text('Clear reading history?'),
-              content: const Text(
-                  'This removes recently opened hymns. Your favorites and categories will stay.'),
+              title: Text(context.appText.clearHistoryQuestion),
+              content: Text(context.appText.clearHistoryHelp),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Cancel')),
+                    child: Text(context.appText.cancel)),
                 TextButton(
                     onPressed: () => Navigator.pop(context, true),
-                    child: const Text('Clear')),
+                    child: Text(context.appText.clear)),
               ],
             ));
     if (confirmed == true) await Recents.instance.clear();
@@ -37,9 +37,9 @@ class ReadingHistoryPage extends StatelessWidget {
     return AnimatedBuilder(
       animation: Listenable.merge([recents, recents.storageError]),
       builder: (context, _) => Scaffold(
-        appBar: AppBar(title: const Text('Reading history'), actions: [
+        appBar: AppBar(title: Text(context.appText.readingHistory), actions: [
           IconButton(
-              tooltip: 'Clear history',
+              tooltip: context.appText.clearHistory,
               icon: const Icon(Icons.delete_outline),
               onPressed: recents.value.isEmpty || recents.storageError.value
                   ? null
@@ -50,7 +50,7 @@ class ReadingHistoryPage extends StatelessWidget {
           const SavedHymnNotice(),
           Expanded(
               child: recents.value.isEmpty
-                  ? const Center(child: Text('No recently opened hymns'))
+                  ? Center(child: Text(context.appText.noRecentHymns))
                   : ListView.builder(
                       itemCount: recents.value.length,
                       itemBuilder: (context, position) {
@@ -59,7 +59,8 @@ class ReadingHistoryPage extends StatelessWidget {
                         return ListTile(
                           key: ValueKey('history-${entry.v}-${entry.n}'),
                           leading: Text('${entry.n}'),
-                          title: Text(hymn?.title ?? 'Hymn unavailable'),
+                          title: Text(
+                              hymn?.title ?? context.appText.hymnUnavailable),
                           subtitle: Text(hymn?.bookLabel ?? entry.v),
                           trailing: hymn == null
                               ? null
