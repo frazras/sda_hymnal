@@ -195,5 +195,70 @@
       }
     }
   },
-  "titleLyricsNumber": "Title, lyrics or number"
+  "titleLyricsNumber": "Title, lyrics or number",
+  "newFavoriteCategory": "New favorite category",
+  "renameFavoriteCategory": "Rename favorite category",
+  "moreFavoritesOptions": "More favorites options",
+  "servicePlaylists": "Service playlists",
+  "deleteCategoryHelp": "Hymns saved in other categories or Favorites will stay there.",
+  "rename": "Rename",
+  "reorderHymns": "Reorder hymns",
+  "deleteCategory": "Delete category",
+  "emptyFavoriteCategory": "Tap a hymn’s heart to add it to this favorite category.",
+  "mainFavorites": "Main favorites",
+  "mainFavoritesList": "Main favorites list",
+  "reorderFavorites": "Reorder favorites",
+  "noFavoritesYet": "No favorites yet",
+  "addFavoritesHelp": "Tap the heart on any hymn to save it here",
+  "saveToFavorites": "Save to favorites",
+  "categoryName": "Category name",
+  "categoryNameExample": "My childhood songs",
+  "create": "Create",
+  "listNameLengthError": "Use a name between 1 and 60 characters.",
+  "listNameDuplicateError": "Choose a different list name.",
+  "reorderHelp": "Drag a handle to change the order. Changes are saved automatically.",
+  "hymnUnavailable": "Hymn unavailable",
+  "favoritesAndRecents": "Favorites and recent hymns",
+  "recentHymns": "Recent hymns",
+  "manageList": "Manage {name}",
+  "deleteListQuestion": "Delete “{name}”?",
+  "reorderList": "Reorder {name}",
+  "moveHymn": "Move {name}",
+  "savedListError": "{name} could not be loaded or saved. Changes are paused to protect your saved lists.",
+  "@manageList": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteListQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@reorderList": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@moveHymn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@savedListError": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "retryLoading": "Retry"
 }

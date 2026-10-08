@@ -513,4 +513,109 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get titleLyricsNumber => 'Название, текст или номер';
+
+  @override
+  String get newFavoriteCategory => 'Новая категория избранного';
+
+  @override
+  String get renameFavoriteCategory => 'Переименовать категорию избранного';
+
+  @override
+  String get moreFavoritesOptions => 'Другие действия с избранным';
+
+  @override
+  String get servicePlaylists => 'Плейлисты богослужений';
+
+  @override
+  String get deleteCategoryHelp =>
+      'Гимны в других категориях и в избранном останутся там.';
+
+  @override
+  String get rename => 'Переименовать';
+
+  @override
+  String get reorderHymns => 'Изменить порядок гимнов';
+
+  @override
+  String get deleteCategory => 'Удалить категорию';
+
+  @override
+  String get emptyFavoriteCategory =>
+      'Нажмите на сердечко гимна, чтобы добавить его в эту категорию избранного.';
+
+  @override
+  String get mainFavorites => 'Основное избранное';
+
+  @override
+  String get mainFavoritesList => 'Основной список избранного';
+
+  @override
+  String get reorderFavorites => 'Изменить порядок избранного';
+
+  @override
+  String get noFavoritesYet => 'Пока нет избранных гимнов';
+
+  @override
+  String get addFavoritesHelp =>
+      'Нажмите на сердечко гимна, чтобы сохранить его здесь';
+
+  @override
+  String get saveToFavorites => 'Сохранить в избранное';
+
+  @override
+  String get categoryName => 'Название категории';
+
+  @override
+  String get categoryNameExample => 'Гимны моего детства';
+
+  @override
+  String get create => 'Создать';
+
+  @override
+  String get listNameLengthError =>
+      'Используйте название длиной от 1 до 60 символов.';
+
+  @override
+  String get listNameDuplicateError => 'Выберите другое название списка.';
+
+  @override
+  String get reorderHelp =>
+      'Перетащите элемент за ручку, чтобы изменить порядок. Изменения сохраняются автоматически.';
+
+  @override
+  String get hymnUnavailable => 'Гимн недоступен';
+
+  @override
+  String get favoritesAndRecents => 'Избранные и недавние гимны';
+
+  @override
+  String get recentHymns => 'Недавние гимны';
+
+  @override
+  String manageList(String name) {
+    return 'Управление: $name';
+  }
+
+  @override
+  String deleteListQuestion(String name) {
+    return 'Удалить «$name»?';
+  }
+
+  @override
+  String reorderList(String name) {
+    return 'Изменить порядок: $name';
+  }
+
+  @override
+  String moveHymn(String name) {
+    return 'Переместить: $name';
+  }
+
+  @override
+  String savedListError(String name) {
+    return 'Не удалось загрузить или сохранить $name. Изменения приостановлены, чтобы защитить ваши сохранённые списки.';
+  }
+
+  @override
+  String get retryLoading => 'Повторить';
 }

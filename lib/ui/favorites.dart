@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import '../services/hymnal_repository.dart';
 import 'service_playlists.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class FavoritesTab extends StatelessWidget {
       slideRoute(HymnPage(
         hymn: hymn,
         analyticsSource: 'favorites',
-        categoryTitle: category?.name ?? 'Favorites',
+        categoryTitle: category?.name ?? context.appText.favorites,
         hymns: category == null
             ? Favorites.instance.value.map(_resolve).whereType<Hymn>().toList()
             : category.hymns.map(_resolve).whereType<Hymn>().toList(),
@@ -78,19 +79,19 @@ class FavoritesTab extends StatelessWidget {
                   key: const ValueKey('create-favorite-sublist'),
                   onPressed: () => editFavoriteSublist(context),
                   icon: const Icon(Icons.playlist_add),
-                  label: const Text('New favorite category'),
+                  label: Text(context.appText.newFavoriteCategory),
                 )),
                 if (serviceRepository != null)
                   PopupMenuButton<String>(
-                      tooltip: 'More favorites options',
+                      tooltip: context.appText.moreFavoritesOptions,
                       onSelected: (_) => Navigator.push(
                           context,
                           slideRoute(ServicePlaylistsPage(
                               repository: serviceRepository!))),
-                      itemBuilder: (_) => const [
+                      itemBuilder: (_) => [
                             PopupMenuItem(
                                 value: 'services',
-                                child: Text('Service playlists'))
+                                child: Text(context.appText.servicePlaylists))
                           ]),
               ],
             ),
@@ -99,10 +100,10 @@ class FavoritesTab extends StatelessWidget {
                 key: PageStorageKey('favorite-sublist-${list.id}'),
                 leading: Icon(Icons.folder_outlined, color: t.accent),
                 title: Text(list.name),
-                subtitle: Text('${list.hymns.length} hymns'),
+                subtitle: Text(context.appText.hymnCount(list.hymns.length)),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   PopupMenuButton<String>(
-                    tooltip: 'Manage ${list.name}',
+                    tooltip: context.appText.manageList(list.name),
                     onSelected: (action) async {
                       if (action == 'rename') {
                         await editFavoriteSublist(context, list: list);
@@ -112,50 +113,55 @@ class FavoritesTab extends StatelessWidget {
                         final remove = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                                  title: Text('Delete “${list.name}”?'),
-                                  content: const Text(
-                                      'Hymns saved in other categories or Favorites will stay there.'),
+                                  title: Text(context.appText
+                                      .deleteListQuestion(list.name)),
+                                  content:
+                                      Text(context.appText.deleteCategoryHelp),
                                   actions: [
                                     TextButton(
                                         onPressed: () =>
                                             Navigator.pop(context, false),
-                                        child: const Text('Cancel')),
+                                        child: Text(context.appText.cancel)),
                                     TextButton(
                                         onPressed: () =>
                                             Navigator.pop(context, true),
-                                        child: const Text('Delete')),
+                                        child: Text(context.appText.delete)),
                                   ],
                                 ));
                         if (remove == true) await saved.deleteSublist(list.id);
                       }
                     },
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                    itemBuilder: (_) => [
                       PopupMenuItem(
-                          value: 'reorder', child: Text('Reorder hymns')),
+                          value: 'rename', child: Text(context.appText.rename)),
                       PopupMenuItem(
-                          value: 'delete', child: Text('Delete category')),
+                          value: 'reorder',
+                          child: Text(context.appText.reorderHymns)),
+                      PopupMenuItem(
+                          value: 'delete',
+                          child: Text(context.appText.deleteCategory)),
                     ],
                   ),
                   const Icon(Icons.expand_more),
                 ]),
                 children: [
                   if (list.hymns.isEmpty)
-                    const Padding(
+                    Padding(
                         padding: EdgeInsets.all(16),
-                        child: Text(
-                            'Tap a hymn’s heart to add it to this favorite category.')),
+                        child: Text(context.appText.emptyFavoriteCategory)),
                   for (final hymn in list.hymns.map(_resolve).whereType<Hymn>())
                     _buildRow(context, hymn, category: list),
                 ],
               ),
             if (saved.sublists.value.isNotEmpty)
-              const Padding(
+              Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text('Main favorites',
+                  child: Text(context.appText.mainFavorites,
                       style: TextStyle(fontWeight: FontWeight.bold))),
             if (hymns.isEmpty)
-              Padding(padding: const EdgeInsets.all(32), child: _emptyState(t)),
+              Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: _emptyState(context, t)),
             if (saved.value.length > 1)
               Align(
                   alignment: Alignment.centerRight,
@@ -163,7 +169,7 @@ class FavoritesTab extends StatelessWidget {
                       key: const ValueKey('reorder-main-favorites'),
                       onPressed: () => _reorder(context),
                       icon: const Icon(Icons.reorder),
-                      label: const Text('Reorder favorites'))),
+                      label: Text(context.appText.reorderFavorites))),
             for (final hymn in hymns) _buildRow(context, hymn),
           ],
         );
@@ -171,13 +177,13 @@ class FavoritesTab extends StatelessWidget {
     );
   }
 
-  Widget _emptyState(HymnalTokens t) {
+  Widget _emptyState(BuildContext context, HymnalTokens t) {
     return Center(
       child: Text.rich(
         TextSpan(children: [
-          const TextSpan(text: 'No favorites yet\n'),
-          const TextSpan(
-            text: 'Tap the heart on any hymn to save it here',
+          TextSpan(text: '${context.appText.noFavoritesYet}\n'),
+          TextSpan(
+            text: context.appText.addFavoritesHelp,
             style: TextStyle(fontSize: 11.5),
           ),
         ]),

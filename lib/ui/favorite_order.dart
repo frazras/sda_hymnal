@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
@@ -21,17 +22,17 @@ class FavoriteOrderPage extends StatelessWidget {
                 .firstOrNull;
         final entries = sublistId == null ? saved.value : category?.hymns ?? [];
         return Scaffold(
-          appBar:
-              AppBar(title: Text('Reorder ${category?.name ?? 'Favorites'}')),
+          appBar: AppBar(
+              title: Text(context.appText
+                  .reorderList(category?.name ?? context.appText.favorites))),
           body: SafeArea(
-              child: Column(children: [
-            const SavedHymnNotice(),
-            const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                    'Drag a handle to change the order. Changes are saved automatically.')),
-            Expanded(
-                child: ReorderableListView.builder(
+            child: ReorderableListView.builder(
+              header: Column(children: [
+                const SavedHymnNotice(),
+                Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(context.appText.reorderHelp)),
+              ]),
               buildDefaultDragHandles: false,
               itemCount: entries.length,
               onReorderItem: (from, to) =>
@@ -42,22 +43,23 @@ class FavoriteOrderPage extends StatelessWidget {
                 return ListTile(
                   key: ValueKey('order-${entry.v}-${entry.n}'),
                   leading: Text('${entry.n}'),
-                  title: Text(hymn?.title ?? 'Hymn unavailable'),
+                  title: Text(hymn?.title ?? context.appText.hymnUnavailable),
                   subtitle: Text(hymn?.bookLabel ?? entry.v),
                   trailing: saved.storageError.value
                       ? null
                       : ReorderableDragStartListener(
                           index: index,
                           child: Semantics(
-                              label: 'Move ${hymn?.title ?? entry.n}',
-                              child: const Padding(
+                              label: context.appText
+                                  .moveHymn(hymn?.title ?? entry.n.toString()),
+                              child: Padding(
                                   padding: EdgeInsets.all(12),
                                   child: Icon(Icons.drag_handle))),
                         ),
                 );
               },
-            )),
-          ])),
+            ),
+          ),
         );
       },
     );

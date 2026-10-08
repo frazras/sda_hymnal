@@ -504,4 +504,107 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get titleLyricsNumber => 'Title, lyrics or number';
+
+  @override
+  String get newFavoriteCategory => 'New favorite category';
+
+  @override
+  String get renameFavoriteCategory => 'Rename favorite category';
+
+  @override
+  String get moreFavoritesOptions => 'More favorites options';
+
+  @override
+  String get servicePlaylists => 'Service playlists';
+
+  @override
+  String get deleteCategoryHelp =>
+      'Hymns saved in other categories or Favorites will stay there.';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get reorderHymns => 'Reorder hymns';
+
+  @override
+  String get deleteCategory => 'Delete category';
+
+  @override
+  String get emptyFavoriteCategory =>
+      'Tap a hymn’s heart to add it to this favorite category.';
+
+  @override
+  String get mainFavorites => 'Main favorites';
+
+  @override
+  String get mainFavoritesList => 'Main favorites list';
+
+  @override
+  String get reorderFavorites => 'Reorder favorites';
+
+  @override
+  String get noFavoritesYet => 'No favorites yet';
+
+  @override
+  String get addFavoritesHelp => 'Tap the heart on any hymn to save it here';
+
+  @override
+  String get saveToFavorites => 'Save to favorites';
+
+  @override
+  String get categoryName => 'Category name';
+
+  @override
+  String get categoryNameExample => 'My childhood songs';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get listNameLengthError => 'Use a name between 1 and 60 characters.';
+
+  @override
+  String get listNameDuplicateError => 'Choose a different list name.';
+
+  @override
+  String get reorderHelp =>
+      'Drag a handle to change the order. Changes are saved automatically.';
+
+  @override
+  String get hymnUnavailable => 'Hymn unavailable';
+
+  @override
+  String get favoritesAndRecents => 'Favorites and recent hymns';
+
+  @override
+  String get recentHymns => 'Recent hymns';
+
+  @override
+  String manageList(String name) {
+    return 'Manage $name';
+  }
+
+  @override
+  String deleteListQuestion(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String reorderList(String name) {
+    return 'Reorder $name';
+  }
+
+  @override
+  String moveHymn(String name) {
+    return 'Move $name';
+  }
+
+  @override
+  String savedListError(String name) {
+    return '$name could not be loaded or saved. Changes are paused to protect your saved lists.';
+  }
+
+  @override
+  String get retryLoading => 'Retry';
 }

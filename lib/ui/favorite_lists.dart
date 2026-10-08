@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
 import '../models/hymn.dart';
@@ -31,17 +32,17 @@ void saveFavorite(BuildContext context, Hymn hymn) {
             children: [
               const SavedHymnNotice(),
               ListTile(
-                title: const Text('Save to favorites',
+                title: Text(context.appText.saveToFavorites,
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(hymn.title.trim()),
                 trailing: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Done')),
+                    child: Text(context.appText.done)),
               ),
               CheckboxListTile(
                 key: const ValueKey('favorite-parent-checkbox'),
-                title: const Text('Favorites'),
-                subtitle: const Text('Main favorites list'),
+                title: Text(context.appText.favorites),
+                subtitle: Text(context.appText.mainFavoritesList),
                 value: favorites.contains(hymn.number, hymn.version),
                 onChanged: favorites.storageError.value
                     ? null
@@ -106,7 +107,13 @@ class _SublistNameDialogState extends State<_SublistNameDialog> {
     } on ArgumentError catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.message.toString();
+          _error = switch (e.message.toString()) {
+            'Use a name between 1 and 60 characters.' =>
+              context.appText.listNameLengthError,
+            'Choose a different list name.' =>
+              context.appText.listNameDuplicateError,
+            _ => e.message.toString(),
+          };
           _saving = false;
         });
       }
@@ -116,26 +123,28 @@ class _SublistNameDialogState extends State<_SublistNameDialog> {
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: Text(widget.list == null
-            ? 'New favorite category'
-            : 'Rename favorite category'),
+            ? context.appText.newFavoriteCategory
+            : context.appText.renameFavoriteCategory),
         content: TextField(
           controller: _controller,
           autofocus: true,
           maxLength: 60,
           textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
-              labelText: 'Category name',
-              hintText: 'My childhood songs',
+              labelText: context.appText.categoryName,
+              hintText: context.appText.categoryNameExample,
               errorText: _error),
           onSubmitted: (_) => _save(),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+              child: Text(context.appText.cancel)),
           TextButton(
               onPressed: _saving ? null : _save,
-              child: Text(widget.list == null ? 'Create' : 'Save')),
+              child: Text(widget.list == null
+                  ? context.appText.create
+                  : context.appText.save)),
         ],
       );
 }

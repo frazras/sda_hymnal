@@ -989,6 +989,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Title, lyrics or number'**
   String get titleLyricsNumber;
+
+  /// No description provided for @newFavoriteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New favorite category'**
+  String get newFavoriteCategory;
+
+  /// No description provided for @renameFavoriteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename favorite category'**
+  String get renameFavoriteCategory;
+
+  /// No description provided for @moreFavoritesOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'More favorites options'**
+  String get moreFavoritesOptions;
+
+  /// No description provided for @servicePlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'Service playlists'**
+  String get servicePlaylists;
+
+  /// No description provided for @deleteCategoryHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns saved in other categories or Favorites will stay there.'**
+  String get deleteCategoryHelp;
+
+  /// No description provided for @rename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get rename;
+
+  /// No description provided for @reorderHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder hymns'**
+  String get reorderHymns;
+
+  /// No description provided for @deleteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category'**
+  String get deleteCategory;
+
+  /// No description provided for @emptyFavoriteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a hymn’s heart to add it to this favorite category.'**
+  String get emptyFavoriteCategory;
+
+  /// No description provided for @mainFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Main favorites'**
+  String get mainFavorites;
+
+  /// No description provided for @mainFavoritesList.
+  ///
+  /// In en, this message translates to:
+  /// **'Main favorites list'**
+  String get mainFavoritesList;
+
+  /// No description provided for @reorderFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder favorites'**
+  String get reorderFavorites;
+
+  /// No description provided for @noFavoritesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get noFavoritesYet;
+
+  /// No description provided for @addFavoritesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart on any hymn to save it here'**
+  String get addFavoritesHelp;
+
+  /// No description provided for @saveToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to favorites'**
+  String get saveToFavorites;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoryName;
+
+  /// No description provided for @categoryNameExample.
+  ///
+  /// In en, this message translates to:
+  /// **'My childhood songs'**
+  String get categoryNameExample;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @listNameLengthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a name between 1 and 60 characters.'**
+  String get listNameLengthError;
+
+  /// No description provided for @listNameDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a different list name.'**
+  String get listNameDuplicateError;
+
+  /// No description provided for @reorderHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag a handle to change the order. Changes are saved automatically.'**
+  String get reorderHelp;
+
+  /// No description provided for @hymnUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymn unavailable'**
+  String get hymnUnavailable;
+
+  /// No description provided for @favoritesAndRecents.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites and recent hymns'**
+  String get favoritesAndRecents;
+
+  /// No description provided for @recentHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent hymns'**
+  String get recentHymns;
+
+  /// No description provided for @manageList.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage {name}'**
+  String manageList(String name);
+
+  /// No description provided for @deleteListQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”?'**
+  String deleteListQuestion(String name);
+
+  /// No description provided for @reorderList.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder {name}'**
+  String reorderList(String name);
+
+  /// No description provided for @moveHymn.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {name}'**
+  String moveHymn(String name);
+
+  /// No description provided for @savedListError.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} could not be loaded or saved. Changes are paused to protect your saved lists.'**
+  String savedListError(String name);
+
+  /// No description provided for @retryLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryLoading;
 }
 
 class _AppLocalizationsDelegate

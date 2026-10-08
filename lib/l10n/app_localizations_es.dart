@@ -507,4 +507,108 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get titleLyricsNumber => 'Título, letra o número';
+
+  @override
+  String get newFavoriteCategory => 'Nueva categoría de favoritos';
+
+  @override
+  String get renameFavoriteCategory => 'Renombrar categoría de favoritos';
+
+  @override
+  String get moreFavoritesOptions => 'Más opciones de favoritos';
+
+  @override
+  String get servicePlaylists => 'Listas para el culto';
+
+  @override
+  String get deleteCategoryHelp =>
+      'Los himnos guardados en otras categorías o en Favoritos permanecerán allí.';
+
+  @override
+  String get rename => 'Renombrar';
+
+  @override
+  String get reorderHymns => 'Reordenar himnos';
+
+  @override
+  String get deleteCategory => 'Eliminar categoría';
+
+  @override
+  String get emptyFavoriteCategory =>
+      'Toca el corazón de un himno para añadirlo a esta categoría de favoritos.';
+
+  @override
+  String get mainFavorites => 'Favoritos principales';
+
+  @override
+  String get mainFavoritesList => 'Lista principal de favoritos';
+
+  @override
+  String get reorderFavorites => 'Reordenar favoritos';
+
+  @override
+  String get noFavoritesYet => 'Aún no hay favoritos';
+
+  @override
+  String get addFavoritesHelp =>
+      'Toca el corazón de un himno para guardarlo aquí';
+
+  @override
+  String get saveToFavorites => 'Guardar en favoritos';
+
+  @override
+  String get categoryName => 'Nombre de categoría';
+
+  @override
+  String get categoryNameExample => 'Himnos de mi infancia';
+
+  @override
+  String get create => 'Crear';
+
+  @override
+  String get listNameLengthError => 'Usa un nombre de entre 1 y 60 caracteres.';
+
+  @override
+  String get listNameDuplicateError => 'Elige otro nombre para la lista.';
+
+  @override
+  String get reorderHelp =>
+      'Arrastra un control para cambiar el orden. Los cambios se guardan automáticamente.';
+
+  @override
+  String get hymnUnavailable => 'Himno no disponible';
+
+  @override
+  String get favoritesAndRecents => 'Favoritos e himnos recientes';
+
+  @override
+  String get recentHymns => 'Himnos recientes';
+
+  @override
+  String manageList(String name) {
+    return 'Administrar $name';
+  }
+
+  @override
+  String deleteListQuestion(String name) {
+    return '¿Eliminar «$name»?';
+  }
+
+  @override
+  String reorderList(String name) {
+    return 'Reordenar $name';
+  }
+
+  @override
+  String moveHymn(String name) {
+    return 'Mover $name';
+  }
+
+  @override
+  String savedListError(String name) {
+    return 'No se pudo cargar o guardar $name. Los cambios están suspendidos para proteger tus listas guardadas.';
+  }
+
+  @override
+  String get retryLoading => 'Reintentar';
 }

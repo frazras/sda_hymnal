@@ -9,6 +9,10 @@ import 'package:sdahymnal/ui/musical_style_sheet.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/hymnal_browser.dart';
+import 'package:sdahymnal/ui/favorites.dart';
+import 'package:sdahymnal/ui/favorite_lists.dart';
+import 'package:sdahymnal/ui/favorite_order.dart';
+import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/models/hymn.dart';
 
 void main() {
@@ -195,5 +199,97 @@ void main() {
       expect(find.text(context.appText.noMatchingHymns), findsOneWidget);
       expect(tester.takeException(), isNull, reason: locale.languageCode);
     }
+  });
+  testWidgets('localized favorite dialogs preserve names and book references',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final hymn = Hymn(
+        number: 230,
+        title: 'Abre tu corazón',
+        body: 'Letra',
+        version: 'sda-es-2009');
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final classic in [false, true]) {
+        await tester.pumpWidget(const SizedBox.shrink());
+        SharedPreferences.setMockInitialValues({});
+        await Favorites.instance.load();
+        await tester.pumpWidget(MaterialApp(
+          locale: locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          theme: buildHymnalTheme(HymnalTokens.dark, classic: classic),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(1.3)),
+            child: child!,
+          ),
+          home: Scaffold(
+              body: FavoritesTab(
+            hymnsNew: [],
+            hymnsOld: [],
+            additionalHymns: [hymn],
+          )),
+        ));
+        await tester.pumpAndSettle();
+        final context = tester.element(find.byType(FavoritesTab));
+        final text = context.appText;
+        await tester.tap(find.byKey(const ValueKey('create-favorite-sublist')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(text.create));
+        await tester.pumpAndSettle();
+        expect(find.text(text.listNameLengthError), findsOneWidget);
+        await tester.enterText(find.byType(TextField), 'Mis himnos — corazón');
+        await tester.tap(find.text(text.create));
+        await tester.pumpAndSettle();
+        final saved = Favorites.instance;
+        final id = saved.sublists.value.single.id;
+        await saved.setSublistHymn(id, hymn, true);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('create-favorite-sublist')));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Mis himnos — corazón');
+        await tester.tap(find.text(text.create));
+        await tester.pumpAndSettle();
+        expect(find.text(text.listNameDuplicateError), findsOneWidget);
+        await tester.tap(find.text(text.cancel));
+        await tester.pumpAndSettle();
+        editFavoriteSublist(context, list: saved.sublists.value.single);
+        await tester.pumpAndSettle();
+        expect(find.text(text.renameFavoriteCategory), findsOneWidget);
+        await tester.enterText(find.byType(TextField), 'Sábado — сердце');
+        await tester.tap(find.text(text.save));
+        await tester.pumpAndSettle();
+        await saved.load();
+        expect(saved.sublists.value.single.name, 'Sábado — сердце');
+        expect(saved.sublists.value.single.id, id);
+        expect(saved.sublists.value.single.hymns, [(n: 230, v: 'sda-es-2009')]);
+        expect(tester.takeException(), isNull,
+            reason: '${locale.languageCode} categories');
+        Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (_) =>
+                FavoriteOrderPage(sublistId: id, resolve: (_) => hymn)));
+        await tester.pumpAndSettle();
+        expect(find.text(text.reorderList('Sábado — сердце')), findsOneWidget);
+        expect(
+            find.byWidgetPredicate((widget) =>
+                widget is Semantics &&
+                widget.properties.label == text.moveHymn(hymn.title)),
+            findsOneWidget);
+        expect(tester.takeException(), isNull,
+            reason: '${locale.languageCode} reorder');
+        saved.storageError.value = true;
+        await tester.pumpAndSettle();
+        expect(find.text(text.savedListError(text.favorites)), findsOneWidget);
+        saved.storageError.value = false;
+        Navigator.of(context).pop();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull,
+            reason: '${locale.languageCode} classic=$classic');
+      }
+    }
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 }

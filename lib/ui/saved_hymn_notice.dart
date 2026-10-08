@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/prefs.dart';
 
@@ -17,30 +18,33 @@ class SavedHymnNotice extends StatelessWidget {
           final recents = Recents.instance.storageError.value;
           if (!favorites && !recents) return const SizedBox.shrink();
           final name = favorites && recents
-              ? 'Favorites and recent hymns'
+              ? context.appText.favoritesAndRecents
               : favorites
-                  ? 'Favorites'
-                  : 'Recent hymns';
+                  ? context.appText.favorites
+                  : context.appText.recentHymns;
           return Material(
             color: Theme.of(context).colorScheme.errorContainer,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(children: [
-                Expanded(
-                    child: Text(
-                        '$name could not be loaded or saved. '
-                        'Changes are paused to protect your saved lists.',
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onErrorContainer))),
-                TextButton(
-                    onPressed: () async {
-                      if (favorites) await Favorites.instance.load();
-                      if (recents) await Recents.instance.load();
-                    },
-                    child: const Text('Retry')),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(context.appText.savedListError(name),
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).colorScheme.onErrorContainer)),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () async {
+                        if (favorites) await Favorites.instance.load();
+                        if (recents) await Recents.instance.load();
+                      },
+                      child: Text(context.appText.retryLoading),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

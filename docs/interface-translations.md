@@ -14,11 +14,12 @@ values fall back to English without overwriting the saved value.
 The catalogs and Flutter localization delegates are in place. Navigation, main
 reader menu, musical style sheet, top-level settings, and keypad discovery labels
 now consume the messages. Search labels, result counts, topic controls, and empty states also consume
-localized messages. Favorites and several reader/settings child screens still
-need coverage. **Do not expose the language selector until
+localized messages. Favorites, category dialogs, reorder controls, and protected-storage warnings
+also consume translations. Several reader/settings child screens still need
+coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 148-message
+not claim that the app interface is fully translated. The 178-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -54,3 +55,13 @@ four interface locales and both designs. Filters wrap on narrow screens; count
 messages use ICU plurals and locale-aware number formatting. All-book search
 actions are checked at 320×568 with 1.3 text scale and a 220px keyboard inset.
 Book titles, edition identities, topic titles, and lyrics remain source content.
+
+Favorites regression checks create, reject empty/duplicate names, and rename
+categories in all four locales and both designs at compact width and 1.3 text
+scale. Source names and native book references survive saving and reloading.
+Stored model validation messages remain unchanged; the dialog maps known errors
+to translated presentation messages.
+
+Long storage warnings place the retry action beneath the message. The reorder
+page scrolls warnings and instructions together with the hymn list, preserving
+access to content on compact screens and with larger text.
