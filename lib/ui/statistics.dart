@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import '../l10n/app_text.dart';
 
 import '../models/hymn.dart';
 import '../services/analytics.dart';
@@ -7,26 +11,11 @@ import '../theme.dart';
 import 'common.dart';
 import 'hymnPage.dart';
 
-String statisticNumber(int value) => '$value'
-    .replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (m) => '${m[1]},');
+String statisticNumber(int value, [String locale = 'en']) =>
+    NumberFormat.decimalPattern(locale).format(value);
 
-String statisticDate(DateTime date) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
-  return '${date.day} ${months[date.month - 1]} ${date.year}';
-}
+String statisticDate(DateTime date, [String locale = 'en']) =>
+    DateFormat('d MMM y', locale).format(date);
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key, required this.hymns, this.load});
@@ -63,6 +52,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
       _failed = false;
     });
     try {
+      // Also support standalone English previews without application delegates.
+      await initializeDateFormatting();
       final value =
           await (widget.load?.call(force) ?? _repository.load(force: force));
       if (mounted) {
@@ -99,6 +90,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    final text = context.appText;
+    final locale = text.localeName;
     final snapshot = _snapshot;
     final period = snapshot?.periods[_period];
     final country = period?.countries.containsKey(_country) == true
@@ -109,9 +102,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
       body: SafeArea(
           child: Column(children: [
         SubPageHeader(
-            title: 'Statistics',
+            title: context.appText.statisticsTitle,
             trailing: IconButton(
-                tooltip: 'Refresh statistics',
+                tooltip: context.appText.refreshStatistics,
                 onPressed: _loading ? null : () => _load(true),
                 icon: const Icon(Icons.refresh))),
         if (_loading) const LinearProgressIndicator(minHeight: 2),
@@ -123,81 +116,90 @@ class _StatisticsPageState extends State<StatisticsPage> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
               children: [
-                Text('A community in song',
+                Text(context.appText.communityInSong,
                     style: TextStyle(
                         fontFamily: kSerif,
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
                         color: t.ink)),
                 const SizedBox(height: 8),
-                Text(
-                    'Discover the hymns our community opens, returns to, and adds to favorites.',
+                Text(context.appText.communityInSongHelp,
                     style: TextStyle(color: t.muted, height: 1.5)),
                 const SizedBox(height: 20),
                 Wrap(spacing: 8, runSpacing: 8, children: [
                   for (final value in ['1', '4', '8'])
                     ChoiceChip(
-                        label:
-                            Text(value == '1' ? 'Last week' : '$value weeks'),
+                        label: Text(value == '1'
+                            ? text.lastWeek
+                            : text.statisticsWeeks(int.parse(value))),
                         selected: _period == value,
                         onSelected: (_) => setState(() => _period = value))
                 ]),
                 const SizedBox(height: 16),
                 if (snapshot != null && period != null) ...[
                   Text(
-                      '${statisticDate(period.start)} – ${statisticDate(period.end)}',
+                      '${statisticDate(period.start, locale)} – ${statisticDate(period.end, locale)}',
                       style:
                           TextStyle(color: t.ink, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
                   Text(
-                      '${snapshot.offline ? 'Offline · Saved report' : 'Report updated'} ${statisticDate(snapshot.generated.toLocal())}. '
-                      'Completed weeks only; weekly uploads can arrive later.',
+                      text.reportDateHelp(
+                          snapshot.offline
+                              ? text.savedReport
+                              : text.reportUpdated,
+                          statisticDate(snapshot.generated.toLocal(), locale)),
                       style:
                           TextStyle(fontSize: 12, color: t.muted, height: 1.5)),
                   if (snapshot.offline ||
                       DateTime.now().difference(snapshot.generated) >
                           const Duration(days: 2))
-                    _notice(
-                        'You’re viewing a saved or older report. Refresh when connected for the latest available statistics.'),
+                    _notice(context.appText.olderReportHelp),
                   _rankings(
-                      'Most-opened hymns',
-                      'A place to begin your next time of worship.',
+                      context.appText.mostOpenedHymns,
+                      context.appText.mostOpenedHelp,
                       period.songs,
-                      'opens'),
+                      text.statisticsOpens),
                   _rankings(
-                      'Hymns we return to',
-                      'Additional opens of the same hymn on one installation within a calendar week. This does not measure complete performances.',
+                      context.appText.returningHymns,
+                      context.appText.returningHymnsHelp,
                       period.repeats,
-                      'repeat opens'),
+                      text.statisticsRepeatOpens),
                   _rankings(
-                      'Added to favorites',
-                      'Hymns people saved during this period. These are additions, not everyone’s current favorites.',
+                      context.appText.addedToFavorites,
+                      context.appText.addedToFavoritesHelp,
                       period.favorites,
-                      'additions'),
+                      text.statisticsAdditions),
                   _card(
-                      'When we open the hymnal',
-                      'Times are local to each device when the hymn was opened.',
-                      StatisticBars(values: period.times, labels: const {
-                        'night': 'Night · 12–6 am',
-                        'morning': 'Morning · 6 am–12 pm',
-                        'afternoon': 'Afternoon · 12–6 pm',
-                        'evening': 'Evening · 6 pm–12 am'
+                      context.appText.whenHymnalOpened,
+                      context.appText.whenHymnalOpenedHelp,
+                      StatisticBars(values: period.times, labels: {
+                        'night': context.appText.statisticsNight,
+                        'morning': context.appText.statisticsMorning,
+                        'afternoon': context.appText.statisticsAfternoon,
+                        'evening': context.appText.statisticsEvening
                       })),
                   _card(
-                      'Days filled with song',
-                      'Hymn opens by the local day of the week.',
-                      StatisticBars(values: period.weekdays, labels: const {
-                        '1': 'Monday',
-                        '2': 'Tuesday',
-                        '3': 'Wednesday',
-                        '4': 'Thursday',
-                        '5': 'Friday',
-                        '6': 'Saturday',
-                        '7': 'Sunday'
+                      context.appText.daysFilledWithSong,
+                      context.appText.daysFilledWithSongHelp,
+                      StatisticBars(values: period.weekdays, labels: {
+                        '1': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 1)),
+                        '2': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 2)),
+                        '3': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 3)),
+                        '4': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 4)),
+                        '5': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 5)),
+                        '6': DateFormat.EEEE(locale)
+                            .format(DateTime(2024, 1, 6)),
+                        '7':
+                            DateFormat.EEEE(locale).format(DateTime(2024, 1, 7))
                       })),
                   _card(
-                      'Around the world',
-                      'Popular hymns by upload country. Travel and network routing can affect country estimates.',
+                      context.appText.aroundTheWorld,
+                      context.appText.aroundTheWorldHelp,
                       country == null
                           ? _empty()
                           : Column(
@@ -207,37 +209,35 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                       key:
                                           ValueKey('country-$_period-$country'),
                                       initialValue: country,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Country (ISO code)',
+                                      isExpanded: true,
+                                      decoration: InputDecoration(
+                                          labelText: text.countryIsoCode,
                                           border: OutlineInputBorder()),
                                       items: [
                                         for (final code
                                             in period.countries.keys)
                                           DropdownMenuItem(
                                               value: code,
-                                              child: Text(_countryLabel(code)))
+                                              child: Text(_countryLabel(code),
+                                                  maxLines: 2))
                                       ],
                                       onChanged: (value) =>
                                           setState(() => _country = value)),
                                   const SizedBox(height: 12),
-                                  _songList(
-                                      period.countries[country]!, 'opens'),
+                                  _songList(period.countries[country]!,
+                                      text.statisticsOpens),
                                 ])),
-                  _notice(
-                      'About these numbers\n\nThese are shared activity counts, not unique people or the number of times a hymn was sung. '
-                      'Each published weekly group needs at least 20 participating installations. Small groups and some related totals are withheld, so charts may be incomplete. '
-                      'New measurements need time to gather enough contributions.\n\nEveryone sees the same community report. You can view it even when sharing is off in Settings.'),
+                  _notice(text.statisticsExplanation),
                 ] else if (_failed) ...[
-                  _notice(
-                      'Community statistics are unavailable right now. Connect to the internet and try again. After your first successful download, the saved report will be available offline.'),
+                  _notice(context.appText.communityStatisticsFailed),
                   OutlinedButton.icon(
                       onPressed: () => _load(true),
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Try again')),
+                      label: Text(text.retry)),
                 ] else if (_loading)
-                  const Padding(
-                      padding: EdgeInsets.all(32),
-                      child: Text('Loading community statistics…')),
+                  Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Text(context.appText.loadingCommunityStatistics)),
               ]),
         )),
       ])),
@@ -252,8 +252,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Widget _empty() => Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Text(
-          'Community insights are growing. Results appear here when enough people have contributed.',
+      child: Text(context.appText.communityInsightsGrowing,
           style: TextStyle(color: context.tokens.muted, height: 1.5)));
 
   Widget _card(String title, String subtitle, Widget child) {
@@ -282,10 +281,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   Widget _rankings(String title, String subtitle, List<SongStatistic> songs,
-          String unit) =>
+          String Function(int) unit) =>
       _card(title, subtitle, songs.isEmpty ? _empty() : _songList(songs, unit));
 
-  Widget _songList(List<SongStatistic> songs, String unit) {
+  Widget _songList(List<SongStatistic> songs, String Function(int) unit) {
     final t = context.tokens;
     final max = songs.fold<int>(
         1, (value, song) => song.count > value ? song.count : value);
@@ -322,7 +321,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 4),
                                 Text(
-                                    '${song.edition == 'new' ? 'New' : 'Old'} ${song.hymn} · ${statisticNumber(song.count)} $unit',
+                                    '${song.edition == 'new' ? context.appText.statisticsNewEdition : context.appText.statisticsOldEdition} ${song.hymn} · ${unit(song.count)}',
                                     style: TextStyle(
                                         fontSize: 12, color: t.muted)),
                                 const SizedBox(height: 8),
@@ -340,24 +339,25 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   String _countryLabel(String code) {
-    const names = {
-      'JM': 'Jamaica',
-      'US': 'United States',
-      'GB': 'United Kingdom',
-      'CA': 'Canada',
-      'TT': 'Trinidad and Tobago',
-      'GY': 'Guyana',
-      'BB': 'Barbados',
-      'BS': 'Bahamas',
-      'ZA': 'South Africa',
-      'KE': 'Kenya',
-      'NG': 'Nigeria',
-      'GH': 'Ghana',
-      'PH': 'Philippines',
-      'AU': 'Australia',
-      'NZ': 'New Zealand',
-      'IN': 'India',
-      'ZW': 'Zimbabwe'
+    final text = context.appText;
+    final names = {
+      'JM': text.jamaica,
+      'US': text.countryUS,
+      'GB': text.countryGB,
+      'CA': text.countryCA,
+      'TT': text.countryTT,
+      'GY': text.countryGY,
+      'BB': text.countryBB,
+      'BS': text.countryBS,
+      'ZA': text.countryZA,
+      'KE': text.countryKE,
+      'NG': text.countryNG,
+      'GH': text.countryGH,
+      'PH': text.countryPH,
+      'AU': text.countryAU,
+      'NZ': text.countryNZ,
+      'IN': text.countryIN,
+      'ZW': text.countryZW,
     };
     return names.containsKey(code) ? '${names[code]} ($code)' : code;
   }
@@ -379,7 +379,7 @@ class StatisticBars extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                      '${entry.value} · ${values.containsKey(entry.key) ? '${statisticNumber(values[entry.key]!)} opens' : 'Not enough published data'}',
+                      '${entry.value} · ${values.containsKey(entry.key) ? context.appText.statisticsOpens(values[entry.key]!) : context.appText.notEnoughPublishedData}',
                       style: TextStyle(color: t.ink, fontSize: 12)),
                   const SizedBox(height: 7),
                   ExcludeSemantics(

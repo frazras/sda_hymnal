@@ -627,5 +627,100 @@
   "country": "Country",
   "jamaica": "Jamaica",
   "email": "Email",
-  "privacy": "Privacy"
+  "privacy": "Privacy",
+  "statisticsTitle": "Statistics",
+  "refreshStatistics": "Refresh statistics",
+  "communityInSong": "A community in song",
+  "communityInSongHelp": "Discover the hymns our community opens, returns to, and adds to favorites.",
+  "lastWeek": "Last week",
+  "statisticsWeeks": "{count} weeks",
+  "reportUpdated": "Report updated",
+  "savedReport": "Offline · Saved report",
+  "reportDateHelp": "{status} {date}. Completed weeks only; weekly uploads can arrive later.",
+  "olderReportHelp": "You’re viewing a saved or older report. Refresh when connected for the latest available statistics.",
+  "mostOpenedHymns": "Most-opened hymns",
+  "mostOpenedHelp": "A place to begin your next time of worship.",
+  "returningHymns": "Hymns we return to",
+  "returningHymnsHelp": "Additional opens of the same hymn on one installation within a calendar week. This does not measure complete performances.",
+  "addedToFavorites": "Added to favorites",
+  "addedToFavoritesHelp": "Hymns people saved during this period. These are additions, not everyone’s current favorites.",
+  "whenHymnalOpened": "When we open the hymnal",
+  "whenHymnalOpenedHelp": "Times are local to each device when the hymn was opened.",
+  "statisticsNight": "Night · 12–6 am",
+  "statisticsMorning": "Morning · 6 am–12 pm",
+  "statisticsAfternoon": "Afternoon · 12–6 pm",
+  "statisticsEvening": "Evening · 6 pm–12 am",
+  "daysFilledWithSong": "Days filled with song",
+  "daysFilledWithSongHelp": "Hymn opens by the local day of the week.",
+  "aroundTheWorld": "Around the world",
+  "aroundTheWorldHelp": "Popular hymns by upload country. Travel and network routing can affect country estimates.",
+  "countryIsoCode": "Country (ISO code)",
+  "statisticsExplanation": "About these numbers\n\nThese are shared activity counts, not unique people or the number of times a hymn was sung. Each published weekly group needs at least 20 participating installations. Small groups and some related totals are withheld, so charts may be incomplete. New measurements need time to gather enough contributions.\n\nEveryone sees the same community report. You can view it even when sharing is off in Settings.",
+  "communityStatisticsFailed": "Community statistics are unavailable right now. Connect to the internet and try again. After your first successful download, the saved report will be available offline.",
+  "loadingCommunityStatistics": "Loading community statistics…",
+  "communityInsightsGrowing": "Community insights are growing. Results appear here when enough people have contributed.",
+  "notEnoughPublishedData": "Not enough published data",
+  "statisticsNewEdition": "New",
+  "statisticsOldEdition": "Old",
+  "countryUS": "United States",
+  "countryGB": "United Kingdom",
+  "countryCA": "Canada",
+  "countryTT": "Trinidad and Tobago",
+  "countryGY": "Guyana",
+  "countryBB": "Barbados",
+  "countryBS": "Bahamas",
+  "countryZA": "South Africa",
+  "countryKE": "Kenya",
+  "countryNG": "Nigeria",
+  "countryGH": "Ghana",
+  "countryPH": "Philippines",
+  "countryAU": "Australia",
+  "countryNZ": "New Zealand",
+  "countryIN": "India",
+  "countryZW": "Zimbabwe",
+  "statisticsOpens": "{count, plural, one{{count} open} other{{count} opens}}",
+  "statisticsRepeatOpens": "{count, plural, one{{count} repeat open} other{{count} repeat opens}}",
+  "statisticsAdditions": "{count, plural, one{{count} addition} other{{count} additions}}",
+  "@statisticsWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@statisticsOpens": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@statisticsRepeatOpens": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@statisticsAdditions": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "@reportDateHelp": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 407-message
+not claim that the app interface is fully translated. The 460-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -105,3 +105,11 @@ contact addresses and destinations. Contact rows wrap at compact widths with
 larger text. Tests cover all four locales, both designs and both themes; mocked
 link launches verify destinations without opening external applications. Score
 layout tests also verify decoded page images rather than only page controls.
+
+Community statistics now localize period filters, report status, chart labels,
+country names, and explanatory text. Dates, weekdays, and grouped counts follow
+the interface locale; activity units use ICU plurals, including Russian forms.
+Unknown country codes remain visible as supplied. Compact checks cover recovery
+from a load failure, saved reports, period selection, charts, and country filters
+in all four locales, both designs, and both themes with larger text. Public
+report fields, source song titles, and analytics event IDs stay unchanged.

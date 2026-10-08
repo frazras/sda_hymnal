@@ -2543,6 +2543,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy'**
   String get privacy;
+
+  /// No description provided for @statisticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statisticsTitle;
+
+  /// No description provided for @refreshStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh statistics'**
+  String get refreshStatistics;
+
+  /// No description provided for @communityInSong.
+  ///
+  /// In en, this message translates to:
+  /// **'A community in song'**
+  String get communityInSong;
+
+  /// No description provided for @communityInSongHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover the hymns our community opens, returns to, and adds to favorites.'**
+  String get communityInSongHelp;
+
+  /// No description provided for @lastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Last week'**
+  String get lastWeek;
+
+  /// No description provided for @statisticsWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} weeks'**
+  String statisticsWeeks(int count);
+
+  /// No description provided for @reportUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Report updated'**
+  String get reportUpdated;
+
+  /// No description provided for @savedReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline · Saved report'**
+  String get savedReport;
+
+  /// No description provided for @reportDateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'{status} {date}. Completed weeks only; weekly uploads can arrive later.'**
+  String reportDateHelp(String status, String date);
+
+  /// No description provided for @olderReportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You’re viewing a saved or older report. Refresh when connected for the latest available statistics.'**
+  String get olderReportHelp;
+
+  /// No description provided for @mostOpenedHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'Most-opened hymns'**
+  String get mostOpenedHymns;
+
+  /// No description provided for @mostOpenedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A place to begin your next time of worship.'**
+  String get mostOpenedHelp;
+
+  /// No description provided for @returningHymns.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns we return to'**
+  String get returningHymns;
+
+  /// No description provided for @returningHymnsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional opens of the same hymn on one installation within a calendar week. This does not measure complete performances.'**
+  String get returningHymnsHelp;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get addedToFavorites;
+
+  /// No description provided for @addedToFavoritesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns people saved during this period. These are additions, not everyone’s current favorites.'**
+  String get addedToFavoritesHelp;
+
+  /// No description provided for @whenHymnalOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'When we open the hymnal'**
+  String get whenHymnalOpened;
+
+  /// No description provided for @whenHymnalOpenedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Times are local to each device when the hymn was opened.'**
+  String get whenHymnalOpenedHelp;
+
+  /// No description provided for @statisticsNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night · 12–6 am'**
+  String get statisticsNight;
+
+  /// No description provided for @statisticsMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning · 6 am–12 pm'**
+  String get statisticsMorning;
+
+  /// No description provided for @statisticsAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon · 12–6 pm'**
+  String get statisticsAfternoon;
+
+  /// No description provided for @statisticsEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening · 6 pm–12 am'**
+  String get statisticsEvening;
+
+  /// No description provided for @daysFilledWithSong.
+  ///
+  /// In en, this message translates to:
+  /// **'Days filled with song'**
+  String get daysFilledWithSong;
+
+  /// No description provided for @daysFilledWithSongHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymn opens by the local day of the week.'**
+  String get daysFilledWithSongHelp;
+
+  /// No description provided for @aroundTheWorld.
+  ///
+  /// In en, this message translates to:
+  /// **'Around the world'**
+  String get aroundTheWorld;
+
+  /// No description provided for @aroundTheWorldHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular hymns by upload country. Travel and network routing can affect country estimates.'**
+  String get aroundTheWorldHelp;
+
+  /// No description provided for @countryIsoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Country (ISO code)'**
+  String get countryIsoCode;
+
+  /// No description provided for @statisticsExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'About these numbers\n\nThese are shared activity counts, not unique people or the number of times a hymn was sung. Each published weekly group needs at least 20 participating installations. Small groups and some related totals are withheld, so charts may be incomplete. New measurements need time to gather enough contributions.\n\nEveryone sees the same community report. You can view it even when sharing is off in Settings.'**
+  String get statisticsExplanation;
+
+  /// No description provided for @communityStatisticsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Community statistics are unavailable right now. Connect to the internet and try again. After your first successful download, the saved report will be available offline.'**
+  String get communityStatisticsFailed;
+
+  /// No description provided for @loadingCommunityStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading community statistics…'**
+  String get loadingCommunityStatistics;
+
+  /// No description provided for @communityInsightsGrowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Community insights are growing. Results appear here when enough people have contributed.'**
+  String get communityInsightsGrowing;
+
+  /// No description provided for @notEnoughPublishedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough published data'**
+  String get notEnoughPublishedData;
+
+  /// No description provided for @statisticsNewEdition.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get statisticsNewEdition;
+
+  /// No description provided for @statisticsOldEdition.
+  ///
+  /// In en, this message translates to:
+  /// **'Old'**
+  String get statisticsOldEdition;
+
+  /// No description provided for @countryUS.
+  ///
+  /// In en, this message translates to:
+  /// **'United States'**
+  String get countryUS;
+
+  /// No description provided for @countryGB.
+  ///
+  /// In en, this message translates to:
+  /// **'United Kingdom'**
+  String get countryGB;
+
+  /// No description provided for @countryCA.
+  ///
+  /// In en, this message translates to:
+  /// **'Canada'**
+  String get countryCA;
+
+  /// No description provided for @countryTT.
+  ///
+  /// In en, this message translates to:
+  /// **'Trinidad and Tobago'**
+  String get countryTT;
+
+  /// No description provided for @countryGY.
+  ///
+  /// In en, this message translates to:
+  /// **'Guyana'**
+  String get countryGY;
+
+  /// No description provided for @countryBB.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbados'**
+  String get countryBB;
+
+  /// No description provided for @countryBS.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahamas'**
+  String get countryBS;
+
+  /// No description provided for @countryZA.
+  ///
+  /// In en, this message translates to:
+  /// **'South Africa'**
+  String get countryZA;
+
+  /// No description provided for @countryKE.
+  ///
+  /// In en, this message translates to:
+  /// **'Kenya'**
+  String get countryKE;
+
+  /// No description provided for @countryNG.
+  ///
+  /// In en, this message translates to:
+  /// **'Nigeria'**
+  String get countryNG;
+
+  /// No description provided for @countryGH.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghana'**
+  String get countryGH;
+
+  /// No description provided for @countryPH.
+  ///
+  /// In en, this message translates to:
+  /// **'Philippines'**
+  String get countryPH;
+
+  /// No description provided for @countryAU.
+  ///
+  /// In en, this message translates to:
+  /// **'Australia'**
+  String get countryAU;
+
+  /// No description provided for @countryNZ.
+  ///
+  /// In en, this message translates to:
+  /// **'New Zealand'**
+  String get countryNZ;
+
+  /// No description provided for @countryIN.
+  ///
+  /// In en, this message translates to:
+  /// **'India'**
+  String get countryIN;
+
+  /// No description provided for @countryZW.
+  ///
+  /// In en, this message translates to:
+  /// **'Zimbabwe'**
+  String get countryZW;
+
+  /// No description provided for @statisticsOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} open} other{{count} opens}}'**
+  String statisticsOpens(int count);
+
+  /// No description provided for @statisticsRepeatOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} repeat open} other{{count} repeat opens}}'**
+  String statisticsRepeatOpens(int count);
+
+  /// No description provided for @statisticsAdditions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} addition} other{{count} additions}}'**
+  String statisticsAdditions(int count);
 }
 
 class _AppLocalizationsDelegate

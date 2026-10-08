@@ -1368,4 +1368,232 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get privacy => 'Конфиденциальность';
+
+  @override
+  String get statisticsTitle => 'Статистика';
+
+  @override
+  String get refreshStatistics => 'Обновить статистику';
+
+  @override
+  String get communityInSong => 'Сообщество в песне';
+
+  @override
+  String get communityInSongHelp =>
+      'Узнайте, какие гимны наше сообщество открывает, перечитывает и добавляет в избранное.';
+
+  @override
+  String get lastWeek => 'Прошлая неделя';
+
+  @override
+  String statisticsWeeks(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString недели',
+      many: '$countString недель',
+      few: '$countString недели',
+      one: '$countString неделя',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reportUpdated => 'Отчёт обновлён';
+
+  @override
+  String get savedReport => 'Нет сети · Сохранённый отчёт';
+
+  @override
+  String reportDateHelp(String status, String date) {
+    return '$status $date. Только завершённые недели; еженедельные данные могут поступать позже.';
+  }
+
+  @override
+  String get olderReportHelp =>
+      'Вы просматриваете сохранённый или старый отчёт. Обновите его при подключении к сети, чтобы получить последние доступные данные.';
+
+  @override
+  String get mostOpenedHymns => 'Самые просматриваемые гимны';
+
+  @override
+  String get mostOpenedHelp =>
+      'Отправная точка для вашего следующего времени поклонения.';
+
+  @override
+  String get returningHymns => 'Гимны, к которым мы возвращаемся';
+
+  @override
+  String get returningHymnsHelp =>
+      'Повторные открытия одного гимна в одной установленной копии приложения за календарную неделю. Это не число полных исполнений.';
+
+  @override
+  String get addedToFavorites => 'Добавлено в избранное';
+
+  @override
+  String get addedToFavoritesHelp =>
+      'Гимны, сохранённые за этот период. Это новые добавления, а не всё текущее избранное.';
+
+  @override
+  String get whenHymnalOpened => 'Когда мы открываем сборник гимнов';
+
+  @override
+  String get whenHymnalOpenedHelp =>
+      'Время указано по местному времени устройства на момент открытия гимна.';
+
+  @override
+  String get statisticsNight => 'Ночь · 0–6 ч';
+
+  @override
+  String get statisticsMorning => 'Утро · 6–12 ч';
+
+  @override
+  String get statisticsAfternoon => 'День · 12–18 ч';
+
+  @override
+  String get statisticsEvening => 'Вечер · 18–24 ч';
+
+  @override
+  String get daysFilledWithSong => 'Дни, наполненные песней';
+
+  @override
+  String get daysFilledWithSongHelp =>
+      'Открытия гимнов по местному дню недели.';
+
+  @override
+  String get aroundTheWorld => 'По всему миру';
+
+  @override
+  String get aroundTheWorldHelp =>
+      'Популярные гимны по стране отправки данных. Поездки и маршрутизация сети могут влиять на определение страны.';
+
+  @override
+  String get countryIsoCode => 'Страна (код ISO)';
+
+  @override
+  String get statisticsExplanation =>
+      'Об этих числах\n\nЭто общие показатели активности, а не число уникальных людей или исполнений гимна. Для публикации каждой недельной группы требуется не менее 20 участвующих установок приложения. Небольшие группы и некоторые связанные итоги не публикуются, поэтому диаграммы могут быть неполными. Новым показателям нужно время, чтобы накопить достаточно данных.\n\nВсе видят один и тот же отчёт сообщества. Он доступен даже при отключённой отправке статистики в настройках.';
+
+  @override
+  String get communityStatisticsFailed =>
+      'Статистика сообщества сейчас недоступна. Подключитесь к интернету и попробуйте снова. После первой успешной загрузки сохранённый отчёт будет доступен без сети.';
+
+  @override
+  String get loadingCommunityStatistics => 'Загрузка статистики сообщества…';
+
+  @override
+  String get communityInsightsGrowing =>
+      'Статистика сообщества накапливается. Результаты появятся здесь, когда будет достаточно участников.';
+
+  @override
+  String get notEnoughPublishedData => 'Недостаточно опубликованных данных';
+
+  @override
+  String get statisticsNewEdition => 'Новый';
+
+  @override
+  String get statisticsOldEdition => 'Старый';
+
+  @override
+  String get countryUS => 'США';
+
+  @override
+  String get countryGB => 'Великобритания';
+
+  @override
+  String get countryCA => 'Канада';
+
+  @override
+  String get countryTT => 'Тринидад и Тобаго';
+
+  @override
+  String get countryGY => 'Гайана';
+
+  @override
+  String get countryBB => 'Барбадос';
+
+  @override
+  String get countryBS => 'Багамы';
+
+  @override
+  String get countryZA => 'Южная Африка';
+
+  @override
+  String get countryKE => 'Кения';
+
+  @override
+  String get countryNG => 'Нигерия';
+
+  @override
+  String get countryGH => 'Гана';
+
+  @override
+  String get countryPH => 'Филиппины';
+
+  @override
+  String get countryAU => 'Австралия';
+
+  @override
+  String get countryNZ => 'Новая Зеландия';
+
+  @override
+  String get countryIN => 'Индия';
+
+  @override
+  String get countryZW => 'Зимбабве';
+
+  @override
+  String statisticsOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString открытия',
+      many: '$countString открытий',
+      few: '$countString открытия',
+      one: '$countString открытие',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsRepeatOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString повторного открытия',
+      many: '$countString повторных открытий',
+      few: '$countString повторных открытия',
+      one: '$countString повторное открытие',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsAdditions(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString добавления',
+      many: '$countString добавлений',
+      few: '$countString добавления',
+      one: '$countString добавление',
+    );
+    return '$_temp0';
+  }
 }

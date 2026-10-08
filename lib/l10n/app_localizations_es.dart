@@ -1360,4 +1360,219 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get privacy => 'Privacidad';
+
+  @override
+  String get statisticsTitle => 'Estadísticas';
+
+  @override
+  String get refreshStatistics => 'Actualizar estadísticas';
+
+  @override
+  String get communityInSong => 'Una comunidad que canta';
+
+  @override
+  String get communityInSongHelp =>
+      'Descubre los himnos que nuestra comunidad abre, vuelve a consultar y añade a favoritos.';
+
+  @override
+  String get lastWeek => 'Última semana';
+
+  @override
+  String statisticsWeeks(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString semanas';
+  }
+
+  @override
+  String get reportUpdated => 'Informe actualizado';
+
+  @override
+  String get savedReport => 'Sin conexión · Informe guardado';
+
+  @override
+  String reportDateHelp(String status, String date) {
+    return '$status $date. Solo semanas completas; los datos semanales pueden llegar más tarde.';
+  }
+
+  @override
+  String get olderReportHelp =>
+      'Estás viendo un informe guardado o anterior. Actualiza cuando tengas conexión para ver las estadísticas más recientes disponibles.';
+
+  @override
+  String get mostOpenedHymns => 'Himnos más consultados';
+
+  @override
+  String get mostOpenedHelp =>
+      'Un punto de partida para tu próximo momento de adoración.';
+
+  @override
+  String get returningHymns => 'Himnos que volvemos a consultar';
+
+  @override
+  String get returningHymnsHelp =>
+      'Aperturas adicionales del mismo himno en una instalación durante una semana calendario. No representa interpretaciones completas.';
+
+  @override
+  String get addedToFavorites => 'Añadidos a favoritos';
+
+  @override
+  String get addedToFavoritesHelp =>
+      'Himnos guardados durante este período. Son nuevas incorporaciones, no todos los favoritos actuales.';
+
+  @override
+  String get whenHymnalOpened => 'Cuándo abrimos el himnario';
+
+  @override
+  String get whenHymnalOpenedHelp =>
+      'Las horas corresponden a la hora local de cada dispositivo al abrir el himno.';
+
+  @override
+  String get statisticsNight => 'Madrugada · 0–6 h';
+
+  @override
+  String get statisticsMorning => 'Mañana · 6–12 h';
+
+  @override
+  String get statisticsAfternoon => 'Tarde · 12–18 h';
+
+  @override
+  String get statisticsEvening => 'Noche · 18–24 h';
+
+  @override
+  String get daysFilledWithSong => 'Días llenos de canto';
+
+  @override
+  String get daysFilledWithSongHelp =>
+      'Aperturas de himnos según el día de la semana local.';
+
+  @override
+  String get aroundTheWorld => 'Por todo el mundo';
+
+  @override
+  String get aroundTheWorldHelp =>
+      'Himnos populares según el país de envío de datos. Los viajes y la conexión de red pueden afectar la estimación del país.';
+
+  @override
+  String get countryIsoCode => 'País (código ISO)';
+
+  @override
+  String get statisticsExplanation =>
+      'Acerca de estas cifras\n\nSon recuentos de actividad compartida, no de personas únicas ni de veces que se cantó un himno. Cada grupo semanal publicado necesita al menos 20 instalaciones participantes. Se omiten los grupos pequeños y algunos totales relacionados, por lo que los gráficos pueden estar incompletos. Las nuevas mediciones necesitan tiempo para reunir suficientes aportes.\n\nTodos ven el mismo informe de la comunidad. Puedes consultarlo aunque el envío de estadísticas esté desactivado en Ajustes.';
+
+  @override
+  String get communityStatisticsFailed =>
+      'Las estadísticas de la comunidad no están disponibles ahora. Conéctate a internet e inténtalo de nuevo. Tras la primera descarga correcta, el informe guardado estará disponible sin conexión.';
+
+  @override
+  String get loadingCommunityStatistics =>
+      'Cargando estadísticas de la comunidad…';
+
+  @override
+  String get communityInsightsGrowing =>
+      'Las estadísticas de la comunidad están creciendo. Los resultados aparecerán aquí cuando haya suficientes participantes.';
+
+  @override
+  String get notEnoughPublishedData => 'No hay suficientes datos publicados';
+
+  @override
+  String get statisticsNewEdition => 'Nuevo';
+
+  @override
+  String get statisticsOldEdition => 'Antiguo';
+
+  @override
+  String get countryUS => 'Estados Unidos';
+
+  @override
+  String get countryGB => 'Reino Unido';
+
+  @override
+  String get countryCA => 'Canadá';
+
+  @override
+  String get countryTT => 'Trinidad y Tobago';
+
+  @override
+  String get countryGY => 'Guyana';
+
+  @override
+  String get countryBB => 'Barbados';
+
+  @override
+  String get countryBS => 'Bahamas';
+
+  @override
+  String get countryZA => 'Sudáfrica';
+
+  @override
+  String get countryKE => 'Kenia';
+
+  @override
+  String get countryNG => 'Nigeria';
+
+  @override
+  String get countryGH => 'Ghana';
+
+  @override
+  String get countryPH => 'Filipinas';
+
+  @override
+  String get countryAU => 'Australia';
+
+  @override
+  String get countryNZ => 'Nueva Zelanda';
+
+  @override
+  String get countryIN => 'India';
+
+  @override
+  String get countryZW => 'Zimbabue';
+
+  @override
+  String statisticsOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString aperturas',
+      one: '$countString apertura',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsRepeatOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString aperturas repetidas',
+      one: '$countString apertura repetida',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsAdditions(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString incorporaciones',
+      one: '$countString incorporación',
+    );
+    return '$_temp0';
+  }
 }

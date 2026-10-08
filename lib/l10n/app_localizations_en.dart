@@ -1354,4 +1354,217 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacy => 'Privacy';
+
+  @override
+  String get statisticsTitle => 'Statistics';
+
+  @override
+  String get refreshStatistics => 'Refresh statistics';
+
+  @override
+  String get communityInSong => 'A community in song';
+
+  @override
+  String get communityInSongHelp =>
+      'Discover the hymns our community opens, returns to, and adds to favorites.';
+
+  @override
+  String get lastWeek => 'Last week';
+
+  @override
+  String statisticsWeeks(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString weeks';
+  }
+
+  @override
+  String get reportUpdated => 'Report updated';
+
+  @override
+  String get savedReport => 'Offline · Saved report';
+
+  @override
+  String reportDateHelp(String status, String date) {
+    return '$status $date. Completed weeks only; weekly uploads can arrive later.';
+  }
+
+  @override
+  String get olderReportHelp =>
+      'You’re viewing a saved or older report. Refresh when connected for the latest available statistics.';
+
+  @override
+  String get mostOpenedHymns => 'Most-opened hymns';
+
+  @override
+  String get mostOpenedHelp => 'A place to begin your next time of worship.';
+
+  @override
+  String get returningHymns => 'Hymns we return to';
+
+  @override
+  String get returningHymnsHelp =>
+      'Additional opens of the same hymn on one installation within a calendar week. This does not measure complete performances.';
+
+  @override
+  String get addedToFavorites => 'Added to favorites';
+
+  @override
+  String get addedToFavoritesHelp =>
+      'Hymns people saved during this period. These are additions, not everyone’s current favorites.';
+
+  @override
+  String get whenHymnalOpened => 'When we open the hymnal';
+
+  @override
+  String get whenHymnalOpenedHelp =>
+      'Times are local to each device when the hymn was opened.';
+
+  @override
+  String get statisticsNight => 'Night · 12–6 am';
+
+  @override
+  String get statisticsMorning => 'Morning · 6 am–12 pm';
+
+  @override
+  String get statisticsAfternoon => 'Afternoon · 12–6 pm';
+
+  @override
+  String get statisticsEvening => 'Evening · 6 pm–12 am';
+
+  @override
+  String get daysFilledWithSong => 'Days filled with song';
+
+  @override
+  String get daysFilledWithSongHelp =>
+      'Hymn opens by the local day of the week.';
+
+  @override
+  String get aroundTheWorld => 'Around the world';
+
+  @override
+  String get aroundTheWorldHelp =>
+      'Popular hymns by upload country. Travel and network routing can affect country estimates.';
+
+  @override
+  String get countryIsoCode => 'Country (ISO code)';
+
+  @override
+  String get statisticsExplanation =>
+      'About these numbers\n\nThese are shared activity counts, not unique people or the number of times a hymn was sung. Each published weekly group needs at least 20 participating installations. Small groups and some related totals are withheld, so charts may be incomplete. New measurements need time to gather enough contributions.\n\nEveryone sees the same community report. You can view it even when sharing is off in Settings.';
+
+  @override
+  String get communityStatisticsFailed =>
+      'Community statistics are unavailable right now. Connect to the internet and try again. After your first successful download, the saved report will be available offline.';
+
+  @override
+  String get loadingCommunityStatistics => 'Loading community statistics…';
+
+  @override
+  String get communityInsightsGrowing =>
+      'Community insights are growing. Results appear here when enough people have contributed.';
+
+  @override
+  String get notEnoughPublishedData => 'Not enough published data';
+
+  @override
+  String get statisticsNewEdition => 'New';
+
+  @override
+  String get statisticsOldEdition => 'Old';
+
+  @override
+  String get countryUS => 'United States';
+
+  @override
+  String get countryGB => 'United Kingdom';
+
+  @override
+  String get countryCA => 'Canada';
+
+  @override
+  String get countryTT => 'Trinidad and Tobago';
+
+  @override
+  String get countryGY => 'Guyana';
+
+  @override
+  String get countryBB => 'Barbados';
+
+  @override
+  String get countryBS => 'Bahamas';
+
+  @override
+  String get countryZA => 'South Africa';
+
+  @override
+  String get countryKE => 'Kenya';
+
+  @override
+  String get countryNG => 'Nigeria';
+
+  @override
+  String get countryGH => 'Ghana';
+
+  @override
+  String get countryPH => 'Philippines';
+
+  @override
+  String get countryAU => 'Australia';
+
+  @override
+  String get countryNZ => 'New Zealand';
+
+  @override
+  String get countryIN => 'India';
+
+  @override
+  String get countryZW => 'Zimbabwe';
+
+  @override
+  String statisticsOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString opens',
+      one: '$countString open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsRepeatOpens(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString repeat opens',
+      one: '$countString repeat open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String statisticsAdditions(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString additions',
+      one: '$countString addition',
+    );
+    return '$_temp0';
+  }
 }
