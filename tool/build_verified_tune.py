@@ -150,6 +150,15 @@ if __name__ == '__main__':
         'includesIntroduction': True,
         'score': 'assets/sheet_music/es_2009/piano_sheet_es_303.png'
     }]}
+    from build_abre_tu_corazon import build as build_abre, mapping as abre_mapping
+    abre = build_abre((ROOT / 'tool/data/midi_sources/spanish-old-164.mid').read_bytes())
+    abre_path = ROOT / 'assets/midi/es-2009-230.mid'
+    catalog['mappings'].append(abre_mapping(abre))
+    if args.check:
+        if not abre_path.exists() or abre_path.read_bytes() != abre:
+            raise SystemExit('Verified Spanish 230 differs')
+    else:
+        abre_path.write_bytes(abre)
     catalog_path = ROOT / 'assets/midi/verified_tunes.json'
     catalog_bytes = (json.dumps(catalog, ensure_ascii=False, indent=2) + '\n').encode()
     if args.check:
@@ -160,4 +169,5 @@ if __name__ == '__main__':
     else:
         DEST.write_bytes(output)
         catalog_path.write_bytes(catalog_bytes)
+    print(f'Verified Spanish 230: 2 verses, {len(abre)} bytes')
     print(f'Verified Spanish 303: intro + 3 verses, {len(output)} bytes')

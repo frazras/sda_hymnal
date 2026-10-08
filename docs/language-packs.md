@@ -21,7 +21,7 @@ recognized for ranking. Displayed titles and lyrics are never normalized.
 
 The interface remains English. Hymn text, titles, credits, and topics retain
 their source language. UI translation and audio are separate roadmap items.
-Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Both Spanish editions now offer instrumental recordings for every hymn (614 New and 527 Old). Spanish New #303 prefers its verified three-verse MIDI, retaining styles, choir parts, and key changes. Other Spanish hymns use the same player with recording-supported controls; other foreign editions remain silent. Recordings download on first play into a bounded temporary cache, so first use requires a connection. Cyrillic labels use a bundled font fallback.
+Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Both Spanish editions now offer instrumental recordings for every hymn (614 New and 527 Old). Spanish New #303 (three verses) and #230 (two verses) prefer their score-reviewed MIDI arrangements, retaining styles, choir parts, and key changes. Other Spanish hymns use the same player with recording-supported controls; other foreign editions remain silent. Recordings download on first play into a bounded temporary cache, so first use requires a connection. Cyrillic labels use a bundled font fallback.
 
 Foreign per-hymn analytics are suppressed while the deployed collector still
 accepts only English aliases. Content reports use its existing general-report

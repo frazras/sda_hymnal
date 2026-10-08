@@ -11,8 +11,8 @@ String? hymnMidiAsset(String book, int number) {
   if (book == 'old' && number >= 1 && number <= 703) {
     return 'midi/C${number.toString().padLeft(3, '0')}.mid';
   }
-  if (book == 'sda-es-2009' && number == 303) {
-    return 'midi/es-2009-303.mid';
+  if (book == 'sda-es-2009' && const {230, 303}.contains(number)) {
+    return 'midi/es-2009-$number.mid';
   }
   return null;
 }

@@ -44,8 +44,10 @@ void main() {
         expect(hymn.title, source['items'][i]['title']);
         expect(hymn.body, isNotEmpty);
         expect(hymn.readingBody, hymn.body);
-        expect(MidiPlayer.hasMidi(hymn),
-            hymn.version == 'sda-es-2009' && hymn.number == 303);
+        expect(
+            MidiPlayer.hasMidi(hymn),
+            hymn.version == 'sda-es-2009' &&
+                const {230, 303}.contains(hymn.number));
         expect(hymn.video, isNull);
         expect(hymn.metadata, isNull);
       }

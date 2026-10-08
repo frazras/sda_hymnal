@@ -160,6 +160,7 @@ void main() {
         for (var n = 1; n <= 695; n++) '${n.toString().padLeft(3, '0')}.mid',
         for (var n = 1; n <= 703; n++) 'C${n.toString().padLeft(3, '0')}.mid',
         'es-2009-303.mid',
+        'es-2009-230.mid',
       };
       expect(names, expected);
       for (final file in files) {

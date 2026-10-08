@@ -95,3 +95,33 @@ The [Old/New correlation project](https://github.com/Alexisvt/correlacion-himnar
 is an additional candidate-identification resource. Number/title correlations
 must not be treated as proof that two editions use identical music or performance
 form. Review the printed scores before sharing any MIDI arrangement.
+
+## Spanish New #230: Abre tu corazón (2026-10-08)
+
+Reviewed the entire printed soprano against
+`assets/sheet_music/es_2009/piano_sheet_es_230.png`: Eb major, 6/8,
+eight bars, no pickup or introduction, two verses. The 30-note phrase and
+quarter-note onset positions are recorded in `tool/build_abre_tu_corazon.py`.
+
+The Spanish Old #164 candidate from the edition-specific source is pinned at
+`tool/data/midi_sources/spanish-old-164.mid` (SHA-256
+`fb1ef0129d66debbc32929d96d136af69fd148433c4e4fc496d26475d9b34f44`).
+It contains a single eight-bar verse in F, with named soprano/alto/tenor/bass.
+After transposition down two semitones, its soprano matches the New score except
+for the held note beginning at quarter beat 9: the candidate has G4, whereas the
+New score prints Eb4. Both the note-on and note-off are corrected explicitly.
+The final chord is shortened by half a quarter beat to preserve the printed
+closing eighth rest. Each verse occupies 24 quarter beats; repeating once gives
+48 beats and approximately 46.452 seconds. Eb-major key metadata is added.
+
+This is a target-specific accompaniment arrangement. The source harmony is
+retained after transposition; it is not claimed to duplicate every printed
+supporting voice. The New edition's complete soprano and rhythm are checked,
+and its two-verse form follows the target text. The Old edition is not enabled
+by this mapping because its score review is still pending. Existing recordings
+remain available for all other Spanish hymns.
+
+The shared builder generates/checks both reviewed Spanish arrangements and the
+mapping catalog. Tests check both full soprano repetitions, balanced note events,
+closing rests, written key, duration, all style/engine renders, and manual
+play/pause while preserving the exact Spanish book/item identity.

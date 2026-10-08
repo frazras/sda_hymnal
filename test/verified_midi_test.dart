@@ -8,6 +8,8 @@ import 'package:sdahymnal/services/verified_midi.dart';
 
 void main() {
   test('only the reviewed exact Spanish edition resolves', () {
+    expect(hymnMidiAsset('sda-es-2009', 230), 'midi/es-2009-230.mid');
+    expect(hymnMidiAsset('sda-es-1962', 164), isNull);
     expect(hymnMidiAsset('sda-es-2009', 303), 'midi/es-2009-303.mid');
     for (final book in [
       'sda-es-1962',
@@ -51,4 +53,18 @@ void main() {
       expect(midiParts(rendered), isNotEmpty);
     });
   }
+  test('Abre tu corazon keeps two verses, Eb major and every style', () {
+    final bytes = File('assets/midi/es-2009-230.mid').readAsBytesSync();
+    expect(readKeySignature(bytes)?.label, 'Eb');
+    expect(readMidiDuration(bytes).inMilliseconds, closeTo(46452, 1));
+    expect(midiParts(bytes).length, 4);
+    for (final theme in ['classic', ...arrangedMidiThemes.keys]) {
+      for (final apple in [false, true]) {
+        final rendered = renderHymnMidi(bytes,
+            theme: theme, forAppleSynth: apple, semitones: 2);
+        expect(readMidiDuration(rendered), greaterThan(Duration.zero));
+        expect(midiParts(rendered), isNotEmpty);
+      }
+    }
+  });
 }

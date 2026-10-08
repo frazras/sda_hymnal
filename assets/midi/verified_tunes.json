@@ -15,6 +15,22 @@
       "verses": 3,
       "includesIntroduction": true,
       "score": "assets/sheet_music/es_2009/piano_sheet_es_303.png"
+    },
+    {
+      "bookId": "sda-es-2009",
+      "itemId": "230",
+      "asset": "assets/midi/es-2009-230.mid",
+      "sha256": "6155d65347b07cb48d501760f13a48632bb79aba889cc2e1f87677f3f6c758c0",
+      "sourceBookId": "sda-es-1962",
+      "sourceItemId": "164",
+      "sourceSha256": "fb1ef0129d66debbc32929d96d136af69fd148433c4e4fc496d26475d9b34f44",
+      "sourceUrl": "https://4eange.org/espagnol/CAN/ESP/MID/E164.mid",
+      "key": "Eb",
+      "meter": "6/8",
+      "verses": 2,
+      "includesIntroduction": false,
+      "score": "assets/sheet_music/es_2009/piano_sheet_es_230.png",
+      "adaptation": "Transpose down two semitones, use printed Eb held soprano at beat 9, end each verse with printed eighth rest, repeat for two verses. Source harmony retained as an arrangement."
     }
   ]
 }

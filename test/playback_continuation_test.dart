@@ -177,27 +177,29 @@ void main() {
     expect(MidiPlayer.instance.current.value, isNull);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
-    final spanish = hymn(303, 'sda-es-2009');
-    await tester.pumpWidget(MaterialApp(
-        theme: buildHymnalTheme(HymnalTokens.light),
-        home: HymnPage(hymn: spanish, hymns: [spanish])));
-    await tester.pumpAndSettle();
-    expect(MidiPlayer.instance.current.value, isNull);
-    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
-    for (var i = 0; i < 10; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
+    for (final number in [230, 303]) {
+      final spanish = hymn(number, 'sda-es-2009');
+      await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(HymnalTokens.light),
+          home: HymnPage(hymn: spanish, hymns: [spanish])));
+      await tester.pumpAndSettle();
+      expect(MidiPlayer.instance.current.value, isNull);
+      await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(MidiPlayer.instance.current.value?.version, 'sda-es-2009');
+      expect(MidiPlayer.instance.current.value?.n, number);
+      expect(loadedSources.last, contains('es-2009-$number.mid'));
+      await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+      await tester.pump();
+      expect(MidiPlayer.instance.current.value?.paused, isTrue);
+      await audioEvent('audio.onComplete');
+      await tester.pump();
+      expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, spanish);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
     }
-    expect(MidiPlayer.instance.current.value?.version, 'sda-es-2009');
-    expect(MidiPlayer.instance.current.value?.n, 303);
-    expect(loadedSources.last, contains('es-2009-303.mid'));
-    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
-    await tester.pump();
-    expect(MidiPlayer.instance.current.value?.paused, isTrue);
-    await audioEvent('audio.onComplete');
-    await tester.pump();
-    expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, spanish);
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump();
   });
 
   testWidgets('main Favorites carries only its displayed mixed-edition list',

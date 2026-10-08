@@ -87,7 +87,8 @@ Items below are plans, not claims that multilingual content is already installed
 
 - [ ] Expand verified cross-language tune mappings. Spanish New #303 now has
       three-verse NEW BRITAIN playback verified against English New #108 and its
-      Spanish score. Other pairs require individual musical/form verification.
+      Spanish score. New #230 now has its own score-corrected two-verse 6/8
+      arrangement in Eb; other pairs require individual musical/form verification.
 
 - [x] Add Jazz with piano chords, walking acoustic bass, swung ride cymbal,
       and customizable ensemble instruments and mix.
