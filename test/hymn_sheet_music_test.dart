@@ -22,8 +22,9 @@ class _ScoreAssets extends CachingAssetBundle {
   }
 
   @override
-  Future<ByteData> load(String key) =>
-      SynchronousFuture(ByteData.sublistView(File(key).readAsBytesSync()));
+  Future<ByteData> load(String key) => File(key).existsSync()
+      ? SynchronousFuture(ByteData.sublistView(File(key).readAsBytesSync()))
+      : rootBundle.load(key);
 }
 
 void main() {
@@ -252,6 +253,12 @@ void main() {
         final context = tester.element(find.byType(HymnSheetMusic));
         final text = context.appText;
         expect(find.text(text.pageOfTotal(1, 6)), findsOneWidget);
+        expect(find.text(text.scorePageError), findsNothing);
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+        });
+        await tester.pumpAndSettle();
+        expect(tester.widget<RawImage>(find.byType(RawImage)).image, isNotNull);
         await tester.tap(find.byTooltip(text.nextScorePage));
         await tester.pumpAndSettle();
         expect(find.text(text.pageOfTotal(2, 6)), findsOneWidget);

@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics_endpoint.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,11 +21,6 @@ class About extends StatelessWidget {
   /// only in the Play Console listing field.
   static final Uri _privacyUrl = Uri.parse('$analyticsEndpoint/privacy-policy');
 
-  static const String _bio =
-      'I am a software developer for Mobile Apps and Websites. This project '
-      'is my contribution to help you develop a closer relationship with the '
-      'Lord. I pray you keep your heart pure and lift your praises high.';
-
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -32,7 +28,7 @@ class About extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SubPageHeader(title: 'About Us'),
+            SubPageHeader(title: context.appText.aboutUs),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -56,20 +52,21 @@ class About extends StatelessWidget {
                     // Name row: padding 18/24/0, gap 10.
                     Padding(
                       padding: const EdgeInsets.fromLTRB(24, 18, 24, 0),
-                      child: Row(
+                      child: OverflowBar(
+                        alignment: MainAxisAlignment.spaceBetween,
+                        overflowAlignment: OverflowBarAlignment.start,
+                        spacing: 10,
+                        overflowSpacing: 6,
                         children: [
-                          Expanded(
-                            child: Text(
-                              'Rohan A. Smith',
-                              style: TextStyle(
-                                fontFamily: kSerif,
-                                fontSize: 23,
-                                fontWeight: FontWeight.w600,
-                                color: t.ink,
-                              ),
+                          Text(
+                            'Rohan A. Smith',
+                            style: TextStyle(
+                              fontFamily: kSerif,
+                              fontSize: 23,
+                              fontWeight: FontWeight.w600,
+                              color: t.ink,
                             ),
                           ),
-                          const SizedBox(width: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 11, vertical: 5),
@@ -78,7 +75,7 @@ class About extends StatelessWidget {
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
-                              'APP DEVELOPER',
+                              context.appText.appDeveloper.toUpperCase(),
                               style: TextStyle(
                                 fontFamily: kSans,
                                 fontSize: 11,
@@ -95,7 +92,7 @@ class About extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
                       child: Text(
-                        _bio,
+                        context.appText.developerBio,
                         style: TextStyle(
                           fontFamily: kSerif,
                           fontSize: 16,
@@ -117,13 +114,13 @@ class About extends StatelessWidget {
                       child: Column(
                         children: [
                           _InfoRow(
-                            label: 'Country',
+                            label: context.appText.country,
                             divider: true,
                             value: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Jamaica',
+                                  context.appText.jamaica,
                                   style: TextStyle(
                                     fontFamily: kSans,
                                     fontSize: 14.5,
@@ -154,7 +151,7 @@ class About extends StatelessWidget {
                             ),
                           ),
                           _InfoRow(
-                            label: 'Email',
+                            label: context.appText.email,
                             divider: true,
                             value: _LinkValue(
                               text: 'rohan@exterbox.com',
@@ -162,10 +159,10 @@ class About extends StatelessWidget {
                             ),
                           ),
                           _InfoRow(
-                            label: 'Privacy',
+                            label: context.appText.privacy,
                             divider: false,
                             value: _LinkValue(
-                              text: 'Privacy Policy',
+                              text: context.appText.privacyPolicy,
                               onTap: () => launchUrl(_privacyUrl,
                                   mode: LaunchMode.externalApplication),
                             ),
@@ -204,16 +201,18 @@ class _InfoRow extends StatelessWidget {
               border: Border(bottom: BorderSide(color: t.line2)),
             )
           : null,
-      child: Row(
+      child: OverflowBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        overflowAlignment: OverflowBarAlignment.end,
+        spacing: 12,
+        overflowSpacing: 6,
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 13,
-                color: t.muted,
-              ),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: t.muted,
             ),
           ),
           value,

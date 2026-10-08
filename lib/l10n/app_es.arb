@@ -400,5 +400,11 @@
   "roleOrganBacking": "Acompañamiento de órgano",
   "roleStrum": "Rasgueo",
   "roleShimmer": "Brillo",
-  "roleAllMelodicParts": "Todas las voces melódicas"
+  "roleAllMelodicParts": "Todas las voces melódicas",
+  "appDeveloper": "Desarrollador de la aplicación",
+  "developerBio": "Soy desarrollador de aplicaciones móviles y sitios web. Este proyecto es mi contribución para ayudarte a tener una relación más cercana con el Señor. Oro para que mantengas tu corazón puro y eleves tus alabanzas.",
+  "country": "País",
+  "jamaica": "Jamaica",
+  "email": "Correo electrónico",
+  "privacy": "Privacidad"
 }

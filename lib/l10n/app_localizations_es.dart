@@ -1341,4 +1341,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get roleAllMelodicParts => 'Todas las voces melódicas';
+
+  @override
+  String get appDeveloper => 'Desarrollador de la aplicación';
+
+  @override
+  String get developerBio =>
+      'Soy desarrollador de aplicaciones móviles y sitios web. Este proyecto es mi contribución para ayudarte a tener una relación más cercana con el Señor. Oro para que mantengas tu corazón puro y eleves tus alabanzas.';
+
+  @override
+  String get country => 'País';
+
+  @override
+  String get jamaica => 'Jamaica';
+
+  @override
+  String get email => 'Correo electrónico';
+
+  @override
+  String get privacy => 'Privacidad';
 }

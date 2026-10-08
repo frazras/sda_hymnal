@@ -2507,6 +2507,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All melodic parts'**
   String get roleAllMelodicParts;
+
+  /// No description provided for @appDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'App developer'**
+  String get appDeveloper;
+
+  /// No description provided for @developerBio.
+  ///
+  /// In en, this message translates to:
+  /// **'I am a software developer for Mobile Apps and Websites. This project is my contribution to help you develop a closer relationship with the Lord. I pray you keep your heart pure and lift your praises high.'**
+  String get developerBio;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @jamaica.
+  ///
+  /// In en, this message translates to:
+  /// **'Jamaica'**
+  String get jamaica;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacy;
 }
 
 class _AppLocalizationsDelegate

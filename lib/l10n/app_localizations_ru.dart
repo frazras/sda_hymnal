@@ -1349,4 +1349,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get roleAllMelodicParts => 'Все мелодические партии';
+
+  @override
+  String get appDeveloper => 'Разработчик приложения';
+
+  @override
+  String get developerBio =>
+      'Я разрабатываю мобильные приложения и веб-сайты. Этот проект — мой вклад в то, чтобы помочь вам стать ближе к Господу. Молюсь, чтобы вы хранили чистоту сердца и возносили Ему хвалу.';
+
+  @override
+  String get country => 'Страна';
+
+  @override
+  String get jamaica => 'Ямайка';
+
+  @override
+  String get email => 'Электронная почта';
+
+  @override
+  String get privacy => 'Конфиденциальность';
 }
