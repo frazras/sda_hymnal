@@ -1290,7 +1290,7 @@ class _HymnPageState extends State<HymnPage> {
   /// no key signature); the key relabels with the transposition.
   String _chordMeta(ChordTrack track, int semis) {
     final key = track.key;
-    final meter = '${track.beatsPerBar}/4';
+    final meter = track.meterLabel;
     return key == null
         ? meter
         : '${context.appText.keyOf(transposedKeyLabel(key, semis))} · $meter';

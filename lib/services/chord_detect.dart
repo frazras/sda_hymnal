@@ -68,6 +68,7 @@ class ChordTrack {
     required this.chords,
     required this.key,
     required this.beatsPerBar,
+    this.denominator = 4,
     required this.measureStartMs,
   });
 
@@ -79,6 +80,11 @@ class ChordTrack {
 
   /// Time-signature numerator (default 4).
   final int beatsPerBar;
+
+  /// Time-signature beat unit, retained for compound-meter chart labels.
+  final int denominator;
+
+  String get meterLabel => '$beatsPerBar/$denominator';
 
   /// Media-time ms of each measure start, from the start of the file.
   final List<int> measureStartMs;
@@ -235,6 +241,7 @@ ChordTrack simplifyTrack(ChordTrack track, ChordLevel level) {
     chords: _mergeAdjacent(events),
     key: track.key,
     beatsPerBar: track.beatsPerBar,
+    denominator: track.denominator,
     measureStartMs: track.measureStartMs,
   );
 }
@@ -426,6 +433,7 @@ ChordTrack? detectChords(Uint8List midiBytes) {
     chords: chords,
     key: score.key,
     beatsPerBar: score.beatsPerBar,
+    denominator: score.denominator,
     measureStartMs: measureStartMs,
   );
 }
