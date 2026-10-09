@@ -212,3 +212,11 @@ are visible in the existing player. Recordings use the media player on iOS;
 verified MIDI continues through the native soundfont player. Only the active
 engine can publish completion events. Autoplay remains opt-in and starts only
 after manual playback; pausing does not advance the queue.
+
+The MIDI publication gate checks all catalog mappings globally, including unknown
+book references. Duplicate book/item mappings fail validation and are excluded
+from coverage rather than being counted twice. Local assets must stay within the
+repository, match their SHA-256, and carry a standard MIDI header. These checks
+protect catalog integrity; they do not verify tune equivalence or replace
+individual musical review. Regression fixtures exercise unknown references,
+duplicates, path escapes, checksum failures, malformed records, and non-MIDI files.

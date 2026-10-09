@@ -191,6 +191,40 @@ def inspect_recordings(catalog, book_items):
     return available, errors
 
 
+def inspect_midi(catalog, book_items, root):
+    """Validate every mapping, including references outside installed books."""
+    available, errors, seen, duplicates = {}, [], set(), set()
+    if not isinstance(catalog, dict) or catalog.get('schemaVersion') != 1 or not isinstance(catalog.get('mappings'), list):
+        return {}, [{'code': 'invalid_midi_catalog', 'location': 'root'}]
+    for index, mapping in enumerate(catalog['mappings']):
+        location = f'mappings[{index}]'
+        try:
+            if not isinstance(mapping, dict):
+                raise ValueError('Invalid mapping object')
+            book, item = mapping.get('bookId'), mapping.get('itemId')
+            if not isinstance(book, str) or not isinstance(item, str):
+                raise ValueError('Invalid mapping identity')
+            ref = (book, item)
+            if ref in seen:
+                duplicates.add(ref)
+                raise ValueError('Duplicate mapping')
+            seen.add(ref)
+            if book not in book_items or item not in book_items[book]:
+                raise ValueError('Unavailable mapping reference')
+            asset = local_asset(root, mapping['asset']).read_bytes()
+            if hashlib.sha256(asset).hexdigest() != mapping['sha256']:
+                raise ValueError('MIDI checksum mismatch')
+            if len(asset) < 14 or asset[:4] != b'MThd' or int.from_bytes(asset[4:8], 'big') != 6:
+                raise ValueError('Invalid MIDI header')
+            available.setdefault(book, set()).add(item)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            errors.append({'code': 'invalid_midi_mapping', 'location': location,
+                           'detail': str(exc)})
+    for book, item in duplicates:
+        available.get(book, set()).discard(item)
+    return available, errors
+
+
 def report(root=ROOT):
     catalog = json.loads((root / 'assets/hymnals/catalog.json').read_text())
     manifest = json.loads((root / 'tool/data/hymnal_sources.json').read_text())
@@ -201,7 +235,7 @@ def report(root=ROOT):
         if extra:
             expected[extra['book']['id']] = extra['expectedNumbers']
     midi_catalog = root / 'assets/midi/verified_tunes.json'
-    midi_mappings = json.loads(midi_catalog.read_text())['mappings'] if midi_catalog.exists() else []
+    midi_data = json.loads(midi_catalog.read_text()) if midi_catalog.exists() else None
     recording_catalog = root / 'assets/hymnals/spanish_recordings.json'
     recording_data = json.loads(recording_catalog.read_text()) if recording_catalog.exists() else None
     book_items = {}
@@ -237,30 +271,22 @@ def report(root=ROOT):
                     available.add(identity)
                 else:
                     result['errors'].append({'code': 'invalid_score_asset', 'location': identity})
-            instrumental = []
-            for mapping in midi_mappings:
-                if mapping['bookId'] != entry['id']:
-                    continue
-                try:
-                    asset = local_asset(root, mapping['asset']).read_bytes()
-                    if mapping['itemId'] not in item_ids or hashlib.sha256(asset).hexdigest() != mapping['sha256']:
-                        raise ValueError('Invalid MIDI mapping')
-                    instrumental.append(mapping['itemId'])
-                except (OSError, ValueError, KeyError, TypeError):
-                    result['errors'].append({'code': 'invalid_midi_mapping', 'location': mapping.get('itemId')})
             result['media'] = {
                 'scoreHymns': len(available & item_ids),
                 'missingScoreItemIds': sorted(item_ids - available, key=lambda x: (len(x), x)),
-                'verifiedInstrumentalItemIds': instrumental,
+                'verifiedInstrumentalItemIds': [],
                 'instrumentalRecordingItemIds': [],
                 'vocals': 'No verified sung recordings in these language packs.'}
         except (OSError, ValueError, KeyError, TypeError) as exc:
             result = {'bookId': entry.get('id'), 'errors': [
                 {'code': 'unreadable_pack', 'location': str(exc)}]}
         books.append(result)
+    midi, midi_errors = inspect_midi(midi_data, book_items, root) if midi_data is not None else ({}, [])
     recordings, catalog_errors = inspect_recordings(recording_data, book_items) if recording_data is not None else ({}, [])
+    catalog_errors.extend(midi_errors)
     for book in books:
         if 'media' in book:
+            book['media']['verifiedInstrumentalItemIds'] = sorted(midi.get(book['bookId'], set()), key=lambda x: (len(x), x))
             valid = recordings.get(book['bookId'], set())
             book['media']['instrumentalRecordingItemIds'] = sorted(valid, key=lambda x: (len(x), x))
             book['media']['missingInstrumentalRecordingItemIds'] = sorted(

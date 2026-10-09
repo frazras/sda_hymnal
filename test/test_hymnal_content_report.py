@@ -142,6 +142,38 @@ class ContentReportTest(unittest.TestCase):
                 _, errors = validator.inspect_recordings(catalog, {})
                 self.assertTrue(errors)
 
+    def test_midi_gate_rejects_unknown_duplicate_corrupt_and_invalid_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            asset = b'MThd' + (6).to_bytes(4, 'big') + bytes([0, 0, 0, 1, 0, 96])
+            (root / 'song.mid').write_bytes(asset)
+            mapping = dict(bookId='test', itemId='1', asset='song.mid',
+                           sha256=hashlib.sha256(asset).hexdigest())
+            catalog = dict(schemaVersion=1, mappings=[mapping])
+            before = copy.deepcopy(catalog)
+            available, errors = validator.inspect_midi(catalog, {'test': {'1'}}, root)
+            self.assertEqual(available, {'test': {'1'}})
+            self.assertEqual(errors, [])
+            for field, value in [('bookId', 'unknown'), ('itemId', '2'),
+                                 ('sha256', 'wrong'), ('asset', '../song.mid')]:
+                bad = copy.deepcopy(catalog)
+                bad['mappings'][0][field] = value
+                available, errors = validator.inspect_midi(bad, {'test': {'1'}}, root)
+                self.assertEqual(available, {})
+                self.assertEqual(len(errors), 1)
+            bad = copy.deepcopy(catalog)
+            bad['mappings'].append(copy.deepcopy(mapping))
+            available, errors = validator.inspect_midi(bad, {'test': {'1'}}, root)
+            self.assertEqual(available['test'], set())
+            self.assertEqual(len(errors), 1)
+            (root / 'song.mid').write_bytes(b'not MIDI')
+            bad = copy.deepcopy(catalog)
+            bad['mappings'][0]['sha256'] = hashlib.sha256(b'not MIDI').hexdigest()
+            self.assertTrue(validator.inspect_midi(bad, {'test': {'1'}}, root)[1])
+            self.assertEqual(catalog, before)
+        for malformed in [None, [], {}, dict(schemaVersion=1, mappings=[None, {}])]:
+            self.assertTrue(validator.inspect_midi(malformed, {}, ROOT)[1])
+
     def test_shipped_report_is_deterministic_and_exposes_known_score_gap(self):
         result = validator.report()
         self.assertEqual(result, validator.report())
