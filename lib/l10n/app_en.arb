@@ -765,5 +765,28 @@
     }
   },
   "previousControl": "Previous",
-  "nextControl": "Next"
+  "nextControl": "Next",
+  "includeLyrics": "Include",
+  "fullHymn": "Full hymn",
+  "lyricsCopied": "Lyrics copied",
+  "copyLyricsFailed": "Could not copy lyrics. Please try again.",
+  "shareLyricsFailed": "Could not open sharing. You can copy the lyrics instead.",
+  "lyricVerse": "Verse {number}",
+  "lyricSection": "Section {number}",
+  "@lyricVerse": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@lyricSection": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "copyControl": "Copy",
+  "shareControl": "Share"
 }

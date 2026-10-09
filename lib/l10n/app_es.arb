@@ -481,5 +481,14 @@
   "servicePosition": "Culto: {name} · {position} de {total}",
   "serviceItemCount": "{count, plural, one{{count} elemento} other{{count} elementos}}",
   "previousControl": "Anterior",
-  "nextControl": "Siguiente"
+  "nextControl": "Siguiente",
+  "includeLyrics": "Incluir",
+  "fullHymn": "Himno completo",
+  "lyricsCopied": "Letra copiada",
+  "copyLyricsFailed": "No se pudo copiar la letra. Inténtalo de nuevo.",
+  "shareLyricsFailed": "No se pudo abrir la opción de compartir. Puedes copiar la letra.",
+  "lyricVerse": "Estrofa {number}",
+  "lyricSection": "Sección {number}",
+  "copyControl": "Copiar",
+  "shareControl": "Compartir"
 }

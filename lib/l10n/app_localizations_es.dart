@@ -1662,4 +1662,37 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get nextControl => 'Siguiente';
+
+  @override
+  String get includeLyrics => 'Incluir';
+
+  @override
+  String get fullHymn => 'Himno completo';
+
+  @override
+  String get lyricsCopied => 'Letra copiada';
+
+  @override
+  String get copyLyricsFailed =>
+      'No se pudo copiar la letra. Inténtalo de nuevo.';
+
+  @override
+  String get shareLyricsFailed =>
+      'No se pudo abrir la opción de compartir. Puedes copiar la letra.';
+
+  @override
+  String lyricVerse(String number) {
+    return 'Estrofa $number';
+  }
+
+  @override
+  String lyricSection(int number) {
+    return 'Sección $number';
+  }
+
+  @override
+  String get copyControl => 'Copiar';
+
+  @override
+  String get shareControl => 'Compartir';
 }

@@ -5,7 +5,11 @@ import 'package:sdahymnal/services/search_normalization.dart';
 class HymnTextSection {
   final String label;
   final String text;
-  const HymnTextSection(this.label, this.text);
+  final String? verseNumber;
+  /// A fallback section heading, rather than a verse number or source refrain.
+  final bool generatedLabel;
+  const HymnTextSection(this.label, this.text,
+      {this.verseNumber, this.generatedLabel = false});
 }
 
 /// Export source order, without the reader's automatically repeated choruses.
@@ -23,14 +27,17 @@ class HymnTextExport {
     final result = <HymnTextSection>[];
     final buffer = <String>[];
     String? label;
+    String? verseNumber;
     void flush() {
       final text = buffer.join('\n').trim();
       if (text.isNotEmpty) {
-        result.add(
-            HymnTextSection(label ?? 'Section ${result.length + 1}', text));
+        result.add(HymnTextSection(
+            label ?? 'Section ${result.length + 1}', text,
+            verseNumber: verseNumber, generatedLabel: label == null));
       }
       buffer.clear();
       label = null;
+      verseNumber = null;
     }
 
     final refrains = refrainLabelsFor(hymn.languageTag);
@@ -41,6 +48,7 @@ class HymnTextExport {
       if (numbered || refrain) {
         flush();
         label = numbered ? 'Verse $line' : line;
+        verseNumber = numbered ? line : null;
       } else if (line.isEmpty && buffer.isNotEmpty) {
         // A standalone label remains attached to its following lyric block.
         if (buffer.length > 1 || label == null) flush();

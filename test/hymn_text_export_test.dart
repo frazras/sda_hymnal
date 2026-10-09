@@ -14,7 +14,11 @@ void main() {
         number: 2, title: row['title'], body: row['body'], version: 'new'));
     expect(export.sections.length, 5);
     expect(export.sections[0].label, 'Verse 1');
+    expect(export.sections[0].verseNumber, '1');
+    expect(export.sections[0].generatedLabel, isFalse);
     expect(export.sections[1].label, 'CHORUS:');
+    expect(export.sections[1].verseNumber, isNull);
+    expect(export.sections[1].generatedLabel, isFalse);
     expect(export.sections[2].label, 'Verse 2');
     expect('CHORUS:'.allMatches(export.text()).length, 1);
     expect(export.text(section: 2), contains('New Hymnal\n\n2\n'));
@@ -36,6 +40,19 @@ void main() {
     expect(export.sections.length, 2);
     expect(export.sections[1].label, 'Припев:');
     expect(export.text(section: 1), contains('Гимны Надежды 1997'));
+  });
+
+  test('unlabeled source sections identify only generated menu labels', () {
+    final export = HymnTextExport(Hymn(
+        number: 1,
+        version: 'new',
+        title: 'Unnumbered',
+        body: 'First line<br>Second line<br><br>Last line'));
+    expect(export.sections.map((e) => e.generatedLabel), [true, true]);
+    expect(export.sections.map((e) => e.verseNumber), [null, null]);
+    expect(export.sections.map((e) => e.text),
+        ['First line\nSecond line', 'Last line']);
+    expect(export.text(), endsWith('First line\nSecond line\n\nLast line'));
   });
 
   test('all imported hymns retain every nonblank source lyric line', () {

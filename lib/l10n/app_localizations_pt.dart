@@ -1659,4 +1659,37 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get nextControl => 'Próximo';
+
+  @override
+  String get includeLyrics => 'Incluir';
+
+  @override
+  String get fullHymn => 'Hino completo';
+
+  @override
+  String get lyricsCopied => 'Letra copiada';
+
+  @override
+  String get copyLyricsFailed =>
+      'Não foi possível copiar a letra. Tente novamente.';
+
+  @override
+  String get shareLyricsFailed =>
+      'Não foi possível abrir o compartilhamento. Você pode copiar a letra.';
+
+  @override
+  String lyricVerse(String number) {
+    return 'Estrofe $number';
+  }
+
+  @override
+  String lyricSection(int number) {
+    return 'Seção $number';
+  }
+
+  @override
+  String get copyControl => 'Copiar';
+
+  @override
+  String get shareControl => 'Compartilhar';
 }

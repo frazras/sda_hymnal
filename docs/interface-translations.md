@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 482-message
+not claim that the app interface is fully translated. The 491-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -122,3 +122,11 @@ cover create, repeat, reorder, reload, rename, cancel/confirm deletion, storage
 protection, and unavailable-item navigation in all four locales, both designs,
 and both themes at compact width with larger text. Favorites and melody volume
 remain unchanged after editing or deleting a service.
+
+The lyrics copy/share page now translates controls, verse/section menu labels,
+and success/failure notices. Source chorus headings and the exported title,
+book identity, and lyrics remain unchanged. Tests exercise complete and selected
+verse copying, native share-sheet anchoring, share failure followed by copying,
+and clipboard failure across all four locales, both designs, and both themes.
+Platform calls are mocked; tests do not send lyrics externally. Unnumbered
+section previews also retain their exact source text under translated labels.

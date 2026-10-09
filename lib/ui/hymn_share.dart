@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sdahymnal/models/hymn.dart';
@@ -17,12 +18,22 @@ class _HymnSharePageState extends State<HymnSharePage> {
   bool _sharing = false;
   String get _text => _export.text(section: _selection < 0 ? null : _selection);
 
+  String _sectionLabel(int index) {
+    final section = _export.sections[index];
+    if (section.verseNumber != null) {
+      return context.appText.lyricVerse(section.verseNumber!);
+    }
+    return section.generatedLabel
+        ? context.appText.lyricSection(index + 1)
+        : section.label;
+  }
+
   Future<void> _copy() async {
     try {
       await Clipboard.setData(ClipboardData(text: _text));
-      if (mounted) _notice('Lyrics copied');
+      if (mounted) _notice(context.appText.lyricsCopied);
     } catch (_) {
-      if (mounted) _notice('Could not copy lyrics. Please try again.');
+      if (mounted) _notice(context.appText.copyLyricsFailed);
     }
   }
 
@@ -42,7 +53,7 @@ class _HymnSharePageState extends State<HymnSharePage> {
           sharePositionOrigin: origin));
     } catch (_) {
       if (mounted) {
-        _notice('Could not open sharing. You can copy the lyrics instead.');
+        _notice(context.appText.shareLyricsFailed);
       }
     } finally {
       if (mounted) setState(() => _sharing = false);
@@ -51,7 +62,7 @@ class _HymnSharePageState extends State<HymnSharePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text('Copy or share lyrics')),
+      appBar: AppBar(title: Text(context.appText.copyOrShareLyrics)),
       body: SafeArea(
         child: Column(children: [
           Padding(
@@ -60,13 +71,15 @@ class _HymnSharePageState extends State<HymnSharePage> {
               key: const ValueKey('share-lyric-section'),
               initialValue: -1,
               isExpanded: true,
-              decoration: const InputDecoration(labelText: 'Include'),
+              decoration:
+                  InputDecoration(labelText: context.appText.includeLyrics),
               items: [
-                const DropdownMenuItem(value: -1, child: Text('Full hymn')),
+                DropdownMenuItem(
+                    value: -1, child: Text(context.appText.fullHymn)),
                 for (var i = 0; i < _export.sections.length; i++)
                   DropdownMenuItem(
                       value: i,
-                      child: Text(_export.sections[i].label,
+                      child: Text(_sectionLabel(i),
                           overflow: TextOverflow.ellipsis)),
               ],
               onChanged: (value) => setState(() => _selection = value ?? -1),
@@ -94,13 +107,13 @@ class _HymnSharePageState extends State<HymnSharePage> {
                 OutlinedButton.icon(
                     onPressed: _copy,
                     icon: const Icon(Icons.copy),
-                    label: const Text('Copy')),
+                    label: Text(context.appText.copyControl)),
                 Builder(
                     builder: (buttonContext) => FilledButton.icon(
                         onPressed:
                             _sharing ? null : () => _share(buttonContext),
                         icon: const Icon(Icons.share_outlined),
-                        label: const Text('Share'))),
+                        label: Text(context.appText.shareControl))),
               ],
             )),
       ));

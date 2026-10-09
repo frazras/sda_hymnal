@@ -1684,4 +1684,37 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get nextControl => 'Далее';
+
+  @override
+  String get includeLyrics => 'Включить';
+
+  @override
+  String get fullHymn => 'Весь гимн';
+
+  @override
+  String get lyricsCopied => 'Текст скопирован';
+
+  @override
+  String get copyLyricsFailed =>
+      'Не удалось скопировать текст. Попробуйте снова.';
+
+  @override
+  String get shareLyricsFailed =>
+      'Не удалось открыть меню отправки. Вы можете скопировать текст.';
+
+  @override
+  String lyricVerse(String number) {
+    return 'Куплет $number';
+  }
+
+  @override
+  String lyricSection(int number) {
+    return 'Раздел $number';
+  }
+
+  @override
+  String get copyControl => 'Копировать';
+
+  @override
+  String get shareControl => 'Поделиться';
 }

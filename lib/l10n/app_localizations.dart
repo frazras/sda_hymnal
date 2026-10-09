@@ -2993,6 +2993,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get nextControl;
+
+  /// No description provided for @includeLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Include'**
+  String get includeLyrics;
+
+  /// No description provided for @fullHymn.
+  ///
+  /// In en, this message translates to:
+  /// **'Full hymn'**
+  String get fullHymn;
+
+  /// No description provided for @lyricsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyrics copied'**
+  String get lyricsCopied;
+
+  /// No description provided for @copyLyricsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not copy lyrics. Please try again.'**
+  String get copyLyricsFailed;
+
+  /// No description provided for @shareLyricsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open sharing. You can copy the lyrics instead.'**
+  String get shareLyricsFailed;
+
+  /// No description provided for @lyricVerse.
+  ///
+  /// In en, this message translates to:
+  /// **'Verse {number}'**
+  String lyricVerse(String number);
+
+  /// No description provided for @lyricSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Section {number}'**
+  String lyricSection(int number);
+
+  /// No description provided for @copyControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyControl;
+
+  /// No description provided for @shareControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareControl;
 }
 
 class _AppLocalizationsDelegate

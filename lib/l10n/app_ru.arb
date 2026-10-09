@@ -481,5 +481,14 @@
   "servicePosition": "Богослужение: {name} · {position} из {total}",
   "serviceItemCount": "{count, plural, one{{count} элемент} few{{count} элемента} many{{count} элементов} other{{count} элемента}}",
   "previousControl": "Назад",
-  "nextControl": "Далее"
+  "nextControl": "Далее",
+  "includeLyrics": "Включить",
+  "fullHymn": "Весь гимн",
+  "lyricsCopied": "Текст скопирован",
+  "copyLyricsFailed": "Не удалось скопировать текст. Попробуйте снова.",
+  "shareLyricsFailed": "Не удалось открыть меню отправки. Вы можете скопировать текст.",
+  "lyricVerse": "Куплет {number}",
+  "lyricSection": "Раздел {number}",
+  "copyControl": "Копировать",
+  "shareControl": "Поделиться"
 }
