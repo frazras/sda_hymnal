@@ -1996,4 +1996,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get languageSaveFailed =>
       'Não foi possível salvar o idioma do aplicativo. Tente novamente.';
+
+  @override
+  String get readingLeader => 'Dirigente';
+
+  @override
+  String get readingCongregation => 'Congregação';
 }

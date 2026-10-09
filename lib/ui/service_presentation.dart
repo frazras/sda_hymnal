@@ -25,8 +25,10 @@ class _ServicePresentationPageState extends State<ServicePresentationPage> {
     final text = context.appText;
     setState(() => _sharing = true);
     try {
-      final html = widget.presentation
-          .html(previousLabel: text.previousItem, nextLabel: text.nextItem);
+      final html = widget.presentation.html(
+          previousLabel: text.previousItem,
+          nextLabel: text.nextItem,
+          roleLabel: text.readingRoleLabel);
       await SharePlus.instance.share(ShareParams(
         files: [
           XFile.fromData(Uint8List.fromList(utf8.encode(html)),
@@ -80,7 +82,7 @@ class _ServicePresentationPageState extends State<ServicePresentationPage> {
                         color: Colors.white, fontSize: 26, height: 1.3)),
                 const SizedBox(height: 20),
                 Text(
-                    '${slide.bookLabel}${slide.role == null ? '' : ' · ${slide.role}'}',
+                    '${slide.bookLabel}${slide.role == null ? '' : ' · ${context.appText.readingRoleLabel(slide.role!)}'}',
                     style: const TextStyle(
                         color: Color(0xffbec9be), fontSize: 14)),
               ])),

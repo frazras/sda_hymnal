@@ -41,3 +41,8 @@ usable at 4x text size on a 320-pixel screen in both designs and themes.
 
 VideoPsalm export should use reviewed schemas and imported sample validation.
 An HTML export is not evidence of VideoPsalm compatibility.
+
+Known reading speaker roles are translated using the selected interface language
+in both the native preview and exported HTML. Source role IDs and reading text
+remain unchanged. Unknown source roles retain their supplied labels. Tests cover
+Spanish preview labels and localized HTML without mutating the snapshot.

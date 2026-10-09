@@ -568,5 +568,7 @@
   "previewPresentation": "Pré-visualizar slides",
   "sharePresentation": "Compartilhar slides HTML",
   "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.",
-  "languageSaveFailed": "Não foi possível salvar o idioma do aplicativo. Tente novamente."
+  "languageSaveFailed": "Não foi possível salvar o idioma do aplicativo. Tente novamente.",
+  "readingLeader": "Dirigente",
+  "readingCongregation": "Congregação"
 }

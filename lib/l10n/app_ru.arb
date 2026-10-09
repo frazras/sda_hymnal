@@ -568,5 +568,7 @@
   "previewPresentation": "Предпросмотр слайдов",
   "sharePresentation": "Поделиться HTML-слайдами",
   "presentationExportFailed": "Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения.",
-  "languageSaveFailed": "Не удалось сохранить язык приложения. Попробуйте ещё раз."
+  "languageSaveFailed": "Не удалось сохранить язык приложения. Попробуйте ещё раз.",
+  "readingLeader": "Ведущий",
+  "readingCongregation": "Община"
 }

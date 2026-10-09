@@ -2001,4 +2001,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get languageSaveFailed =>
       'No se pudo guardar el idioma de la aplicación. Inténtalo de nuevo.';
+
+  @override
+  String get readingLeader => 'Dirigente';
+
+  @override
+  String get readingCongregation => 'Congregación';
 }

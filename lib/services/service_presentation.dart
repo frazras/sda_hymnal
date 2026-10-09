@@ -82,7 +82,10 @@ class ServicePresentation {
   }
 
   /// No remote fonts, media, scripts, or assets. Source text is always escaped.
-  String html({required String previousLabel, required String nextLabel}) {
+  String html(
+      {required String previousLabel,
+      required String nextLabel,
+      String Function(String)? roleLabel}) {
     const escape = HtmlEscape();
     String escaped(String text) => escape.convert(text);
     return '''<!doctype html>
@@ -95,7 +98,7 @@ footer{font-size:clamp(14px,1.5vw,24px);padding-top:2vh;color:#bec9be}nav{height
 </style></head><body>
 ${[
       for (var i = 0; i < slides.length; i++)
-        '''<section class="slide${i == 0 ? ' active' : ''}" aria-hidden="${i != 0}"><h1>${escaped(slides[i].title)}</h1><pre>${escaped(slides[i].text)}</pre><footer>${escaped(slides[i].bookLabel)}${slides[i].role == null ? '' : ' · ${escaped(slides[i].role!)}'}</footer></section>'''
+        '''<section class="slide${i == 0 ? ' active' : ''}" aria-hidden="${i != 0}"><h1>${escaped(slides[i].title)}</h1><pre>${escaped(slides[i].text)}</pre><footer>${escaped(slides[i].bookLabel)}${slides[i].role == null ? '' : ' · ${escaped(roleLabel?.call(slides[i].role!) ?? slides[i].role!)}'}</footer></section>'''
     ].join('\n')}
 <nav><button id="previous">${escaped(previousLabel)}</button><span id="position" aria-live="polite"></span><button id="next">${escaped(nextLabel)}</button></nav>
 <script>

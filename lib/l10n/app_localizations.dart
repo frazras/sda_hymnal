@@ -3515,6 +3515,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not save the app language. Please try again.'**
   String get languageSaveFailed;
+
+  /// No description provided for @readingLeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Leader'**
+  String get readingLeader;
+
+  /// No description provided for @readingCongregation.
+  ///
+  /// In en, this message translates to:
+  /// **'Congregation'**
+  String get readingCongregation;
 }
 
 class _AppLocalizationsDelegate

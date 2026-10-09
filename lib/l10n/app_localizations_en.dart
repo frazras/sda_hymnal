@@ -1984,4 +1984,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get languageSaveFailed =>
       'Could not save the app language. Please try again.';
+
+  @override
+  String get readingLeader => 'Leader';
+
+  @override
+  String get readingCongregation => 'Congregation';
 }

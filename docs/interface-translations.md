@@ -26,7 +26,7 @@ Compact-screen tests cover switching among all four locales in Modern/Classic
 and light/dark mode, persistent selection, preserved settings, and translated
 search/favorites/reader flows. Alphabetical shortcuts hide while typing to retain
 space for the translated result count and Done action above the keyboard.
-The 569-message catalogs remain draft translations needing fluent community
+The 571-message catalogs remain draft translations needing fluent community
 review. This technical rollout does not claim that review has happened or mark
 the complete translation roadmap item achieved.
 

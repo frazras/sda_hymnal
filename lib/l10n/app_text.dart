@@ -11,6 +11,11 @@ extension HymnalAppText on BuildContext {
 
 /// Translate presentation labels without changing persisted music/analytics IDs.
 extension HymnalOptionText on AppLocalizations {
+  String readingRoleLabel(String role) => switch (role.toLowerCase()) {
+        'leader' => readingLeader,
+        'congregation' => readingCongregation,
+        _ => role,
+      };
   String styleLabel(String id) => switch (id) {
         'gospel' => modernGospel,
         'jazz' => jazz,

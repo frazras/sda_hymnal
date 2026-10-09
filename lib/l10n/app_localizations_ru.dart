@@ -2022,4 +2022,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get languageSaveFailed =>
       'Не удалось сохранить язык приложения. Попробуйте ещё раз.';
+
+  @override
+  String get readingLeader => 'Ведущий';
+
+  @override
+  String get readingCongregation => 'Община';
 }

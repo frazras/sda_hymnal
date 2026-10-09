@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sdahymnal/ui/service_presentation.dart';
 import 'package:sdahymnal/theme.dart';
+import 'package:sdahymnal/l10n/app_localizations.dart';
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn.dart';
@@ -65,6 +67,19 @@ void main() {
     expect(deck.slides.first.ref, hymn.ref);
     expect(() => deck.slides.clear(), throwsUnsupportedError);
   });
+  test('HTML translates reading roles without mutating source roles or text',
+      () {
+    final presentation = ServicePresentation.build(service, repository);
+    final html = presentation.html(
+        previousLabel: 'Anterior',
+        nextLabel: 'Siguiente',
+        roleLabel: (role) => role == 'leader' ? 'Dirigente' : 'Congregación');
+    expect(html, contains('Español · Dirigente'));
+    expect(html, contains('Español · Congregación'));
+    expect(html, contains('Amén'));
+    expect(presentation.slides.where((s) => s.role != null).map((s) => s.role),
+        ['leader', 'congregation']);
+  });
   test('HTML escapes source and controls and remains self contained', () {
     final html = ServicePresentation.build(service, repository)
         .html(previousLabel: '<Back>', nextLabel: 'Next & more');
@@ -95,6 +110,28 @@ void main() {
     expect(
         () => ServicePresentation.build(service, repository, linesPerSlide: 0),
         throwsArgumentError);
+  });
+  testWidgets(
+      'Spanish preview uses translated role labels and unchanged reading text',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+        locale: const Locale('es'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        home: ServicePresentationPage(
+            presentation: ServicePresentation.build(service, repository))));
+    await tester.pumpAndSettle();
+    final text = tester.element(find.byType(ServicePresentationPage)).appText;
+    await tester.tap(find.byTooltip(text.nextItem));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip(text.nextItem));
+    await tester.pumpAndSettle();
+    expect(find.text('Español · Dirigente'), findsOneWidget);
+    expect(find.text('Primera\nSegunda'), findsOneWidget);
+    await tester.tap(find.byTooltip(text.nextItem));
+    await tester.pumpAndSettle();
+    expect(find.text('Español · Congregación'), findsOneWidget);
+    expect(find.text('Amén'), findsOneWidget);
   });
   testWidgets(
       'share sends a real UTF-8 HTML file with its filename and popover origin',
