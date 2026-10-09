@@ -186,3 +186,10 @@ version-to-message adapter preserves version IDs and source ordering; unknown
 versions or mismatched feature counts fall back to their original notes. Coverage
 tests require every published entry in each locale and exact English equivalence.
 These translations remain drafts awaiting fluent review.
+
+The catalog validator rejects duplicate JSON keys and translations that omit an
+argument declared in the English template (including plural/count arguments).
+Argument order and locale-specific plural branches may differ. Six focused tests
+cover these failure modes and the existing nonempty-message check. Flutter
+gen-l10n remains responsible for ICU syntax/type generation; this validator is
+not a substitute for fluent review or UI layout validation.
