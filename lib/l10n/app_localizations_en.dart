@@ -1805,4 +1805,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get latestRelease => 'LATEST';
+
+  @override
+  String get release450Feature0 =>
+      'Correct 6/8 timing across musical styles and improve number-screen spacing, dark menus, and page turns.';
+
+  @override
+  String get release450Feature1 =>
+      'Enable Autoplay under Sound to continue music or videos through your current hymn list after pressing Play.';
+
+  @override
+  String get release450Feature2 =>
+      'Play hymns in Jazz style with piano chords, walking acoustic bass, and swung drums.';
+
+  @override
+  String get release450Feature3 =>
+      'Enjoy Jamaican Gospel accompaniment with its original synchronized rhythm and a 15% faster default tempo.';
+
+  @override
+  String get release450Feature4 =>
+      'Change musical style and toggle Choir Practice directly from the hymn menu.';
+
+  @override
+  String get release450Feature5 =>
+      'Reach every musical style in the scrolling picker, with Caribbean choices grouped together.';
+
+  @override
+  String get release450Feature6 =>
+      'Adjust drum-kit volume or solo the drums in all five backing styles; soloing another part now silences the kit.';
+
+  @override
+  String get release450Feature7 =>
+      'Find musical-style instrument controls below Sound in Settings and preview your ensemble with Amazing Grace.';
+
+  @override
+  String get release450Feature8 =>
+      'Find hymns more easily with search that prioritizes titles and opening lyric lines.';
+
+  @override
+  String get release450Feature9 =>
+      'Save favorites with refreshed heart feedback and a gentle reminder at the end of a hymn.';
+
+  @override
+  String get release440Feature0 =>
+      'Enable Choir Practice in Settings to hear available vocal parts separately, rename tracks, and mute or solo them.';
+
+  @override
+  String get release440Feature1 =>
+      'Choose an instrument and adjust the volume for each choir track using compact controls.';
+
+  @override
+  String get release440Feature2 =>
+      'Customize ensemble instruments in Settings, adjust their levels, solo individual roles, and preview your mix.';
+
+  @override
+  String get release440Feature3 =>
+      'Choose from 111 instruments organized into 11 categories. Find Steelpan under Percussion, with automatic rolls on sustained notes.';
+
+  @override
+  String get release440Feature4 =>
+      'Choir Practice uses the original parts and overrides the selected ensemble style. These optional controls stay hidden until enabled.';
+
+  @override
+  String get release430Feature0 =>
+      'Read all 225 additional readings from the New Hymnal, numbered 696–920, with their categories and Scripture references.';
+
+  @override
+  String get release430Feature1 =>
+      'Find a reading from the number keypad or browse and search the complete reading collection, then swipe between readings and use a comfortable reading-speed auto-scroll.';
+
+  @override
+  String get release430Feature2 =>
+      'Browse hymns and Scripture readings by topic or occasion, including the New Hymnal\'s topical index.';
+
+  @override
+  String get release430Feature3 =>
+      'Read restored hymn stories with quotations and passages that were missing from the earlier import.';
+
+  @override
+  String get release430Feature4 =>
+      'Explore community statistics in Settings, including popular hymns, repeat visits, favorite additions, and times of worship, with saved reports available offline.';
+
+  @override
+  String get release430Feature5 =>
+      'Help improve the app with weekly usage summaries. Sharing is enabled by default and can be turned off at any time in Settings under Privacy & Statistics.';
+
+  @override
+  String get release420Feature0 =>
+      'Read the background story of a hymn and see its writer and composer.';
+
+  @override
+  String get release420Feature1 =>
+      'Watch a matching hymn video while following the words in the app.';
+
+  @override
+  String get release420Feature2 =>
+      'Play music for all 703 Old Hymnal songs, with the correct number of verses and choruses.';
+
+  @override
+  String get release420Feature3 =>
+      'Hear and read each chorus after every verse in both hymnals.';
+
+  @override
+  String get release420Feature4 =>
+      'Enjoy continuous reggae and steelpan rhythms in songs written in 3/4 time.';
+
+  @override
+  String get release420Feature5 =>
+      'Use auto-scroll while reading, adjust its speed with a slider, and reposition the words without stopping it.';
+
+  @override
+  String get release420Feature6 =>
+      'Keep the music player hidden across songs and app launches when you prefer more reading space.';
+
+  @override
+  String get release420Feature7 =>
+      'Keep favorite hymns close at hand with the restored heart button in the hymn header.';
+
+  @override
+  String get release420Feature8 =>
+      'Review what changed in this and earlier versions from the What’s New screen.';
+
+  @override
+  String get release411Feature0 =>
+      'Choose the Modern or Classic app design, with a matching home-screen icon.';
+
+  @override
+  String get release411Feature1 =>
+      'Read corrected lyrics for Old Hymnal 533 and 534.';
+
+  @override
+  String get release411Feature2 => 'Enjoy more reliable music playback.';
+
+  @override
+  String get release410Feature0 =>
+      'Added verse numbers and clear chorus labels throughout the Old Hymnal.';
+
+  @override
+  String get release410Feature1 =>
+      'Improved the Island Reggae accompaniment and its sound on iPhone.';
+
+  @override
+  String get release410Feature2 =>
+      'Added an option to keep the screen awake while a hymn is open.';
+
+  @override
+  String get release401Feature0 =>
+      'Added a privacy policy written specifically for the hymnal app.';
+
+  @override
+  String get release400Feature0 =>
+      'Introduced the rebuilt app with a cleaner reading experience.';
+
+  @override
+  String get release400Feature1 =>
+      'Added music playback, chords, Gospel, Island Reggae, and Steel Pan Calypso accompaniment.';
+
+  @override
+  String get release400Feature2 =>
+      'Corrected dozens of reported lyric problems and restored New Hymnal 314.';
 }

@@ -1821,4 +1821,164 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get latestRelease => 'ÚLTIMA';
+
+  @override
+  String get release450Feature0 =>
+      'Corrige el compás de 6/8 en los estilos musicales y mejora el espacio en la pantalla de números, los menús oscuros y los cambios de página.';
+
+  @override
+  String get release450Feature1 =>
+      'Activa la reproducción automática en Sonido para continuar la música o los videos de la lista actual después de pulsar Reproducir.';
+
+  @override
+  String get release450Feature2 =>
+      'Reproduce himnos con estilo Jazz: acordes de piano, bajo acústico caminante y batería con swing.';
+
+  @override
+  String get release450Feature3 =>
+      'Disfruta del acompañamiento Gospel jamaicano con su ritmo sincronizado original y un tempo predeterminado un 15 % más rápido.';
+
+  @override
+  String get release450Feature4 =>
+      'Cambia el estilo musical y activa o desactiva la práctica de coro desde el menú del himno.';
+
+  @override
+  String get release450Feature5 =>
+      'Accede a todos los estilos en el selector desplazable, con las opciones caribeñas agrupadas.';
+
+  @override
+  String get release450Feature6 =>
+      'Ajusta el volumen de la batería o escúchala sola en los cinco estilos de acompañamiento; al escuchar otra parte sola, la batería se silencia.';
+
+  @override
+  String get release450Feature7 =>
+      'Encuentra los controles de instrumentos debajo de Sonido en Ajustes y escucha una muestra del conjunto con Amazing Grace.';
+
+  @override
+  String get release450Feature8 =>
+      'Encuentra himnos más fácilmente con una búsqueda que da prioridad a los títulos y las primeras líneas.';
+
+  @override
+  String get release450Feature9 =>
+      'Guarda favoritos con una nueva animación del corazón y un recordatorio discreto al final del himno.';
+
+  @override
+  String get release440Feature0 =>
+      'Activa la práctica de coro en Ajustes para escuchar por separado las voces disponibles, cambiar los nombres de las pistas y silenciarlas o escucharlas solas.';
+
+  @override
+  String get release440Feature1 =>
+      'Elige un instrumento y ajusta el volumen de cada pista del coro con controles compactos.';
+
+  @override
+  String get release440Feature2 =>
+      'Personaliza los instrumentos del conjunto en Ajustes, ajusta sus niveles, escucha partes solas y prueba la mezcla.';
+
+  @override
+  String get release440Feature3 =>
+      'Elige entre 111 instrumentos en 11 categorías. Encuentra Steelpan en Percusión, con redobles automáticos en notas sostenidas.';
+
+  @override
+  String get release440Feature4 =>
+      'La práctica de coro utiliza las partes originales y sustituye el estilo del conjunto seleccionado. Estos controles opcionales permanecen ocultos hasta activarlos.';
+
+  @override
+  String get release430Feature0 =>
+      'Lee las 225 lecturas adicionales del Himnario Nuevo, numeradas del 696 al 920, con sus categorías y referencias bíblicas.';
+
+  @override
+  String get release430Feature1 =>
+      'Busca una lectura con el teclado numérico o explora toda la colección; desliza entre lecturas y usa el desplazamiento automático a una velocidad cómoda.';
+
+  @override
+  String get release430Feature2 =>
+      'Explora himnos y lecturas bíblicas por tema u ocasión, incluido el índice temático del Himnario Nuevo.';
+
+  @override
+  String get release430Feature3 =>
+      'Lee las historias restauradas de los himnos, con citas y pasajes que faltaban en la importación anterior.';
+
+  @override
+  String get release430Feature4 =>
+      'Explora las estadísticas de la comunidad en Ajustes: himnos populares, visitas repetidas, favoritos añadidos y horarios de culto, con informes guardados disponibles sin conexión.';
+
+  @override
+  String get release430Feature5 =>
+      'Ayuda a mejorar la aplicación con resúmenes semanales de uso. El envío está activado por defecto y puede desactivarse en Ajustes, en Privacidad y estadísticas.';
+
+  @override
+  String get release420Feature0 =>
+      'Lee la historia de un himno y consulta su autor y compositor.';
+
+  @override
+  String get release420Feature1 =>
+      'Mira un video del himno mientras sigues la letra en la aplicación.';
+
+  @override
+  String get release420Feature2 =>
+      'Reproduce la música de los 703 himnos del Himnario Antiguo, con el número correcto de estrofas y coros.';
+
+  @override
+  String get release420Feature3 =>
+      'Escucha y lee el coro después de cada estrofa en ambos himnarios.';
+
+  @override
+  String get release420Feature4 =>
+      'Disfruta de ritmos continuos de reggae y steelpan en canciones con compás de 3/4.';
+
+  @override
+  String get release420Feature5 =>
+      'Usa el desplazamiento automático al leer, ajusta su velocidad y cambia la posición de la letra sin detenerlo.';
+
+  @override
+  String get release420Feature6 =>
+      'Mantén oculto el reproductor entre canciones y al abrir la aplicación si prefieres más espacio para leer.';
+
+  @override
+  String get release420Feature7 =>
+      'Guarda tus himnos favoritos con el botón de corazón restaurado en el encabezado.';
+
+  @override
+  String get release420Feature8 =>
+      'Consulta los cambios de esta versión y de las anteriores en la pantalla de novedades.';
+
+  @override
+  String get release411Feature0 =>
+      'Elige el diseño Moderno o Clásico, con un icono de inicio correspondiente.';
+
+  @override
+  String get release411Feature1 =>
+      'Lee las letras corregidas de los himnos 533 y 534 del Himnario Antiguo.';
+
+  @override
+  String get release411Feature2 =>
+      'Disfruta de una reproducción musical más fiable.';
+
+  @override
+  String get release410Feature0 =>
+      'Se añadieron números de estrofa y etiquetas claras para los coros en todo el Himnario Antiguo.';
+
+  @override
+  String get release410Feature1 =>
+      'Se mejoró el acompañamiento Island Reggae y su sonido en iPhone.';
+
+  @override
+  String get release410Feature2 =>
+      'Se añadió una opción para mantener la pantalla encendida mientras un himno está abierto.';
+
+  @override
+  String get release401Feature0 =>
+      'Se añadió una política de privacidad específica para la aplicación.';
+
+  @override
+  String get release400Feature0 =>
+      'Se presentó la aplicación renovada con una lectura más clara.';
+
+  @override
+  String get release400Feature1 =>
+      'Se añadieron reproducción musical, acordes y acompañamientos Gospel, Island Reggae y Steel Pan Calypso.';
+
+  @override
+  String get release400Feature2 =>
+      'Se corrigieron decenas de problemas de letras notificados y se restauró el himno 314 del Himnario Nuevo.';
 }

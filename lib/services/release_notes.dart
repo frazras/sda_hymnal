@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:sdahymnal/l10n/release_text.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -16,8 +19,12 @@ class ReleaseNotesService {
 
   ReleaseNotesCatalog? _catalog;
 
-  Future<ReleaseNotesCatalog> load() async => _catalog ??=
-      ReleaseNotesCatalog.fromJson(await rootBundle.loadString(assetPath));
+  Future<ReleaseNotesCatalog> load() async {
+    // Parse the published English dates even in standalone English previews.
+    await initializeDateFormatting('en');
+    return _catalog ??=
+        ReleaseNotesCatalog.fromJson(await rootBundle.loadString(assetPath));
+  }
 
   Future<void> showIfNeeded(BuildContext context) async {
     final preferences = await SharedPreferences.getInstance();
@@ -122,6 +129,13 @@ class _ReleaseHistoryDialog extends StatelessWidget {
 
   Widget _release(
       BuildContext context, HymnalTokens t, AppRelease release, bool latest) {
+    final translated =
+        translatedReleaseFeatures(context.appText, release.version);
+    // New or amended release entries remain readable until their translations arrive.
+    final features = translated?.length == release.features.length
+        ? translated!
+        : release.features;
+    final date = DateFormat('MMMM d, y', 'en').tryParseStrict(release.date);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -155,9 +169,13 @@ class _ReleaseHistoryDialog extends StatelessWidget {
                 ),
             ],
           ),
-          Text(release.date, style: TextStyle(color: t.muted, fontSize: 12)),
+          Text(
+              date == null
+                  ? release.date
+                  : MaterialLocalizations.of(context).formatMediumDate(date),
+              style: TextStyle(color: t.muted, fontSize: 12)),
           const SizedBox(height: 7),
-          for (final feature in release.features)
+          for (final feature in features)
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
               child: Row(

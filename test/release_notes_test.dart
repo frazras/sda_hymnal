@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/models/release_notes.dart';
 import 'package:sdahymnal/l10n/app_localizations.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
+import 'package:sdahymnal/l10n/release_text.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/settings.dart';
@@ -41,6 +42,28 @@ void main() {
       expect(release.features, isNotEmpty);
       expect(release.features.every((feature) => feature.trim().isNotEmpty),
           isTrue);
+    }
+  });
+
+  test('every published feature has a translation without changing history',
+      () {
+    final catalog = ReleaseNotesCatalog.fromJson(
+        File('assets/release_notes.json').readAsStringSync());
+    for (final locale in AppLocalizations.supportedLocales) {
+      final text = lookupAppLocalizations(locale);
+      for (final release in catalog.releases) {
+        final translated = translatedReleaseFeatures(text, release.version)!;
+        expect(translated.length, release.features.length);
+        expect(translated.every((value) => value.trim().isNotEmpty), isTrue);
+        if (locale.languageCode == 'en') {
+          expect(translated, release.features);
+        } else {
+          for (var index = 0; index < translated.length; index++) {
+            expect(translated[index], isNot(release.features[index]));
+          }
+        }
+      }
+      expect(translatedReleaseFeatures(text, 'future-version'), isNull);
     }
   });
 
@@ -133,8 +156,6 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    final catalog = ReleaseNotesCatalog.fromJson(
-        File('assets/release_notes.json').readAsStringSync());
     for (final locale in AppLocalizations.supportedLocales) {
       for (final classic in [false, true]) {
         for (final dark in [false, true]) {
@@ -179,9 +200,15 @@ void main() {
                     of: find.byKey(const ValueKey('release-notes-history')),
                     matching: find.byType(Scrollable)));
             expect(find.text(text.latestRelease), findsOneWidget);
+            final date = MaterialLocalizations.of(tester
+                    .element(find.byKey(const ValueKey('release-notes-done'))))
+                .formatMediumDate(DateTime(2026, 9, 25));
+            expect(find.text(date), findsOneWidget);
             expect(find.text(text.versionLabel(appReleaseVersion)),
                 findsOneWidget);
-            expect(find.text(catalog.releases.first.features.first),
+            expect(
+                find.text(
+                    translatedReleaseFeatures(text, appReleaseVersion)!.first),
                 findsOneWidget);
             await tester.scrollUntilVisible(
                 find.text(text.versionLabel('4.0.0')), 250,

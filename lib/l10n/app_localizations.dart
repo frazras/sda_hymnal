@@ -3239,6 +3239,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'LATEST'**
   String get latestRelease;
+
+  /// No description provided for @release450Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct 6/8 timing across musical styles and improve number-screen spacing, dark menus, and page turns.'**
+  String get release450Feature0;
+
+  /// No description provided for @release450Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Autoplay under Sound to continue music or videos through your current hymn list after pressing Play.'**
+  String get release450Feature1;
+
+  /// No description provided for @release450Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Play hymns in Jazz style with piano chords, walking acoustic bass, and swung drums.'**
+  String get release450Feature2;
+
+  /// No description provided for @release450Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy Jamaican Gospel accompaniment with its original synchronized rhythm and a 15% faster default tempo.'**
+  String get release450Feature3;
+
+  /// No description provided for @release450Feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'Change musical style and toggle Choir Practice directly from the hymn menu.'**
+  String get release450Feature4;
+
+  /// No description provided for @release450Feature5.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach every musical style in the scrolling picker, with Caribbean choices grouped together.'**
+  String get release450Feature5;
+
+  /// No description provided for @release450Feature6.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust drum-kit volume or solo the drums in all five backing styles; soloing another part now silences the kit.'**
+  String get release450Feature6;
+
+  /// No description provided for @release450Feature7.
+  ///
+  /// In en, this message translates to:
+  /// **'Find musical-style instrument controls below Sound in Settings and preview your ensemble with Amazing Grace.'**
+  String get release450Feature7;
+
+  /// No description provided for @release450Feature8.
+  ///
+  /// In en, this message translates to:
+  /// **'Find hymns more easily with search that prioritizes titles and opening lyric lines.'**
+  String get release450Feature8;
+
+  /// No description provided for @release450Feature9.
+  ///
+  /// In en, this message translates to:
+  /// **'Save favorites with refreshed heart feedback and a gentle reminder at the end of a hymn.'**
+  String get release450Feature9;
+
+  /// No description provided for @release440Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Choir Practice in Settings to hear available vocal parts separately, rename tracks, and mute or solo them.'**
+  String get release440Feature0;
+
+  /// No description provided for @release440Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an instrument and adjust the volume for each choir track using compact controls.'**
+  String get release440Feature1;
+
+  /// No description provided for @release440Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize ensemble instruments in Settings, adjust their levels, solo individual roles, and preview your mix.'**
+  String get release440Feature2;
+
+  /// No description provided for @release440Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from 111 instruments organized into 11 categories. Find Steelpan under Percussion, with automatic rolls on sustained notes.'**
+  String get release440Feature3;
+
+  /// No description provided for @release440Feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'Choir Practice uses the original parts and overrides the selected ensemble style. These optional controls stay hidden until enabled.'**
+  String get release440Feature4;
+
+  /// No description provided for @release430Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Read all 225 additional readings from the New Hymnal, numbered 696–920, with their categories and Scripture references.'**
+  String get release430Feature0;
+
+  /// No description provided for @release430Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a reading from the number keypad or browse and search the complete reading collection, then swipe between readings and use a comfortable reading-speed auto-scroll.'**
+  String get release430Feature1;
+
+  /// No description provided for @release430Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse hymns and Scripture readings by topic or occasion, including the New Hymnal\'s topical index.'**
+  String get release430Feature2;
+
+  /// No description provided for @release430Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Read restored hymn stories with quotations and passages that were missing from the earlier import.'**
+  String get release430Feature3;
+
+  /// No description provided for @release430Feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore community statistics in Settings, including popular hymns, repeat visits, favorite additions, and times of worship, with saved reports available offline.'**
+  String get release430Feature4;
+
+  /// No description provided for @release430Feature5.
+  ///
+  /// In en, this message translates to:
+  /// **'Help improve the app with weekly usage summaries. Sharing is enabled by default and can be turned off at any time in Settings under Privacy & Statistics.'**
+  String get release430Feature5;
+
+  /// No description provided for @release420Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the background story of a hymn and see its writer and composer.'**
+  String get release420Feature0;
+
+  /// No description provided for @release420Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch a matching hymn video while following the words in the app.'**
+  String get release420Feature1;
+
+  /// No description provided for @release420Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Play music for all 703 Old Hymnal songs, with the correct number of verses and choruses.'**
+  String get release420Feature2;
+
+  /// No description provided for @release420Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear and read each chorus after every verse in both hymnals.'**
+  String get release420Feature3;
+
+  /// No description provided for @release420Feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy continuous reggae and steelpan rhythms in songs written in 3/4 time.'**
+  String get release420Feature4;
+
+  /// No description provided for @release420Feature5.
+  ///
+  /// In en, this message translates to:
+  /// **'Use auto-scroll while reading, adjust its speed with a slider, and reposition the words without stopping it.'**
+  String get release420Feature5;
+
+  /// No description provided for @release420Feature6.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the music player hidden across songs and app launches when you prefer more reading space.'**
+  String get release420Feature6;
+
+  /// No description provided for @release420Feature7.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep favorite hymns close at hand with the restored heart button in the hymn header.'**
+  String get release420Feature7;
+
+  /// No description provided for @release420Feature8.
+  ///
+  /// In en, this message translates to:
+  /// **'Review what changed in this and earlier versions from the What’s New screen.'**
+  String get release420Feature8;
+
+  /// No description provided for @release411Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the Modern or Classic app design, with a matching home-screen icon.'**
+  String get release411Feature0;
+
+  /// No description provided for @release411Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Read corrected lyrics for Old Hymnal 533 and 534.'**
+  String get release411Feature1;
+
+  /// No description provided for @release411Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy more reliable music playback.'**
+  String get release411Feature2;
+
+  /// No description provided for @release410Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Added verse numbers and clear chorus labels throughout the Old Hymnal.'**
+  String get release410Feature0;
+
+  /// No description provided for @release410Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Improved the Island Reggae accompaniment and its sound on iPhone.'**
+  String get release410Feature1;
+
+  /// No description provided for @release410Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Added an option to keep the screen awake while a hymn is open.'**
+  String get release410Feature2;
+
+  /// No description provided for @release401Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Added a privacy policy written specifically for the hymnal app.'**
+  String get release401Feature0;
+
+  /// No description provided for @release400Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduced the rebuilt app with a cleaner reading experience.'**
+  String get release400Feature0;
+
+  /// No description provided for @release400Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Added music playback, chords, Gospel, Island Reggae, and Steel Pan Calypso accompaniment.'**
+  String get release400Feature1;
+
+  /// No description provided for @release400Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrected dozens of reported lyric problems and restored New Hymnal 314.'**
+  String get release400Feature2;
 }
 
 class _AppLocalizationsDelegate
