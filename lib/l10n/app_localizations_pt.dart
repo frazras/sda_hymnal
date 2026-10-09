@@ -2002,4 +2002,38 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get readingCongregation => 'Congregação';
+
+  @override
+  String get languagePacks => 'Downloads de hinários';
+
+  @override
+  String get languagePacksHelp =>
+      'Adicione letras para leitura offline. A música é baixada separadamente ao reproduzir.';
+
+  @override
+  String get packBundled => 'Incluído no aplicativo';
+
+  @override
+  String get packInstalled => 'Baixado';
+
+  @override
+  String get packDownload => 'Baixar';
+
+  @override
+  String get packDownloadFailed =>
+      'Não foi possível alterar este download. Seus livros salvos não foram alterados. Tente novamente.';
+
+  @override
+  String get packNoMusic => 'Somente letras; não inclui música.';
+
+  @override
+  String packDetails(int count, String size) {
+    return '$count hinos · $size MB';
+  }
+
+  @override
+  String get packReviewPending => 'Revisão independente das letras pendente';
+
+  @override
+  String get packUpdate => 'Atualizar';
 }

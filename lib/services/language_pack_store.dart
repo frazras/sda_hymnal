@@ -102,6 +102,24 @@ class LanguagePackStore {
   bool _validBook(String id) => RegExp(r'^sda-[a-z0-9-]+$').hasMatch(id);
   File _pointer(String book) => File('${directory.path}/$book.json');
 
+  /// Return metadata only for a validated active copy, for update comparison.
+  Future<LanguagePackDownload?> installedDescriptor(String book) async {
+    if (await load(book) == null) return null;
+    try {
+      return LanguagePackDownload.fromJson(
+          jsonDecode(await _pointer(book).readAsString())
+              as Map<String, dynamic>);
+    } on FileSystemException {
+      return null;
+    } on FormatException {
+      return null;
+    } on TypeError {
+      return null;
+    } on ArgumentError {
+      return null;
+    }
+  }
+
   /// Invalid local content is ignored so the caller can retain bundled content.
   Future<HymnalPack?> load(String book) async {
     if (!_validBook(book)) return null;
@@ -143,11 +161,12 @@ class LanguagePackStore {
   }
 
   Future<void> install(LanguagePackDownload descriptor,
-          {LanguagePackCancellation? cancellation}) =>
+          {LanguagePackCancellation? cancellation,
+          Future<Uint8List> Function(LanguagePackDownload)? fetch}) =>
       _serialize(() async {
         cancellation?.check();
         // Validate before writing or replacing any active content.
-        final data = Uint8List.fromList(await download(descriptor));
+        final data = Uint8List.fromList(await (fetch ?? download)(descriptor));
         cancellation?.check();
         descriptor.validate(data);
         await directory.create(recursive: true);

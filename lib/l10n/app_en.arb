@@ -913,5 +913,25 @@
   "presentationExportFailed": "Unable to export slides. Check that every service item is available.",
   "languageSaveFailed": "Could not save the app language. Please try again.",
   "readingLeader": "Leader",
-  "readingCongregation": "Congregation"
+  "readingCongregation": "Congregation",
+  "languagePacks": "Hymnal downloads",
+  "languagePacksHelp": "Add hymn text for offline reading. Music downloads separately when played.",
+  "packBundled": "Included in the app",
+  "packInstalled": "Downloaded",
+  "packDownload": "Download",
+  "packDownloadFailed": "Could not change this download. Your saved books are unchanged. Try again.",
+  "packNoMusic": "Hymn text only; music is not included.",
+  "packDetails": "{count} hymns · {size} MB",
+  "packReviewPending": "Independent lyric review pending",
+  "@packDetails": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "packUpdate": "Update"
 }

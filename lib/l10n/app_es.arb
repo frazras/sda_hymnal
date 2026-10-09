@@ -570,5 +570,15 @@
   "presentationExportFailed": "No se pudieron exportar las diapositivas. Comprueba que todos los elementos del servicio estén disponibles.",
   "languageSaveFailed": "No se pudo guardar el idioma de la aplicación. Inténtalo de nuevo.",
   "readingLeader": "Dirigente",
-  "readingCongregation": "Congregación"
+  "readingCongregation": "Congregación",
+  "languagePacks": "Descargas de himnarios",
+  "languagePacksHelp": "Añade letras para leer sin conexión. La música se descarga por separado al reproducirla.",
+  "packBundled": "Incluido en la aplicación",
+  "packInstalled": "Descargado",
+  "packDownload": "Descargar",
+  "packDownloadFailed": "No se pudo cambiar esta descarga. Tus libros guardados no han cambiado. Inténtalo de nuevo.",
+  "packNoMusic": "Solo letras; no incluye música.",
+  "packDetails": "{count} himnos · {size} MB",
+  "packReviewPending": "Revisión independiente de las letras pendiente",
+  "packUpdate": "Actualizar"
 }

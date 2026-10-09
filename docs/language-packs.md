@@ -348,5 +348,23 @@ regression suite includes all 350 records. The trusted download catalog now
 registers its exact published bytes, and the shared loader adds the book only
 when a valid local copy is installed. Removal restores the six bundled books.
 The shared number pad and reader support this collection in both designs and
-themes. Management UI and live reload remain before users can install it from
-the app; music coverage is still unavailable.
+themes. The Settings download page now installs, cancels, updates, and removes trusted
+text copies, refreshing the shell after activation. Music coverage is still
+unavailable.
+
+## Text download management
+
+Settings > Hymnal downloads shows the trusted catalog separately from the book
+picker. It displays text size and hymn count. Included books remain available
+offline without redundant downloads. Optional books disclose missing music and
+pending independent lyric review. Their text downloads are integrity checked,
+show progress, and can be cancelled before activation; leaving the page also
+cancels a pending download. One management operation runs at a time.
+
+An installed copy with a different checksum offers Update. Removal deletes only
+the local text override; bundled books fall back to their included text. Saved
+favorites and service references are retained. After a successful change the
+shell reloads its shared content: newly installed books become selectable, and
+removing the selected optional book safely returns to English. Audio remains
+on demand with its existing bounded cache. Optional score-pack management and a
+remote catalog update channel are still separate unfinished work.

@@ -3527,6 +3527,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Congregation'**
   String get readingCongregation;
+
+  /// No description provided for @languagePacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymnal downloads'**
+  String get languagePacks;
+
+  /// No description provided for @languagePacksHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add hymn text for offline reading. Music downloads separately when played.'**
+  String get languagePacksHelp;
+
+  /// No description provided for @packBundled.
+  ///
+  /// In en, this message translates to:
+  /// **'Included in the app'**
+  String get packBundled;
+
+  /// No description provided for @packInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get packInstalled;
+
+  /// No description provided for @packDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get packDownload;
+
+  /// No description provided for @packDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not change this download. Your saved books are unchanged. Try again.'**
+  String get packDownloadFailed;
+
+  /// No description provided for @packNoMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymn text only; music is not included.'**
+  String get packNoMusic;
+
+  /// No description provided for @packDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hymns · {size} MB'**
+  String packDetails(int count, String size);
+
+  /// No description provided for @packReviewPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Independent lyric review pending'**
+  String get packReviewPending;
+
+  /// No description provided for @packUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get packUpdate;
 }
 
 class _AppLocalizationsDelegate

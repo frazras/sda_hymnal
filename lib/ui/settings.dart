@@ -1,6 +1,7 @@
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'report_error.dart';
 import 'app_language_picker.dart';
+import 'language_packs.dart';
 import '../services/app_language.dart';
 import 'reading_history.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
@@ -26,9 +27,14 @@ import 'package:sdahymnal/ui/statistics.dart';
 /// Settings tab — content only (the shell renders the brand header above and
 /// the bottom nav below). Sections: READING, SOUND, APPEARANCE, MORE, footer.
 class Settings extends StatelessWidget {
-  const Settings({super.key, this.hymns = const [], this.historyHymns});
+  const Settings(
+      {super.key,
+      this.hymns = const [],
+      this.historyHymns,
+      this.onPacksChanged});
   final List<Hymn> hymns;
   final List<Hymn>? historyHymns;
+  final Future<void> Function()? onPacksChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -243,6 +249,17 @@ class Settings extends StatelessWidget {
                     interfaceLanguageNames[locale.languageCode] ?? 'English',
                 onTap: () => showAppLanguagePicker(context),
               ),
+            )),
+        const SizedBox(height: 10),
+        _card(t,
+            child: _SettingsRow(
+              leading: Icon(Icons.download_outlined, color: t.muted),
+              title: context.appText.languagePacks,
+              onTap: () => Navigator.push(
+                  context,
+                  slideRoute(LanguagePacksPage(
+                    onChanged: onPacksChanged ?? () async {},
+                  ))),
             )),
         SectionLabel(context.appText.more.toUpperCase(),
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),

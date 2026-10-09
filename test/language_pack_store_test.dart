@@ -42,6 +42,25 @@ void main() {
           hymnCount: 1,
           topicCount: 0);
 
+  test(
+      'active metadata detects updates and per-operation fetch stays validated',
+      () async {
+    final first = data('Primero'), second = data('Segundo');
+    final store = LanguagePackStore(directory, download: (_) async => first);
+    expect(await store.installedDescriptor('sda-es-2009'), isNull);
+    await store.install(descriptor(first));
+    expect((await store.installedDescriptor('sda-es-2009'))!.checksum,
+        descriptor(first).checksum);
+    expect((await store.installedDescriptor('sda-es-2009'))!.checksum,
+        isNot(descriptor(second).checksum));
+    await store.install(descriptor(second), fetch: (_) async => second);
+    expect((await store.installedDescriptor('sda-es-2009'))!.checksum,
+        descriptor(second).checksum);
+    expect((await store.load('sda-es-2009'))!.hymns.single.title, 'Segundo');
+    await File('${directory.path}/sda-es-2009.json').writeAsString('broken');
+    expect(await store.installedDescriptor('sda-es-2009'), isNull);
+  });
+
   test('verified text reopens offline and removes without touching other books',
       () async {
     final first = data('Primero'), second = data('Segundo', 'sda-es-1962');

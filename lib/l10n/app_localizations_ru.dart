@@ -2028,4 +2028,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get readingCongregation => 'Община';
+
+  @override
+  String get languagePacks => 'Загрузка сборников гимнов';
+
+  @override
+  String get languagePacksHelp =>
+      'Добавьте тексты для чтения без интернета. Музыка загружается отдельно при воспроизведении.';
+
+  @override
+  String get packBundled => 'Включено в приложение';
+
+  @override
+  String get packInstalled => 'Загружено';
+
+  @override
+  String get packDownload => 'Загрузить';
+
+  @override
+  String get packDownloadFailed =>
+      'Не удалось изменить загрузку. Сохранённые книги не изменены. Попробуйте снова.';
+
+  @override
+  String get packNoMusic => 'Только тексты гимнов; музыка не включена.';
+
+  @override
+  String packDetails(int count, String size) {
+    return 'Гимнов: $count · $size МБ';
+  }
+
+  @override
+  String get packReviewPending =>
+      'Независимая проверка текстов ещё не выполнена';
+
+  @override
+  String get packUpdate => 'Обновить';
 }

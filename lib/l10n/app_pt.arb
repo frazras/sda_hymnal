@@ -570,5 +570,15 @@
   "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.",
   "languageSaveFailed": "Não foi possível salvar o idioma do aplicativo. Tente novamente.",
   "readingLeader": "Dirigente",
-  "readingCongregation": "Congregação"
+  "readingCongregation": "Congregação",
+  "languagePacks": "Downloads de hinários",
+  "languagePacksHelp": "Adicione letras para leitura offline. A música é baixada separadamente ao reproduzir.",
+  "packBundled": "Incluído no aplicativo",
+  "packInstalled": "Baixado",
+  "packDownload": "Baixar",
+  "packDownloadFailed": "Não foi possível alterar este download. Seus livros salvos não foram alterados. Tente novamente.",
+  "packNoMusic": "Somente letras; não inclui música.",
+  "packDetails": "{count} hinos · {size} MB",
+  "packReviewPending": "Revisão independente das letras pendente",
+  "packUpdate": "Atualizar"
 }

@@ -112,7 +112,7 @@ class _TabsState extends State<Tabs> {
     }
   }
 
-  _loadHymns() async {
+  Future<void> _loadHymns() async {
     final bundle = DefaultAssetBundle.of(context);
     final hymnData = await bundle.loadString('assets/hymns.json');
     try {
@@ -334,10 +334,13 @@ class _TabsState extends State<Tabs> {
                                 hymnsOld: _hymnsOld,
                                 additionalHymns:
                                     _packs.expand((p) => p.hymns).toList()),
-                            Settings(hymns: _hymns, historyHymns: [
-                              ..._hymns,
-                              ..._packs.expand((p) => p.hymns),
-                            ]),
+                            Settings(
+                                onPacksChanged: _loadHymns,
+                                hymns: _hymns,
+                                historyHymns: [
+                                  ..._hymns,
+                                  ..._packs.expand((p) => p.hymns),
+                                ]),
                           ],
                         ),
                 ),

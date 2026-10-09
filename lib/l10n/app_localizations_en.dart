@@ -1990,4 +1990,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readingCongregation => 'Congregation';
+
+  @override
+  String get languagePacks => 'Hymnal downloads';
+
+  @override
+  String get languagePacksHelp =>
+      'Add hymn text for offline reading. Music downloads separately when played.';
+
+  @override
+  String get packBundled => 'Included in the app';
+
+  @override
+  String get packInstalled => 'Downloaded';
+
+  @override
+  String get packDownload => 'Download';
+
+  @override
+  String get packDownloadFailed =>
+      'Could not change this download. Your saved books are unchanged. Try again.';
+
+  @override
+  String get packNoMusic => 'Hymn text only; music is not included.';
+
+  @override
+  String packDetails(int count, String size) {
+    return '$count hymns · $size MB';
+  }
+
+  @override
+  String get packReviewPending => 'Independent lyric review pending';
+
+  @override
+  String get packUpdate => 'Update';
 }

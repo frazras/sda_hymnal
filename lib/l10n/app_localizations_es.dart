@@ -2007,4 +2007,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get readingCongregation => 'Congregación';
+
+  @override
+  String get languagePacks => 'Descargas de himnarios';
+
+  @override
+  String get languagePacksHelp =>
+      'Añade letras para leer sin conexión. La música se descarga por separado al reproducirla.';
+
+  @override
+  String get packBundled => 'Incluido en la aplicación';
+
+  @override
+  String get packInstalled => 'Descargado';
+
+  @override
+  String get packDownload => 'Descargar';
+
+  @override
+  String get packDownloadFailed =>
+      'No se pudo cambiar esta descarga. Tus libros guardados no han cambiado. Inténtalo de nuevo.';
+
+  @override
+  String get packNoMusic => 'Solo letras; no incluye música.';
+
+  @override
+  String packDetails(int count, String size) {
+    return '$count himnos · $size MB';
+  }
+
+  @override
+  String get packReviewPending =>
+      'Revisión independiente de las letras pendiente';
+
+  @override
+  String get packUpdate => 'Actualizar';
 }
