@@ -249,3 +249,27 @@ report also rejects repeated topic members. Regression checks load all six
 shipped packs successfully and reject malformed metadata and text variants.
 These activation checks are groundwork for optional downloads; downloaded pack
 management is not yet available in Settings.
+
+## Downloaded text storage groundwork
+
+`LanguagePackDownload` describes a reviewed HTTPS text object with exact byte size,
+SHA-256, book identity, hymn count, and topic count. It rejects text objects larger
+than 16 MiB and validates decoded content against the runtime parser before any
+activation. `LanguagePackStore` uses an injected downloader; it is not connected
+to Settings, repository loading, or a published remote catalog yet.
+
+The store stages verified text and metadata in a separate directory, flushes both,
+and atomically replaces the active pointer. Failed or cancelled updates leave the
+working pointer intact; writes/removals serialize and a failed download does not
+poison subsequent operations. Successful updates remove obsolete text revisions.
+Loading rechecks integrity, rejects linked/traversing files, and returns null for
+invalid local data so the caller can retain bundled content. Removal deactivates
+only the specified downloaded edition. It never writes preferences, favorites,
+English assets, media, or the on-demand recording cache.
+
+Seven store tests cover offline reopening, edition-isolated removal, failed
+updates, bounded revision retention, cancellation during a pending download,
+serialized operations and recovery, corrupt local metadata, and linked files.
+The optional-download roadmap item remains incomplete until trusted catalog
+publication, transport, repository integration, score storage, translated size/
+coverage management UI, and physical-device validation are connected.
