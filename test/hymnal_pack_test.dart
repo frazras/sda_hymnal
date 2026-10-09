@@ -112,6 +112,16 @@ void main() {
       (data) => data['items'].add(data['items'][0]),
       (data) => data['topics'][0]['itemIds'] = ['999'],
       (data) => data['book']['id'] = 'new',
+      (data) => data['book']['languageTag'] = 'es',
+      (data) => data['book']['displayName'] = ' ',
+      (data) => data['items'] = [],
+      (data) => data['items'][0]['title'] = '\uFFFD',
+      (data) => data['items'][0]['blocks'][0]['text'] = '\uFFFD',
+      (data) => data['topics'][0]['id'] = '',
+      (data) => data['topics'][0]['title'] = ' ',
+      (data) => data['topics'][0]['group'] = ' ',
+      (data) =>
+          data['topics'][0]['itemIds'].add(data['topics'][0]['itemIds'][0]),
     ]) {
       final data = jsonDecode(original) as Map<String, dynamic>;
       mutate(data);

@@ -98,6 +98,9 @@ def inspect_pack(pack, expected_numbers=None):
         if not isinstance(refs, list) or not refs:
             error('invalid_topic_references', at)
         else:
+            for ref, count in Counter(r for r in refs if isinstance(r, str)).items():
+                if count > 1:
+                    error('duplicate_topic_reference', f'{at}:{ref}')
             for ref in refs:
                 if not isinstance(ref, str) or ref not in ids:
                     error('absent_topic_reference', f'{at}:{ref}')

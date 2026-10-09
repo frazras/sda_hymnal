@@ -34,7 +34,9 @@ class HymnalPack {
         languageTag: book['languageTag'] as String,
         displayName: book['displayName'] as String,
         year: book['year'] as int?);
-    if (!_supportedImportedBook(edition.id)) {
+    if (!_supportedImportedBook(edition.id) ||
+        edition.displayName.trim().isEmpty ||
+        edition.languageTag.split('-').first != edition.id.split('-')[1]) {
       throw const FormatException('Unknown imported book.');
     }
     const escape = HtmlEscape();
@@ -49,13 +51,15 @@ class HymnalPack {
       if (number < 1 ||
           '$number' != id ||
           byId.containsKey(id) ||
-          title.trim().isEmpty) {
+          title.trim().isEmpty ||
+          title.contains('\uFFFD')) {
         throw const FormatException('Duplicate or invalid hymn.');
       }
       final body = StringBuffer();
       for (final block in item['blocks'] as List<dynamic>) {
         final text = block['text'] as String;
         if (text.trim().isEmpty ||
+            text.contains('\uFFFD') ||
             !['verse', 'refrain'].contains(block['kind'])) {
           throw const FormatException('Invalid lyric block.');
         }
@@ -78,13 +82,18 @@ class HymnalPack {
       hymns.add(hymn);
       byId[id] = hymn;
     }
+    if (hymns.isEmpty) throw const FormatException('Empty hymnal pack.');
     hymns.sort((a, b) => a.number.compareTo(b.number));
     final topics = <HymnalTopic>[];
     final topicIds = <String>{};
     for (final topic in data['topics'] as List<dynamic>) {
       final id = topic['id'] as String;
       final ids = (topic['itemIds'] as List<dynamic>).cast<String>();
-      if (!topicIds.add(id) ||
+      if (id.trim().isEmpty ||
+          (topic['group'] as String).trim().isEmpty ||
+          (topic['title'] as String).trim().isEmpty ||
+          !topicIds.add(id) ||
+          ids.toSet().length != ids.length ||
           ids.isEmpty ||
           ids.any((id) => !byId.containsKey(id))) {
         throw const FormatException('Invalid topic references.');

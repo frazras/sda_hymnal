@@ -241,3 +241,11 @@ The Content publication checks GitHub workflow runs this same command on pushes,
 pull requests, and manual dispatch with read-only repository permission. This is
 an automated structural gate, not fluent lyric review, musical equivalence review,
 or an automatic release. Branch protection is not changed by adding the workflow.
+
+Runtime pack parsing rejects empty books, empty edition labels, language labels
+that conflict with canonical book IDs, invalid replacement characters in titles
+or lyrics, empty topic metadata, and repeated topic members. The publication
+report also rejects repeated topic members. Regression checks load all six
+shipped packs successfully and reject malformed metadata and text variants.
+These activation checks are groundwork for optional downloads; downloaded pack
+management is not yet available in Settings.

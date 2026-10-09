@@ -56,6 +56,10 @@ class ContentReportTest(unittest.TestCase):
         self.pack['items'][0]['blocks'][0]['kind'] = 'guessed-chorus'
         self.assertEqual(self.codes(self.pack), {'duplicate_topic_id', 'invalid_block_kind'})
 
+    def test_duplicate_topic_members_are_rejected(self):
+        self.pack['topics'][0]['itemIds'].append('1')
+        self.assertEqual(self.codes(self.pack), {'duplicate_topic_reference'})
+
     def test_asset_paths_cannot_escape_root_even_through_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
