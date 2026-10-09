@@ -77,6 +77,9 @@ class MidiPlayer {
   final ValueNotifier<Set<int>> mutedParts = ValueNotifier({});
   final ValueNotifier<Set<int>> soloParts = ValueNotifier({});
   bool _preview = false;
+  bool get isPreview => _preview;
+  Hymn? _loadedHymn;
+  Hymn? get loadedHymn => _loadedHymn;
   bool get _practice => MusicOptions.instance.choirPractice && !_preview;
   int _stopGeneration = 0;
   Future<void> _operations = Future.value();
@@ -485,6 +488,7 @@ class MidiPlayer {
       _preview = preview;
       _recording = !hasMidi(hymn);
     }
+    _loadedHymn = hymn;
     if (_nativeActive) return _channelToggle(hymn);
     final cur = current.value;
     if (isCurrent(cur, hymn)) {

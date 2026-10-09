@@ -112,7 +112,10 @@ Items below are plans, not claims that multilingual content is already installed
       require verified MIDI assets or reviewed tune mappings.
 - [ ] Add persistent background audio with lock-screen/notification controls,
       headphone actions, interruption handling, and one shared playback queue.
-      Start with audio playback; retain each medium's supported behavior.
+      Start with audio playback; retain each medium's supported behavior. The existing
+      engines now publish system media metadata and support play/pause/stop/seek;
+      platform background setup and interruption pauses are connected. Physical
+      device validation and reader-independent queue ownership remain.
 
 ## Browsing and Favorites
 

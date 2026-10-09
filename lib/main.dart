@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:sdahymnal/services/system_audio.dart';
 
 import 'package:sdahymnal/l10n/app_localizations.dart';
 import 'package:sdahymnal/services/app_language.dart';
@@ -39,6 +40,11 @@ Future<void> main() async {
     AppAnalytics.instance.event('diagnostic', variant: 'platform_error');
     return previousPlatformError?.call(error, stack) ?? false;
   };
+  try {
+    await SystemAudio.initialize();
+  } catch (_) {
+    AppAnalytics.instance.event('diagnostic', variant: 'system_audio_init');
+  }
   runApp(const Hymnal());
 }
 

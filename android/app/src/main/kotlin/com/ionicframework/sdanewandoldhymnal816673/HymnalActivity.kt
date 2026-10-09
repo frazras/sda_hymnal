@@ -3,11 +3,11 @@ package com.ionicframework.sdanewandoldhymnal816673
 import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class HymnalActivity : FlutterActivity() {
+class HymnalActivity : AudioServiceActivity() {
     private var iconChannel: MethodChannel? = null
     private var analyticsChannel: MethodChannel? = null
 
