@@ -66,3 +66,9 @@ Automatic advancement requires confirmation that playback started before publish
 the next reader occurrence. Disabling Autoplay or cancelling during a recording
 download or native MIDI load prevents a late start and leaves the reader selection
 unchanged. Tests exercise both engine loading boundaries and the queue acknowledgement.
+
+`AudioInterruptionPolicy` is the shared policy for real session interruption and
+headphone-removal streams. It invalidates pending advancement before waiting for
+engine pause, ignores interruption-end events, and survives pause errors so later
+events can retry. Deterministic tests cover this ordering and recovery; physical
+call and headphone behavior still requires device validation.

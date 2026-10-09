@@ -5,6 +5,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'audio_queue.dart';
+import 'audio_interruption_policy.dart';
 
 /// System controls observe and command the existing player; no second engine.
 class HymnalAudioHandler extends BaseAudioHandler {
@@ -155,16 +156,15 @@ class SystemAudio {
     );
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
-    // Never resume automatically after a call or route change. The user decides.
+    final interruptions = AudioInterruptionPolicy(
+      cancelPending: AudioQueue.instance.cancelPending,
+      pause: MidiPlayer.instance.pause,
+    );
     _subscriptions.add(session.interruptionEventStream.listen((event) {
-      if (event.begin) {
-        AudioQueue.instance.cancelPending();
-        unawaited(MidiPlayer.instance.pause().catchError((Object _) {}));
-      }
+      unawaited(interruptions.interruption(begin: event.begin));
     }));
     _subscriptions.add(session.becomingNoisyEventStream.listen((_) {
-      AudioQueue.instance.cancelPending();
-      unawaited(MidiPlayer.instance.pause().catchError((Object _) {}));
+      unawaited(interruptions.headphonesRemoved());
     }));
   }
 }
