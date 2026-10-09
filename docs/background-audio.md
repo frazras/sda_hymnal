@@ -42,3 +42,12 @@ recovery, native/recording switches, absolute and relative seek, and stopped
 metadata clearing. They do not prove lock-screen behavior on physical hardware.
 Category/service queue ownership and completion currently remain in the reader;
 background queue persistence and screen-independent advancement still need work.
+
+Queue groundwork now uses `HymnPlaybackQueue`, an immutable occurrence snapshot.
+Category continuation uses this model to retain displayed order, skip unsupported
+media within that list, and wrap. Service snapshots can retain repeated hymn
+occurrences and null reading/unavailable barriers with no wrapping or skipping.
+The selected occurrence must be carried separately from hymn identity before
+service/system integration, since the same hymn may appear twice. The model is
+connected to existing category target selection; background ownership and system
+next/previous wiring remain pending.
