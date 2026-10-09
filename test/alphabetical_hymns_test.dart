@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/alphabetical_hymns.dart';
 
 Hymn hymn(int n, String title,
@@ -85,4 +86,40 @@ void main() {
     expect(find.text('Я'), findsOneWidget);
     expect(find.text('Corazón'), findsNothing);
   });
+  for (final classic in [false, true]) {
+    for (final dark in [false, true]) {
+      testWidgets(
+          'small screen and large text keep letter picker usable classic=$classic dark=$dark',
+          (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final hymns = [
+          for (var i = 0; i < 26; i++)
+            hymn(i + 1,
+                '${String.fromCharCode(65 + i)} A long title with several words'),
+        ];
+        messenger.setMockMethodCallHandler(
+            channel, (_) async => List.generate(26, (i) => i));
+        await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(dark ? HymnalTokens.dark : HymnalTokens.light,
+              classic: classic),
+          builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(4)),
+              child: child!),
+          home: AlphabeticalHymns(hymns: hymns),
+        ));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Jump to letter'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Z'));
+        await tester.tap(find.text('Z'));
+        await tester.pumpAndSettle();
+        expect(find.text(hymns.last.title), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
 }

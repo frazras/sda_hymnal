@@ -128,8 +128,10 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
                 return const Center(child: CircularProgressIndicator());
               }
               final hymns = snapshot.data!;
-              final extent =
-                  96.0 * MediaQuery.textScalerOf(context).scale(1).clamp(1, 3);
+              final extent = 96.0 *
+                  MediaQuery.textScalerOf(context)
+                      .scale(1)
+                      .clamp(1, double.infinity);
               return Column(children: [
                 Align(
                     alignment: Alignment.centerRight,

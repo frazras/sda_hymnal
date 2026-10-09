@@ -13,6 +13,7 @@ import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnal_browser.dart';
+import 'package:sdahymnal/ui/alphabetical_hymns.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/tabs.dart';
 import 'hymnal_pack_test.dart' show FilePackBundle;
@@ -54,6 +55,46 @@ void main() {
       }
       return null;
     });
+  });
+
+  testWidgets(
+      'alphabetical reader preserves exact edition and displayed book order',
+      (tester) async {
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    const channel = MethodChannel('sdahymnal/collation');
+    messenger.setMockMethodCallHandler(channel, (_) async => [2, 0, 1]);
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+    final hymns = [
+      Hymn(
+          number: 3,
+          title: 'Beta',
+          body: 'Verse',
+          version: 'sda-es-2009',
+          languageTag: 'es'),
+      Hymn(
+          number: 1,
+          title: 'Gamma',
+          body: 'Verse',
+          version: 'sda-es-1962',
+          languageTag: 'es'),
+      Hymn(
+          number: 2,
+          title: 'Alpha',
+          body: 'Verse',
+          version: 'sda-es-2009',
+          languageTag: 'es'),
+    ];
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: AlphabeticalHymns(hymns: hymns)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alpha'));
+    await tester.pumpAndSettle();
+    final reader = tester.widget<HymnPage>(find.byType(HymnPage));
+    expect(reader.hymn, same(hymns[2]));
+    expect(reader.hymns, [hymns[2], hymns[0]]);
+    expect(reader.hymns.every((h) => h.version == 'sda-es-2009'), isTrue);
   });
 
   for (final classic in [false, true]) {

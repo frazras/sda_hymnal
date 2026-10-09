@@ -28,7 +28,9 @@ The original search route retains query relevance ranking and original navigatio
 A collation failure offers retry, while Back returns to existing usable search.
 
 Tests cover lazy-row jumping, native failure/retry, mixed-language selection,
-letter labels, and existing paired and imported-book search and number-pad flows.
+letter labels, 320-pixel screens at 4x text size in both designs and themes,
+exact-edition reader queue order, and existing paired and imported-book search
+and number-pad flows.
 
 References: [Android Collator](https://developer.android.com/reference/java/text/Collator)
 and [Foundation comparison](https://developer.apple.com/documentation/foundation/nsstring/compare(_:options:range:locale:)).
