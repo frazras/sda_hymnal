@@ -7,6 +7,7 @@ import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymnal_pack.dart';
+import 'package:sdahymnal/services/installed_language_packs.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
@@ -26,7 +27,8 @@ import 'package:sdahymnal/ui/hymnal_browser.dart';
 /// App shell: brand header + active tab + bottom nav.
 /// Tab screens are content-only; the header and nav live here.
 class Tabs extends StatefulWidget {
-  const Tabs({super.key});
+  const Tabs({super.key, this.packLoader = loadInstalledLanguagePacks});
+  final Future<List<HymnalPack>> Function(AssetBundle) packLoader;
 
   @override
   State<Tabs> createState() => _TabsState();
@@ -144,7 +146,7 @@ class _TabsState extends State<Tabs> {
     List<HymnalPack> packs = [];
     var packsFailed = false;
     try {
-      packs = await loadHymnalPacks(bundle);
+      packs = await widget.packLoader(bundle);
     } catch (_) {
       packsFailed = true;
     }

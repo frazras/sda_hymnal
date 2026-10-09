@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -57,6 +58,32 @@ void main() {
     });
   });
 
+  for (final classic in [false, true]) {
+    testWidgets('updated text keeps the shared Spanish keypad classic=$classic',
+        (tester) async {
+      final source = jsonDecode(
+          File('assets/hymnals/sda-es-2009.json').readAsStringSync());
+      source['items'][0]['title'] = 'Título revisado';
+      final updated = HymnalPack.fromJson(jsonEncode(source));
+      final old = HymnalPack.fromJson(
+          File('assets/hymnals/sda-es-1962.json').readAsStringSync());
+      await (await SharedPreferences.getInstance())
+          .setString('selectedHymnal', 'spanish');
+      await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(HymnalTokens.light, classic: classic),
+          home: DefaultAssetBundle(
+              bundle: FilePackBundle(),
+              child: Tabs(packLoader: (_) async => [updated, old]))));
+      for (var i = 0; i < 12; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      await tester.tap(find.text('1').last);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('book-query')), findsNothing);
+      expect(find.textContaining('Título revisado'), findsWidgets);
+    });
+  }
+
   testWidgets(
       'alphabetical reader preserves exact edition and displayed book order',
       (tester) async {
@@ -108,7 +135,8 @@ void main() {
       await tester.pumpWidget(MaterialApp(
           theme: buildHymnalTheme(HymnalTokens.light, classic: classic),
           home: DefaultAssetBundle(
-              bundle: FilePackBundle(), child: const Tabs())));
+              bundle: FilePackBundle(),
+              child: Tabs(packLoader: loadHymnalPacks))));
       for (var i = 0; i < 12; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
@@ -173,7 +201,8 @@ void main() {
         theme: buildHymnalTheme(
             classic ? HymnalTokens.classic(true) : HymnalTokens.dark,
             classic: classic),
-        home: DefaultAssetBundle(bundle: FilePackBundle(), child: const Tabs()),
+        home: DefaultAssetBundle(
+            bundle: FilePackBundle(), child: Tabs(packLoader: loadHymnalPacks)),
       ));
       for (var i = 0; i < 12; i++) {
         await tester.pump(const Duration(milliseconds: 100));
@@ -287,7 +316,8 @@ void main() {
                       .copyWith(textScaler: const TextScaler.linear(1.3)),
                   child: child!),
               home: DefaultAssetBundle(
-                  bundle: FilePackBundle(), child: const Tabs())));
+                  bundle: FilePackBundle(),
+                  child: Tabs(packLoader: loadHymnalPacks))));
           for (var i = 0; i < 16; i++) {
             await tester.pump(const Duration(milliseconds: 100));
           }
@@ -382,8 +412,9 @@ void main() {
       (tester) async {
     Future<void> shell() => tester.pumpWidget(MaterialApp(
           theme: buildHymnalTheme(HymnalTokens.light),
-          home:
-              DefaultAssetBundle(bundle: FilePackBundle(), child: const Tabs()),
+          home: DefaultAssetBundle(
+              bundle: FilePackBundle(),
+              child: Tabs(packLoader: loadHymnalPacks)),
         ));
     await shell();
     // The English number entry deliberately keeps a blinking caret active.
@@ -436,7 +467,8 @@ void main() {
             data: MediaQuery.of(context)
                 .copyWith(textScaler: const TextScaler.linear(1.5)),
             child: child!),
-        home: DefaultAssetBundle(bundle: FilePackBundle(), child: const Tabs()),
+        home: DefaultAssetBundle(
+            bundle: FilePackBundle(), child: Tabs(packLoader: loadHymnalPacks)),
       ));
       for (var i = 0; i < 12; i++) {
         await tester.pump(const Duration(milliseconds: 100));

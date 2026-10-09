@@ -283,3 +283,19 @@ regressions use streamed responses, including cancellation before headers, wrong
 status/size, truncated or changed text, oversized bodies, and stalled streams.
 The HTTP dependency stays at the already-resolved 1.6.0 version, promoted to direct.
 This transport still awaits trusted catalog and app-loader/UI wiring.
+
+`loadInstalledLanguagePacks` now connects downloaded text to the app shell.
+It verifies the bundled packs first, retains their edition order, and overlays
+only an exact-edition locally verified pack. Missing/corrupt downloaded content
+retains the bundled edition. Application-support storage is initialized lazily;
+loading never starts a network request. Failure to obtain local storage retains
+bundled books. English books continue using their existing loader and assets.
+
+Real-file integration tests install an updated Spanish pack, reopen it offline,
+remove it back to bundled text with unchanged references, and corrupt it to
+verify fallback while other editions remain available. Modern and Classic shell
+checks show an updated Spanish title through the existing paired number pad.
+The shell accepts an injected pack loader for deterministic widget tests; those
+UI checks are separate from the real filesystem integration tests. Remote
+catalog publication, management controls, live reload after management actions,
+and optional scores remain incomplete.
