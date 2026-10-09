@@ -14,6 +14,7 @@ void main() {
     final messenger =
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     final native = <String>[];
+    var failNativePause = false;
     final media = <String>[];
     String? id;
     Future<void> audioEvent(String event) async {
@@ -53,6 +54,9 @@ void main() {
     messenger.setMockMethodCallHandler(const MethodChannel('sdahymnal/midi'),
         (call) async {
       native.add(call.method);
+      if (call.method == 'pause' && failNativePause) {
+        throw PlatformException(code: 'PAUSE_FAILED');
+      }
       if (call.method == 'load') return 120.0;
       if (call.method == 'getPosition') return 0.0;
       return null;
@@ -78,6 +82,20 @@ void main() {
     expect(player.current.value, isNull);
     await player.toggle(midi);
     expect(native, contains('play'));
+    failNativePause = true;
+    await expectLater(player.pause(), throwsA(isA<PlatformException>()));
+    expect(player.current.value?.paused, isFalse);
+    failNativePause = false;
+    await player.pause();
+    final nativePauses = native.where((m) => m == 'pause').length;
+    await player.pause();
+    expect(player.current.value?.paused, isTrue);
+    expect(native.where((m) => m == 'pause').length, nativePauses);
+    await player.resume();
+    final nativePlays = native.where((m) => m == 'play').length;
+    await player.resume();
+    expect(player.current.value?.paused, isFalse);
+    expect(native.where((m) => m == 'play').length, nativePlays);
     await player.toggle(hymn);
     expect(native.last, 'stop');
     expect(fetched, 1);
@@ -93,6 +111,19 @@ void main() {
     expect(player.current.value?.paused, isTrue);
     await player.toggle(hymn);
     expect(player.current.value?.paused, isFalse);
+    await player.pause();
+    final mediaPauses = media.where((m) => m == 'pause').length;
+    await player.pause();
+    expect(player.current.value?.paused, isTrue);
+    expect(media.where((m) => m == 'pause').length, mediaPauses);
+    final sources = media.where((m) => m == 'setSourceUrl').length;
+    await player.resume();
+    final mediaResumes = media.where((m) => m == 'resume').length;
+    await player.resume();
+    expect(player.current.value?.paused, isFalse);
+    expect(media.where((m) => m == 'resume').length, mediaResumes);
+    expect(media.where((m) => m == 'setSourceUrl').length, sources);
+    expect(fetched, 1);
     await player.seekBy(const Duration(seconds: 10));
     expect(media, contains('seek'));
     await player.setSpeed(1.25);
@@ -122,6 +153,9 @@ void main() {
     expect(media.where((m) => m == 'resume').length, resumes);
     expect(player.current.value, isNull);
     expect(player.loading.value, isFalse);
+    await player.pause();
+    await player.resume();
+    expect(player.current.value, isNull);
     await sub.cancel();
     await dir.delete(recursive: true);
   });

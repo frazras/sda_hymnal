@@ -697,6 +697,37 @@ class MidiPlayer {
     position.value = clamped;
   }
 
+  /// Explicit media commands must be idempotent: repeated headset/system events
+  /// must never toggle a paused hymn back into playback.
+  Future<void> pause() => _setPaused(true);
+  Future<void> resume() => _setPaused(false);
+
+  Future<void> _setPaused(bool paused) => _enqueue(() async {
+        final cur = current.value;
+        if (cur == null || cur.paused == paused) return;
+        if (_nativeActive) {
+          await _channel.invokeMethod(paused ? 'pause' : 'play');
+          if (paused) {
+            _stopPositionPolling();
+          } else {
+            _startPositionPolling();
+          }
+        } else {
+          if (paused) {
+            await _player.pause();
+          } else {
+            await _player.resume();
+          }
+        }
+        // A completion callback may have cleared this track while the command ran.
+        if (current.value == cur) {
+          current.value = (version: cur.version, n: cur.n, paused: paused);
+          if (!paused) await _applySpeed();
+          AppAnalytics.instance.event(paused ? 'play_pause' : 'play_resume',
+              hymn: cur.n, edition: cur.version);
+        }
+      });
+
   Future<void> stop() {
     _stopGeneration++;
     return _enqueue(_stop);
