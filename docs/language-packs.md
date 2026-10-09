@@ -220,3 +220,10 @@ repository, match their SHA-256, and carry a standard MIDI header. These checks
 protect catalog integrity; they do not verify tune equivalence or replace
 individual musical review. Regression fixtures exercise unknown references,
 duplicates, path escapes, checksum failures, malformed records, and non-MIDI files.
+
+Reviewed lyric-block overrides regenerate the derived `sourceText` used for
+search, so corrected lyrics and displayed blocks stay consistent. Original
+`sourceRecord` data and the before/after review log remain intact. The importer
+returns the same corrected pack it writes, and `--check` compares that complete
+corrected output against the staged file. Regression tests cover both paths
+and reject empty or malformed replacement blocks before writing.

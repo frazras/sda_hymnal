@@ -1,5 +1,6 @@
 import copy
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -83,6 +84,47 @@ class StructuredImportTest(unittest.TestCase):
         overrides['sourceRevision'] = 'changed'
         with self.assertRaises(ValueError):
             importer.apply_overrides(pack, overrides)
+
+    def test_lyric_override_updates_search_text_without_mutating_source(self):
+        pack = importer.convert(self.source, self.manifest)
+        before = copy.deepcopy(pack)
+        overrides = dict(sourceRevision='pinned', changes=[
+            dict(itemId='4', field='blocks', before=pack['items'][0]['blocks'],
+                 after=[dict(kind='verse', text='Texte corrigé'),
+                        dict(kind='refrain', text='Nouvelle réponse')],
+                 reviewer='Content reviewer', reason='Checked printed lyrics')])
+        result = importer.apply_overrides(pack, overrides)
+        self.assertEqual(result['items'][0]['sourceText'], 'Texte corrigé\n\nNouvelle réponse')
+        self.assertEqual(result['items'][0]['sourceRecord'], self.record)
+        self.assertEqual(result['reviewedOverrides'], overrides)
+        self.assertEqual(pack, before)
+        for replacement in [[], [dict(kind='verse', text='')], [None]]:
+            bad = copy.deepcopy(overrides)
+            bad['changes'][0]['after'] = replacement
+            with self.assertRaises(ValueError):
+                importer.apply_overrides(pack, bad)
+
+    def test_build_returns_the_corrected_pack_it_writes_and_checks(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            snapshot = root / 'source.json'
+            snapshot.write_text(json.dumps(self.source))
+            manifest = copy.deepcopy(self.manifest)
+            manifest['snapshot'] = 'source.json'
+            manifest['source'].update(bytes=snapshot.stat().st_size,
+                                      sha256=hashlib.sha256(snapshot.read_bytes()).hexdigest())
+            manifest_path = root / 'manifest.json'
+            manifest_path.write_text(json.dumps(manifest))
+            overrides = dict(sourceRevision='pinned', changes=[
+                dict(itemId='4', field='title', before='Grâce', after='Titre corrigé',
+                     reviewer='Reviewer', reason='Printed title')])
+            override_path = root / 'overrides.json'
+            override_path.write_text(json.dumps(overrides))
+            output = root / 'pack.json'
+            result = importer.build(manifest_path, output, override_path)
+            self.assertEqual(result, json.loads(output.read_text()))
+            self.assertEqual(result['items'][0]['title'], 'Titre corrigé')
+            self.assertEqual(importer.build(manifest_path, output, override_path, check=True), result)
 
     def test_pinned_full_sources_regenerate_offline_and_detect_stale_output(self):
         for name, count in [('french', 520), ('tagalog', 237), ('swahili', 220), ('cebuano', 237)]:

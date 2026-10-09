@@ -121,6 +121,8 @@ def apply_overrides(pack, overrides):
     errors = inspect_pack(result)['errors']
     if errors:
         raise ValueError(json.dumps(errors))
+    for item in result['items']:
+        item['sourceText'] = '\n\n'.join(block['text'] for block in item['blocks'])
     result['reviewedOverrides'] = copy.deepcopy(overrides)
     return result
 
@@ -133,7 +135,8 @@ def build(manifest_path, output, overrides_path=None, check=False):
         raise ValueError('Pinned source size/checksum mismatch')
     pack = convert(json.loads(data), manifest)
     overrides = json.loads(overrides_path.read_text()) if overrides_path else None
-    encoded = json_bytes(apply_overrides(pack, overrides))
+    pack = apply_overrides(pack, overrides)
+    encoded = json_bytes(pack)
     if check:
         if not output.exists() or output.read_bytes() != encoded:
             raise ValueError('Generated staging pack differs')
