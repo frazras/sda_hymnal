@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:sdahymnal/theme.dart';
@@ -26,7 +27,7 @@ class Sp extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const SubPageHeader(title: 'Our Other Projects'),
+            SubPageHeader(title: context.appText.otherProjects),
             Expanded(
               // Flex-1 spacer bottom-pins the CTA on tall screens; on short
               // screens the whole column scrolls (CTA is not a fixed overlay).
@@ -74,12 +75,7 @@ class Sp extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
                             child: Text(
-                              'Sabbath Programs is an initiative to improve '
-                              'the quality of church services by providing '
-                              'Christ-centered, creative and purpose-driven '
-                              'programs to congregations across the world. We '
-                              'provide innovative programs for Sabbath School, '
-                              'Divine Service and Adventist Youth (AY).',
+                              context.appText.sabbathProgramsDescription,
                               style: TextStyle(
                                 fontFamily: kSerif,
                                 fontSize: 16,
@@ -108,7 +104,7 @@ class Sp extends StatelessWidget {
                                       boxShadow: t.ctaShadow,
                                     ),
                                     child: Text(
-                                      'Visit the website',
+                                      context.appText.visitWebsite,
                                       style: TextStyle(
                                         fontFamily: kSans,
                                         fontSize: 16,

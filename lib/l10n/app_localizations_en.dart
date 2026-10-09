@@ -1782,4 +1782,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String keypadEnglishRange(String newBook, String oldBook) {
     return '$newBook 1–695 · Readings 696–920 · $oldBook 1–703';
   }
+
+  @override
+  String get visitWebsite => 'Visit the website';
+
+  @override
+  String get sabbathProgramsDescription =>
+      'Sabbath Programs is an initiative to improve the quality of church services by providing Christ-centered, creative and purpose-driven programs to congregations across the world. We provide innovative programs for Sabbath School, Divine Service and Adventist Youth (AY).';
+
+  @override
+  String get additionalHymnalsRetry => 'Additional hymnals unavailable · Retry';
 }

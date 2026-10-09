@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
@@ -240,8 +241,7 @@ class _TabsState extends State<Tabs> {
                 if (_tab == 1 && _packsFailed)
                   TextButton(
                       onPressed: _loadHymns,
-                      child:
-                          const Text('Additional hymnals unavailable · Retry')),
+                      child: Text(context.appText.additionalHymnalsRetry)),
                 Expanded(
                   // Both surrounding navigation widgets change with design.
                   // Keep the shared tab subtree when Flutter reconciles them.

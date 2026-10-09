@@ -1796,4 +1796,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String keypadEnglishRange(String newBook, String oldBook) {
     return '$newBook 1–695 · Lecturas 696–920 · $oldBook 1–703';
   }
+
+  @override
+  String get visitWebsite => 'Visitar el sitio web';
+
+  @override
+  String get sabbathProgramsDescription =>
+      'Sabbath Programs es una iniciativa para mejorar la calidad de los cultos ofreciendo programas creativos, con propósito y centrados en Cristo a congregaciones de todo el mundo. Ofrecemos programas innovadores para la Escuela Sabática, el culto divino y los Jóvenes Adventistas (JA).';
+
+  @override
+  String get additionalHymnalsRetry =>
+      'Himnarios adicionales no disponibles · Reintentar';
 }

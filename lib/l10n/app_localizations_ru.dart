@@ -1818,4 +1818,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String keypadEnglishRange(String newBook, String oldBook) {
     return '$newBook 1–695 · Чтения 696–920 · $oldBook 1–703';
   }
+
+  @override
+  String get visitWebsite => 'Посетить сайт';
+
+  @override
+  String get sabbathProgramsDescription =>
+      'Sabbath Programs — это инициатива по улучшению качества богослужений: мы предлагаем общинам по всему миру творческие программы с ясной целью, в центре которых Христос. Мы создаём новые программы для субботней школы, богослужения и адвентистской молодёжи.';
+
+  @override
+  String get additionalHymnalsRetry =>
+      'Дополнительные сборники недоступны · Повторить';
 }

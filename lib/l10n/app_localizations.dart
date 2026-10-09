@@ -3197,6 +3197,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{newBook} 1–695 · Readings 696–920 · {oldBook} 1–703'**
   String keypadEnglishRange(String newBook, String oldBook);
+
+  /// No description provided for @visitWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit the website'**
+  String get visitWebsite;
+
+  /// No description provided for @sabbathProgramsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sabbath Programs is an initiative to improve the quality of church services by providing Christ-centered, creative and purpose-driven programs to congregations across the world. We provide innovative programs for Sabbath School, Divine Service and Adventist Youth (AY).'**
+  String get sabbathProgramsDescription;
+
+  /// No description provided for @additionalHymnalsRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional hymnals unavailable · Retry'**
+  String get additionalHymnalsRetry;
 }
 
 class _AppLocalizationsDelegate

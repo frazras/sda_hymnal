@@ -515,5 +515,8 @@
   "previewHymnOrReadingHelp": "Digite o número de um hino ou leitura para vê-lo aqui",
   "previewHymnHelp": "Digite o número de um hino para vê-lo aqui",
   "notInHymnal": "Não está em {book}",
-  "keypadEnglishRange": "{newBook} 1–695 · Leituras 696–920 · {oldBook} 1–703"
+  "keypadEnglishRange": "{newBook} 1–695 · Leituras 696–920 · {oldBook} 1–703",
+  "visitWebsite": "Visitar o site",
+  "sabbathProgramsDescription": "Sabbath Programs é uma iniciativa para melhorar a qualidade dos cultos, oferecendo programas criativos, com propósito e centrados em Cristo às congregações de todo o mundo. Oferecemos programas inovadores para a Escola Sabatina, o culto divino e os Jovens Adventistas (JA).",
+  "additionalHymnalsRetry": "Hinários adicionais indisponíveis · Tentar novamente"
 }

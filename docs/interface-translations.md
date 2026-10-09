@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 516-message
+not claim that the app interface is fully translated. The 519-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -159,3 +159,10 @@ across all four interface locales, both designs, and both themes. Native book
 names and titles remain unchanged. Preview badges wrap within a bounded width
 so long edition labels leave room for hymn titles. Tests advance fixed frames
 because the keypad cursor intentionally keeps blinking.
+
+The Other Projects page translates its heading, description, and website action.
+Brand names and the website destination remain unchanged. Compact checks cover
+all four locales, both designs, and both themes with increased text scale,
+decode the actual logo, and verify the destination through a mocked launcher.
+The additional-hymnal loading failure now uses a translated retry message;
+its loading and retry behavior is unchanged.
