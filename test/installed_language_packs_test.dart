@@ -27,6 +27,41 @@ void main() {
       hymnCount: 614,
       topicCount: 47);
 
+  test('download catalog pins six exact edition objects', () async {
+    final downloads = await loadLanguagePackDownloads(FilePackBundle());
+    expect(downloads.length, 6);
+    expect(downloads.first.bookId, 'sda-es-2009');
+    expect(downloads.first.hymnCount, 614);
+    expect(downloads.first.topicCount, 47);
+    expect(() => downloads.clear(), throwsUnsupportedError);
+    for (final download in downloads) {
+      final source =
+          File('assets/hymnals/${download.bookId}.json').readAsBytesSync();
+      expect(download.validate(source).edition.id, download.bookId);
+    }
+  });
+
+  test('download catalog rejects redirects, duplicate books and mutable refs',
+      () async {
+    final original = File('assets/hymnals/downloads.json').readAsStringSync();
+    for (final change in <void Function(Map<String, dynamic>)>[
+      (value) => value['source']['revision'] = 'main',
+      (value) =>
+          value['books'][0]['url'] = 'https://example.com/unreviewed.json',
+      (value) => value['books'].add(value['books'][0]),
+      (value) => value['books'] = [],
+    ]) {
+      final catalog = jsonDecode(original) as Map<String, dynamic>;
+      change(catalog);
+      final bundle = FilePackBundle({
+        'assets/hymnals/downloads.json':
+            Uint8List.fromList(utf8.encode(jsonEncode(catalog)))
+      });
+      await expectLater(
+          loadLanguagePackDownloads(bundle), throwsFormatException);
+    }
+  });
+
   test('offline updated text replaces only its edition in the shared loader',
       () async {
     final bytes = corrected();

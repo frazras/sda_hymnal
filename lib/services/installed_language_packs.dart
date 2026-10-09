@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/hymnal_pack.dart';
@@ -36,4 +37,34 @@ Future<List<HymnalPack>> loadInstalledLanguagePacks(AssetBundle bundle,
         .add(updated?.edition.id == fallback.edition.id ? updated! : fallback);
   }
   return List.unmodifiable(result);
+}
+
+/// Trusted bundled metadata pins every remote object to a reviewed commit.
+Future<List<LanguagePackDownload>> loadLanguagePackDownloads(
+    AssetBundle bundle) async {
+  final catalog =
+      jsonDecode(await bundle.loadString('assets/hymnals/downloads.json'))
+          as Map<String, dynamic>;
+  final source = catalog['source'] as Map<String, dynamic>;
+  final repository = source['repository'] as String;
+  final revision = source['revision'] as String;
+  if (catalog['schemaVersion'] != 1 ||
+      !RegExp(r'^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$').hasMatch(repository) ||
+      !RegExp(r'^[0-9a-f]{40}$').hasMatch(revision)) {
+    throw const FormatException('Unpinned language download catalog');
+  }
+  final downloads = <LanguagePackDownload>[];
+  final seen = <String>{};
+  for (final value in catalog['books'] as List<dynamic>) {
+    final descriptor =
+        LanguagePackDownload.fromJson(value as Map<String, dynamic>);
+    final expected = Uri.https('raw.githubusercontent.com',
+        '/$repository/$revision/assets/hymnals/${descriptor.bookId}.json');
+    if (!seen.add(descriptor.bookId) || descriptor.url != expected) {
+      throw const FormatException('Invalid language download destination');
+    }
+    downloads.add(descriptor);
+  }
+  if (downloads.isEmpty) throw const FormatException('Empty download catalog');
+  return List.unmodifiable(downloads);
 }

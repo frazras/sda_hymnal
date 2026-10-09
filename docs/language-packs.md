@@ -299,3 +299,27 @@ The shell accepts an injected pack loader for deterministic widget tests; those
 UI checks are separate from the real filesystem integration tests. Remote
 catalog publication, management controls, live reload after management actions,
 and optional scores remain incomplete.
+
+## Reviewed text download catalog
+
+`assets/hymnals/downloads.json` now lists six exact-edition text objects with byte
+sizes, SHA-256, hymn/topic counts, and source coverage notes. URLs pin this
+repository's commit `52c3a841f1d70fecf254486a7c0326d5a4318572`; no branch-name URL
+or number-based music reuse is involved. The bundled metadata is 3,951 bytes.
+It does not add another lyric pack or any audio to the app.
+
+`tool/build_language_download_catalog.py` derives it from reviewed bundled packs
+and `tool/data/language_download_sources.json`. `--check` is part of the offline
+publication gate. Before publishing a changed source revision, run
+`python3 tool/build_language_download_catalog.py --check --verify-remote` to
+fetch each pinned text object and verify its exact destination, byte size and
+checksum. All six hosted objects passed this check on 9 October 2026. The remote
+check is intentionally separate from offline CI and downloads no recordings.
+
+The app-side catalog reader rejects mutable revisions, duplicate books, empty
+catalogs, and URLs that differ from the pinned repository/commit/edition path.
+Tests verify every descriptor against its real bundled pack plus invalid catalog
+fixtures. A management screen still needs to distinguish already-bundled content
+from installed updates so it never downloads redundant text merely to show an
+installed status. Catalog hosting uses the existing GitHub repository, not S3;
+no new infrastructure has been created.

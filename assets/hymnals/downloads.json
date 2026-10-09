@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "frazras/sda_hymnal",
+    "revision": "52c3a841f1d70fecf254486a7c0326d5a4318572"
+  },
+  "books": [
+    {
+      "bookId": "sda-es-2009",
+      "displayName": "Español · 2009",
+      "languageTag": "es",
+      "year": 2009,
+      "bytes": 1029781,
+      "sha256": "c784cbc404032746923b9f85f92611a3d821619c4d94a7d4883da6e923efbb3d",
+      "hymnCount": 614,
+      "topicCount": 47,
+      "coverage": {
+        "sourceRecords": 614,
+        "structurallyComplete": true,
+        "note": "Imported source edition; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-es-2009.json"
+    },
+    {
+      "bookId": "sda-es-1962",
+      "displayName": "Español · 1962",
+      "languageTag": "es",
+      "year": 1962,
+      "bytes": 832957,
+      "sha256": "bf80253d881c470a56d571bebc3a8aa8ebbd9bbff36532a9375f98aa659685d3",
+      "hymnCount": 527,
+      "topicCount": 53,
+      "coverage": {
+        "sourceRecords": 527,
+        "structurallyComplete": true,
+        "note": "Imported source edition; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-es-1962.json"
+    },
+    {
+      "bookId": "sda-pt-1996",
+      "displayName": "Português · 1996",
+      "languageTag": "pt",
+      "year": 1996,
+      "bytes": 964317,
+      "sha256": "72198dbc7e35d3ef4727c2174875f531802c88b722f78e4ba410949bb81c31f8",
+      "hymnCount": 610,
+      "topicCount": 45,
+      "coverage": {
+        "sourceRecords": 610,
+        "structurallyComplete": true,
+        "note": "Imported source edition; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-pt-1996.json"
+    },
+    {
+      "bookId": "sda-ru-1997",
+      "displayName": "Гимны Надежды · 1997",
+      "languageTag": "ru",
+      "year": 1997,
+      "bytes": 953100,
+      "sha256": "2da144787dbda76a5b5723fff6f4ccacdd371209543b7ce3c293f8f2e79c223c",
+      "hymnCount": 385,
+      "topicCount": 55,
+      "coverage": {
+        "sourceRecords": 385,
+        "structurallyComplete": true,
+        "note": "Imported source edition; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-ru-1997.json"
+    },
+    {
+      "bookId": "sda-fr-hymnes-et-louanges",
+      "displayName": "Français · Hymnes et Louanges",
+      "languageTag": "fr",
+      "year": null,
+      "bytes": 1449432,
+      "sha256": "d4db4333567bead48618a2e2de181c58ce6a5f7fd012f6ef8a045bceb312e8fd",
+      "hymnCount": 520,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 520,
+        "structurallyComplete": true,
+        "note": "All source entries included. Print edition year not established; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-fr-hymnes-et-louanges.json"
+    },
+    {
+      "bookId": "sda-sw-nyimbo-za-kristo",
+      "displayName": "Kiswahili · Nyimbo za Kristo",
+      "languageTag": "sw",
+      "year": null,
+      "bytes": 590752,
+      "sha256": "b8ffb47099d5f43c0a5ec0d7b3485b77834c8da8dfe5a849cd7cd8acdbbb2432",
+      "hymnCount": 220,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 220,
+        "structurallyComplete": true,
+        "note": "All source entries included. Print edition year not established; independent lyric review pending."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-sw-nyimbo-za-kristo.json"
+    }
+  ]
+}
