@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/models/release_notes.dart';
+import 'package:sdahymnal/l10n/app_localizations.dart';
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/settings.dart';
@@ -123,6 +125,82 @@ void main() {
     await tester.tap(find.text('Check for updates'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('release-notes-title')), findsNothing);
+  });
+
+  testWidgets('translated release history fits compact screens and dismisses',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final catalog = ReleaseNotesCatalog.fromJson(
+        File('assets/release_notes.json').readAsStringSync());
+    for (final locale in AppLocalizations.supportedLocales) {
+      for (final classic in [false, true]) {
+        for (final dark in [false, true]) {
+          SharedPreferences.setMockInitialValues({});
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pumpWidget(MaterialApp(
+            locale: locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: buildHymnalTheme(
+                dark ? HymnalTokens.dark : HymnalTokens.light,
+                classic: classic),
+            builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(1.3)),
+                child: child!),
+            home: Builder(
+                builder: (context) => Column(children: [
+                      TextButton(
+                          key: const ValueKey('history'),
+                          onPressed: () =>
+                              ReleaseNotesService.instance.showHistory(context),
+                          child: const Text('History')),
+                      TextButton(
+                          key: const ValueKey('update'),
+                          onPressed: () => ReleaseNotesService.instance
+                              .showIfNeeded(context),
+                          child: const Text('Update')),
+                    ])),
+          ));
+          await tester.pumpAndSettle();
+          final text =
+              tester.element(find.byKey(const ValueKey('history'))).appText;
+          for (final updated in [false, true]) {
+            await tester
+                .tap(find.byKey(ValueKey(updated ? 'update' : 'history')));
+            await tester.pumpAndSettle();
+            expect(find.text(updated ? text.appUpdated : text.whatsNew),
+                findsOneWidget);
+            await tester.scrollUntilVisible(find.text(text.latestRelease), 100,
+                scrollable: find.descendant(
+                    of: find.byKey(const ValueKey('release-notes-history')),
+                    matching: find.byType(Scrollable)));
+            expect(find.text(text.latestRelease), findsOneWidget);
+            expect(find.text(text.versionLabel(appReleaseVersion)),
+                findsOneWidget);
+            expect(find.text(catalog.releases.first.features.first),
+                findsOneWidget);
+            await tester.scrollUntilVisible(
+                find.text(text.versionLabel('4.0.0')), 250,
+                scrollable: find.descendant(
+                    of: find.byKey(const ValueKey('release-notes-history')),
+                    matching: find.byType(Scrollable)));
+            expect(find.text(text.versionLabel('4.0.0')), findsOneWidget);
+            await tester.tap(find.text(text.done));
+            await tester.pumpAndSettle();
+            expect(find.byKey(const ValueKey('release-notes-title')),
+                findsNothing);
+            expect(tester.takeException(), isNull);
+          }
+          final prefs = await SharedPreferences.getInstance();
+          expect(prefs.getStringList(ReleaseNotesService.seenVersionsKey),
+              contains(appReleaseVersion));
+        }
+      }
+    }
   });
 
   testWidgets('Appearance is immediately before More and Donate is absent',

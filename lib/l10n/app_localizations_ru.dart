@@ -1829,4 +1829,18 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get additionalHymnalsRetry =>
       'Дополнительные сборники недоступны · Повторить';
+
+  @override
+  String get appUpdated => 'Приложение обновлено до последней версии.';
+
+  @override
+  String get updateHistoryIntro =>
+      'Новые возможности и улучшения предыдущих версий.';
+
+  @override
+  String get releaseHistoryIntro =>
+      'Посмотрите, что добавлено в каждой версии.';
+
+  @override
+  String get latestRelease => 'ПОСЛЕДНЯЯ';
 }

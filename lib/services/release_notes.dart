@@ -1,3 +1,4 @@
+import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:flutter/services.dart';
@@ -71,32 +72,36 @@ class _ReleaseHistoryDialog extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                updated
-                    ? 'You have been updated to the latest version.'
-                    : 'What’s new',
-                key: const ValueKey('release-notes-title'),
-                style: TextStyle(
-                  color: t.ink,
-                  fontSize: 21,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                updated
-                    ? 'Here’s what’s new, followed by improvements from earlier versions.'
-                    : 'See what was added in each version.',
-                style: TextStyle(color: t.muted, fontSize: 13),
-              ),
-              const SizedBox(height: 14),
               Expanded(
-                child: ListView.separated(
+                child: ListView(
                   key: const ValueKey('release-notes-history'),
-                  itemCount: catalog.releases.length,
-                  separatorBuilder: (_, __) => Divider(color: t.line),
-                  itemBuilder: (context, index) =>
+                  children: [
+                    Text(
+                      updated
+                          ? context.appText.appUpdated
+                          : context.appText.whatsNew,
+                      key: const ValueKey('release-notes-title'),
+                      style: TextStyle(
+                        color: t.ink,
+                        fontSize: 21,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      updated
+                          ? context.appText.updateHistoryIntro
+                          : context.appText.releaseHistoryIntro,
+                      style: TextStyle(color: t.muted, fontSize: 13),
+                    ),
+                    const SizedBox(height: 14),
+                    for (var index = 0;
+                        index < catalog.releases.length;
+                        index++) ...[
+                      if (index > 0) Divider(color: t.line),
                       _release(context, t, catalog.releases[index], index == 0),
+                    ],
+                  ],
                 ),
               ),
               const SizedBox(height: 8),
@@ -105,7 +110,7 @@ class _ReleaseHistoryDialog extends StatelessWidget {
                 child: FilledButton(
                   key: const ValueKey('release-notes-done'),
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Done'),
+                  child: Text(context.appText.done),
                 ),
               ),
             ],
@@ -126,7 +131,7 @@ class _ReleaseHistoryDialog extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Version ${release.version}',
+                  context.appText.versionLabel(release.version),
                   style: TextStyle(
                     color: t.ink,
                     fontSize: 16,
@@ -142,7 +147,7 @@ class _ReleaseHistoryDialog extends StatelessWidget {
                     color: t.accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(99),
                   ),
-                  child: Text('LATEST',
+                  child: Text(context.appText.latestRelease,
                       style: TextStyle(
                           color: t.accent,
                           fontSize: 10,

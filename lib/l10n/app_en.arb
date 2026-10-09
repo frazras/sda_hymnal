@@ -861,5 +861,9 @@
   },
   "visitWebsite": "Visit the website",
   "sabbathProgramsDescription": "Sabbath Programs is an initiative to improve the quality of church services by providing Christ-centered, creative and purpose-driven programs to congregations across the world. We provide innovative programs for Sabbath School, Divine Service and Adventist Youth (AY).",
-  "additionalHymnalsRetry": "Additional hymnals unavailable · Retry"
+  "additionalHymnalsRetry": "Additional hymnals unavailable · Retry",
+  "appUpdated": "You have been updated to the latest version.",
+  "updateHistoryIntro": "Here’s what’s new, followed by improvements from earlier versions.",
+  "releaseHistoryIntro": "See what was added in each version.",
+  "latestRelease": "LATEST"
 }

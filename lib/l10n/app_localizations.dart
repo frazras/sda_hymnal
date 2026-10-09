@@ -3215,6 +3215,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Additional hymnals unavailable · Retry'**
   String get additionalHymnalsRetry;
+
+  /// No description provided for @appUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been updated to the latest version.'**
+  String get appUpdated;
+
+  /// No description provided for @updateHistoryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Here’s what’s new, followed by improvements from earlier versions.'**
+  String get updateHistoryIntro;
+
+  /// No description provided for @releaseHistoryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'See what was added in each version.'**
+  String get releaseHistoryIntro;
+
+  /// No description provided for @latestRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'LATEST'**
+  String get latestRelease;
 }
 
 class _AppLocalizationsDelegate

@@ -1807,4 +1807,18 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get additionalHymnalsRetry =>
       'Himnarios adicionales no disponibles · Reintentar';
+
+  @override
+  String get appUpdated =>
+      'La aplicación se ha actualizado a la última versión.';
+
+  @override
+  String get updateHistoryIntro =>
+      'Estas son las novedades, seguidas de las mejoras de versiones anteriores.';
+
+  @override
+  String get releaseHistoryIntro => 'Consulta las novedades de cada versión.';
+
+  @override
+  String get latestRelease => 'ÚLTIMA';
 }

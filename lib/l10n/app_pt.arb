@@ -518,5 +518,9 @@
   "keypadEnglishRange": "{newBook} 1–695 · Leituras 696–920 · {oldBook} 1–703",
   "visitWebsite": "Visitar o site",
   "sabbathProgramsDescription": "Sabbath Programs é uma iniciativa para melhorar a qualidade dos cultos, oferecendo programas criativos, com propósito e centrados em Cristo às congregações de todo o mundo. Oferecemos programas inovadores para a Escola Sabatina, o culto divino e os Jovens Adventistas (JA).",
-  "additionalHymnalsRetry": "Hinários adicionais indisponíveis · Tentar novamente"
+  "additionalHymnalsRetry": "Hinários adicionais indisponíveis · Tentar novamente",
+  "appUpdated": "O aplicativo foi atualizado para a versão mais recente.",
+  "updateHistoryIntro": "Veja as novidades e, em seguida, as melhorias das versões anteriores.",
+  "releaseHistoryIntro": "Veja o que foi adicionado em cada versão.",
+  "latestRelease": "MAIS RECENTE"
 }

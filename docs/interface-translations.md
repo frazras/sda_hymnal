@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 519-message
+not claim that the app interface is fully translated. The 523-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -166,3 +166,11 @@ all four locales, both designs, and both themes with increased text scale,
 decode the actual logo, and verify the destination through a mocked launcher.
 The additional-hymnal loading failure now uses a translated retry message;
 its loading and retry behavior is unchanged.
+
+Update-history dialog headings, version labels, the latest badge, and dismissal
+action use translations. The heading scrolls with the release list so long
+translations cannot consume the list area on compact screens. Tests cover both
+automatic update notices and manually opened history across all locales, designs,
+and themes at 320×568 and 1.3 text scale, including older entries, dismissal, and
+seen-version persistence. Release descriptions and dates remain the published
+English release content and still require translated release catalogs.
