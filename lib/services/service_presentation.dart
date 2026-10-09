@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
+
 import 'package:sdahymnal/models/hymn_ref.dart';
 import 'package:sdahymnal/models/service_playlist.dart';
 import 'hymn_text_export.dart';
@@ -79,6 +81,49 @@ class ServicePresentation {
       throw const FormatException('Empty service presentation');
     }
     return ServicePresentation._(service.name, slides);
+  }
+
+  /// VideoPsalm songbook JSON. This is not a native service agenda file.
+  /// Each service occurrence gets a distinct song, retaining the chosen order.
+  String videoPsalmSongbook({String Function(String)? roleLabel}) {
+    String guid(String identity) => base64
+        .encode(sha256.convert(utf8.encode(identity)).bytes.take(16).toList())
+        .replaceAll('=', '');
+    final occurrences = <String, List<PresentationSlide>>{};
+    for (final slide in slides) {
+      occurrences.putIfAbsent(slide.occurrenceId, () => []).add(slide);
+    }
+    // Keep exported identities separate from installed/source songbook GUIDs.
+    final identity = jsonEncode([
+      name,
+      for (final group in occurrences.values)
+        [
+          group.first.occurrenceId,
+          group.first.ref.bookId,
+          group.first.ref.itemId
+        ]
+    ]);
+    return const JsonEncoder.withIndent('  ').convert({
+      'Text': name,
+      'Abbreviation': 'SDA',
+      'Guid': guid('sdahymnal:service-songbook:$identity'),
+      'Songs': [
+        for (final entry in occurrences.entries)
+          {
+            'ID': occurrences.keys.toList().indexOf(entry.key) + 1,
+            'Guid': guid('sdahymnal:service-song:$identity:${entry.key}'),
+            'Text': entry.value.first.title,
+            'Verses': [
+              for (final slide in entry.value)
+                {
+                  'Text': slide.role == null
+                      ? slide.text
+                      : '${roleLabel?.call(slide.role!) ?? slide.role!}\n${slide.text}',
+                }
+            ],
+          }
+      ],
+    });
   }
 
   /// No remote fonts, media, scripts, or assets. Source text is always escaped.

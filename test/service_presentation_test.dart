@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,6 +67,28 @@ void main() {
         ['leader', 'congregation']);
     expect(deck.slides.first.ref, hymn.ref);
     expect(() => deck.slides.clear(), throwsUnsupportedError);
+  });
+  test('VideoPsalm songbook preserves occurrences, Unicode and reading roles',
+      () {
+    final deck =
+        ServicePresentation.build(service, repository, linesPerSlide: 2);
+    final encoded = deck.videoPsalmSongbook(
+        roleLabel: (role) => role == 'leader' ? 'Dirigente' : 'Congregación');
+    final book = jsonDecode(encoded) as Map<String, dynamic>;
+    final songs = book['Songs'] as List<dynamic>;
+    expect(book['Text'], service.name);
+    expect(songs.map((song) => song['ID']), [1, 2, 3]);
+    expect(songs.map((song) => song['Text']),
+        ['1 · Corazón <script>', '2 · Lectura', '1 · Corazón <script>']);
+    expect(songs.map((song) => song['Guid']).toSet().length, 3);
+    expect(base64.decode('${book['Guid']}==').length, 16);
+    expect((songs[0]['Verses'] as List).map((v) => v['Text']).join('\n'),
+        '1\nÁbreme\nSeñor\nCoro\nGloria');
+    expect((songs[1]['Verses'] as List).map((v) => v['Text']),
+        ['Dirigente\nPrimera\nSegunda', 'Congregación\nAmén']);
+    expect(deck.slides.where((s) => s.role != null).map((s) => s.role),
+        ['leader', 'congregation']);
+    expect(deck.videoPsalmSongbook(), deck.videoPsalmSongbook());
   });
   test('HTML translates reading roles without mutating source roles or text',
       () {

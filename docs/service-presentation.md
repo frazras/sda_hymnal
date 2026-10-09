@@ -46,3 +46,25 @@ Known reading speaker roles are translated using the selected interface language
 in both the native preview and exported HTML. Source role IDs and reading text
 remain unchanged. Unknown source roles retain their supplied labels. Tests cover
 Spanish preview labels and localized HTML without mutating the snapshot.
+
+## VideoPsalm serializer groundwork
+
+`ServicePresentation.videoPsalmSongbook` emits the `Text`, `Guid`, `Songs`, and
+`Verses` JSON structure found in the pinned French VideoPsalm source. Each service
+occurrence becomes a separate numbered song, so opening and closing repetitions
+remain distinct. Slide order, source Unicode lyrics, and localized reading roles
+are retained. Generated compact GUIDs use a separate service-export namespace;
+source songbook identities are not reused. No source credits or copyrights are
+invented.
+
+A generated Spanish two-occurrence fixture was successfully re-imported through
+`import_structured_hymnals.convert`, with identical lyric blocks and distinct
+occurrences. Dart tests cover JSON decoding, repeated titles, roles, Unicode,
+GUID shape, and deterministic output. This proves our adapter round trip, not
+native VideoPsalm acceptance. The serializer is not yet exposed in the share UI.
+
+The official [transfer guide](https://myvideopsalm.weebly.com/blog/transfer-songs-from-one-pc-to-another)
+distinguishes copied songbooks from portable agendas containing songs and styles.
+A songbook JSON file is not a `.vpagd` agenda. Native agenda-schema investigation,
+Windows VideoPsalm acceptance, and a clear export-format choice remain before
+claiming compatibility or exposing the new format to users.
