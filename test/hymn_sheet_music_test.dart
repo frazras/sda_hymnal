@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:crypto/crypto.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,56 @@ void main() {
     data['books']['sda-en-1985']['hymns']['1'][0]['asset'] = '../score.png';
     expect(() => HymnSheetMusicCatalog.fromJson(jsonEncode(data)),
         throwsFormatException);
+  });
+
+  test('all published pages match trusted size, checksum and PNG dimensions',
+      () {
+    var count = 0;
+    for (final book in catalog.books.values) {
+      for (final pages in book.values) {
+        for (final page in pages) {
+          page.validate(File(page.asset).readAsBytesSync());
+          count++;
+        }
+      }
+    }
+    expect(count, 1843);
+    final page = catalog.forHymn('new', 1).single;
+    final bytes = File(page.asset).readAsBytesSync();
+    final changed = Uint8List.fromList(bytes)..[bytes.length - 1] ^= 1;
+    expect(() => page.validate(changed), throwsFormatException);
+    expect(() => page.validate(Uint8List.sublistView(bytes, 1)),
+        throwsFormatException);
+    final dimensions = HymnScorePage(page.asset, page.width + 1, page.height,
+        bytes: page.bytes, checksum: page.checksum);
+    expect(() => dimensions.validate(bytes), throwsFormatException);
+    final invalid = Uint8List(33);
+    final fake = HymnScorePage(page.asset, 1, 1,
+        bytes: invalid.length, checksum: sha256.convert(invalid).toString());
+    expect(() => fake.validate(invalid), throwsFormatException);
+  });
+
+  test(
+      'download catalog rejects ambiguous references and invalid integrity metadata',
+      () {
+    for (final change in <void Function(Map<String, dynamic>)>[
+      (d) => d['books']['sda-en-1985']['hymns']['1'].clear(),
+      (d) => d['books']['sda-en-1985']['hymns']['01'] =
+          d['books']['sda-en-1985']['hymns']['1'],
+      (d) => d['books']['sda-en-1985']['hymns']['1'][0]['bytes'] = 0,
+      (d) => d['books']['sda-en-1985']['hymns']['1'][0]['sha256'] = 'invalid',
+      (d) => d['books']['sda-en-1985']['hymns']['1'][0]['width'] = 999999,
+      (d) => d['books']['sda-es-2009']['hymns']['1'] =
+          d['books']['sda-en-1985']['hymns']['1'],
+      (d) => d['books']['sda-en-1985']['hymns']['2'] =
+          d['books']['sda-en-1985']['hymns']['1'],
+      (d) => d['books'].clear(),
+    ]) {
+      final data = jsonDecode(source) as Map<String, dynamic>;
+      change(data);
+      expect(() => HymnSheetMusicCatalog.fromJson(jsonEncode(data)),
+          throwsFormatException);
+    }
   });
 
   Hymn hymn(int number, {String version = 'new'}) =>

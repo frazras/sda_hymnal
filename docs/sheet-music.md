@@ -54,3 +54,18 @@ multilingual migration. Future books need their own explicit score associations.
 
 See [the broader integration plan](multilingual-resource-audit.md) for language
 packs, recorded audio, and the remaining catalog/persistence migration.
+
+## Download integrity foundation
+
+The runtime catalog retains each page's byte count and SHA-256 checksum for
+future optional-pack installation. It rejects empty catalogs/books/page lists,
+noncanonical hymn numbers, invalid book identities, duplicate page assets,
+wrong-edition directories, malformed checksums, and unbounded dimensions/sizes.
+A page validator checks exact bytes, checksum, PNG signature, and IHDR dimensions
+before a downloaded page may be activated. Regression checks apply it to all
+1,843 published pages and reject changed, truncated, mislabeled, and non-PNG data.
+
+This does not yet implement score-pack downloads or remove bundled score images.
+The existing offline viewer and its page order are retained. Score transport,
+atomic storage, management controls, and viewer loading from installed packs
+remain unfinished.
