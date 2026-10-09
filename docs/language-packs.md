@@ -323,3 +323,28 @@ fixtures. A management screen still needs to distinguish already-bundled content
 from installed updates so it never downloads redundant text merely to show an
 installed status. Catalog hosting uses the existing GitHub repository, not S3;
 no new infrastructure has been created.
+
+## First optional text collection: Chichewa staging
+
+The pinned [Rejnac Chichewa source](https://github.com/rejnac/chichewa-hymnal/tree/690b953ec1426e04b5e2ebe7eddfcb2db878c754)
+identifies the book as **Khristu Mu Nyimbo**, in Chichewa (Chewa/Nyanja), with
+350 hymns. The [Library of Congress language registry](https://www.loc.gov/standards/iso639-2/php/langcodes-keyword.php?SearchTerm=ny&SearchType=iso_639_1)
+confirms `ny` as its two-letter code. Source metadata and README do not establish
+a print year; the manifest retains null rather than guessing an edition year.
+
+The source snapshot and checksum are pinned in
+`tool/data/structured_sources/chichewa.manifest.json`. A structural pass found
+350 unique numbers, exactly 1–350, no empty titles, and no empty lyric blocks.
+The standard structured importer preserves source song records/GUIDs and every
+lyric occurrence in order. Refrains are not inferred from position or language.
+Independent fluent lyric review remains pending, as disclosed in the coverage note.
+No topics, MIDI, video, scores, or recordings are attached by number matching.
+
+The generated pack lives at `resources/hymnals/sda-ny-khristu-mu-nyimbo.json`,
+**outside Flutter's bundled asset paths**. It is intended for optional text
+downloads, not another automatic increase in installed app size. The offline
+publication gate checks byte-identical regeneration, and the structured-source
+regression suite includes all 350 records. Runtime acceptance, trusted download
+catalog registration, management UI, and shared-keypad integration remain before
+users can install this collection. This source preparation does not claim app
+availability or music coverage.
