@@ -127,7 +127,10 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
-          AlphabeticalBrowseButton(hymns: widget.hymns),
+          if (!widget.keyboardOpen &&
+              MediaQuery.viewInsetsOf(context).bottom == 0 &&
+              _query.text.trim().isEmpty)
+            AlphabeticalBrowseButton(hymns: widget.hymns),
           Expanded(
               child: Text(context.appText.hymnCountScope(
                   results.length, context.appText.allLanguages))),
@@ -292,7 +295,10 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
-          AlphabeticalBrowseButton(hymns: _queue),
+          if (!widget.keyboardOpen &&
+              MediaQuery.viewInsetsOf(context).bottom == 0 &&
+              query.isEmpty)
+            AlphabeticalBrowseButton(hymns: _queue),
           Expanded(
               child: Text(
                   context.appText

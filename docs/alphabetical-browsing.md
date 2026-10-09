@@ -15,7 +15,8 @@ index list. Unsupported platforms must not advertise locale sorting through an
 ASCII fallback; bridge failures should leave existing browsing usable.
 
 An A–Z icon in existing search controls opens a dedicated browse route, keeping
-letter navigation away from the compact search screen. The route uses native
+letter navigation away from the compact search screen. The shortcut is hidden
+while a query or keyboard is active, leaving room for translated search actions. The route uses native
 sorting and a modal letter picker. Fixed-height rows scale with text size, so a
 jump reaches its intended lazy-list row even for long titles. Labels fold Latin
 accents but retain Spanish Ñ and Russian letters, including Ё. Only initials

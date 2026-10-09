@@ -358,7 +358,9 @@ class _HymnListState extends State<HymnList> {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [
-              AlphabeticalBrowseButton(hymns: _currentHymns),
+              if (_query.trim().isEmpty &&
+                  MediaQuery.viewInsetsOf(context).bottom == 0)
+                AlphabeticalBrowseButton(hymns: _currentHymns),
               Expanded(
                 child: TextButton.icon(
                   onPressed: !widget.english
