@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/playback_continuation.dart';
+import 'package:sdahymnal/services/audio_queue.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/ui/favorites.dart';
@@ -175,6 +176,44 @@ void main() {
     }
     expect(find.text('Service: Repeated hymn · 2 of 2'), findsOneWidget);
     expect(MidiPlayer.instance.current.value, isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+    // Keep the singleton platform player's event subscriptions in this same
+    // fake-clock test zone while checking suspended rendering and resume.
+    AudioQueue.instance.clear();
+    await Autoplay.instance.set(true);
+    MusicPlayerVisible.instance.value = true;
+    addTearDown(() => tester.binding
+        .handleAppLifecycleStateChanged(AppLifecycleState.resumed));
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: HymnPage(
+            hymn: first, hymns: list, categoryTitle: 'Background list')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('hymn-play-pause')));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(MidiPlayer.instance.current.value?.paused, isFalse);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await audioEvent('audio.onComplete');
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(MidiPlayer.instance.current.value?.version, second.version);
+    expect(AudioQueue.instance.value!.index, 1);
+    expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, first);
+    await audioEvent('audio.onComplete');
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(AudioQueue.instance.value!.index, 2);
+    expect(MidiPlayer.instance.current.value?.n, third.number);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn, third);
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
     for (final number in [230, 303]) {

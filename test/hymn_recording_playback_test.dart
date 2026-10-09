@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/playback_queue.dart';
 import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/services/system_audio.dart';
+import 'package:sdahymnal/services/audio_queue.dart';
 import 'package:audio_service/audio_service.dart';
 
 void main() {
@@ -79,7 +81,11 @@ void main() {
         version: 'sda-es-2009',
         title: 'Sublime gracia',
         body: 'Lyrics');
-    final handler = HymnalAudioHandler(player);
+    final handler = HymnalAudioHandler(player,
+        queue: AudioQueue(
+            play: player.toggle,
+            playable: MidiPlayer.hasMusic,
+            autoplay: () => false));
     expect(handler.mediaItem.value, isNull);
     await handler.play();
     expect(player.current.value, isNull);
@@ -177,6 +183,22 @@ void main() {
     expect(handler.mediaItem.value, isNull);
     expect(
         handler.playbackState.value.processingState, AudioProcessingState.idle);
+    handler.audioQueue.select(
+        HymnPlaybackQueue(
+            entries: [hymn, midi], wrap: true, skipUnavailable: true),
+        0);
+    await player.toggle(hymn);
+    expect(handler.playbackState.value.controls,
+        contains(MediaControl.skipToNext));
+    await handler.skipToNext();
+    expect(handler.mediaItem.value?.id, 'sda-es-2009:303');
+    expect(handler.audioQueue.value!.index, 1);
+    await handler.skipToPrevious();
+    expect(handler.mediaItem.value?.id, 'sda-es-1962:1');
+    expect(handler.audioQueue.value!.index, 0);
+    await handler.stop();
+    expect(handler.audioQueue.value, isNull);
+    expect(handler.mediaItem.value, isNull);
     handler.detach();
     await sub.cancel();
     await dir.delete(recursive: true);

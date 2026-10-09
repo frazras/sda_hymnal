@@ -4,6 +4,7 @@ import '../models/hymn_ref.dart';
 import '../models/service_playlist.dart';
 import '../services/hymnal_repository.dart';
 import '../services/midi_player.dart';
+import '../models/playback_queue.dart';
 import 'additional_readings.dart';
 import 'hymnPage.dart';
 import 'reader_sequence.dart';
@@ -13,7 +14,11 @@ class ServiceReader {
   final ServicePlaylist playlist;
   final HymnalRepository repository;
 
-  const ServiceReader({required this.playlist, required this.repository});
+  ServiceReader({required this.playlist, required this.repository});
+
+  late final audioQueue = HymnPlaybackQueue(entries: [
+    for (final entry in playlist.entries) repository.hymn(entry.ref)
+  ], wrap: false, skipUnavailable: false);
 
   Widget? page(int index,
       {bool previewOnly = false,
@@ -33,6 +38,10 @@ class ServiceReader {
       }
     }
     final sequence = ReaderSequence(
+      audioQueue: audioQueue,
+      audioIndex: index,
+      audioPage: (target, {showSheetMusic = false}) => page(target,
+          continuation: HymnContinuation.midi, showSheetMusic: showSheetMusic),
       label:
           'Service: ${playlist.name} · ${index + 1} of ${playlist.entries.length}',
       localizedLabel: (context) => context.appText

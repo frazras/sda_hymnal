@@ -4,10 +4,13 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sdahymnal/services/midi_player.dart';
+import 'audio_queue.dart';
 
 /// System controls observe and command the existing player; no second engine.
 class HymnalAudioHandler extends BaseAudioHandler {
-  HymnalAudioHandler(this.player) {
+  HymnalAudioHandler(this.player, {AudioQueue? queue})
+      : audioQueue = queue ?? AudioQueue.instance {
+    audioQueue.addListener(_publish);
     for (final notifier in [
       player.current,
       player.loading,
@@ -21,6 +24,7 @@ class HymnalAudioHandler extends BaseAudioHandler {
   }
 
   final MidiPlayer player;
+  final AudioQueue audioQueue;
   DateTime _lastPositionUpdate = DateTime.fromMillisecondsSinceEpoch(0);
 
   void _positionChanged() {
@@ -37,6 +41,11 @@ class HymnalAudioHandler extends BaseAudioHandler {
     final hymn = player.loadedHymn;
     final visible = current != null && !player.isPreview;
     final playing = visible && !current.paused && !player.loading.value;
+    final selected = audioQueue.value;
+    final previous =
+        selected?.queue.adjacent(selected.index, -1, MidiPlayer.hasMusic);
+    final next =
+        selected?.queue.adjacent(selected.index, 1, MidiPlayer.hasMusic);
     mediaItem.add(visible && hymn != null
         ? MediaItem(
             id: '${current.version}:${current.n}',
@@ -50,7 +59,9 @@ class HymnalAudioHandler extends BaseAudioHandler {
     playbackState.add(PlaybackState(
       controls: visible
           ? [
+              if (previous != null) MediaControl.skipToPrevious,
               playing ? MediaControl.pause : MediaControl.play,
+              if (next != null) MediaControl.skipToNext,
               MediaControl.stop
             ]
           : [],
@@ -61,7 +72,13 @@ class HymnalAudioHandler extends BaseAudioHandler {
               MediaAction.seekBackward
             }
           : {},
-      androidCompactActionIndices: visible ? const [0] : [],
+      androidCompactActionIndices: visible
+          ? [
+              if (previous != null) 0,
+              previous != null ? 1 : 0,
+              if (next != null) previous != null ? 2 : 1
+            ]
+          : [],
       processingState: !visible
           ? AudioProcessingState.idle
           : player.loading.value
@@ -74,11 +91,27 @@ class HymnalAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> play() => player.resume();
+  Future<void> play() async {
+    audioQueue.arm();
+    await player.resume();
+  }
+
   @override
-  Future<void> pause() => player.pause();
+  Future<void> pause() async {
+    audioQueue.cancelPending();
+    await player.pause();
+  }
+
   @override
-  Future<void> stop() => player.stop();
+  Future<void> stop() async {
+    audioQueue.clear();
+    await player.stop();
+  }
+
+  @override
+  Future<void> skipToNext() => audioQueue.advance(1);
+  @override
+  Future<void> skipToPrevious() => audioQueue.advance(-1);
   @override
   Future<void> seek(Duration position) async {
     await player.seekBy(position - player.position.value);
@@ -94,6 +127,7 @@ class HymnalAudioHandler extends BaseAudioHandler {
 
   @visibleForTesting
   void detach() {
+    audioQueue.removeListener(_publish);
     for (final notifier in [
       player.current,
       player.loading,
@@ -124,10 +158,12 @@ class SystemAudio {
     // Never resume automatically after a call or route change. The user decides.
     _subscriptions.add(session.interruptionEventStream.listen((event) {
       if (event.begin) {
+        AudioQueue.instance.cancelPending();
         unawaited(MidiPlayer.instance.pause().catchError((Object _) {}));
       }
     }));
     _subscriptions.add(session.becomingNoisyEventStream.listen((_) {
+      AudioQueue.instance.cancelPending();
       unawaited(MidiPlayer.instance.pause().catchError((Object _) {}));
     }));
   }

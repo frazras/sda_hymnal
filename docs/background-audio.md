@@ -1,8 +1,8 @@
 # Background audio and system media controls
 
 This roadmap feature remains in progress. The system audio handler and platform
-background configuration are connected. Device validation, interruption coverage,
-and a shared queue independent of the reader remain before completion.
+background configuration are connected. Physical device validation and broader interruption coverage remain before
+completion. Audio queue ownership is now independent of reader rendering.
 
 The first prerequisite is implemented: `MidiPlayer.pause()` and `resume()` are
 explicit serialized commands for native MIDI and recorded audio. Repeating either
@@ -40,14 +40,24 @@ foreground service and receiver. iOS declares only the audio background mode.
 Bridge tests cover source metadata, repeated system commands, failed pause
 recovery, native/recording switches, absolute and relative seek, and stopped
 metadata clearing. They do not prove lock-screen behavior on physical hardware.
-Category/service queue ownership and completion currently remain in the reader;
-background queue persistence and screen-independent advancement still need work.
+Category/service queue ownership and audio completion now live in `AudioQueue`.
+The reader observes occurrence selection and catches up after rendering resumes.
+Leaving the reader deliberately still stops its own queue; minimizing the app
+continues audio. Video continuation remains in the video reader.
 
-Queue groundwork now uses `HymnPlaybackQueue`, an immutable occurrence snapshot.
-Category continuation uses this model to retain displayed order, skip unsupported
-media within that list, and wrap. Service snapshots can retain repeated hymn
-occurrences and null reading/unavailable barriers with no wrapping or skipping.
-The selected occurrence must be carried separately from hymn identity before
-service/system integration, since the same hymn may appear twice. The model is
-connected to existing category target selection; background ownership and system
-next/previous wiring remain pending.
+The queue uses `HymnPlaybackQueue`, an immutable occurrence snapshot. Categories
+retain displayed order, skip unsupported media within that list, and wrap.
+Services retain repeated occurrences and stop at reading/unavailable barriers
+without wrapping. System next/previous actions use the same queue and are offered
+only when a playable adjacent occurrence exists. Repeated service hymns restart
+as separate occurrences rather than toggling the same hymn into pause.
+
+Explicit pause, interruptions, and headphone removal invalidate pending automatic
+advancement. Preparation checks cancellation before loading/starting the next
+hymn. No initial selection starts audio: a user Play action remains required.
+Tests cover suspended reader rendering across two advances, catch-up on resume,
+repeated service entries, queue boundaries, failed-load retry, cancellation during
+preparation, and retained source identities and sheet-view state. The singleton
+platform-player scenario stays in one fake-clock widget test so event subscriptions
+are not stranded in a disposed test zone. Physical screen-lock, headphone, call,
+and Android notification checks still remain; these tests do not substitute for them.

@@ -1,3 +1,6 @@
+import '../services/audio_queue.dart';
+import '../models/playback_queue.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'dart:async';
 import '../services/playback_continuation.dart';
@@ -89,11 +92,11 @@ enum _ReaderAction {
   sheetMusic
 }
 
-class _HymnPageState extends State<HymnPage> {
+class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
   late bool _sheetMusicVisible = widget.showSheetMusic;
   bool _videoVisible = false;
   bool _advancing = false;
-  StreamSubscription<MidiPlayback>? _completionSubscription;
+
   final _favoriteBurst = GlobalKey<FavoriteBurstState>();
   bool _endHintShown = false;
 
@@ -129,14 +132,8 @@ class _HymnPageState extends State<HymnPage> {
   void initState() {
     super.initState();
     if (widget.previewOnly) return;
-    _completionSubscription =
-        MidiPlayer.instance.completions.listen((finished) {
-      if (finished.n == widget.hymn.number &&
-          finished.version == widget.hymn.version &&
-          !_videoVisible) {
-        _continue(HymnContinuation.midi);
-      }
-    });
+    WidgetsBinding.instance.addObserver(this);
+    AudioQueue.instance.addListener(_syncAudioReader);
     AppAnalytics.instance.openHymn(
         widget.hymn.number, widget.hymn.version, widget.analyticsSource);
     // Single recents recording point: every open (keypad, search, chip) and
@@ -175,19 +172,82 @@ class _HymnPageState extends State<HymnPage> {
       super.dispose();
       return;
     }
-    _completionSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    AudioQueue.instance.removeListener(_syncAudioReader);
     AppAnalytics.instance.closeHymn(widget.hymn.number, widget.hymn.version);
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
-    if (!_advancing) MidiPlayer.instance.stopIfCurrent(widget.hymn);
+    if (!_advancing) {
+      final selected = AudioQueue.instance.value;
+      final ownsQueue = selected != null &&
+          (identical(widget.sequence?.audioQueue, selected.queue) ||
+              listEquals(widget.hymns, selected.queue.entries));
+      if (ownsQueue) {
+        AudioQueue.instance.clear();
+        MidiPlayer.instance.stop();
+      } else {
+        MidiPlayer.instance.stopIfCurrent(widget.hymn);
+      }
+    }
     ScreenWake.instance.release();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _syncAudioReader());
+    }
+  }
+
+  void _syncAudioReader() {
+    final selected = AudioQueue.instance.value;
+    if (!mounted ||
+        selected == null ||
+        _advancing ||
+        _videoVisible ||
+        (WidgetsBinding.instance.lifecycleState != null &&
+            WidgetsBinding.instance.lifecycleState !=
+                AppLifecycleState.resumed) ||
+        !(ModalRoute.of(context)?.isCurrent ?? false)) {
+      return;
+    }
+    Widget? page;
+    if (widget.sequence?.audioQueue != null) {
+      if (!identical(widget.sequence!.audioQueue, selected.queue) ||
+          widget.sequence!.audioIndex == selected.index) {
+        return;
+      }
+      page = widget.sequence!.audioPage
+          ?.call(selected.index, showSheetMusic: _sheetMusicVisible);
+    } else {
+      if (!listEquals(widget.hymns, selected.queue.entries) ||
+          (widget.hymn.number == selected.hymn.number &&
+              widget.hymn.version == selected.hymn.version)) {
+        return;
+      }
+      page = HymnPage(
+          hymn: selected.hymn,
+          hymns: widget.hymns,
+          categoryTitle: widget.categoryTitle,
+          showSheetMusic: _sheetMusicVisible,
+          analyticsSource: 'adjacent');
+    }
+    if (page == null) return;
+    _advancing = true;
+    Navigator.pushReplacement(
+        context,
+        PageRouteBuilder<void>(
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+            pageBuilder: (_, __, ___) => page!));
   }
 
   void _showVideo() {
     if (widget.hymn.video == null) return;
     AppAnalytics.instance.event('video_open',
         hymn: widget.hymn.number, edition: widget.hymn.version);
+    AudioQueue.instance.clear();
     MidiPlayer.instance.stopIfCurrent(widget.hymn);
     setState(() => _videoVisible = true);
   }
@@ -1754,6 +1814,21 @@ class _HymnPageState extends State<HymnPage> {
 
   Future<void> _toggleMusic() async {
     try {
+      final sequence = widget.sequence;
+      final queue = sequence?.audioQueue ??
+          HymnPlaybackQueue(
+              entries: widget.hymns, wrap: true, skipUnavailable: true);
+      final index = sequence?.audioIndex ??
+          widget.hymns.indexWhere((h) =>
+              h.number == widget.hymn.number &&
+              h.version == widget.hymn.version);
+      if (index >= 0) {
+        AudioQueue.instance.select(queue, index);
+        final current = MidiPlayer.instance.current.value;
+        if (MidiPlayer.isCurrent(current, widget.hymn) && !current!.paused) {
+          AudioQueue.instance.cancelPending();
+        }
+      }
       await MidiPlayer.instance.toggle(widget.hymn);
     } catch (_) {
       if (!mounted) return;

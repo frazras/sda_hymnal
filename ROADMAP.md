@@ -114,8 +114,10 @@ Items below are plans, not claims that multilingual content is already installed
       headphone actions, interruption handling, and one shared playback queue.
       Start with audio playback; retain each medium's supported behavior. The existing
       engines now publish system media metadata and support play/pause/stop/seek;
-      platform background setup and interruption pauses are connected. Physical
-      device validation and reader-independent queue ownership remain.
+      platform background setup and interruption pauses are connected. Audio queue ownership,
+      occurrence-aware service boundaries, system next/previous controls, and
+      reader catch-up after background advancement are connected. Physical device
+      validation remains.
 
 ## Browsing and Favorites
 
