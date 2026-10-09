@@ -1771,4 +1771,29 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get topicReadingsUnavailable => 'Lecturas no disponibles';
+
+  @override
+  String get enterHymnOrReadingNumber =>
+      'Introduce el número del himno o lectura';
+
+  @override
+  String get enterHymnNumber => 'Introduce el número del himno';
+
+  @override
+  String get previewHymnOrReadingHelp =>
+      'Introduce el número de un himno o lectura para verlo aquí';
+
+  @override
+  String get previewHymnHelp =>
+      'Introduce el número de un himno para verlo aquí';
+
+  @override
+  String notInHymnal(String book) {
+    return 'No está en $book';
+  }
+
+  @override
+  String keypadEnglishRange(String newBook, String oldBook) {
+    return '$newBook 1–695 · Lecturas 696–920 · $oldBook 1–703';
+  }
 }

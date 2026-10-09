@@ -1794,4 +1794,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get topicReadingsUnavailable => 'Чтения недоступны';
+
+  @override
+  String get enterHymnOrReadingNumber => 'Введите номер гимна или чтения';
+
+  @override
+  String get enterHymnNumber => 'Введите номер гимна';
+
+  @override
+  String get previewHymnOrReadingHelp =>
+      'Введите номер гимна или чтения для предварительного просмотра';
+
+  @override
+  String get previewHymnHelp =>
+      'Введите номер гимна для предварительного просмотра';
+
+  @override
+  String notInHymnal(String book) {
+    return 'Нет в сборнике $book';
+  }
+
+  @override
+  String keypadEnglishRange(String newBook, String oldBook) {
+    return '$newBook 1–695 · Чтения 696–920 · $oldBook 1–703';
+  }
 }

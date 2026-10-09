@@ -509,5 +509,11 @@
   "hymnsPopularityRanked": "Hinos ordenados por popularidade",
   "topicReadingCount": "{count, plural, one{{count} leitura} other{{count} leituras}}",
   "topicReadingsLoading": "Carregando leituras…",
-  "topicReadingsUnavailable": "Leituras indisponíveis"
+  "topicReadingsUnavailable": "Leituras indisponíveis",
+  "enterHymnOrReadingNumber": "Digite o número do hino ou leitura",
+  "enterHymnNumber": "Digite o número do hino",
+  "previewHymnOrReadingHelp": "Digite o número de um hino ou leitura para vê-lo aqui",
+  "previewHymnHelp": "Digite o número de um hino para vê-lo aqui",
+  "notInHymnal": "Não está em {book}",
+  "keypadEnglishRange": "{newBook} 1–695 · Leituras 696–920 · {oldBook} 1–703"
 }

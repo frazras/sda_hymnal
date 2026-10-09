@@ -835,5 +835,28 @@
     }
   },
   "topicReadingsLoading": "Loading readings…",
-  "topicReadingsUnavailable": "Readings unavailable"
+  "topicReadingsUnavailable": "Readings unavailable",
+  "enterHymnOrReadingNumber": "Enter hymn or reading number",
+  "enterHymnNumber": "Enter hymn number",
+  "previewHymnOrReadingHelp": "Type a hymn or reading number to preview it here",
+  "previewHymnHelp": "Type a hymn number to preview it here",
+  "notInHymnal": "Not in {book}",
+  "keypadEnglishRange": "{newBook} 1–695 · Readings 696–920 · {oldBook} 1–703",
+  "@notInHymnal": {
+    "placeholders": {
+      "book": {
+        "type": "String"
+      }
+    }
+  },
+  "@keypadEnglishRange": {
+    "placeholders": {
+      "newBook": {
+        "type": "String"
+      },
+      "oldBook": {
+        "type": "String"
+      }
+    }
+  }
 }

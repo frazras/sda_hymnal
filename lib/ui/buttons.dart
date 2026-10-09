@@ -531,7 +531,7 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                     isNew: true,
                     title: newOk
                         ? _titleFor(widget.hymnsNew, n)
-                        : 'Not in ${widget.newLabel}',
+                        : context.appText.notInHymnal(widget.newLabel),
                     invalid: !newOk,
                     onTap: newOk ? () => _open(true) : null,
                   ),
@@ -551,11 +551,12 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                   TextSpan(children: [
                     TextSpan(
                         text: widget.english
-                            ? 'Type a hymn or reading number to preview it here\n'
-                            : 'Type a hymn number to preview it here\n'),
+                            ? '${context.appText.previewHymnOrReadingHelp}\n'
+                            : '${context.appText.previewHymnHelp}\n'),
                     TextSpan(
                       text: widget.english
-                          ? 'New Hymnal 1–695 · Readings 696–920 · Old Hymnal 1–703'
+                          ? context.appText.keypadEnglishRange(
+                              widget.newLabel, widget.oldLabel)
                           : '${widget.newLabel} 1–${widget.hymnsNew.last.number}${widget.hymnsOld.isEmpty ? '' : ' · ${widget.oldLabel} 1–${widget.hymnsOld.last.number}'}',
                       style: const TextStyle(fontSize: 11.5),
                     ),
@@ -656,11 +657,14 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
         ),
         child: Row(
           children: [
-            VersionBadge(
-                isNew: isNew,
-                label: widget.english
-                    ? null
-                    : (isNew ? widget.newLabel : widget.oldLabel)),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 90),
+              child: VersionBadge(
+                  isNew: isNew,
+                  label: widget.english
+                      ? null
+                      : (isNew ? widget.newLabel : widget.oldLabel)),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -723,11 +727,13 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
             _key(t, keyHeight,
                 utility: true,
                 onTap: _clear,
+                semanticsLabel: context.appText.clearNumber,
                 child: HymnalIcons.clearX(t.muted)),
             digit('0'),
             _key(t, keyHeight,
                 utility: true,
                 onTap: _back,
+                semanticsLabel: context.appText.deleteDigit,
                 child: HymnalIcons.backspace(t.muted)),
           ]),
         ],
@@ -739,10 +745,11 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     HymnalTokens t,
     double height, {
     bool utility = false,
+    String? semanticsLabel,
     required VoidCallback onTap,
     required Widget child,
   }) {
-    return Pressable(
+    final key = Pressable(
       onTap: onTap,
       pressedScale: 0.95,
       builder: (context, pressed) => Container(
@@ -757,5 +764,13 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
         child: child,
       ),
     );
+    return semanticsLabel == null
+        ? key
+        : Semantics(
+            button: true,
+            label: semanticsLabel,
+            onTap: onTap,
+            excludeSemantics: true,
+            child: key);
   }
 }

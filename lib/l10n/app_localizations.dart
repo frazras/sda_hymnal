@@ -3161,6 +3161,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Readings unavailable'**
   String get topicReadingsUnavailable;
+
+  /// No description provided for @enterHymnOrReadingNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter hymn or reading number'**
+  String get enterHymnOrReadingNumber;
+
+  /// No description provided for @enterHymnNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter hymn number'**
+  String get enterHymnNumber;
+
+  /// No description provided for @previewHymnOrReadingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a hymn or reading number to preview it here'**
+  String get previewHymnOrReadingHelp;
+
+  /// No description provided for @previewHymnHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a hymn number to preview it here'**
+  String get previewHymnHelp;
+
+  /// No description provided for @notInHymnal.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in {book}'**
+  String notInHymnal(String book);
+
+  /// No description provided for @keypadEnglishRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{newBook} 1–695 · Readings 696–920 · {oldBook} 1–703'**
+  String keypadEnglishRange(String newBook, String oldBook);
 }
 
 class _AppLocalizationsDelegate

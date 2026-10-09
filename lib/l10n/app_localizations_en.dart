@@ -1759,4 +1759,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get topicReadingsUnavailable => 'Readings unavailable';
+
+  @override
+  String get enterHymnOrReadingNumber => 'Enter hymn or reading number';
+
+  @override
+  String get enterHymnNumber => 'Enter hymn number';
+
+  @override
+  String get previewHymnOrReadingHelp =>
+      'Type a hymn or reading number to preview it here';
+
+  @override
+  String get previewHymnHelp => 'Type a hymn number to preview it here';
+
+  @override
+  String notInHymnal(String book) {
+    return 'Not in $book';
+  }
+
+  @override
+  String keypadEnglishRange(String newBook, String oldBook) {
+    return '$newBook 1–695 · Readings 696–920 · $oldBook 1–703';
+  }
 }

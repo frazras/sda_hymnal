@@ -157,8 +157,8 @@ class ClassicNumberPad extends StatelessWidget {
             child: Text(
               display.isEmpty
                   ? (hasReadings
-                      ? 'Enter hymn or reading number'
-                      : 'Enter hymn number')
+                      ? context.appText.enterHymnOrReadingNumber
+                      : context.appText.enterHymnNumber)
                   : display,
               key: const ValueKey('classic-number-display'),
               textAlign: TextAlign.center,
@@ -176,10 +176,11 @@ class ClassicNumberPad extends StatelessWidget {
             for (final digit in row) button(Text(digit), () => onDigit(digit))
           ]),
         Row(children: [
-          button(const Icon(Icons.cancel), onClear, label: 'Clear number'),
+          button(const Icon(Icons.cancel), onClear,
+              label: context.appText.clearNumber),
           button(const Text('0'), () => onDigit('0')),
           button(const Icon(Icons.backspace), onBackspace,
-              label: 'Delete digit'),
+              label: context.appText.deleteDigit),
         ]),
         Row(children: [
           if (showOld)
@@ -196,7 +197,8 @@ class ClassicNumberPad extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
                   children: [
-                    Text('READING: $display  $readingTitle',
+                    Text(
+                        '${context.appText.reading.toUpperCase()}: $display  $readingTitle',
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 3),
@@ -227,7 +229,7 @@ class ClassicNumberPad extends StatelessWidget {
                     child: OutlinedButton.icon(
                       onPressed: onReadings,
                       icon: const Icon(Icons.menu_book_outlined, size: 18),
-                      label: const Text('Additional readings',
+                      label: Text(context.appText.additionalReadings,
                           maxLines: 1, overflow: TextOverflow.ellipsis),
                     ),
                   ),
@@ -329,8 +331,9 @@ class ClassicSearchRow extends StatelessWidget {
                       ? 'assets/lettern.svg'
                       : 'assets/lettero.svg',
                   width: 32,
-                  semanticsLabel:
-                      hymn.version == 'new' ? 'New Hymnal' : 'Old Hymnal'),
+                  semanticsLabel: hymn.version == 'new'
+                      ? context.appText.newHymnal
+                      : context.appText.oldHymnal),
           title: Text('${hymn.number}. ${hymn.title}',
               style: TextStyle(fontWeight: FontWeight.bold, color: t.ink)),
           subtitle: hymn.isEnglishEdition ? null : Text(hymn.bookLabel),

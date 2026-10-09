@@ -509,5 +509,11 @@
   "hymnsPopularityRanked": "Гимны по популярности",
   "topicReadingCount": "{count, plural, one{{count} чтение} few{{count} чтения} many{{count} чтений} other{{count} чтения}}",
   "topicReadingsLoading": "Загрузка чтений…",
-  "topicReadingsUnavailable": "Чтения недоступны"
+  "topicReadingsUnavailable": "Чтения недоступны",
+  "enterHymnOrReadingNumber": "Введите номер гимна или чтения",
+  "enterHymnNumber": "Введите номер гимна",
+  "previewHymnOrReadingHelp": "Введите номер гимна или чтения для предварительного просмотра",
+  "previewHymnHelp": "Введите номер гимна для предварительного просмотра",
+  "notInHymnal": "Нет в сборнике {book}",
+  "keypadEnglishRange": "{newBook} 1–695 · Чтения 696–920 · {oldBook} 1–703"
 }

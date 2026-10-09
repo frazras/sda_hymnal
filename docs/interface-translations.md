@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 510-message
+not claim that the app interface is fully translated. The 516-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -150,3 +150,12 @@ references. Missing reading data shows loading/unavailable status rather than
 a false zero. A deferred asset-load regression verifies loading, failure, and
 successful retry against the real reading catalog; retries bypass cached failed
 asset futures and make a fresh request.
+
+Keypad empty states, reading shortcuts, invalid-book feedback, and utility
+button labels now use translations in Modern and Classic. Modern clear/delete
+buttons expose named accessibility actions. Compact checks cover number entry,
+reading previews, clearing/deleting digits, and paired Spanish Old/New previews
+across all four interface locales, both designs, and both themes. Native book
+names and titles remain unchanged. Preview badges wrap within a bounded width
+so long edition labels leave room for hymn titles. Tests advance fixed frames
+because the keypad cursor intentionally keeps blinking.
