@@ -344,7 +344,9 @@ The generated pack lives at `resources/hymnals/sda-ny-khristu-mu-nyimbo.json`,
 **outside Flutter's bundled asset paths**. It is intended for optional text
 downloads, not another automatic increase in installed app size. The offline
 publication gate checks byte-identical regeneration, and the structured-source
-regression suite includes all 350 records. Runtime acceptance, trusted download
-catalog registration, management UI, and shared-keypad integration remain before
-users can install this collection. This source preparation does not claim app
-availability or music coverage.
+regression suite includes all 350 records. The trusted download catalog now
+registers its exact published bytes, and the shared loader adds the book only
+when a valid local copy is installed. Removal restores the six bundled books.
+The shared number pad and reader support this collection in both designs and
+themes. Management UI and live reload remain before users can install it from
+the app; music coverage is still unavailable.

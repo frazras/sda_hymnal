@@ -36,6 +36,17 @@ Future<List<HymnalPack>> loadInstalledLanguagePacks(AssetBundle bundle,
     result
         .add(updated?.edition.id == fallback.edition.id ? updated! : fallback);
   }
+  try {
+    final downloads = await loadLanguagePackDownloads(bundle);
+    final bundledIds = bundled.map((p) => p.edition.id).toSet();
+    for (final download in downloads) {
+      if (bundledIds.contains(download.bookId)) continue;
+      final optional = await installed.load(download.bookId);
+      if (optional != null) result.add(optional);
+    }
+  } catch (_) {
+    // Catalog availability must not remove working bundled editions.
+  }
   return List.unmodifiable(result);
 }
 
@@ -58,8 +69,14 @@ Future<List<LanguagePackDownload>> loadLanguagePackDownloads(
   for (final value in catalog['books'] as List<dynamic>) {
     final descriptor =
         LanguagePackDownload.fromJson(value as Map<String, dynamic>);
-    final expected = Uri.https('raw.githubusercontent.com',
-        '/$repository/$revision/assets/hymnals/${descriptor.bookId}.json');
+    final path =
+        value['path'] as String? ?? 'assets/hymnals/${descriptor.bookId}.json';
+    if (path != 'assets/hymnals/${descriptor.bookId}.json' &&
+        path != 'resources/hymnals/${descriptor.bookId}.json') {
+      throw const FormatException('Invalid language download path');
+    }
+    final expected =
+        Uri.https('raw.githubusercontent.com', '/$repository/$revision/$path');
     if (!seen.add(descriptor.bookId) || descriptor.url != expected) {
       throw const FormatException('Invalid language download destination');
     }

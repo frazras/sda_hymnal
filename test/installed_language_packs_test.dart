@@ -27,16 +27,17 @@ void main() {
       hymnCount: 614,
       topicCount: 47);
 
-  test('download catalog pins six exact edition objects', () async {
+  test('download catalog pins seven exact edition objects', () async {
     final downloads = await loadLanguagePackDownloads(FilePackBundle());
-    expect(downloads.length, 6);
+    expect(downloads.length, 7);
     expect(downloads.first.bookId, 'sda-es-2009');
     expect(downloads.first.hymnCount, 614);
     expect(downloads.first.topicCount, 47);
     expect(() => downloads.clear(), throwsUnsupportedError);
     for (final download in downloads) {
-      final source =
-          File('assets/hymnals/${download.bookId}.json').readAsBytesSync();
+      final source = File(
+              '${download.bookId == 'sda-ny-khristu-mu-nyimbo' ? 'resources' : 'assets'}/hymnals/${download.bookId}.json')
+          .readAsBytesSync();
       expect(download.validate(source).edition.id, download.bookId);
     }
   });
@@ -60,6 +61,34 @@ void main() {
       await expectLater(
           loadLanguagePackDownloads(bundle), throwsFormatException);
     }
+  });
+
+  test('optional Chichewa appears only after installation and removes cleanly',
+      () async {
+    final bytes = File('resources/hymnals/sda-ny-khristu-mu-nyimbo.json')
+        .readAsBytesSync();
+    final downloads = await loadLanguagePackDownloads(FilePackBundle());
+    final descriptor =
+        downloads.singleWhere((d) => d.bookId == 'sda-ny-khristu-mu-nyimbo');
+    final store = LanguagePackStore(directory, download: (_) async => bytes);
+    expect(
+        (await loadInstalledLanguagePacks(FilePackBundle(), store: store))
+            .length,
+        6);
+    await store.install(descriptor);
+    final installed =
+        await loadInstalledLanguagePacks(FilePackBundle(), store: store);
+    expect(installed.length, 7);
+    expect(installed.last.edition.languageTag, 'ny');
+    expect(installed.last.edition.year, isNull);
+    expect(installed.last.hymns.length, 350);
+    expect(installed.last.hymns.first.ref.bookId, descriptor.bookId);
+    expect(installed.last.hymns.first.title, 'Omba Lipenga');
+    await store.remove(descriptor.bookId);
+    expect(
+        (await loadInstalledLanguagePacks(FilePackBundle(), store: store))
+            .length,
+        6);
   });
 
   test('offline updated text replaces only its edition in the shared loader',

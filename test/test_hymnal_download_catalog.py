@@ -2,10 +2,12 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tool'))
 spec = importlib.util.spec_from_file_location('download_catalog', ROOT / 'tool/build_language_download_catalog.py')
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
@@ -16,10 +18,10 @@ class DownloadCatalogTest(unittest.TestCase):
         catalog = builder.build()
         self.assertEqual(catalog, builder.build())
         self.assertEqual(catalog, json.loads(builder.DEST.read_text()))
-        self.assertEqual(len(catalog['books']), 6)
+        self.assertEqual(len(catalog['books']), 7)
         for book in catalog['books']:
             self.assertIn(catalog['source']['revision'], book['url'])
-            self.assertTrue(book['url'].endswith(f'/assets/hymnals/{book["bookId"]}.json'))
+            self.assertTrue(book['url'].endswith('/' + book.get('path', f'assets/hymnals/{book["bookId"]}.json')))
             self.assertGreater(book['hymnCount'], 0)
             self.assertIn('note', book['coverage'])
             self.assertNotIn('audio', book)
@@ -30,6 +32,7 @@ class DownloadCatalogTest(unittest.TestCase):
             (root / 'tool/data').mkdir(parents=True)
             (root / 'assets/hymnals').mkdir(parents=True)
             source = json.loads((ROOT / 'tool/data/language_download_sources.json').read_text())
+            source['optionalPacks'] = []
             original = json.loads((ROOT / 'assets/hymnals/catalog.json').read_text())
             entry = original['books'][0]
             (root / entry['asset']).write_bytes((ROOT / entry['asset']).read_bytes())

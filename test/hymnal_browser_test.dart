@@ -293,7 +293,15 @@ void main() {
     }
   }
 
-  for (final book in ['sda-fr-hymnes-et-louanges', 'sda-sw-nyimbo-za-kristo']) {
+  for (final book in [
+    'sda-fr-hymnes-et-louanges',
+    'sda-sw-nyimbo-za-kristo',
+    'sda-ny-khristu-mu-nyimbo',
+  ]) {
+    final optionalPack = book == 'sda-ny-khristu-mu-nyimbo'
+        ? HymnalPack.fromJson(
+            File('resources/hymnals/$book.json').readAsStringSync())
+        : null;
     for (final classic in [false, true]) {
       for (final dark in [false, true]) {
         testWidgets(
@@ -317,7 +325,10 @@ void main() {
                   child: child!),
               home: DefaultAssetBundle(
                   bundle: FilePackBundle(),
-                  child: Tabs(packLoader: loadHymnalPacks))));
+                  child: Tabs(
+                      packLoader: optionalPack == null
+                          ? loadHymnalPacks
+                          : (_) async => [optionalPack]))));
           for (var i = 0; i < 16; i++) {
             await tester.pump(const Duration(milliseconds: 100));
           }

@@ -7,7 +7,11 @@ import 'package:sdahymnal/services/hymnal_repository.dart';
 
 bool _supportedImportedBook(String id) =>
     RegExp(r'^sda-(es|pt|ru)-\d{4}$').hasMatch(id) ||
-    const {'sda-fr-hymnes-et-louanges', 'sda-sw-nyimbo-za-kristo'}.contains(id);
+    const {
+      'sda-fr-hymnes-et-louanges',
+      'sda-sw-nyimbo-za-kristo',
+      'sda-ny-khristu-mu-nyimbo'
+    }.contains(id);
 
 class HymnalTopic {
   final String id;

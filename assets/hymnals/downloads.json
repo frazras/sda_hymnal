@@ -2,7 +2,10 @@
   "schemaVersion": 1,
   "source": {
     "repository": "frazras/sda_hymnal",
-    "revision": "52c3a841f1d70fecf254486a7c0326d5a4318572"
+    "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
+    "optionalPacks": [
+      "resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
+    ]
   },
   "books": [
     {
@@ -19,7 +22,7 @@
         "structurallyComplete": true,
         "note": "Imported source edition; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-es-2009.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-es-2009.json"
     },
     {
       "bookId": "sda-es-1962",
@@ -35,7 +38,7 @@
         "structurallyComplete": true,
         "note": "Imported source edition; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-es-1962.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-es-1962.json"
     },
     {
       "bookId": "sda-pt-1996",
@@ -51,7 +54,7 @@
         "structurallyComplete": true,
         "note": "Imported source edition; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-pt-1996.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-pt-1996.json"
     },
     {
       "bookId": "sda-ru-1997",
@@ -67,7 +70,7 @@
         "structurallyComplete": true,
         "note": "Imported source edition; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-ru-1997.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-ru-1997.json"
     },
     {
       "bookId": "sda-fr-hymnes-et-louanges",
@@ -83,7 +86,7 @@
         "structurallyComplete": true,
         "note": "All source entries included. Print edition year not established; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-fr-hymnes-et-louanges.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-fr-hymnes-et-louanges.json"
     },
     {
       "bookId": "sda-sw-nyimbo-za-kristo",
@@ -99,7 +102,24 @@
         "structurallyComplete": true,
         "note": "All source entries included. Print edition year not established; independent lyric review pending."
       },
-      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/52c3a841f1d70fecf254486a7c0326d5a4318572/assets/hymnals/sda-sw-nyimbo-za-kristo.json"
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-sw-nyimbo-za-kristo.json"
+    },
+    {
+      "bookId": "sda-ny-khristu-mu-nyimbo",
+      "displayName": "Chichewa · Khristu Mu Nyimbo",
+      "languageTag": "ny",
+      "year": null,
+      "path": "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
+      "bytes": 1049855,
+      "sha256": "b2a681107cea105c74879c6555ae353d972635db975206e4c389b4c034162117",
+      "hymnCount": 350,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 350,
+        "structurallyComplete": true,
+        "note": "All 350 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
     }
   ]
 }

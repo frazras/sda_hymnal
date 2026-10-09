@@ -39,6 +39,25 @@ def build(root=ROOT):
                           hymnCount=entry['hymnCount'], topicCount=entry['topicCount'],
                           coverage=pack['coverage'],
                           url=f'https://raw.githubusercontent.com/{repository}/{revision}/{asset}'))
+    for asset in source.get('optionalPacks', []):
+        if not isinstance(asset, str) or not re.fullmatch(r'resources/hymnals/sda-[a-z0-9-]+\.json', asset):
+            raise ValueError('Invalid optional pack path')
+        data = (root / asset).read_bytes()
+        pack = json.loads(data)
+        book = pack['book']
+        identity = book['id']
+        if identity in seen or asset != f'resources/hymnals/{identity}.json':
+            raise ValueError('Optional pack identity mismatch')
+        from validate_hymnal_content import inspect_pack
+        if inspect_pack(pack)['errors'] or not 0 < len(data) <= 16 * 1024 * 1024:
+            raise ValueError('Invalid optional pack content')
+        seen.add(identity)
+        books.append(dict(bookId=identity, displayName=book['displayName'],
+                          languageTag=book['languageTag'], year=book.get('year'),
+                          path=asset, bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                          hymnCount=len(pack['items']), topicCount=len(pack['topics']),
+                          coverage=pack['coverage'],
+                          url=f'https://raw.githubusercontent.com/{repository}/{revision}/{asset}'))
     return dict(schemaVersion=1, source=source, books=books)
 
 

@@ -1,4 +1,7 @@
 {
   "repository": "frazras/sda_hymnal",
-  "revision": "52c3a841f1d70fecf254486a7c0326d5a4318572"
+  "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
+  "optionalPacks": [
+    "resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
+  ]
 }
