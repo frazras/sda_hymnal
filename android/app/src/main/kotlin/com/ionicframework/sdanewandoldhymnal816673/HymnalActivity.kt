@@ -8,11 +8,31 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class HymnalActivity : AudioServiceActivity() {
+    private var collationChannel: MethodChannel? = null
     private var iconChannel: MethodChannel? = null
     private var analyticsChannel: MethodChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        collationChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sdahymnal/collation")
+        collationChannel?.setMethodCallHandler { call, result ->
+            if (call.method != "sort") { result.notImplemented() }
+            else {
+                val titles = call.argument<List<String>>("titles")
+                val language = call.argument<String>("language")
+                if (titles == null || language.isNullOrBlank()) {
+                    result.error("INVALID_ARGUMENTS", "Expected titles and language", null)
+                } else {
+                    val collator = java.text.Collator.getInstance(java.util.Locale.forLanguageTag(language))
+                    collator.strength = java.text.Collator.SECONDARY
+                    collator.decomposition = java.text.Collator.CANONICAL_DECOMPOSITION
+                    result.success(titles.indices.sortedWith(Comparator { a, b ->
+                        val comparison = collator.compare(titles[a], titles[b])
+                        if (comparison == 0) a.compareTo(b) else comparison
+                    }))
+                }
+            }
+        }
         analyticsChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sdahymnal/analytics_storage")
         analyticsChannel?.setMethodCallHandler { call, result ->
             if (call.method == "directory") {
@@ -39,6 +59,8 @@ class HymnalActivity : AudioServiceActivity() {
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        collationChannel?.setMethodCallHandler(null)
+        collationChannel = null
         analyticsChannel?.setMethodCallHandler(null)
         analyticsChannel = null
         iconChannel?.setMethodCallHandler(null)
