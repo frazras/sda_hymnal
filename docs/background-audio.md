@@ -61,3 +61,8 @@ preparation, and retained source identities and sheet-view state. The singleton
 platform-player scenario stays in one fake-clock widget test so event subscriptions
 are not stranded in a disposed test zone. Physical screen-lock, headphone, call,
 and Android notification checks still remain; these tests do not substitute for them.
+
+Automatic advancement requires confirmation that playback started before publishing
+the next reader occurrence. Disabling Autoplay or cancelling during a recording
+download or native MIDI load prevents a late start and leaves the reader selection
+unchanged. Tests exercise both engine loading boundaries and the queue acknowledgement.

@@ -19,6 +19,8 @@ void main() {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     final native = <String>[];
     var failNativePause = false;
+    Completer<double>? pendingNativeLoad;
+    Completer<void>? nativeLoadEntered;
     final media = <String>[];
     String? id;
     Future<void> audioEvent(String event) async {
@@ -61,7 +63,13 @@ void main() {
       if (call.method == 'pause' && failNativePause) {
         throw PlatformException(code: 'PAUSE_FAILED');
       }
-      if (call.method == 'load') return 120.0;
+      if (call.method == 'load') {
+        if (pendingNativeLoad != null) {
+          nativeLoadEntered!.complete();
+          return await pendingNativeLoad.future;
+        }
+        return 120.0;
+      }
       if (call.method == 'getPosition') return 0.0;
       return null;
     });
@@ -183,6 +191,34 @@ void main() {
     expect(handler.mediaItem.value, isNull);
     expect(
         handler.playbackState.value.processingState, AudioProcessingState.idle);
+    var allowStart = true;
+    pendingDownload = Completer<File>();
+    final guarded = player.toggle(hymn, canStart: () => allowStart);
+    while (!player.loading.value) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    final resumesBeforeCancellation = media.where((m) => m == 'resume').length;
+    allowStart = false;
+    pendingDownload.complete(File('${dir.path}/cancelled.m4a'));
+    await guarded;
+    expect(media.where((m) => m == 'resume').length, resumesBeforeCancellation);
+    expect(player.current.value, isNull);
+    expect(player.loading.value, isFalse);
+    allowStart = true;
+    pendingNativeLoad = Completer<double>();
+    nativeLoadEntered = Completer<void>();
+    final guardedMidi = player.toggle(midi, canStart: () => allowStart);
+    await nativeLoadEntered.future;
+    final nativePlaysBeforeCancellation =
+        native.where((m) => m == 'play').length;
+    allowStart = false;
+    pendingNativeLoad.complete(120);
+    await guardedMidi;
+    expect(
+        native.where((m) => m == 'play').length, nativePlaysBeforeCancellation);
+    expect(player.current.value, isNull);
+    expect(player.duration.value, Duration.zero);
+    pendingNativeLoad = null;
     handler.audioQueue.select(
         HymnPlaybackQueue(
             entries: [hymn, midi], wrap: true, skipUnavailable: true),

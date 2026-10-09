@@ -23,7 +23,7 @@ class AudioQueue extends ValueNotifier<AudioQueuePosition?> {
   final Future<void> Function(Hymn) play;
   final bool Function(Hymn) playable;
   final bool Function() autoplay;
-  final Future<void> Function(Hymn, bool Function())? guardedPlay;
+  final Future<bool> Function(Hymn, bool Function())? guardedPlay;
   bool _armed = false;
   Future<void> _operations = Future.value();
   int _generation = 0;
@@ -31,11 +31,13 @@ class AudioQueue extends ValueNotifier<AudioQueuePosition?> {
   static final AudioQueue instance = AudioQueue(
     play: (hymn) => MidiPlayer.instance.toggle(hymn),
     guardedPlay: (hymn, valid) async {
-      if (!valid()) return;
+      if (!valid()) return false;
       await MidiPlayer.instance.stop();
-      if (!valid()) return;
+      if (!valid()) return false;
       await MidiPlayer.instance.prepareKey(hymn);
-      if (valid()) await MidiPlayer.instance.toggle(hymn);
+      if (!valid()) return false;
+      await MidiPlayer.instance.toggle(hymn, canStart: valid);
+      return MidiPlayer.isCurrent(MidiPlayer.instance.current.value, hymn);
     },
     playable: MidiPlayer.hasMusic,
     autoplay: () => Autoplay.instance.value,
@@ -93,11 +95,12 @@ class AudioQueue extends ValueNotifier<AudioQueuePosition?> {
       final target = selected.queue.entries[next]!;
       if (!automatic) _armed = true;
       if (guardedPlay != null) {
-        await guardedPlay!(
+        final started = await guardedPlay!(
             target,
             () =>
                 generation == _generation &&
                 (!automatic || (_armed && autoplay())));
+        if (!started) return;
       } else {
         await play(target);
       }

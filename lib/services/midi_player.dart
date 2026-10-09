@@ -440,7 +440,7 @@ class MidiPlayer {
   }
 
   /// Play the hymn; if it is already the current one, toggle pause/resume.
-  Future<void> toggle(Hymn hymn) async {
+  Future<void> toggle(Hymn hymn, {bool Function()? canStart}) async {
     if (!hasMusic(hymn)) return;
     final before = current.value;
     final starting = !isCurrent(before, hymn);
@@ -454,7 +454,7 @@ class MidiPlayer {
     try {
       await _enqueue(() async {
         _preview = false;
-        await _toggle(hymn);
+        await _toggle(hymn, canStart: canStart);
       });
       final after = current.value;
       if (isCurrent(after, hymn)) {
@@ -480,7 +480,8 @@ class MidiPlayer {
     }
   }
 
-  Future<void> _toggle(Hymn hymn) async {
+  Future<void> _toggle(Hymn hymn, {bool Function()? canStart}) async {
+    if (canStart != null && !canStart()) return;
     if (!hasMusic(hymn)) return;
     if (!isCurrent(current.value, hymn)) {
       final preview = _preview;
@@ -489,7 +490,7 @@ class MidiPlayer {
       _recording = !hasMidi(hymn);
     }
     _loadedHymn = hymn;
-    if (_nativeActive) return _channelToggle(hymn);
+    if (_nativeActive) return _channelToggle(hymn, canStart: canStart);
     final cur = current.value;
     if (isCurrent(cur, hymn)) {
       if (cur!.paused) {
@@ -511,7 +512,12 @@ class MidiPlayer {
       loading.value = true;
       final generation = _stopGeneration;
       final source = await _source(hymn.version, hymn.number);
-      if (generation != _stopGeneration) return;
+      if (generation != _stopGeneration || (canStart != null && !canStart())) {
+        current.value = null;
+        position.value = Duration.zero;
+        duration.value = Duration.zero;
+        return;
+      }
       await _player.play(source);
       await _applySpeed();
     } catch (_) {
@@ -522,7 +528,7 @@ class MidiPlayer {
     }
   }
 
-  Future<void> _channelToggle(Hymn hymn) async {
+  Future<void> _channelToggle(Hymn hymn, {bool Function()? canStart}) async {
     final cur = current.value;
     if (isCurrent(cur, hymn)) {
       try {
@@ -556,10 +562,21 @@ class MidiPlayer {
     duration.value = Duration.zero;
     current.value = (version: hymn.version, n: hymn.number, paused: false);
     try {
+      final generation = _stopGeneration;
       final path = (await _renderFile(hymn.version, hymn.number)).path;
+      if (generation != _stopGeneration || (canStart != null && !canStart())) {
+        current.value = null;
+        return;
+      }
       final secs = await _channel.invokeMethod<double>('load', path);
       duration.value = _toDuration(secs ?? 0);
       position.value = Duration.zero;
+      if (generation != _stopGeneration || (canStart != null && !canStart())) {
+        await _channel.invokeMethod('stop');
+        current.value = null;
+        duration.value = Duration.zero;
+        return;
+      }
       await _channel.invokeMethod('play');
       await _applySpeed();
       _startPositionPolling();

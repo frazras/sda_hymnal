@@ -77,7 +77,9 @@ void main() {
         guardedPlay: (h, valid) async {
           started.complete();
           await gate.future;
-          if (valid()) played.add(h.number);
+          if (!valid()) return false;
+          played.add(h.number);
+          return true;
         },
         playable: (_) => true,
         autoplay: () => true);
@@ -94,5 +96,34 @@ void main() {
     expect(controller.value!.index, 0);
     await controller.advance(1, automatic: true);
     expect(played, isEmpty);
+  });
+  test(
+      'disabling autoplay while preparing leaves the reader occurrence unchanged',
+      () async {
+    var enabled = true;
+    final gate = Completer<void>(), preparing = Completer<void>();
+    final played = <int>[];
+    final controller = AudioQueue(
+        play: (h) async => played.add(h.number),
+        guardedPlay: (h, valid) async {
+          preparing.complete();
+          await gate.future;
+          if (!valid()) return false;
+          played.add(h.number);
+          return true;
+        },
+        playable: (_) => true,
+        autoplay: () => enabled);
+    controller.select(
+        HymnPlaybackQueue(
+            entries: [hymn(1), hymn(2)], wrap: true, skipUnavailable: true),
+        0);
+    final pending = controller.advance(1, automatic: true);
+    await preparing.future;
+    enabled = false;
+    gate.complete();
+    await pending;
+    expect(played, isEmpty);
+    expect(controller.value!.index, 0);
   });
 }
