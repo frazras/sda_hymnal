@@ -86,6 +86,14 @@ the pinned manifest, catalog hashes/counts, and exact-edition score references.
 Every referenced score file is checked against its byte count and SHA-256.
 Missing scores are listed separately as coverage gaps; absent language audio
 is explicitly disclosed. No media association is inferred from a title or number.
+Instrumental recording references now require a known exact book and item,
+unique book/item entries, pinned repository/revision metadata, positive byte
+counts, valid Git blob hashes, and the matching edition-specific source path.
+Declared counts and total sizes must agree with their entries. Catalog failures
+are collected in `catalogErrors` and contribute to the nonzero publication status.
+Coverage lists include only valid recording references and explicitly list
+missing recordings. This offline report validates catalog metadata; the separate
+recording audit verifies downloaded bytes and durations.
 
 The reusable pack inspector accepts an explicit expected-number set for partial
 collections; it never fills gaps or renumbers source records. This report

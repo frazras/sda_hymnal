@@ -91,6 +91,56 @@ class ContentReportTest(unittest.TestCase):
             result = validator.report(root)
             self.assertGreater(result['errorCount'], 0)
             self.assertEqual(result['books'][0]['media']['scoreHymns'], 0)
+            write('assets/hymnals/spanish_recordings.json', dict(
+                schemaVersion=1, repository='owner/repo', revision='a'*40,
+                books=[dict(bookId='unknown', expectedCount=1, totalBytes=100,
+                            items=[dict(itemId='1', path='wrong.m4a', bytes=100,
+                                        gitBlobSha1='b'*40)])]))
+            result = validator.report(root)
+            self.assertIn('absent_recording_book',
+                          {e['code'] for e in result['catalogErrors']})
+            self.assertEqual(result['errorCount'], len(result['catalogErrors']) +
+                             sum(len(book['errors']) for book in result['books']))
+            self.assertEqual(result['books'][0]['media']['instrumentalRecordingItemIds'], [])
+
+    def test_recording_metadata_rejects_wrong_edition_duplicates_and_bad_hashes(self):
+        item = dict(itemId='1', path='music/spanish/2009 version/instrumental/001.m4a',
+                    bytes=100, gitBlobSha1='a' * 40)
+        catalog = dict(schemaVersion=1, repository='owner/repo', revision='b' * 40,
+                       books=[dict(bookId='sda-es-2009', expectedCount=1,
+                                   totalBytes=100, items=[item])])
+        identities = {'sda-es-2009': {'1', '2'}}
+        available, errors = validator.inspect_recordings(catalog, identities)
+        self.assertEqual(errors, [])
+        self.assertEqual(available, {'sda-es-2009': {'1'}})
+        before = copy.deepcopy(catalog)
+        bad = copy.deepcopy(catalog)
+        bad['books'][0]['items'].append(copy.deepcopy(item))
+        bad['books'][0]['items'][1]['gitBlobSha1'] = 'not-a-hash'
+        bad['books'][0]['items'].append(dict(
+            itemId='999', path='../another-book.m4a', bytes=True, gitBlobSha1='a'*40))
+        available, errors = validator.inspect_recordings(bad, identities)
+        self.assertTrue({'duplicate_recording_reference', 'absent_recording_reference',
+                         'invalid_recording_path', 'invalid_recording_integrity',
+                         'recording_count_mismatch', 'recording_bytes_mismatch'} <=
+                        {e['code'] for e in errors})
+        self.assertEqual(available['sda-es-2009'], set())
+        self.assertEqual(catalog, before)
+        bad = copy.deepcopy(catalog)
+        bad['books'][0]['items'][0]['path'] = 'music/spanish/1962 version/instrumental/001.m4a'
+        available, errors = validator.inspect_recordings(bad, identities)
+        self.assertEqual(available['sda-es-2009'], set())
+        self.assertEqual(errors[0]['code'], 'invalid_recording_path')
+        bad['books'][0]['bookId'] = 'unknown'
+        _, errors = validator.inspect_recordings(bad, identities)
+        self.assertIn('absent_recording_book', {e['code'] for e in errors})
+
+    def test_recording_shapes_and_provenance_fail_without_crashing(self):
+        for catalog in [None, [], {}, dict(schemaVersion=1, books=None),
+                        dict(schemaVersion=1, books=[None, {}])]:
+            with self.subTest(catalog=catalog):
+                _, errors = validator.inspect_recordings(catalog, {})
+                self.assertTrue(errors)
 
     def test_shipped_report_is_deterministic_and_exposes_known_score_gap(self):
         result = validator.report()
@@ -101,6 +151,11 @@ class ContentReportTest(unittest.TestCase):
         self.assertEqual(books['sda-es-2009']['media']['scoreHymns'], 614)
         self.assertEqual(books['sda-ru-1997']['media']['missingScoreItemIds'], ['244'])
         self.assertEqual(books['sda-es-1962']['media']['scoreHymns'], 0)
+        self.assertEqual(result['catalogErrors'], [])
+        for book, count in [('sda-es-2009', 614), ('sda-es-1962', 527)]:
+            self.assertEqual(len(books[book]['media']['instrumentalRecordingItemIds']), count)
+            self.assertEqual(books[book]['media']['missingInstrumentalRecordingItemIds'], [])
+        self.assertEqual(len(books['sda-pt-1996']['media']['missingInstrumentalRecordingItemIds']), 610)
 
 
 if __name__ == '__main__':

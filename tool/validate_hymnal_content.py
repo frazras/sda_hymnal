@@ -8,6 +8,7 @@ import argparse
 from collections import Counter
 import hashlib
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -117,6 +118,79 @@ def local_asset(root, name):
     return path
 
 
+def inspect_recordings(catalog, book_items):
+    """Check exact-edition references and pinned metadata without fetching audio."""
+    errors, available = [], {}
+    def error(code, location):
+        errors.append({'code': code, 'location': location})
+    if not isinstance(catalog, dict) or catalog.get('schemaVersion') != 1:
+        return {}, [{'code': 'invalid_recording_catalog', 'location': 'root'}]
+    if (not isinstance(catalog.get('repository'), str)
+            or not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', catalog['repository'])
+            or not isinstance(catalog.get('revision'), str)
+            or not re.fullmatch(r'[0-9a-f]{40}', catalog['revision'])):
+        error('invalid_recording_provenance', 'source')
+    books = catalog.get('books')
+    if not isinstance(books, list):
+        return {}, errors + [{'code': 'invalid_recording_books', 'location': 'books'}]
+    seen_books = set()
+    years = {'sda-es-2009': '2009', 'sda-es-1962': '1962'}
+    for index, book in enumerate(books):
+        at = f'books[{index}]'
+        if not isinstance(book, dict) or not isinstance(book.get('bookId'), str):
+            error('invalid_recording_book', at)
+            continue
+        identity = book['bookId']
+        if identity in seen_books:
+            error('duplicate_recording_book', identity)
+        seen_books.add(identity)
+        if identity not in book_items:
+            error('absent_recording_book', identity)
+        items = book.get('items')
+        if not isinstance(items, list):
+            error('invalid_recording_items', identity)
+            continue
+        seen, duplicates, valid_ids, total = set(), set(), set(), 0
+        for n, item in enumerate(items):
+            location = f'{identity}.items[{n}]'
+            if not isinstance(item, dict) or not isinstance(item.get('itemId'), str):
+                error('invalid_recording_item', location)
+                continue
+            ref = item['itemId']
+            valid = True
+            if ref in seen:
+                error('duplicate_recording_reference', location)
+                duplicates.add(ref)
+                valid_ids.discard(ref)
+                valid = False
+            seen.add(ref)
+            if ref not in book_items.get(identity, set()):
+                error('absent_recording_reference', location)
+                valid = False
+            path = item.get('path')
+            canonical = bool(re.fullmatch(r'[1-9][0-9]*', ref))
+            expected = (f'music/spanish/{years[identity]} version/instrumental/{int(ref):03d}.m4a'
+                        if identity in years and canonical else None)
+            if not isinstance(path, str) or path != expected:
+                error('invalid_recording_path', location)
+                valid = False
+            size, blob = item.get('bytes'), item.get('gitBlobSha1')
+            if (type(size) is not int or size < 12 or not isinstance(blob, str)
+                    or not re.fullmatch(r'[0-9a-f]{40}', blob)):
+                error('invalid_recording_integrity', location)
+                valid = False
+            if type(size) is int and size > 0:
+                total += size
+            if valid:
+                valid_ids.add(ref)
+        if type(book.get('expectedCount')) is not int or book['expectedCount'] != len(items):
+            error('recording_count_mismatch', identity)
+        if type(book.get('totalBytes')) is not int or book['totalBytes'] != total:
+            error('recording_bytes_mismatch', identity)
+        available.setdefault(identity, set()).update(valid_ids - duplicates)
+    return available, errors
+
+
 def report(root=ROOT):
     catalog = json.loads((root / 'assets/hymnals/catalog.json').read_text())
     manifest = json.loads((root / 'tool/data/hymnal_sources.json').read_text())
@@ -129,7 +203,8 @@ def report(root=ROOT):
     midi_catalog = root / 'assets/midi/verified_tunes.json'
     midi_mappings = json.loads(midi_catalog.read_text())['mappings'] if midi_catalog.exists() else []
     recording_catalog = root / 'assets/hymnals/spanish_recordings.json'
-    recording_books = json.loads(recording_catalog.read_text())['books'] if recording_catalog.exists() else []
+    recording_data = json.loads(recording_catalog.read_text()) if recording_catalog.exists() else None
+    book_items = {}
     books = []
     for entry in catalog['books']:
         try:
@@ -144,6 +219,7 @@ def report(root=ROOT):
                     result['errors'].append({'code': 'catalog_mismatch', 'location': field})
             item_ids = {i['id'] for i in pack.get('items', [])
                         if isinstance(i, dict) and isinstance(i.get('id'), str)}
+            book_items[entry['id']] = item_ids
             mappings = scores.get(entry['id'], {}).get('hymns', {})
             available = set()
             for identity, pages in mappings.items():
@@ -176,15 +252,21 @@ def report(root=ROOT):
                 'scoreHymns': len(available & item_ids),
                 'missingScoreItemIds': sorted(item_ids - available, key=lambda x: (len(x), x)),
                 'verifiedInstrumentalItemIds': instrumental,
-                'instrumentalRecordingItemIds': [i['itemId'] for b in recording_books
-                    if b['bookId'] == entry['id'] for i in b['items']],
+                'instrumentalRecordingItemIds': [],
                 'vocals': 'No verified sung recordings in these language packs.'}
         except (OSError, ValueError, KeyError, TypeError) as exc:
             result = {'bookId': entry.get('id'), 'errors': [
                 {'code': 'unreadable_pack', 'location': str(exc)}]}
         books.append(result)
-    return {'schemaVersion': 1, 'scope': 'Bundled imported language packs',
-            'errorCount': sum(len(b['errors']) for b in books), 'books': books}
+    recordings, catalog_errors = inspect_recordings(recording_data, book_items) if recording_data is not None else ({}, [])
+    for book in books:
+        if 'media' in book:
+            valid = recordings.get(book['bookId'], set())
+            book['media']['instrumentalRecordingItemIds'] = sorted(valid, key=lambda x: (len(x), x))
+            book['media']['missingInstrumentalRecordingItemIds'] = sorted(
+                book_items.get(book['bookId'], set()) - valid, key=lambda x: (len(x), x))
+    return {'schemaVersion': 1, 'catalogErrors': catalog_errors, 'scope': 'Bundled imported language packs',
+            'errorCount': len(catalog_errors) + sum(len(b['errors']) for b in books), 'books': books}
 
 
 if __name__ == '__main__':
