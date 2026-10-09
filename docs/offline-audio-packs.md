@@ -1,8 +1,14 @@
 # Optional offline audio packs
 
-This feature is in progress. The persistent store is implemented and tested;
-playback integration and the Settings download/update/remove screen are pending.
-The app still uses its existing temporary on-demand recording cache.
+Full-edition audio downloads are deferred following the storage preference on
+9 October 2026. The app downloads only the selected recording on demand, using
+its bounded 128 MiB temporary cache. Audio is not bundled with the app.
+
+The persistent store is tested groundwork only. It is not connected to playback
+or Settings and does not create files, fetch tracks, or reserve storage at runtime.
+Do not enable full-pack downloads as part of the current roadmap. The source is
+currently pinned GitHub hosting; an S3 migration remains a separate infrastructure
+change and must preserve exact-edition identities and integrity verification.
 
 `RecordingPack` describes a complete edition with unique consecutive numbers,
 exact book identities, declared sizes, and pinned Git blob hashes. Specifications

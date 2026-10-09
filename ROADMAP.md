@@ -72,8 +72,9 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
       each in the audited source), plus optional Adventist Youth, Scripture-song,
       and supplemental songbooks. Preserve their source page numbering.
-- [ ] Let users download, update, and remove optional language, score, and audio
-      packs. Show size and coverage, verify checksums, activate updates atomically,
+- [ ] Let users download, update, and remove optional language and score
+      packs. Keep audio on demand with bounded caching; full-edition audio
+      downloads are deferred to preserve device storage. Show size and coverage, verify checksums, activate updates atomically,
       preserve the last working version and saved favorites, and keep the current
       English books available offline.
 - [ ] Localize the app interface independently of the selected book, starting
@@ -105,8 +106,8 @@ Items below are plans, not claims that multilingual content is already installed
       hymns, with checked source files, bounded caching, shared playback controls,
       and active-engine completion handling. Retain MIDI controls for verified MIDI.
 - [ ] Offer sung versions and expand instrumental recordings where verified recordings
-      exist, alongside MIDI and video. Support optional offline downloads and
-      the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
+      exist, alongside MIDI and video. Download individual recordings on demand
+      with bounded caching and the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
       matching hymn numbers across languages; musical styles and choir controls
       require verified MIDI assets or reviewed tune mappings.
 - [ ] Add persistent background audio with lock-screen/notification controls,
