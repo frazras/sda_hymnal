@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:archive/archive.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,6 +90,39 @@ void main() {
     expect(deck.slides.where((s) => s.role != null).map((s) => s.role),
         ['leader', 'congregation']);
     expect(deck.videoPsalmSongbook(), deck.videoPsalmSongbook());
+  });
+  test('experimental agenda ZIP retains service order and manual advancement',
+      () {
+    final deck =
+        ServicePresentation.build(service, repository, linesPerSlide: 2);
+    final archive = ZipDecoder().decodeBytes(deck.videoPsalmAgenda());
+    expect(archive.files.map((file) => file.name), [
+      'Version.json',
+      'Song_0.json',
+      'SongBook_0.json',
+      'Song_1.json',
+      'SongBook_1.json',
+      'Song_2.json',
+      'SongBook_2.json',
+      'AgendaItemProperties.json'
+    ]);
+    dynamic read(String name) => jsonDecode(utf8.decode(
+        archive.files.singleWhere((file) => file.name == name).content));
+    expect(read('Version.json'), 2);
+    final songs = [for (var i = 0; i < 3; i++) read('Song_$i.json')];
+    expect(songs.map((song) => song['Text']),
+        ['1 · Corazón <script>', '2 · Lectura', '1 · Corazón <script>']);
+    expect(songs.map((song) => song['Guid']).toSet().length, 3);
+    final properties = read('AgendaItemProperties.json')['Items'] as List;
+    expect(properties.length, songs.length);
+    expect(
+        properties.every((item) =>
+            item['AutoAdvance'] == 0 &&
+            item['VerseOrderIndex'] == -1 &&
+            (item['HiddenSlides'] as List).isEmpty),
+        isTrue);
+    expect(read('SongBook_0.json')['Guid'], read('SongBook_2.json')['Guid']);
+    expect(read('SongBook_0.json').containsKey('Songs'), isFalse);
   });
   test('HTML translates reading roles without mutating source roles or text',
       () {

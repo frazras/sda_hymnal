@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:archive/archive.dart';
 
 import 'package:sdahymnal/models/hymn_ref.dart';
 import 'package:sdahymnal/models/service_playlist.dart';
@@ -124,6 +125,38 @@ class ServicePresentation {
           }
       ],
     });
+  }
+
+  /// Experimental `.vpagd` container, pending native VideoPsalm validation.
+  /// Anchor entries are inserted in service order, never sorted by hymn number.
+  List<int> videoPsalmAgenda({String Function(String)? roleLabel}) {
+    final book = jsonDecode(videoPsalmSongbook(roleLabel: roleLabel))
+        as Map<String, dynamic>;
+    final songs = book.remove('Songs') as List<dynamic>;
+    final archive = Archive();
+    void add(String name, Object value) {
+      final bytes = utf8.encode(jsonEncode(value));
+      archive.addFile(ArchiveFile(name, bytes.length, bytes));
+    }
+
+    add('Version.json', 2);
+    for (var index = 0; index < songs.length; index++) {
+      add('Song_$index.json', songs[index]);
+      add('SongBook_$index.json', book);
+    }
+    add('AgendaItemProperties.json', {
+      'Items': [
+        for (var index = 0; index < songs.length; index++)
+          {
+            'FlowType': 0,
+            'AutoAdvance': 0,
+            'Interval': 5000,
+            'VerseOrderIndex': -1,
+            'HiddenSlides': <int>[],
+          }
+      ],
+    });
+    return ZipEncoder().encode(archive);
   }
 
   /// No remote fonts, media, scripts, or assets. Source text is always escaped.

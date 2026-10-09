@@ -68,3 +68,24 @@ distinguishes copied songbooks from portable agendas containing songs and styles
 A songbook JSON file is not a `.vpagd` agenda. Native agenda-schema investigation,
 Windows VideoPsalm acceptance, and a clear export-format choice remain before
 claiming compatibility or exposing the new format to users.
+
+## Experimental native agenda container
+
+`videoPsalmAgenda` now emits a ZIP container with `Version.json` (2), ordered
+`Song_n.json` anchors and matching `SongBook_n.json` definitions, followed by
+`AgendaItemProperties.json`. All occurrences advance manually, expose every
+slide, and use default verse order. Responsive readings are exported as lyric
+slides with roles rather than inventing canonical Bible references. No remote
+media or styles are included. This remains unexposed serializer groundwork.
+
+Container ordering and property structure were inspected in the upstream
+[agenda parser](https://github.com/g0elles/OpenAdoration/blob/fceb5efb0f0c226bef034680a64a97adac292c3a/OpenAdoration.WPF/Helpers/VideoPsalmMigration/VideoPsalmAgendaParser.cs)
+and its
+[fixture tests](https://github.com/g0elles/OpenAdoration/blob/fceb5efb0f0c226bef034680a64a97adac292c3a/OpenAdoration.Tests.Infrastructure/VideoPsalmMigration/VideoPsalmAgendaParserTests.cs).
+This is independent reverse-engineered evidence, not an official schema or
+native acceptance test. Our ZIP regression decodes every entry, checks ordering,
+occurrence GUIDs, book definitions, Unicode titles, and aligned manual properties.
+Native Windows VideoPsalm validation remains required before offering this format.
+
+The archive dependency is pinned to the already-resolved version 4.0.9, promoted
+from transitive to direct; this change adds no new resolved package version.
