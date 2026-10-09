@@ -2861,6 +2861,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{{count} addition} other{{count} additions}}'**
   String statisticsAdditions(int count);
+
+  /// No description provided for @serviceArrangementHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrange hymns and readings for a service. You can use a hymn more than once.'**
+  String get serviceArrangementHelp;
+
+  /// No description provided for @serviceDeleteHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Your hymns and favorites will stay saved.'**
+  String get serviceDeleteHelp;
+
+  /// No description provided for @newService.
+  ///
+  /// In en, this message translates to:
+  /// **'New service'**
+  String get newService;
+
+  /// No description provided for @renameService.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename service'**
+  String get renameService;
+
+  /// No description provided for @serviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Service name'**
+  String get serviceName;
+
+  /// No description provided for @serviceNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sabbath worship'**
+  String get serviceNameHint;
+
+  /// No description provided for @serviceNameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 1–60 characters.'**
+  String get serviceNameInvalid;
+
+  /// No description provided for @serviceSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The service could not be saved. Please try again.'**
+  String get serviceSaveFailed;
+
+  /// No description provided for @serviceStorageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved services could not be read or updated.'**
+  String get serviceStorageFailed;
+
+  /// No description provided for @serviceEditingPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing is paused to protect your saved data.'**
+  String get serviceEditingPaused;
+
+  /// No description provided for @serviceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Service unavailable'**
+  String get serviceUnavailable;
+
+  /// No description provided for @serviceOrderHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add hymns and readings in service order.'**
+  String get serviceOrderHelp;
+
+  /// No description provided for @unavailableItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable item'**
+  String get unavailableItem;
+
+  /// No description provided for @repeatAtEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat at end'**
+  String get repeatAtEnd;
+
+  /// No description provided for @addHymnOrReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add hymn or reading'**
+  String get addHymnOrReading;
+
+  /// No description provided for @numberOrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Number or title'**
+  String get numberOrTitle;
+
+  /// No description provided for @noMatchingServiceItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching hymns or readings'**
+  String get noMatchingServiceItems;
+
+  /// No description provided for @serviceItemNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'This item is not installed. It remains in your service.'**
+  String get serviceItemNotInstalled;
+
+  /// No description provided for @servicePosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Service: {name} · {position} of {total}'**
+  String servicePosition(String name, int position, int total);
+
+  /// No description provided for @serviceItemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item} other{{count} items}}'**
+  String serviceItemCount(int count);
+
+  /// No description provided for @previousControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previousControl;
+
+  /// No description provided for @nextControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextControl;
 }
 
 class _AppLocalizationsDelegate

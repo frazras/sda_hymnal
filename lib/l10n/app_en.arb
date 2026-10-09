@@ -722,5 +722,48 @@
         "type": "String"
       }
     }
-  }
+  },
+  "serviceArrangementHelp": "Arrange hymns and readings for a service. You can use a hymn more than once.",
+  "serviceDeleteHelp": "Your hymns and favorites will stay saved.",
+  "newService": "New service",
+  "renameService": "Rename service",
+  "serviceName": "Service name",
+  "serviceNameHint": "Sabbath worship",
+  "serviceNameInvalid": "Use 1–60 characters.",
+  "serviceSaveFailed": "The service could not be saved. Please try again.",
+  "serviceStorageFailed": "Saved services could not be read or updated.",
+  "serviceEditingPaused": "Editing is paused to protect your saved data.",
+  "serviceUnavailable": "Service unavailable",
+  "serviceOrderHelp": "Add hymns and readings in service order.",
+  "unavailableItem": "Unavailable item",
+  "repeatAtEnd": "Repeat at end",
+  "addHymnOrReading": "Add hymn or reading",
+  "numberOrTitle": "Number or title",
+  "noMatchingServiceItems": "No matching hymns or readings",
+  "serviceItemNotInstalled": "This item is not installed. It remains in your service.",
+  "servicePosition": "Service: {name} · {position} of {total}",
+  "serviceItemCount": "{count, plural, one{{count} item} other{{count} items}}",
+  "@servicePosition": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@serviceItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "previousControl": "Previous",
+  "nextControl": "Next"
 }

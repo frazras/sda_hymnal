@@ -296,7 +296,7 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
                 border: Border(bottom: BorderSide(color: t.line2)),
               ),
               child: Text(
-                widget.sequence?.label ??
+                widget.sequence?.labelFor(context) ??
                     'Category: ${widget.categoryTitle} · ${widget.readings.indexWhere((r) => r.id == widget.reading.id) + 1} of ${widget.readings.length}',
                 style:
                     TextStyle(fontFamily: kSans, fontSize: 13, color: t.accent),

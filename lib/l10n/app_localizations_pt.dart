@@ -1574,4 +1574,89 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceArrangementHelp =>
+      'Organize hinos e leituras para um culto. Você pode incluir um hino mais de uma vez.';
+
+  @override
+  String get serviceDeleteHelp => 'Seus hinos e favoritos continuarão salvos.';
+
+  @override
+  String get newService => 'Novo culto';
+
+  @override
+  String get renameService => 'Renomear culto';
+
+  @override
+  String get serviceName => 'Nome do culto';
+
+  @override
+  String get serviceNameHint => 'Culto de sábado';
+
+  @override
+  String get serviceNameInvalid => 'Use de 1 a 60 caracteres.';
+
+  @override
+  String get serviceSaveFailed =>
+      'Não foi possível salvar o culto. Tente novamente.';
+
+  @override
+  String get serviceStorageFailed =>
+      'Não foi possível ler ou atualizar os cultos salvos.';
+
+  @override
+  String get serviceEditingPaused =>
+      'A edição está pausada para proteger seus dados salvos.';
+
+  @override
+  String get serviceUnavailable => 'Culto indisponível';
+
+  @override
+  String get serviceOrderHelp => 'Adicione hinos e leituras na ordem do culto.';
+
+  @override
+  String get unavailableItem => 'Item indisponível';
+
+  @override
+  String get repeatAtEnd => 'Repetir no final';
+
+  @override
+  String get addHymnOrReading => 'Adicionar hino ou leitura';
+
+  @override
+  String get numberOrTitle => 'Número ou título';
+
+  @override
+  String get noMatchingServiceItems => 'Nenhum hino ou leitura correspondente';
+
+  @override
+  String get serviceItemNotInstalled =>
+      'Este item não está instalado. Ele permanece no seu culto.';
+
+  @override
+  String servicePosition(String name, int position, int total) {
+    return 'Culto: $name · $position de $total';
+  }
+
+  @override
+  String serviceItemCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString itens',
+      one: '$countString item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get previousControl => 'Anterior';
+
+  @override
+  String get nextControl => 'Próximo';
 }

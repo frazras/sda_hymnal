@@ -1596,4 +1596,92 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceArrangementHelp =>
+      'Составьте порядок гимнов и чтений для богослужения. Один гимн можно включить несколько раз.';
+
+  @override
+  String get serviceDeleteHelp => 'Ваши гимны и избранное сохранятся.';
+
+  @override
+  String get newService => 'Новое богослужение';
+
+  @override
+  String get renameService => 'Переименовать богослужение';
+
+  @override
+  String get serviceName => 'Название богослужения';
+
+  @override
+  String get serviceNameHint => 'Субботнее богослужение';
+
+  @override
+  String get serviceNameInvalid => 'Введите от 1 до 60 символов.';
+
+  @override
+  String get serviceSaveFailed =>
+      'Не удалось сохранить богослужение. Попробуйте снова.';
+
+  @override
+  String get serviceStorageFailed =>
+      'Не удалось прочитать или обновить сохранённые богослужения.';
+
+  @override
+  String get serviceEditingPaused =>
+      'Редактирование приостановлено для защиты сохранённых данных.';
+
+  @override
+  String get serviceUnavailable => 'Богослужение недоступно';
+
+  @override
+  String get serviceOrderHelp =>
+      'Добавляйте гимны и чтения в порядке богослужения.';
+
+  @override
+  String get unavailableItem => 'Недоступный элемент';
+
+  @override
+  String get repeatAtEnd => 'Повторить в конце';
+
+  @override
+  String get addHymnOrReading => 'Добавить гимн или чтение';
+
+  @override
+  String get numberOrTitle => 'Номер или название';
+
+  @override
+  String get noMatchingServiceItems => 'Подходящих гимнов или чтений нет';
+
+  @override
+  String get serviceItemNotInstalled =>
+      'Этот элемент не установлен. Он остаётся в вашем богослужении.';
+
+  @override
+  String servicePosition(String name, int position, int total) {
+    return 'Богослужение: $name · $position из $total';
+  }
+
+  @override
+  String serviceItemCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString элемента',
+      many: '$countString элементов',
+      few: '$countString элемента',
+      one: '$countString элемент',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get previousControl => 'Назад';
+
+  @override
+  String get nextControl => 'Далее';
 }

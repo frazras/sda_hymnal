@@ -1,4 +1,5 @@
 import 'dart:math';
+import '../l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import '../models/hymn_ref.dart';
 import '../models/service_playlist.dart';
@@ -48,7 +49,7 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Service playlists')),
+        appBar: AppBar(title: Text(context.appText.servicePlaylists)),
         body: FutureBuilder<void>(
             future: loaded,
             builder: (context, snapshot) {
@@ -61,18 +62,20 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
                         if (store.storageError) _StorageNotice(store: store),
                         Expanded(
                             child: store.playlists.isEmpty
-                                ? const Center(
+                                ? Center(
                                     child: Padding(
-                                        padding: EdgeInsets.all(24),
+                                        padding: const EdgeInsets.all(24),
                                         child: Text(
-                                            'Arrange hymns and readings for a service. You can use a hymn more than once.',
+                                            context
+                                                .appText.serviceArrangementHelp,
                                             textAlign: TextAlign.center)))
                                 : ListView(children: [
                                     for (final list in store.playlists)
                                       ListTile(
                                           title: Text(list.name),
-                                          subtitle: Text(
-                                              '${list.entries.length} items'),
+                                          subtitle: Text(context.appText
+                                              .serviceItemCount(
+                                                  list.entries.length)),
                                           onTap: () => _open(list),
                                           trailing: PopupMenuButton<String>(
                                               enabled: !store.storageError,
@@ -86,25 +89,30 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
                                                     context: context,
                                                     builder: (context) =>
                                                         AlertDialog(
-                                                            title: Text(
-                                                                'Delete “${list.name}”?'),
-                                                            content: const Text(
-                                                                'Your hymns and favorites will stay saved.'),
+                                                            title: Text(context
+                                                                .appText
+                                                                .deleteListQuestion(
+                                                                    list.name)),
+                                                            content: Text(context
+                                                                .appText
+                                                                .serviceDeleteHelp),
                                                             actions: [
                                                               TextButton(
                                                                   onPressed: () =>
                                                                       Navigator.pop(
                                                                           context,
                                                                           false),
-                                                                  child: const Text(
-                                                                      'Cancel')),
+                                                                  child: Text(context
+                                                                      .appText
+                                                                      .cancel)),
                                                               TextButton(
                                                                   onPressed: () =>
                                                                       Navigator.pop(
                                                                           context,
                                                                           true),
-                                                                  child: const Text(
-                                                                      'Delete'))
+                                                                  child: Text(context
+                                                                      .appText
+                                                                      .delete))
                                                             ]));
                                                 if (confirmed == true) {
                                                   try {
@@ -116,13 +124,15 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
                                                   }
                                                 }
                                               },
-                                              itemBuilder: (_) => const [
+                                              itemBuilder: (_) => [
                                                     PopupMenuItem(
                                                         value: 'rename',
-                                                        child: Text('Rename')),
+                                                        child: Text(context
+                                                            .appText.rename)),
                                                     PopupMenuItem(
                                                         value: 'delete',
-                                                        child: Text('Delete'))
+                                                        child: Text(context
+                                                            .appText.delete))
                                                   ]))
                                   ])),
                         SafeArea(
@@ -133,7 +143,7 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
                                         ? null
                                         : () => _name(),
                                     icon: const Icon(Icons.add),
-                                    label: const Text('New service')))),
+                                    label: Text(context.appText.newService)))),
                       ]));
             }),
       );
@@ -158,7 +168,7 @@ class _NameDialogState extends State<_NameDialog> {
   void save() {
     final name = controller.text.trim();
     if (name.isEmpty || name.length > 60) {
-      setState(() => error = 'Use 1–60 characters.');
+      setState(() => error = context.appText.serviceNameInvalid);
       return;
     }
     Navigator.pop(context, name);
@@ -166,36 +176,45 @@ class _NameDialogState extends State<_NameDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-          title: Text(widget.name == null ? 'New service' : 'Rename service'),
+          title: Text(widget.name == null
+              ? context.appText.newService
+              : context.appText.renameService),
           content: TextField(
               controller: controller,
               autofocus: true,
               maxLength: 60,
               decoration: InputDecoration(
-                  labelText: 'Service name',
-                  hintText: 'Sabbath worship',
+                  labelText: context.appText.serviceName,
+                  hintText: context.appText.serviceNameHint,
                   errorText: error),
               onSubmitted: (_) => save()),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel')),
-            TextButton(onPressed: save, child: const Text('Save'))
+                child: Text(context.appText.cancel)),
+            TextButton(onPressed: save, child: Text(context.appText.save))
           ]);
 }
 
-void _error(BuildContext context) =>
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('The service could not be saved. Please try again.')));
+void _error(BuildContext context) => ScaffoldMessenger.of(context)
+    .showSnackBar(SnackBar(content: Text(context.appText.serviceSaveFailed)));
 
 class _StorageNotice extends StatelessWidget {
   final ServicePlaylists store;
   const _StorageNotice({required this.store});
   @override
-  Widget build(BuildContext context) => ListTile(
-      title: const Text('Saved services could not be read or updated.'),
-      subtitle: const Text('Editing is paused to protect your saved data.'),
-      trailing: TextButton(onPressed: store.load, child: const Text('Retry')));
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text(context.appText.serviceStorageFailed),
+        const SizedBox(height: 6),
+        Text(context.appText.serviceEditingPaused),
+        Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+                onPressed: store.load,
+                child: Text(context.appText.retryLoading))),
+      ]));
 }
 
 class _ServiceEditor extends StatelessWidget {
@@ -221,7 +240,7 @@ class _ServiceEditor extends StatelessWidget {
         final matches = store.playlists.where((e) => e.id == id);
         if (matches.isEmpty) {
           return Scaffold(
-              appBar: AppBar(title: const Text('Service unavailable')));
+              appBar: AppBar(title: Text(context.appText.serviceUnavailable)));
         }
         final list = matches.first;
         return Scaffold(
@@ -230,9 +249,7 @@ class _ServiceEditor extends StatelessWidget {
               if (store.storageError) _StorageNotice(store: store),
               Expanded(
                   child: list.entries.isEmpty
-                      ? const Center(
-                          child:
-                              Text('Add hymns and readings in service order.'))
+                      ? Center(child: Text(context.appText.serviceOrderHelp))
                       : ReorderableListView.builder(
                           buildDefaultDragHandles: false,
                           itemCount: list.entries.length,
@@ -244,7 +261,7 @@ class _ServiceEditor extends StatelessWidget {
                             final reading = repository.reading(entry.ref);
                             final title = hymn?.title ??
                                 reading?.title ??
-                                'Unavailable item';
+                                context.appText.unavailableItem;
                             final book = repository
                                     .edition(entry.ref.bookId)
                                     ?.displayName ??
@@ -274,14 +291,15 @@ class _ServiceEditor extends StatelessWidget {
                                                       id: _id(),
                                                       ref: entry.ref))
                                                   : s.without(entry.id)),
-                                          itemBuilder: (_) => const [
+                                          itemBuilder: (_) => [
                                                 PopupMenuItem(
                                                     value: 'repeat',
-                                                    child:
-                                                        Text('Repeat at end')),
+                                                    child: Text(context
+                                                        .appText.repeatAtEnd)),
                                                 PopupMenuItem(
                                                     value: 'remove',
-                                                    child: Text('Remove'))
+                                                    child: Text(
+                                                        context.appText.remove))
                                               ]),
                                       if (!store.storageError)
                                         ReorderableDragStartListener(
@@ -312,7 +330,7 @@ class _ServiceEditor extends StatelessWidget {
                                   }
                                 },
                           icon: const Icon(Icons.add),
-                          label: const Text('Add hymn or reading')))),
+                          label: Text(context.appText.addHymnOrReading)))),
             ]));
       });
 }
@@ -363,33 +381,35 @@ class _ServicePickerState extends State<_ServicePicker> {
             ...matches.where((item) => item.number != number),
           ];
     return Scaffold(
-        appBar: AppBar(title: const Text('Add hymn or reading')),
+        appBar: AppBar(title: Text(context.appText.addHymnOrReading)),
         body: Column(children: [
           Padding(
               padding: const EdgeInsets.all(12),
               child: TextField(
                   autofocus: true,
-                  decoration: const InputDecoration(
-                      labelText: 'Number or title',
+                  decoration: InputDecoration(
+                      labelText: context.appText.numberOrTitle,
                       prefixIcon: Icon(Icons.search)),
                   onChanged: (text) => setState(() => query = text))),
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: DropdownButton<String>(
+                  itemHeight: null,
                   isExpanded: true,
                   value: bookId ?? '',
                   items: [
-                    const DropdownMenuItem(
-                        value: '', child: Text('All hymnals')),
+                    DropdownMenuItem(
+                        value: '', child: Text(context.appText.allHymnals)),
                     for (final edition in widget.repository.editions)
                       DropdownMenuItem(
-                          value: edition.id, child: Text(edition.displayName))
+                          value: edition.id,
+                          child: Text(edition.displayName, maxLines: 2))
                   ],
                   onChanged: (value) =>
                       setState(() => bookId = value == '' ? null : value))),
           Expanded(
               child: results.isEmpty
-                  ? const Center(child: Text('No matching hymns or readings'))
+                  ? Center(child: Text(context.appText.noMatchingServiceItems))
                   : ListView.builder(
                       itemCount: results.length,
                       itemBuilder: (context, index) {
@@ -397,7 +417,7 @@ class _ServicePickerState extends State<_ServicePicker> {
                         return ListTile(
                             title: Text('${item.number}  ${item.title}'),
                             subtitle: Text(
-                                '${item.book}${item.ref.kind == HymnalItemKind.reading ? ' · Reading' : ''}'),
+                                '${item.book}${item.ref.kind == HymnalItemKind.reading ? ' · ${context.appText.reading}' : ''}'),
                             onTap: () => Navigator.pop(context, item.ref));
                       })),
         ]));

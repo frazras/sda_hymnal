@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_text.dart';
 import '../models/hymn_ref.dart';
 import '../models/service_playlist.dart';
 import '../services/hymnal_repository.dart';
@@ -34,6 +35,8 @@ class ServiceReader {
     final sequence = ReaderSequence(
       label:
           'Service: ${playlist.name} · ${index + 1} of ${playlist.entries.length}',
+      localizedLabel: (context) => context.appText
+          .servicePosition(playlist.name, index + 1, playlist.entries.length),
       canMove: (direction) => playlist.adjacent(entry.id, direction) != null,
       page: (direction,
           {previewOnly = false, continuation, showSheetMusic = false}) {
@@ -81,32 +84,36 @@ class _UnavailableEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Unavailable item')),
+        appBar: AppBar(title: Text(context.appText.unavailableItem)),
         body: Padding(
             padding: const EdgeInsets.all(24),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(sequence.label),
-              const SizedBox(height: 24),
-              const Text(
-                  'This item is not installed. It remains in your service.'),
-              const SizedBox(height: 12),
-              Text('${entry.ref.bookId} · ${entry.ref.itemId}'),
-            ])),
+            child: SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text(sequence.labelFor(context)),
+                  const SizedBox(height: 24),
+                  Text(context.appText.serviceItemNotInstalled),
+                  const SizedBox(height: 12),
+                  Text('${entry.ref.bookId} · ${entry.ref.itemId}'),
+                ]))),
         bottomNavigationBar: SafeArea(
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              TextButton.icon(
-                  onPressed:
-                      sequence.canMove(-1) ? () => _move(context, -1) : null,
-                  icon: const Icon(Icons.chevron_left),
-                  label: const Text('Previous')),
-              TextButton.icon(
-                  onPressed:
-                      sequence.canMove(1) ? () => _move(context, 1) : null,
-                  icon: const Icon(Icons.chevron_right),
-                  label: const Text('Next')),
+              Expanded(
+                  child: TextButton.icon(
+                      onPressed: sequence.canMove(-1)
+                          ? () => _move(context, -1)
+                          : null,
+                      icon: const Icon(Icons.chevron_left),
+                      label: Text(context.appText.previousControl))),
+              Expanded(
+                  child: TextButton.icon(
+                      onPressed:
+                          sequence.canMove(1) ? () => _move(context, 1) : null,
+                      icon: const Icon(Icons.chevron_right),
+                      label: Text(context.appText.nextControl))),
             ])),
       );
 }

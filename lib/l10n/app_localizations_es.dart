@@ -1575,4 +1575,91 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceArrangementHelp =>
+      'Organiza himnos y lecturas para un culto. Puedes incluir un himno más de una vez.';
+
+  @override
+  String get serviceDeleteHelp => 'Tus himnos y favoritos seguirán guardados.';
+
+  @override
+  String get newService => 'Nuevo culto';
+
+  @override
+  String get renameService => 'Renombrar culto';
+
+  @override
+  String get serviceName => 'Nombre del culto';
+
+  @override
+  String get serviceNameHint => 'Culto del sábado';
+
+  @override
+  String get serviceNameInvalid => 'Usa entre 1 y 60 caracteres.';
+
+  @override
+  String get serviceSaveFailed =>
+      'No se pudo guardar el culto. Inténtalo de nuevo.';
+
+  @override
+  String get serviceStorageFailed =>
+      'No se pudieron leer o actualizar los cultos guardados.';
+
+  @override
+  String get serviceEditingPaused =>
+      'La edición está pausada para proteger tus datos guardados.';
+
+  @override
+  String get serviceUnavailable => 'Culto no disponible';
+
+  @override
+  String get serviceOrderHelp =>
+      'Añade himnos y lecturas en el orden del culto.';
+
+  @override
+  String get unavailableItem => 'Elemento no disponible';
+
+  @override
+  String get repeatAtEnd => 'Repetir al final';
+
+  @override
+  String get addHymnOrReading => 'Añadir himno o lectura';
+
+  @override
+  String get numberOrTitle => 'Número o título';
+
+  @override
+  String get noMatchingServiceItems =>
+      'No hay himnos ni lecturas que coincidan';
+
+  @override
+  String get serviceItemNotInstalled =>
+      'Este elemento no está instalado. Permanece en tu culto.';
+
+  @override
+  String servicePosition(String name, int position, int total) {
+    return 'Culto: $name · $position de $total';
+  }
+
+  @override
+  String serviceItemCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString elementos',
+      one: '$countString elemento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get previousControl => 'Anterior';
+
+  @override
+  String get nextControl => 'Siguiente';
 }

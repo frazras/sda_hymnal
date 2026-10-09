@@ -356,7 +356,7 @@ class _HymnPageState extends State<HymnPage> {
                       border: Border(bottom: BorderSide(color: t.line2)),
                     ),
                     child: Text(
-                      widget.sequence?.label ??
+                      widget.sequence?.labelFor(context) ??
                           'Category: ${widget.categoryTitle} · ${widget.hymns.indexWhere((h) => h.number == widget.hymn.number && h.version == widget.hymn.version) + 1} of ${widget.hymns.length}',
                       style: TextStyle(
                           fontFamily: kSans, fontSize: 13, color: t.accent),

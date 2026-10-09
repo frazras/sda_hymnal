@@ -1567,4 +1567,89 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get serviceArrangementHelp =>
+      'Arrange hymns and readings for a service. You can use a hymn more than once.';
+
+  @override
+  String get serviceDeleteHelp => 'Your hymns and favorites will stay saved.';
+
+  @override
+  String get newService => 'New service';
+
+  @override
+  String get renameService => 'Rename service';
+
+  @override
+  String get serviceName => 'Service name';
+
+  @override
+  String get serviceNameHint => 'Sabbath worship';
+
+  @override
+  String get serviceNameInvalid => 'Use 1–60 characters.';
+
+  @override
+  String get serviceSaveFailed =>
+      'The service could not be saved. Please try again.';
+
+  @override
+  String get serviceStorageFailed =>
+      'Saved services could not be read or updated.';
+
+  @override
+  String get serviceEditingPaused =>
+      'Editing is paused to protect your saved data.';
+
+  @override
+  String get serviceUnavailable => 'Service unavailable';
+
+  @override
+  String get serviceOrderHelp => 'Add hymns and readings in service order.';
+
+  @override
+  String get unavailableItem => 'Unavailable item';
+
+  @override
+  String get repeatAtEnd => 'Repeat at end';
+
+  @override
+  String get addHymnOrReading => 'Add hymn or reading';
+
+  @override
+  String get numberOrTitle => 'Number or title';
+
+  @override
+  String get noMatchingServiceItems => 'No matching hymns or readings';
+
+  @override
+  String get serviceItemNotInstalled =>
+      'This item is not installed. It remains in your service.';
+
+  @override
+  String servicePosition(String name, int position, int total) {
+    return 'Service: $name · $position of $total';
+  }
+
+  @override
+  String serviceItemCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString items',
+      one: '$countString item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get previousControl => 'Previous';
+
+  @override
+  String get nextControl => 'Next';
 }
