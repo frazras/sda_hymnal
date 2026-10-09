@@ -227,3 +227,17 @@ search, so corrected lyrics and displayed blocks stay consistent. Original
 returns the same corrected pack it writes, and `--check` compares that complete
 corrected output against the staged file. Regression tests cover both paths
 and reject empty or malformed replacement blocks before writing.
+
+## Automated publication gates
+
+Run `python3 tool/check_content.py` from any working directory to run the importer,
+structured-source, and content-report regression suites, translation validator
+suite, byte-identical bundled import check, translation catalog check, and final
+content coverage report. Use `--report /absolute/path/report.json` to retain the
+report; otherwise it stays in temporary storage. A failure stops the command and
+returns a nonzero exit code. It never regenerates bundled assets or downloads audio.
+
+The Content publication checks GitHub workflow runs this same command on pushes,
+pull requests, and manual dispatch with read-only repository permission. This is
+an automated structural gate, not fluent lyric review, musical equivalence review,
+or an automatic release. Branch protection is not changed by adding the workflow.
