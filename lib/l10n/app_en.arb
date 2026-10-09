@@ -910,5 +910,6 @@
   "jumpToLetter": "Jump to letter",
   "previewPresentation": "Preview slides",
   "sharePresentation": "Share HTML slides",
-  "presentationExportFailed": "Unable to export slides. Check that every service item is available."
+  "presentationExportFailed": "Unable to export slides. Check that every service item is available.",
+  "languageSaveFailed": "Could not save the app language. Please try again."
 }

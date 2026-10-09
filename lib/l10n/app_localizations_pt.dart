@@ -1992,4 +1992,8 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get presentationExportFailed =>
       'Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.';
+
+  @override
+  String get languageSaveFailed =>
+      'Não foi possível salvar o idioma do aplicativo. Tente novamente.';
 }

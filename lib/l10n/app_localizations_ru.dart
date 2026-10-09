@@ -2018,4 +2018,8 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get presentationExportFailed =>
       'Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения.';
+
+  @override
+  String get languageSaveFailed =>
+      'Не удалось сохранить язык приложения. Попробуйте ещё раз.';
 }

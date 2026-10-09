@@ -1,5 +1,7 @@
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'report_error.dart';
+import 'app_language_picker.dart';
+import '../services/app_language.dart';
 import 'reading_history.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
@@ -230,6 +232,18 @@ class Settings extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: const _ThemeSegmentedControl(),
         ),
+        const SizedBox(height: 10),
+        _card(t,
+            child: ValueListenableBuilder<Locale>(
+              valueListenable: AppLanguage.instance,
+              builder: (context, locale, _) => _SettingsRow(
+                leading: Icon(Icons.language, color: t.muted),
+                title: context.appText.interfaceLanguage,
+                subtitle:
+                    interfaceLanguageNames[locale.languageCode] ?? 'English',
+                onTap: () => showAppLanguagePicker(context),
+              ),
+            )),
         SectionLabel(context.appText.more.toUpperCase(),
             padding: EdgeInsets.fromLTRB(24, 22, 24, 8)),
         _card(t,

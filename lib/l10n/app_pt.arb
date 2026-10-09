@@ -567,5 +567,6 @@
   "jumpToLetter": "Ir para uma letra",
   "previewPresentation": "Pré-visualizar slides",
   "sharePresentation": "Compartilhar slides HTML",
-  "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis."
+  "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.",
+  "languageSaveFailed": "Não foi possível salvar o idioma do aplicativo. Tente novamente."
 }

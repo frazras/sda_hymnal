@@ -1980,4 +1980,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get presentationExportFailed =>
       'Unable to export slides. Check that every service item is available.';
+
+  @override
+  String get languageSaveFailed =>
+      'Could not save the app language. Please try again.';
 }

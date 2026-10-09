@@ -3509,6 +3509,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to export slides. Check that every service item is available.'**
   String get presentationExportFailed;
+
+  /// No description provided for @languageSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the app language. Please try again.'**
+  String get languageSaveFailed;
 }
 
 class _AppLocalizationsDelegate

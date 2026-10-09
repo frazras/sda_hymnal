@@ -15,12 +15,20 @@ The catalogs and Flutter localization delegates are in place. Navigation, main
 reader menu, musical style sheet, top-level settings, and keypad discovery labels
 now consume the messages. Search labels, result counts, topic controls, and empty states also consume
 localized messages. Favorites, category dialogs, reorder controls, and protected-storage warnings
-also consume translations. Several reader/settings child screens still need
-coverage. **Do not expose the language selector until
-the main navigation, keypad, search, favorites, reader, and settings flows have
-complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 568-message
-catalogs are draft translations that also need fluent community review.
+also consume translations. Reader/settings child screens, service editor and
+preview, history, release notes, and alphabetical browsing use the catalogs.
+The App language row is now exposed under Settings > Appearance. It lists each
+language by its native name and saves the interface preference independently of
+the chosen hymn book. Source titles, lyric language, favorites, and melody volume
+are preserved. English is always selectable from the same picker.
+
+Compact-screen tests cover switching among all four locales in Modern/Classic
+and light/dark mode, persistent selection, preserved settings, and translated
+search/favorites/reader flows. Alphabetical shortcuts hide while typing to retain
+space for the translated result count and Done action above the keyboard.
+The 569-message catalogs remain draft translations needing fluent community
+review. This technical rollout does not claim that review has happened or mark
+the complete translation roadmap item achieved.
 
 ## Contributor steps
 
