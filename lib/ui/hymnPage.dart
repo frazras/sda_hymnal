@@ -520,10 +520,7 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                                   onPressed:
                                       !_canMove(-1) ? null : () => _move(-1),
                                   icon: const Icon(Icons.chevron_left)),
-                              Expanded(
-                                  child: Text(context.appText.swipeToTurn,
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2)),
+                              const Spacer(),
                               IconButton(
                                   key: const ValueKey('reader-next'),
                                   tooltip: widget.sequence == null
