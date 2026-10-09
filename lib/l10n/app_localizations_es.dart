@@ -1981,4 +1981,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get release400Feature2 =>
       'Se corrigieron decenas de problemas de letras notificados y se restauró el himno 314 del Himnario Nuevo.';
+
+  @override
+  String get alphabeticalBrowse => 'Explorar alfabéticamente';
+
+  @override
+  String get jumpToLetter => 'Ir a una letra';
 }

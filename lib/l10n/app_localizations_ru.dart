@@ -2002,4 +2002,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get release400Feature2 =>
       'Исправлены десятки сообщённых ошибок в текстах и восстановлен гимн 314 Нового сборника.';
+
+  @override
+  String get alphabeticalBrowse => 'По алфавиту';
+
+  @override
+  String get jumpToLetter => 'Перейти к букве';
 }

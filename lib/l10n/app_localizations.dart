@@ -3479,6 +3479,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Corrected dozens of reported lyric problems and restored New Hymnal 314.'**
   String get release400Feature2;
+
+  /// No description provided for @alphabeticalBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse alphabetically'**
+  String get alphabeticalBrowse;
+
+  /// No description provided for @jumpToLetter.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to letter'**
+  String get jumpToLetter;
 }
 
 class _AppLocalizationsDelegate

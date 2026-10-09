@@ -562,5 +562,7 @@
   "release401Feature0": "Foi adicionada uma política de privacidade específica para o aplicativo.",
   "release400Feature0": "O aplicativo foi reconstruído com uma experiência de leitura mais clara.",
   "release400Feature1": "Foram adicionados reprodução musical, acordes e acompanhamentos Gospel, Island Reggae e Steel Pan Calypso.",
-  "release400Feature2": "Foram corrigidos dezenas de problemas nas letras relatados e restaurado o hino 314 do Hinário Novo."
+  "release400Feature2": "Foram corrigidos dezenas de problemas nas letras relatados e restaurado o hino 314 do Hinário Novo.",
+  "alphabeticalBrowse": "Explorar por ordem alfabética",
+  "jumpToLetter": "Ir para uma letra"
 }

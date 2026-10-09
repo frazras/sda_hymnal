@@ -1,8 +1,9 @@
 # Alphabetical browsing
 
-This feature is in progress. The native title-collation bridge is implemented;
-search controls, letter jumping, accessibility, and cross-language UI validation
-remain before completion. Number-pad entry and relevance-ranked search stay intact.
+This feature is in progress. Native title collation, a dedicated alphabetical
+browse route, and a letter jump picker are connected to paired, individual, and
+all-language search screens. Physical-device UX review remains. Number-pad entry
+and relevance-ranked search stay intact.
 
 The book language determines title order independently of interface language.
 Android uses java.text.Collator with secondary strength and canonical decomposition;
@@ -13,12 +14,21 @@ Dart validates that the result is a complete permutation and returns an immutabl
 index list. Unsupported platforms must not advertise locale sorting through an
 ASCII fallback; bridge failures should leave existing browsing usable.
 
-The API is not yet called by the UI. Integration must cover paired English and
-Spanish books, individual imported books, both designs, and the existing filtered
-search view. Alphabetical order should be optional, with jump controls appearing
-only while browsing alphabetically without a query. A query retains title-first
-relevance ranking. Reader and playback queues must use the displayed book order,
-with source identities preserved across repeated titles and edition filters.
+An A–Z icon in existing search controls opens a dedicated browse route, keeping
+letter navigation away from the compact search screen. The route uses native
+sorting and a modal letter picker. Fixed-height rows scale with text size, so a
+jump reaches its intended lazy-list row even for long titles. Labels fold Latin
+accents but retain Spanish Ñ and Russian letters, including Ё. Only initials
+present in the current list are offered.
+
+All-language browsing offers a language selector labelled with source book names;
+only that language is sent to its collator. Paired editions retain edition labels.
+Opening a hymn gives the reader its alphabetically displayed, same-edition queue.
+The original search route retains query relevance ranking and original navigation.
+A collation failure offers retry, while Back returns to existing usable search.
+
+Tests cover lazy-row jumping, native failure/retry, mixed-language selection,
+letter labels, and existing paired and imported-book search and number-pad flows.
 
 References: [Android Collator](https://developer.android.com/reference/java/text/Collator)
 and [Foundation comparison](https://developer.apple.com/documentation/foundation/nsstring/compare(_:options:range:locale:)).

@@ -1,5 +1,6 @@
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
+import 'alphabetical_hymns.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymnal_pack.dart';
 import 'package:sdahymnal/services/hymn_search.dart';
@@ -126,6 +127,7 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
+          AlphabeticalBrowseButton(hymns: widget.hymns),
           Expanded(
               child: Text(context.appText.hymnCountScope(
                   results.length, context.appText.allLanguages))),
@@ -290,6 +292,7 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(children: [
+          AlphabeticalBrowseButton(hymns: _queue),
           Expanded(
               child: Text(
                   context.appText

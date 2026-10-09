@@ -905,5 +905,7 @@
   "release401Feature0": "Added a privacy policy written specifically for the hymnal app.",
   "release400Feature0": "Introduced the rebuilt app with a cleaner reading experience.",
   "release400Feature1": "Added music playback, chords, Gospel, Island Reggae, and Steel Pan Calypso accompaniment.",
-  "release400Feature2": "Corrected dozens of reported lyric problems and restored New Hymnal 314."
+  "release400Feature2": "Corrected dozens of reported lyric problems and restored New Hymnal 314.",
+  "alphabeticalBrowse": "Browse alphabetically",
+  "jumpToLetter": "Jump to letter"
 }

@@ -562,5 +562,7 @@
   "release401Feature0": "Se añadió una política de privacidad específica para la aplicación.",
   "release400Feature0": "Se presentó la aplicación renovada con una lectura más clara.",
   "release400Feature1": "Se añadieron reproducción musical, acordes y acompañamientos Gospel, Island Reggae y Steel Pan Calypso.",
-  "release400Feature2": "Se corrigieron decenas de problemas de letras notificados y se restauró el himno 314 del Himnario Nuevo."
+  "release400Feature2": "Se corrigieron decenas de problemas de letras notificados y se restauró el himno 314 del Himnario Nuevo.",
+  "alphabeticalBrowse": "Explorar alfabéticamente",
+  "jumpToLetter": "Ir a una letra"
 }

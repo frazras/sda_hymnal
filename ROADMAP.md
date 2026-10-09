@@ -141,8 +141,8 @@ Items below are plans, not claims that multilingual content is already installed
 - [x] Add a full recently opened history page with book labels and a clear-history
       action, while retaining the quick Recent chips on the number screen.
 - [ ] Add locale-aware alphabetical browsing and a jump index for large books.
-      Native locale collation is implemented; UI controls and jump navigation
-      remain. [Design and validation](docs/alphabetical-browsing.md).
+      Native locale collation, separate browse controls, and letter jumps are
+      connected; physical-device UX review remains. [Design and validation](docs/alphabetical-browsing.md).
 
 ## Sharing and Presentation
 

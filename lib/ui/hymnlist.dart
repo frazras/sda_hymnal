@@ -1,5 +1,6 @@
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'dart:async';
+import 'alphabetical_hymns.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
 import 'package:sdahymnal/services/hymn_search.dart';
@@ -357,6 +358,7 @@ class _HymnListState extends State<HymnList> {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             children: [
+              AlphabeticalBrowseButton(hymns: _currentHymns),
               Expanded(
                 child: TextButton.icon(
                   onPressed: !widget.english

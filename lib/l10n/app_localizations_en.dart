@@ -1964,4 +1964,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get release400Feature2 =>
       'Corrected dozens of reported lyric problems and restored New Hymnal 314.';
+
+  @override
+  String get alphabeticalBrowse => 'Browse alphabetically';
+
+  @override
+  String get jumpToLetter => 'Jump to letter';
 }

@@ -1976,4 +1976,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get release400Feature2 =>
       'Foram corrigidos dezenas de problemas nas letras relatados e restaurado o hino 314 do Hinário Novo.';
+
+  @override
+  String get alphabeticalBrowse => 'Explorar por ordem alfabética';
+
+  @override
+  String get jumpToLetter => 'Ir para uma letra';
 }
