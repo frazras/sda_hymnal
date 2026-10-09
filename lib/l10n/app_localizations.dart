@@ -3491,6 +3491,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Jump to letter'**
   String get jumpToLetter;
+
+  /// No description provided for @previewPresentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview slides'**
+  String get previewPresentation;
+
+  /// No description provided for @sharePresentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share HTML slides'**
+  String get sharePresentation;
+
+  /// No description provided for @presentationExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to export slides. Check that every service item is available.'**
+  String get presentationExportFailed;
 }
 
 class _AppLocalizationsDelegate

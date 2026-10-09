@@ -1987,4 +1987,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get jumpToLetter => 'Ir a una letra';
+
+  @override
+  String get previewPresentation => 'Vista previa de diapositivas';
+
+  @override
+  String get sharePresentation => 'Compartir diapositivas HTML';
+
+  @override
+  String get presentationExportFailed =>
+      'No se pudieron exportar las diapositivas. Comprueba que todos los elementos del servicio estén disponibles.';
 }

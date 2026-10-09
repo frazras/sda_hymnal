@@ -564,5 +564,8 @@
   "release400Feature1": "Добавлены воспроизведение музыки, аккорды и сопровождение Gospel, Island Reggae и Steel Pan Calypso.",
   "release400Feature2": "Исправлены десятки сообщённых ошибок в текстах и восстановлен гимн 314 Нового сборника.",
   "alphabeticalBrowse": "По алфавиту",
-  "jumpToLetter": "Перейти к букве"
+  "jumpToLetter": "Перейти к букве",
+  "previewPresentation": "Предпросмотр слайдов",
+  "sharePresentation": "Поделиться HTML-слайдами",
+  "presentationExportFailed": "Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения."
 }

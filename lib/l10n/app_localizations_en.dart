@@ -1970,4 +1970,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jumpToLetter => 'Jump to letter';
+
+  @override
+  String get previewPresentation => 'Preview slides';
+
+  @override
+  String get sharePresentation => 'Share HTML slides';
+
+  @override
+  String get presentationExportFailed =>
+      'Unable to export slides. Check that every service item is available.';
 }

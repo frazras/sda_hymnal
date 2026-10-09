@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:sdahymnal/ui/service_presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn.dart';
@@ -89,5 +94,46 @@ void main() {
     expect(
         () => ServicePresentation.build(service, repository, linesPerSlide: 0),
         throwsArgumentError);
+  });
+  testWidgets(
+      'share sends a real UTF-8 HTML file with its filename and popover origin',
+      (tester) async {
+    final directory =
+        Directory.systemTemp.createTempSync('presentation-share-');
+    addTearDown(() => directory.deleteSync(recursive: true));
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+    const shareChannel = MethodChannel('dev.fluttercommunity.plus/share');
+    messenger.setMockMethodCallHandler(
+        pathChannel, (_) async => directory.path);
+    final shared = Completer<void>();
+    messenger.setMockMethodCallHandler(shareChannel, (call) async {
+      expect(call.method, 'share');
+      final args = call.arguments as Map;
+      final path = (args['paths'] as List).single as String;
+      expect(path, endsWith('/service-slides.html'));
+      expect(args['mimeTypes'], ['text/html']);
+      expect(args['originWidth'], greaterThan(0));
+      expect(File(path).readAsStringSync(), contains('Corazón &lt;script&gt;'));
+      shared.complete();
+      return 'dev.fluttercommunity.plus/share/unavailable';
+    });
+    addTearDown(() {
+      messenger.setMockMethodCallHandler(pathChannel, null);
+      messenger.setMockMethodCallHandler(shareChannel, null);
+    });
+    await tester.pumpWidget(MaterialApp(
+        home: ServicePresentationPage(
+            presentation: ServicePresentation.build(service, repository))));
+    await tester.tap(find.byTooltip('Share HTML slides'));
+    for (var i = 0; i < 30 && !shared.isCompleted; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    expect(shared.isCompleted, isTrue);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 }

@@ -907,5 +907,8 @@
   "release400Feature1": "Added music playback, chords, Gospel, Island Reggae, and Steel Pan Calypso accompaniment.",
   "release400Feature2": "Corrected dozens of reported lyric problems and restored New Hymnal 314.",
   "alphabeticalBrowse": "Browse alphabetically",
-  "jumpToLetter": "Jump to letter"
+  "jumpToLetter": "Jump to letter",
+  "previewPresentation": "Preview slides",
+  "sharePresentation": "Share HTML slides",
+  "presentationExportFailed": "Unable to export slides. Check that every service item is available."
 }

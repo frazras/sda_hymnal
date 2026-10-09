@@ -151,8 +151,8 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Explore presentation export for service playlists and lyric slides,
       including VideoPsalm compatibility. This is a proposed extension of the
       Rejnac presentation workflow; live casting is a separate future decision.
-      Source-order slides and offline HTML rendering are implemented; UI export
-      and compatibility validation remain. [Progress](docs/service-presentation.md).
+      Source-order slides, preview, and offline HTML file sharing are connected;
+      physical share-sheet/browser and compatibility validation remain. [Progress](docs/service-presentation.md).
 
 ## Usage Insights
 

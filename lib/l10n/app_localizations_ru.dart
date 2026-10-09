@@ -2008,4 +2008,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get jumpToLetter => 'Перейти к букве';
+
+  @override
+  String get previewPresentation => 'Предпросмотр слайдов';
+
+  @override
+  String get sharePresentation => 'Поделиться HTML-слайдами';
+
+  @override
+  String get presentationExportFailed =>
+      'Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения.';
 }

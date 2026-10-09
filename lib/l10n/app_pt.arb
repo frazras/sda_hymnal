@@ -564,5 +564,8 @@
   "release400Feature1": "Foram adicionados reprodução musical, acordes e acompanhamentos Gospel, Island Reggae e Steel Pan Calypso.",
   "release400Feature2": "Foram corrigidos dezenas de problemas nas letras relatados e restaurado o hino 314 do Hinário Novo.",
   "alphabeticalBrowse": "Explorar por ordem alfabética",
-  "jumpToLetter": "Ir para uma letra"
+  "jumpToLetter": "Ir para uma letra",
+  "previewPresentation": "Pré-visualizar slides",
+  "sharePresentation": "Compartilhar slides HTML",
+  "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis."
 }

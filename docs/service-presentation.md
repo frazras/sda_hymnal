@@ -1,8 +1,9 @@
 # Service presentation export
 
 This roadmap item is in progress. A source-order slide snapshot and self-contained
-HTML renderer are implemented. Editor export/share controls, user preview, visual
-rendering checks, and VideoPsalm compatibility remain before completion.
+HTML renderer, editor preview action, and file-sharing controls are implemented.
+HTML browser rendering and physical share-sheet checks, plus VideoPsalm
+compatibility, remain before completion.
 
 `ServicePresentation.build` resolves each service occurrence by its full item
 reference. Repeated hymns remain separate opening/closing occurrences. Hymn blocks
@@ -25,7 +26,17 @@ reading roles, reference preservation, Unicode and HTML escaping, immutable
 slides, invalid line limits, missing entries, and empty services. A generated
 Spanish preview was produced at `/tmp/service-presentation-preview.html`, but the
 browser tool rejected local-file navigation, so browser visual/runtime checks are
-not claimed. No workaround was attempted. No export menu is connected yet.
+not claimed. No workaround was attempted. The service editor now opens a native
+slide preview, with bounded Previous/Next controls and Share HTML slides. The
+preview supports scrollable long text. Export uses a UTF-8 HTML file through
+share_plus temporary storage, a stable filename, and a button-relative iPad
+popover anchor. No export is created until the user requests sharing.
+
+Editor tests cover preview/navigation/back across EN/ES/PT/RU, both designs, and
+light/dark mode on compact screens. A sharing test inspects the real generated
+file at the mocked platform handoff, including Unicode, escaping, MIME type,
+filename, and popover bounds. It does not prove a physical recipient app can
+open the HTML file.
 
 VideoPsalm export should use reviewed schemas and imported sample validation.
 An HTML export is not evidence of VideoPsalm compatibility.

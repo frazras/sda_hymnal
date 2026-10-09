@@ -1982,4 +1982,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get jumpToLetter => 'Ir para uma letra';
+
+  @override
+  String get previewPresentation => 'Pré-visualizar slides';
+
+  @override
+  String get sharePresentation => 'Compartilhar slides HTML';
+
+  @override
+  String get presentationExportFailed =>
+      'Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.';
 }

@@ -7,6 +7,8 @@ import '../services/hymnal_repository.dart';
 import '../services/search_normalization.dart';
 import '../services/service_playlists.dart';
 import 'service_reader.dart';
+import 'service_presentation.dart';
+import '../services/service_presentation.dart';
 
 String _id() => List.generate(16,
         (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'))
@@ -244,7 +246,28 @@ class _ServiceEditor extends StatelessWidget {
         }
         final list = matches.first;
         return Scaffold(
-            appBar: AppBar(title: Text(list.name)),
+            appBar: AppBar(title: Text(list.name), actions: [
+              IconButton(
+                  tooltip: context.appText.previewPresentation,
+                  icon: const Icon(Icons.slideshow_outlined),
+                  onPressed: list.entries.isEmpty
+                      ? null
+                      : () {
+                          try {
+                            final presentation =
+                                ServicePresentation.build(list, repository);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => ServicePresentationPage(
+                                        presentation: presentation)));
+                          } catch (_) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    context.appText.presentationExportFailed)));
+                          }
+                        }),
+            ]),
             body: Column(children: [
               if (store.storageError) _StorageNotice(store: store),
               Expanded(

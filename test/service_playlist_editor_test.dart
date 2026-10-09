@@ -9,6 +9,7 @@ import 'package:sdahymnal/services/hymnal_repository.dart';
 import 'package:sdahymnal/services/service_playlists.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/service_playlists.dart';
+import 'package:sdahymnal/ui/service_presentation.dart';
 
 void main() {
   final repo = HymnalRepository(editions: const [
@@ -89,6 +90,23 @@ void main() {
           expect(store.playlists.single.entries, hasLength(2));
           expect(store.playlists.single.entries.map((e) => e.id).toSet(),
               hasLength(2));
+          await tester.tap(find.byTooltip(text.previewPresentation));
+          await tester.pumpAndSettle();
+          expect(find.byType(ServicePresentationPage), findsOneWidget);
+          expect(find.text('1 / 2'), findsOneWidget);
+          await tester.tap(find.byTooltip(text.nextItem));
+          await tester.pumpAndSettle();
+          expect(find.text('2 / 2'), findsOneWidget);
+          expect(
+              tester
+                  .widget<IconButton>(find.byWidgetPredicate(
+                      (w) => w is IconButton && w.tooltip == text.nextItem))
+                  .onPressed,
+              isNull);
+          await tester.tap(find.byType(BackButton));
+          await tester.pumpAndSettle();
+          expect(store.playlists.single.entries, hasLength(2));
+
           await tester.tap(find.text(text.addHymnOrReading));
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField), '701');
