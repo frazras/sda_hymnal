@@ -498,5 +498,16 @@
   "readingOptions": "Opções de leitura",
   "pauseReading": "Pausar leitura",
   "readingScripture": "Texto bíblico: {reference}",
-  "categoryPosition": "Categoria: {name} · {position} de {total}"
+  "categoryPosition": "Categoria: {name} · {position} de {total}",
+  "topicsHeading": "Hinos e leituras por tema",
+  "topicsIntro": "Explore o índice temático do hinário junto com nossas seleções para diferentes ocasiões.",
+  "searchTopicsOccasions": "Buscar temas e ocasiões",
+  "noMatchingTopics": "Nenhum tema correspondente.",
+  "occasionNoSelections": "Ainda não há seleções disponíveis neste hinário.",
+  "readingsLoadRetry": "Não foi possível carregar as leituras. Tentar novamente",
+  "scriptureReadings": "Leituras bíblicas",
+  "hymnsPopularityRanked": "Hinos ordenados por popularidade",
+  "topicReadingCount": "{count, plural, one{{count} leitura} other{{count} leituras}}",
+  "topicReadingsLoading": "Carregando leituras…",
+  "topicReadingsUnavailable": "Leituras indisponíveis"
 }

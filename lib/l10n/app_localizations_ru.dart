@@ -1745,4 +1745,53 @@ class AppLocalizationsRu extends AppLocalizations {
   String categoryPosition(String name, int position, int total) {
     return 'Категория: $name · $position из $total';
   }
+
+  @override
+  String get topicsHeading => 'Гимны и чтения по темам';
+
+  @override
+  String get topicsIntro =>
+      'Изучайте тематический указатель сборника гимнов вместе с нашими подборками для разных случаев.';
+
+  @override
+  String get searchTopicsOccasions => 'Поиск тем и поводов';
+
+  @override
+  String get noMatchingTopics => 'Подходящих тем нет.';
+
+  @override
+  String get occasionNoSelections =>
+      'Для этого сборника гимнов пока нет подборки.';
+
+  @override
+  String get readingsLoadRetry => 'Не удалось загрузить чтения. Повторить';
+
+  @override
+  String get scriptureReadings => 'Чтения из Писания';
+
+  @override
+  String get hymnsPopularityRanked => 'Гимны по популярности';
+
+  @override
+  String topicReadingCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString чтения',
+      many: '$countString чтений',
+      few: '$countString чтения',
+      one: '$countString чтение',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get topicReadingsLoading => 'Загрузка чтений…';
+
+  @override
+  String get topicReadingsUnavailable => 'Чтения недоступны';
 }

@@ -498,5 +498,16 @@
   "readingOptions": "Opciones de lectura",
   "pauseReading": "Pausar lectura",
   "readingScripture": "Escritura: {reference}",
-  "categoryPosition": "Categoría: {name} · {position} de {total}"
+  "categoryPosition": "Categoría: {name} · {position} de {total}",
+  "topicsHeading": "Himnos y lecturas por tema",
+  "topicsIntro": "Explora el índice temático del himnario junto con nuestras selecciones para distintas ocasiones.",
+  "searchTopicsOccasions": "Buscar temas y ocasiones",
+  "noMatchingTopics": "No hay temas que coincidan.",
+  "occasionNoSelections": "Todavía no hay selecciones disponibles en este himnario.",
+  "readingsLoadRetry": "No se pudieron cargar las lecturas. Reintentar",
+  "scriptureReadings": "Lecturas bíblicas",
+  "hymnsPopularityRanked": "Himnos ordenados por popularidad",
+  "topicReadingCount": "{count, plural, one{{count} lectura} other{{count} lecturas}}",
+  "topicReadingsLoading": "Cargando lecturas…",
+  "topicReadingsUnavailable": "Lecturas no disponibles"
 }

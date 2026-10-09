@@ -1712,4 +1712,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String categoryPosition(String name, int position, int total) {
     return 'Category: $name · $position of $total';
   }
+
+  @override
+  String get topicsHeading => 'Hymns and readings by topic';
+
+  @override
+  String get topicsIntro =>
+      'Explore the hymnal’s topical index alongside our existing occasion selections.';
+
+  @override
+  String get searchTopicsOccasions => 'Search topics and occasions';
+
+  @override
+  String get noMatchingTopics => 'No matching topics.';
+
+  @override
+  String get occasionNoSelections =>
+      'No selections are available in this hymnal yet.';
+
+  @override
+  String get readingsLoadRetry => 'Could not load readings. Retry';
+
+  @override
+  String get scriptureReadings => 'Scripture readings';
+
+  @override
+  String get hymnsPopularityRanked => 'Hymns popularity ranked';
+
+  @override
+  String topicReadingCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString readings',
+      one: '$countString reading',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get topicReadingsLoading => 'Loading readings…';
+
+  @override
+  String get topicReadingsUnavailable => 'Readings unavailable';
 }

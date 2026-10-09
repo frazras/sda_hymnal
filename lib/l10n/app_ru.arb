@@ -498,5 +498,16 @@
   "readingOptions": "Параметры чтения",
   "pauseReading": "Приостановить чтение",
   "readingScripture": "Писание: {reference}",
-  "categoryPosition": "Категория: {name} · {position} из {total}"
+  "categoryPosition": "Категория: {name} · {position} из {total}",
+  "topicsHeading": "Гимны и чтения по темам",
+  "topicsIntro": "Изучайте тематический указатель сборника гимнов вместе с нашими подборками для разных случаев.",
+  "searchTopicsOccasions": "Поиск тем и поводов",
+  "noMatchingTopics": "Подходящих тем нет.",
+  "occasionNoSelections": "Для этого сборника гимнов пока нет подборки.",
+  "readingsLoadRetry": "Не удалось загрузить чтения. Повторить",
+  "scriptureReadings": "Чтения из Писания",
+  "hymnsPopularityRanked": "Гимны по популярности",
+  "topicReadingCount": "{count, plural, one{{count} чтение} few{{count} чтения} many{{count} чтений} other{{count} чтения}}",
+  "topicReadingsLoading": "Загрузка чтений…",
+  "topicReadingsUnavailable": "Чтения недоступны"
 }

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import '../l10n/app_text.dart';
+import '../services/search_normalization.dart';
 
 import 'package:flutter/services.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
@@ -25,14 +27,14 @@ class _HymnOccasionsPageState extends State<HymnOccasionsPage> {
   String _query = '';
 
   bool _matches(HymnOccasion topic) {
-    final query = _query.trim().toLowerCase();
+    final query = normalizeHymnSearch(_query);
     final original = curatedHymnOccasions.where((o) => o.id == topic.id);
     final aliases = topicalCrossReferences.entries
         .where((entry) => entry.value.contains(topic.title))
         .map((entry) => entry.key)
         .join(' ');
-    return '$aliases ${topic.title} ${topic.description} ${original.map((o) => o.title).join(' ')}'
-        .toLowerCase()
+    return normalizeHymnSearch(
+            '$aliases ${topic.title} ${topic.description} ${original.map((o) => o.title).join(' ')}')
         .contains(query);
   }
 
@@ -44,30 +46,29 @@ class _HymnOccasionsPageState extends State<HymnOccasionsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const SubPageHeader(title: 'Hymns by occasion'),
+            SubPageHeader(title: context.appText.hymnsByOccasion),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(20),
                 children: [
-                  Text('Hymns and readings by topic',
+                  Text(context.appText.topicsHeading,
                       style: TextStyle(
                           fontFamily: kSerif, fontSize: 26, color: t.ink)),
                   const SizedBox(height: 8),
-                  Text(
-                      'Explore the hymnal’s topical index alongside our existing occasion selections.',
+                  Text(context.appText.topicsIntro,
                       style: TextStyle(
                           fontFamily: kSans, height: 1.5, color: t.muted)),
                   const SizedBox(height: 20),
                   TextField(
                     onChanged: (value) => setState(() => _query = value),
-                    decoration: const InputDecoration(
-                      hintText: 'Search topics and occasions',
+                    decoration: InputDecoration(
+                      hintText: context.appText.searchTopicsOccasions,
                       prefixIcon: Icon(Icons.search),
                     ),
                   ),
                   const SizedBox(height: 16),
                   if (!hymnOccasions.any(_matches))
-                    const Text('No matching topics.'),
+                    Text(context.appText.noMatchingTopics),
                   for (final occasion in hymnOccasions.where(_matches))
                     Card(
                       color: t.surface,
@@ -144,8 +145,9 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
   Future<void> _loadReadings() async {
     setState(() => _readingsFailed = false);
     try {
-      final data =
-          await rootBundle.loadString('assets/additional_readings.json');
+      // loadString caches failed futures; a retry must request the asset again.
+      final data = await rootBundle
+          .loadString('assets/additional_readings.json', cache: false);
       final catalog = AdditionalReadingCatalog.fromJson(
           jsonDecode(data) as Map<String, dynamic>);
       if (mounted) setState(() => _readings = catalog);
@@ -184,6 +186,11 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
         .readingsFor(_readings ?? const AdditionalReadingCatalog([]), _version);
     final hasReadingRefs =
         _version == 'new' && widget.occasion.newReadingNumbers.isNotEmpty;
+    final readingCount = hasReadingRefs && _readings == null
+        ? (_readingsFailed
+            ? context.appText.topicReadingsUnavailable
+            : context.appText.topicReadingsLoading)
+        : context.appText.topicReadingCount(readings.length);
     return Scaffold(
       backgroundColor: t.bg,
       body: SafeArea(
@@ -208,8 +215,9 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                     children: [
                       for (final version in ['new', 'old'])
                         ChoiceChip(
-                          label: Text(
-                              version == 'new' ? 'New Hymnal' : 'Old Hymnal'),
+                          label: Text(version == 'new'
+                              ? context.appText.newHymnal
+                              : context.appText.oldHymnal),
                           selected: _version == version,
                           onSelected: (_) => setState(() => _version = version),
                         ),
@@ -217,14 +225,13 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                      '${suggestions.length} hymns • ${readings.length} readings${suggestions.isNotEmpty && _popularity.isNotEmpty ? ' • Hymns popularity ranked' : ''}',
+                      '${context.appText.hymnCount(suggestions.length)} • $readingCount${suggestions.isNotEmpty && _popularity.isNotEmpty ? ' • ${context.appText.hymnsPopularityRanked}' : ''}',
                       style: TextStyle(fontFamily: kSans, color: t.muted)),
                   const SizedBox(height: 8),
                   if (suggestions.isEmpty && !hasReadingRefs)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Text(
-                          'No selections are available in this hymnal yet.',
+                      child: Text(context.appText.occasionNoSelections,
                           style: TextStyle(color: t.muted)),
                     ),
                   for (final hymn in suggestions) ...[
@@ -260,13 +267,12 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                       child: _readingsFailed
                           ? TextButton(
                               onPressed: _loadReadings,
-                              child:
-                                  const Text('Could not load readings. Retry'))
+                              child: Text(context.appText.readingsLoadRetry))
                           : const Center(child: CircularProgressIndicator()),
                     ),
                   if (readings.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    Text('Scripture readings',
+                    Text(context.appText.scriptureReadings,
                         style: TextStyle(
                             fontFamily: kSerif, fontSize: 22, color: t.ink)),
                     for (final reading in readings)
@@ -287,7 +293,7 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                                 fontSize: 19,
                                 color: t.ink)),
                         subtitle: Text(
-                            'Reading${reading.scriptureReference == null ? '' : ' • ${reading.scriptureReference}'}'),
+                            '${context.appText.reading}${reading.scriptureReference == null ? '' : ' • ${reading.scriptureReference}'}'),
                         trailing: Icon(Icons.chevron_right, color: t.faint),
                         onTap: () => Navigator.push(
                             context,

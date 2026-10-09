@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 499-message
+not claim that the app interface is fully translated. The 510-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -141,3 +141,12 @@ report subjects, auto-scroll start/pause, and service-order navigation in all
 four locales, both designs, and both themes. Reading titles, scripture
 references, segments, response emphasis, and report identifiers remain source
 data. Existing reader/design regression checks also pass.
+
+Topic/occasion browsing now translates its controls, count units, edition
+filters, and reading status. Source topic titles, descriptions, aliases, and
+hymn/reading assignments stay unchanged. Compact checks exercise all four
+locales, both designs, and both themes, including reading navigation and source
+references. Missing reading data shows loading/unavailable status rather than
+a false zero. A deferred asset-load regression verifies loading, failure, and
+successful retry against the real reading catalog; retries bypass cached failed
+asset futures and make a fresh request.

@@ -1720,4 +1720,52 @@ class AppLocalizationsPt extends AppLocalizations {
   String categoryPosition(String name, int position, int total) {
     return 'Categoria: $name · $position de $total';
   }
+
+  @override
+  String get topicsHeading => 'Hinos e leituras por tema';
+
+  @override
+  String get topicsIntro =>
+      'Explore o índice temático do hinário junto com nossas seleções para diferentes ocasiões.';
+
+  @override
+  String get searchTopicsOccasions => 'Buscar temas e ocasiões';
+
+  @override
+  String get noMatchingTopics => 'Nenhum tema correspondente.';
+
+  @override
+  String get occasionNoSelections =>
+      'Ainda não há seleções disponíveis neste hinário.';
+
+  @override
+  String get readingsLoadRetry =>
+      'Não foi possível carregar as leituras. Tentar novamente';
+
+  @override
+  String get scriptureReadings => 'Leituras bíblicas';
+
+  @override
+  String get hymnsPopularityRanked => 'Hinos ordenados por popularidade';
+
+  @override
+  String topicReadingCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString leituras',
+      one: '$countString leitura',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get topicReadingsLoading => 'Carregando leituras…';
+
+  @override
+  String get topicReadingsUnavailable => 'Leituras indisponíveis';
 }

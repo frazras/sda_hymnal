@@ -3095,6 +3095,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Category: {name} · {position} of {total}'**
   String categoryPosition(String name, int position, int total);
+
+  /// No description provided for @topicsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns and readings by topic'**
+  String get topicsHeading;
+
+  /// No description provided for @topicsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore the hymnal’s topical index alongside our existing occasion selections.'**
+  String get topicsIntro;
+
+  /// No description provided for @searchTopicsOccasions.
+  ///
+  /// In en, this message translates to:
+  /// **'Search topics and occasions'**
+  String get searchTopicsOccasions;
+
+  /// No description provided for @noMatchingTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching topics.'**
+  String get noMatchingTopics;
+
+  /// No description provided for @occasionNoSelections.
+  ///
+  /// In en, this message translates to:
+  /// **'No selections are available in this hymnal yet.'**
+  String get occasionNoSelections;
+
+  /// No description provided for @readingsLoadRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load readings. Retry'**
+  String get readingsLoadRetry;
+
+  /// No description provided for @scriptureReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripture readings'**
+  String get scriptureReadings;
+
+  /// No description provided for @hymnsPopularityRanked.
+  ///
+  /// In en, this message translates to:
+  /// **'Hymns popularity ranked'**
+  String get hymnsPopularityRanked;
+
+  /// No description provided for @topicReadingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} reading} other{{count} readings}}'**
+  String topicReadingCount(int count);
+
+  /// No description provided for @topicReadingsLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading readings…'**
+  String get topicReadingsLoading;
+
+  /// No description provided for @topicReadingsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Readings unavailable'**
+  String get topicReadingsUnavailable;
 }
 
 class _AppLocalizationsDelegate

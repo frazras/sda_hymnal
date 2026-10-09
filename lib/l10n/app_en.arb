@@ -816,5 +816,24 @@
         "type": "int"
       }
     }
-  }
+  },
+  "topicsHeading": "Hymns and readings by topic",
+  "topicsIntro": "Explore the hymnal’s topical index alongside our existing occasion selections.",
+  "searchTopicsOccasions": "Search topics and occasions",
+  "noMatchingTopics": "No matching topics.",
+  "occasionNoSelections": "No selections are available in this hymnal yet.",
+  "readingsLoadRetry": "Could not load readings. Retry",
+  "scriptureReadings": "Scripture readings",
+  "hymnsPopularityRanked": "Hymns popularity ranked",
+  "topicReadingCount": "{count, plural, one{{count} reading} other{{count} readings}}",
+  "@topicReadingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "topicReadingsLoading": "Loading readings…",
+  "topicReadingsUnavailable": "Readings unavailable"
 }
