@@ -193,3 +193,25 @@ Argument order and locale-specific plural branches may differ. Six focused tests
 cover these failure modes and the existing nonempty-message check. Flutter
 gen-l10n remains responsible for ICU syntax/type generation; this validator is
 not a substitute for fluent review or UI layout validation.
+
+## Fluent review sheets
+
+Export a complete draft review sheet without changing the app catalogs:
+
+```sh
+python3 tool/export_translation_review.py es /tmp/interface-review-es.csv
+python3 tool/export_translation_review.py pt /tmp/interface-review-pt.csv
+python3 tool/export_translation_review.py ru /tmp/interface-review-ru.csv
+```
+
+Each UTF-8 CSV contains the message key, English text, current translation,
+available context, and required placeholders. Every row starts as `unreviewed`;
+reviewers can record their name, date, proposed wording, and terminology notes.
+The content checksum identifies the exact language/key/source/translation being
+reviewed, so a later text change cannot silently inherit an older approval.
+The export validates catalog coverage before writing and preserves ICU text.
+
+These sheets are review artifacts, not an automatic import or approval system.
+Apply accepted suggestions to the ARB catalogs through the contributor steps
+above, regenerate localization code, and validate affected screens. A completed
+sheet does not replace device layout checks or review of plurals in context.
