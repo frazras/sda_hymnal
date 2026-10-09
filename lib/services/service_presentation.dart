@@ -56,7 +56,9 @@ class ServicePresentation {
       final before = slides.length;
       for (final block in blocks) {
         final text = block.text.trim();
-        if (text.isEmpty) continue;
+        if (text.isEmpty) {
+          throw FormatException('Empty service block: ${entry.id}');
+        }
         final lines = text.split('\n');
         for (var start = 0; start < lines.length; start += linesPerSlide) {
           final end = (start + linesPerSlide).clamp(0, lines.length);

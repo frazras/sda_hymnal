@@ -10,8 +10,8 @@ reference. Repeated hymns remain separate opening/closing occurrences. Hymn bloc
 come from `HymnTextExport`, retaining source stanza/refrain order without adding the
 reader's repeated choruses. Readings retain each segment and its speaker role.
 The source title, hymn/reading number, book label, and Unicode text remain attached
-to every slide. Missing or empty entries fail the whole export rather than being
-silently omitted. Slides are immutable and split at configurable line boundaries,
+to every slide. Missing entries, empty entries, and empty reading segments fail the whole
+export rather than being silently omitted. Slides are immutable and split at configurable line boundaries,
 defaulting to six source lines per slide.
 
 The HTML output embeds its own style and manual Previous/Next and keyboard
@@ -36,7 +36,8 @@ Editor tests cover preview/navigation/back across EN/ES/PT/RU, both designs, and
 light/dark mode on compact screens. A sharing test inspects the real generated
 file at the mocked platform handoff, including Unicode, escaping, MIME type,
 filename, and popover bounds. It does not prove a physical recipient app can
-open the HTML file.
+open the HTML file. Long-slide tests confirm scrolling and navigation remain
+usable at 4x text size on a 320-pixel screen in both designs and themes.
 
 VideoPsalm export should use reviewed schemas and imported sample validation.
 An HTML export is not evidence of VideoPsalm compatibility.

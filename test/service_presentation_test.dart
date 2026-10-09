@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sdahymnal/ui/service_presentation.dart';
+import 'package:sdahymnal/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/models/hymn.dart';
@@ -136,4 +137,71 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
+  test('an empty reading segment fails instead of dropping part of a reading',
+      () {
+    const incomplete = AdditionalReading(
+        id: 'incomplete',
+        edition: 'sda-es-2009',
+        order: 2,
+        number: 3,
+        title: 'Incomplete',
+        category: '',
+        segments: [
+          ReadingSegment(role: 'leader', text: 'Present'),
+          ReadingSegment(role: 'congregation', text: '  ')
+        ]);
+    final repo = HymnalRepository(
+        editions: repository.editions, hymns: [hymn], readings: [incomplete]);
+    final list = ServicePlaylist(
+        id: 'incomplete',
+        name: 'Incomplete',
+        entries: [ServiceEntry(id: 'reading', ref: incomplete.ref)]);
+    expect(() => ServicePresentation.build(list, repo), throwsFormatException);
+  });
+  for (final classic in [false, true]) {
+    for (final dark in [false, true]) {
+      testWidgets(
+          'long slide remains scrollable with large text classic=$classic dark=$dark',
+          (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final longHymn = Hymn(
+            number: 4,
+            title: 'Una canción con un título muy largo',
+            body: List.filled(6,
+                    'Esta línea tiene muchas palabras para probar cómo se presenta el texto sin perder ninguna palabra.')
+                .join('<br>'),
+            version: 'sda-es-2009',
+            languageTag: 'es');
+        final repo =
+            HymnalRepository(editions: repository.editions, hymns: [longHymn]);
+        final list = ServicePlaylist(
+            id: 'long',
+            name: 'Servicio de adoración',
+            entries: [ServiceEntry(id: 'long', ref: longHymn.ref)]);
+        await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(dark ? HymnalTokens.dark : HymnalTokens.light,
+              classic: classic),
+          builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(4)),
+              child: child!),
+          home: ServicePresentationPage(
+              presentation: ServicePresentation.build(list, repo)),
+        ));
+        await tester.pumpAndSettle();
+        final scrollable =
+            tester.state<ScrollableState>(find.byType(Scrollable).first);
+        expect(scrollable.position.maxScrollExtent, greaterThan(0));
+        await tester.drag(
+            find.byType(SingleChildScrollView), const Offset(0, -300));
+        await tester.pumpAndSettle();
+        expect(scrollable.position.pixels, greaterThan(0));
+        expect(find.text('1 / 1'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  }
 }
