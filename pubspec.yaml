@@ -42,6 +42,7 @@ dependencies:
   sqflite: ^2.4.3
   crypto: ^3.0.7
   archive: 4.0.9
+  http: 1.6.0
   unorm_dart: ^0.3.2
   sqflite_common: ^2.5.11
   share_plus: ^13.3.1

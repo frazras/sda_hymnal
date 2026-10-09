@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -72,8 +73,13 @@ class LanguagePackCancelled implements Exception {
 }
 
 class LanguagePackCancellation {
-  bool _cancelled = false;
-  void cancel() => _cancelled = true;
+  final _signal = Completer<void>();
+  Future<void> get whenCancelled => _signal.future;
+  bool get _cancelled => _signal.isCompleted;
+  void cancel() {
+    if (!_cancelled) _signal.complete();
+  }
+
   void check() {
     if (_cancelled) throw const LanguagePackCancelled();
   }

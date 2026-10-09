@@ -273,3 +273,13 @@ serialized operations and recovery, corrupt local metadata, and linked files.
 The optional-download roadmap item remains incomplete until trusted catalog
 publication, transport, repository integration, score storage, translated size/
 coverage management UI, and physical-device validation are connected.
+
+`downloadLanguagePack` now provides the text transport: a streamed GET to the
+reviewed HTTPS URL, with redirects disabled, exact optional Content-Length,
+received-byte limits, progress callbacks, header/idle timeouts, and full checksum/
+pack validation. Cancellation is passed to the HTTP abort trigger and checked
+between chunks; no partial buffer becomes an installed pack. Its five transport
+regressions use streamed responses, including cancellation before headers, wrong
+status/size, truncated or changed text, oversized bodies, and stalled streams.
+The HTTP dependency stays at the already-resolved 1.6.0 version, promoted to direct.
+This transport still awaits trusted catalog and app-loader/UI wiring.
