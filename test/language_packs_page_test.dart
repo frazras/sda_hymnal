@@ -13,6 +13,69 @@ import 'hymnal_pack_test.dart' show FilePackBundle;
 void main() {
   final bytes =
       File('resources/hymnals/sda-ny-khristu-mu-nyimbo.json').readAsBytesSync();
+  for (final cancel in [false, true]) {
+    testWidgets('failed or cancelled download remains retryable cancel=$cancel',
+        (tester) async {
+      final directory = await tester
+          .runAsync(() => Directory.systemTemp.createTemp('pack-ui-failure-'));
+      addTearDown(() => directory!.delete(recursive: true));
+      final store = LanguagePackStore(directory!, download: (_) async => bytes);
+      var changes = 0;
+      await tester.runAsync(() async {
+        await tester.pumpWidget(MaterialApp(
+            home: DefaultAssetBundle(
+                bundle: FilePackBundle(),
+                child: LanguagePacksPage(
+                  store: store,
+                  onChanged: () async {
+                    changes++;
+                  },
+                  fetch: (_, {cancellation, onProgress}) async {
+                    if (cancel) {
+                      await cancellation!.whenCancelled;
+                      cancellation.check();
+                    }
+                    throw const FormatException('Rejected object');
+                  },
+                ))));
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      });
+      for (var attempt = 0; attempt < 50; attempt++) {
+        await tester.runAsync(() async {
+          await tester.pump();
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        });
+        await tester.pump();
+        if (find.byType(CircularProgressIndicator).evaluate().isEmpty) {
+          break;
+        }
+      }
+      await tester.pumpAndSettle();
+      final download = find.byType(FilledButton);
+      await tester.scrollUntilVisible(download, 300);
+      await tester.ensureVisible(download);
+      await tester.pumpAndSettle();
+      await tester.tap(download);
+      await tester.pump();
+      if (cancel) {
+        await tester.ensureVisible(find.text('Cancel'));
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.tap(find.text('Cancel'));
+      }
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await tester.pumpAndSettle();
+      expect(changes, 0);
+      expect(
+          await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
+          isNull);
+      expect(find.byType(FilledButton), findsOneWidget);
+      expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+          isNotNull);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
   for (final locale in ['en', 'es', 'pt', 'ru']) {
     testWidgets('optional text download and removal refresh books in $locale',
         (tester) async {
