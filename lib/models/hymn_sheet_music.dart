@@ -23,8 +23,9 @@ class HymnScorePage {
     }
     const signature = [137, 80, 78, 71, 13, 10, 26, 10];
     for (var i = 0; i < signature.length; i++) {
-      if (data[i] != signature[i])
+      if (data[i] != signature[i]) {
         throw const FormatException('Invalid score PNG');
+      }
     }
     final header = ByteData.sublistView(data);
     if (header.getUint32(8) != 13 ||
