@@ -19,7 +19,7 @@ also consume translations. Several reader/settings child screens still need
 coverage. **Do not expose the language selector until
 the main navigation, keypad, search, favorites, reader, and settings flows have
 complete coverage and have been checked in both designs.** This milestone does
-not claim that the app interface is fully translated. The 491-message
+not claim that the app interface is fully translated. The 499-message
 catalogs are draft translations that also need fluent community review.
 
 ## Contributor steps
@@ -130,3 +130,14 @@ verse copying, native share-sheet anchoring, share failure followed by copying,
 and clipboard failure across all four locales, both designs, and both themes.
 Platform calls are mocked; tests do not send lyrics externally. Unnumbered
 section previews also retain their exact source text under translated labels.
+
+Additional-reading search/filter controls, reader options, scripture prefixes,
+auto-scroll states, and navigation now use translations. Category position
+labels also translate consistently in hymn and reading readers while retaining
+the source category name. Category chips grow with text size and scroll
+horizontally. Reading search shares accent normalization with hymn search and
+shows an explicit empty state. Compact checks cover search, category wraparound,
+report subjects, auto-scroll start/pause, and service-order navigation in all
+four locales, both designs, and both themes. Reading titles, scripture
+references, segments, response emphasis, and report identifiers remain source
+data. Existing reader/design regression checks also pass.

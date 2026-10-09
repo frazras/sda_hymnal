@@ -1695,4 +1695,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareControl => 'Compartir';
+
+  @override
+  String get additionalReadingsTitle => 'Lecturas adicionales';
+
+  @override
+  String get searchReadings => 'Buscar lecturas';
+
+  @override
+  String get allReadings => 'Todas las lecturas';
+
+  @override
+  String get noMatchingReadings => 'No hay lecturas que coincidan';
+
+  @override
+  String get readingOptions => 'Opciones de lectura';
+
+  @override
+  String get pauseReading => 'Pausar lectura';
+
+  @override
+  String readingScripture(String reference) {
+    return 'Escritura: $reference';
+  }
+
+  @override
+  String categoryPosition(String name, int position, int total) {
+    return 'Categoría: $name · $position de $total';
+  }
 }

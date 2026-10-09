@@ -490,5 +490,13 @@
   "lyricVerse": "Куплет {number}",
   "lyricSection": "Раздел {number}",
   "copyControl": "Копировать",
-  "shareControl": "Поделиться"
+  "shareControl": "Поделиться",
+  "additionalReadingsTitle": "Дополнительные чтения",
+  "searchReadings": "Поиск чтений",
+  "allReadings": "Все чтения",
+  "noMatchingReadings": "Подходящих чтений нет",
+  "readingOptions": "Параметры чтения",
+  "pauseReading": "Приостановить чтение",
+  "readingScripture": "Писание: {reference}",
+  "categoryPosition": "Категория: {name} · {position} из {total}"
 }

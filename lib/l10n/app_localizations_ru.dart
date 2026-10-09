@@ -1717,4 +1717,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareControl => 'Поделиться';
+
+  @override
+  String get additionalReadingsTitle => 'Дополнительные чтения';
+
+  @override
+  String get searchReadings => 'Поиск чтений';
+
+  @override
+  String get allReadings => 'Все чтения';
+
+  @override
+  String get noMatchingReadings => 'Подходящих чтений нет';
+
+  @override
+  String get readingOptions => 'Параметры чтения';
+
+  @override
+  String get pauseReading => 'Приостановить чтение';
+
+  @override
+  String readingScripture(String reference) {
+    return 'Писание: $reference';
+  }
+
+  @override
+  String categoryPosition(String name, int position, int total) {
+    return 'Категория: $name · $position из $total';
+  }
 }

@@ -490,5 +490,13 @@
   "lyricVerse": "Estrofa {number}",
   "lyricSection": "Sección {number}",
   "copyControl": "Copiar",
-  "shareControl": "Compartir"
+  "shareControl": "Compartir",
+  "additionalReadingsTitle": "Lecturas adicionales",
+  "searchReadings": "Buscar lecturas",
+  "allReadings": "Todas las lecturas",
+  "noMatchingReadings": "No hay lecturas que coincidan",
+  "readingOptions": "Opciones de lectura",
+  "pauseReading": "Pausar lectura",
+  "readingScripture": "Escritura: {reference}",
+  "categoryPosition": "Categoría: {name} · {position} de {total}"
 }

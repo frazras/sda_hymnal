@@ -1,4 +1,6 @@
 import 'reader_sequence.dart';
+import '../l10n/app_text.dart';
+import '../services/search_normalization.dart';
 import '../services/error_reports.dart';
 import 'report_error.dart';
 import 'hymn_page_turn.dart';
@@ -24,21 +26,22 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
   Widget build(BuildContext context) {
     final t = context.tokens;
     final categories = ['ALL', ...widget.catalog.categories];
-    final query = _query.trim().toLowerCase();
+    final query = normalizeHymnSearch(_query);
     final readings = widget.catalog.readings.where((reading) {
       final categoryMatch = _category == 'ALL' || reading.category == _category;
       final queryMatch = query.isEmpty ||
-          reading.title.toLowerCase().contains(query) ||
+          normalizeHymnSearch(reading.title).contains(query) ||
           reading.number.toString().contains(query) ||
-          reading.category.toLowerCase().contains(query) ||
-          (reading.scriptureReference ?? '').toLowerCase().contains(query);
+          normalizeHymnSearch(reading.category).contains(query) ||
+          normalizeHymnSearch(reading.scriptureReference ?? '').contains(query);
       return categoryMatch && queryMatch;
     }).toList(growable: false);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Additional Readings'),
+        title: Text(context.appText.additionalReadingsTitle),
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: HymnalIcons.backChevron(t.ink),
           onPressed: () => Navigator.pop(context),
         ),
@@ -50,7 +53,7 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
             child: TextField(
               onChanged: (value) => setState(() => _query = value),
               decoration: InputDecoration(
-                hintText: 'Search readings',
+                hintText: context.appText.searchReadings,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: t.surface,
@@ -61,57 +64,64 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 48,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                return ChoiceChip(
-                  label: Text(category == 'ALL' ? 'All readings' : category),
-                  selected: _category == category,
-                  onSelected: (_) => setState(() => _category = category),
-                );
-              },
-            ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(children: [
+              for (final category in categories)
+                Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(category == 'ALL'
+                          ? context.appText.allReadings
+                          : category),
+                      selected: _category == category,
+                      onSelected: (_) => setState(() => _category = category),
+                    )),
+            ]),
           ),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-              itemCount: readings.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final reading = readings[index];
-                return Card(
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
-                    title: Text('${reading.number}  ${reading.title}',
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text([
-                        reading.category,
-                        if (reading.scriptureReference?.isNotEmpty ?? false)
-                          reading.scriptureReference!,
-                      ].join('  •  ')),
-                    ),
-                    trailing: HymnalIcons.rowChevron(t.muted),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => AdditionalReadingPage(
-                              reading: reading,
-                              readings: readings,
-                              categoryTitle:
-                                  _category == 'ALL' ? null : _category)),
-                    ),
+            child: readings.isEmpty
+                ? Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(context.appText.noMatchingReadings)))
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    itemCount: readings.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final reading = readings[index];
+                      return Card(
+                        child: ListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 8, 12, 8),
+                          title: Text('${reading.number}  ${reading.title}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600)),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text([
+                              reading.category,
+                              if (reading.scriptureReference?.isNotEmpty ??
+                                  false)
+                                reading.scriptureReference!,
+                            ].join('  •  ')),
+                          ),
+                          trailing: HymnalIcons.rowChevron(t.muted),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => AdditionalReadingPage(
+                                    reading: reading,
+                                    readings: readings,
+                                    categoryTitle:
+                                        _category == 'ALL' ? null : _category)),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -248,24 +258,29 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                  TextButton.icon(
-                      onPressed:
-                          widget.sequence!.canMove(-1) ? () => _move(-1) : null,
-                      icon: const Icon(Icons.chevron_left),
-                      label: const Text('Previous')),
-                  TextButton.icon(
-                      onPressed:
-                          widget.sequence!.canMove(1) ? () => _move(1) : null,
-                      icon: const Icon(Icons.chevron_right),
-                      label: const Text('Next')),
+                  Expanded(
+                      child: TextButton.icon(
+                          onPressed: widget.sequence!.canMove(-1)
+                              ? () => _move(-1)
+                              : null,
+                          icon: const Icon(Icons.chevron_left),
+                          label: Text(context.appText.previousControl))),
+                  Expanded(
+                      child: TextButton.icon(
+                          onPressed: widget.sequence!.canMove(1)
+                              ? () => _move(1)
+                              : null,
+                          icon: const Icon(Icons.chevron_right),
+                          label: Text(context.appText.nextControl))),
                 ])),
       appBar: AppBar(
         title: Text('${widget.reading.number}  ${widget.reading.title}'),
         actions: [
           PopupMenuButton<String>(
-            tooltip: 'Reading options',
+            tooltip: context.appText.readingOptions,
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'report', child: Text('Report Errors'))
+              PopupMenuItem(
+                  value: 'report', child: Text(context.appText.reportErrors))
             ],
             onSelected: (_) => Navigator.push(
                 context,
@@ -280,6 +295,7 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
           )
         ],
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: HymnalIcons.backChevron(t.ink),
           onPressed: () => Navigator.pop(context),
         ),
@@ -297,7 +313,12 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
               ),
               child: Text(
                 widget.sequence?.labelFor(context) ??
-                    'Category: ${widget.categoryTitle} · ${widget.readings.indexWhere((r) => r.id == widget.reading.id) + 1} of ${widget.readings.length}',
+                    context.appText.categoryPosition(
+                        widget.categoryTitle!,
+                        widget.readings
+                                .indexWhere((r) => r.id == widget.reading.id) +
+                            1,
+                        widget.readings.length),
                 style:
                     TextStyle(fontFamily: kSans, fontSize: 13, color: t.accent),
               ),
@@ -327,7 +348,8 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
                         const SizedBox(width: 7),
                         Expanded(
                           child: Text(
-                              'Scripture: ${widget.reading.scriptureReference}',
+                              context.appText.readingScripture(
+                                  widget.reading.scriptureReference!),
                               style: TextStyle(color: t.muted)),
                         ),
                       ],
@@ -362,8 +384,9 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
                     heroTag: widget.previewOnly ? null : 'reading-auto-scroll',
                     onPressed: _toggleAutoScroll,
                     icon: Icon(_running ? Icons.pause : Icons.play_arrow),
-                    label:
-                        Text(_running ? 'Pause reading' : 'Start auto-scroll'),
+                    label: Text(_running
+                        ? context.appText.pauseReading
+                        : context.appText.startAutoScroll),
                   ),
                 ),
               ),

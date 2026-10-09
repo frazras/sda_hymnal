@@ -490,5 +490,13 @@
   "lyricVerse": "Estrofe {number}",
   "lyricSection": "Seção {number}",
   "copyControl": "Copiar",
-  "shareControl": "Compartilhar"
+  "shareControl": "Compartilhar",
+  "additionalReadingsTitle": "Leituras adicionais",
+  "searchReadings": "Buscar leituras",
+  "allReadings": "Todas as leituras",
+  "noMatchingReadings": "Nenhuma leitura correspondente",
+  "readingOptions": "Opções de leitura",
+  "pauseReading": "Pausar leitura",
+  "readingScripture": "Texto bíblico: {reference}",
+  "categoryPosition": "Categoria: {name} · {position} de {total}"
 }

@@ -1684,4 +1684,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareControl => 'Share';
+
+  @override
+  String get additionalReadingsTitle => 'Additional Readings';
+
+  @override
+  String get searchReadings => 'Search readings';
+
+  @override
+  String get allReadings => 'All readings';
+
+  @override
+  String get noMatchingReadings => 'No matching readings';
+
+  @override
+  String get readingOptions => 'Reading options';
+
+  @override
+  String get pauseReading => 'Pause reading';
+
+  @override
+  String readingScripture(String reference) {
+    return 'Scripture: $reference';
+  }
+
+  @override
+  String categoryPosition(String name, int position, int total) {
+    return 'Category: $name · $position of $total';
+  }
 }

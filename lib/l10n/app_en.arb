@@ -788,5 +788,33 @@
     }
   },
   "copyControl": "Copy",
-  "shareControl": "Share"
+  "shareControl": "Share",
+  "additionalReadingsTitle": "Additional Readings",
+  "searchReadings": "Search readings",
+  "allReadings": "All readings",
+  "noMatchingReadings": "No matching readings",
+  "readingOptions": "Reading options",
+  "pauseReading": "Pause reading",
+  "readingScripture": "Scripture: {reference}",
+  "categoryPosition": "Category: {name} · {position} of {total}",
+  "@readingScripture": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@categoryPosition": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

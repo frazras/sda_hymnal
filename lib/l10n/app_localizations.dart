@@ -3047,6 +3047,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get shareControl;
+
+  /// No description provided for @additionalReadingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Readings'**
+  String get additionalReadingsTitle;
+
+  /// No description provided for @searchReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'Search readings'**
+  String get searchReadings;
+
+  /// No description provided for @allReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'All readings'**
+  String get allReadings;
+
+  /// No description provided for @noMatchingReadings.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching readings'**
+  String get noMatchingReadings;
+
+  /// No description provided for @readingOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading options'**
+  String get readingOptions;
+
+  /// No description provided for @pauseReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause reading'**
+  String get pauseReading;
+
+  /// No description provided for @readingScripture.
+  ///
+  /// In en, this message translates to:
+  /// **'Scripture: {reference}'**
+  String readingScripture(String reference);
+
+  /// No description provided for @categoryPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Category: {name} · {position} of {total}'**
+  String categoryPosition(String name, int position, int total);
 }
 
 class _AppLocalizationsDelegate

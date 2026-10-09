@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:sdahymnal/l10n/app_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -132,7 +133,8 @@ void main() {
     await tester.pump();
 
     final first = catalog.readings.first;
-    expect(find.text('READING'), findsOneWidget);
+    expect(find.text(tester.element(find.byType(Buttons)).appText.reading),
+        findsOneWidget);
     expect(find.text(first.title), findsOneWidget);
     expect(find.text(first.category), findsOneWidget);
 
