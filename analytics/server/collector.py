@@ -271,6 +271,30 @@ def export_handler(event, context):
     reporting_weeks = {}
     admin_weeks = {}
     exported = 0
+    rows = []
+    offset_start = 0
+    cursor = None
+    revision = 0
+    pages_read = 0
+    job_id = event.get('job_id')
+    checkpointed = context is not None
+    if checkpointed:
+        from export_checkpoint import load_job, save_job, continue_job
+        if job_id is not None:
+            state = load_job(s3, os.environ['BUCKET'], namespace, job_id)
+            if state['complete'] or event.get('revision') != state['revision']:
+                return {'namespace': namespace, 'exported_rows': state['exported'], 'stale': True}
+            monday = dt.date.fromisoformat(state['monday'])
+            reporting_weeks = state['public']
+            admin_weeks = state['admin']
+            exported = state['exported']
+            rows = state['rows']
+            offset_start = state['offset']
+            cursor = state['cursor']
+            revision = state['revision']
+        else:
+            import uuid
+            job_id = uuid.uuid4().hex
     # Expire report snapshots by reporting week, not last daily rewrite time.
     for page in s3.get_paginator('list_objects_v2').paginate(Bucket=os.environ['BUCKET'], Prefix='reports/' + namespace + '/'):
         expired = []
@@ -280,14 +304,26 @@ def export_handler(event, context):
                 expired.append({'Key': obj['Key']})
         if expired:
             s3.delete_objects(Bucket=os.environ['BUCKET'], Delete={'Objects': expired})
-    for offset in range(58):
+    for offset in range(offset_start, 58):
         week = str(monday - dt.timedelta(weeks=offset))
         # Bound each read below the table capacity; a full 1 MiB page can
         # exceed the configured on-demand cap and repeatedly throttle.
-        args = {"KeyConditionExpression": "pk = :p", "ExpressionAttributeValues": {":p": namespace + "#W#" + week}, "ConsistentRead": True, "Limit": 50}
-        rows = []
+        args = {"KeyConditionExpression": "pk = :p", "ExpressionAttributeValues": {":p": namespace + "#W#" + week}, "ConsistentRead": True, "Limit": 500}
+        if cursor:
+            args["ExclusiveStartKey"] = cursor
         while True:
+            if checkpointed and context.get_remaining_time_in_millis() < 60000:
+                if pages_read == 0:
+                    raise RuntimeError('export_no_time_for_progress')
+                state = dict(monday=str(monday), public=reporting_weeks, admin=admin_weeks,
+                    exported=exported, rows=rows, offset=offset,
+                    cursor=args.get('ExclusiveStartKey'), revision=revision + 1, complete=False)
+                save_job(s3, os.environ['BUCKET'], namespace, job_id, state)
+                continue_job(context, namespace, job_id, revision + 1, event.get('preview') is True)
+                return {'namespace': namespace, 'exported_rows': exported,
+                        'pending': True, 'job_id': job_id, 'revision': revision + 1}
             page = table.query(**args)
+            pages_read += 1
             for item in page["Items"]:
                 if int(item["expires"]) <= int(time.time()):
                     continue
@@ -303,12 +339,14 @@ def export_handler(event, context):
         if offset <= 8:
             admin_weeks[week] = compile_admin_week(rows)
             reporting_weeks[week] = safe_public_rows(reporting_weeks.get(week, []))
+        cursor = None
         if not rows:
             continue
         key = "reports/" + namespace + "/week=" + week + "/metrics.jsonl"
         s3.put_object(Bucket=os.environ["BUCKET"], Key=key,
             Body="\n".join(json.dumps(row) for row in rows).encode(), ContentType="application/x-ndjson")
         exported += len(rows)
+        rows = []
         if namespace == "prod":
             descriptor = json.loads(os.environ["GLUE_DESCRIPTOR"])
             descriptor["Location"] = "s3://" + os.environ["BUCKET"] + "/reports/prod/week=" + week + "/"
@@ -325,4 +363,7 @@ def export_handler(event, context):
                             (prefix + 'admin/overview.json', admin_report(admin_weeks, monday, generated, compiled=True))]:
             s3.put_object(Bucket=os.environ['BUCKET'], Key=key, ContentType='application/json',
                 Body=json.dumps(report, separators=(',', ':')).encode())
+    if checkpointed:
+        save_job(s3, os.environ['BUCKET'], namespace, job_id,
+                 dict(complete=True, revision=revision, exported=exported))
     return {"namespace": namespace, "exported_rows": exported}

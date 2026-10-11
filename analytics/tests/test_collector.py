@@ -170,7 +170,7 @@ class Tests(unittest.TestCase):
              patch.object(collector.boto3, 'client', return_value=s3):
             result = collector.export_handler({'namespace': 'e2e'}, None)
         self.assertEqual(result['exported_rows'], 58)
-        self.assertTrue(all(call.kwargs['Limit'] == 50 for call in table.query.call_args_list))
+        self.assertTrue(all(call.kwargs['Limit'] == 500 for call in table.query.call_args_list))
         for call in s3.put_object.call_args_list:
             self.assertTrue(call.kwargs['Key'].startswith('reports/e2e/'))
             row = json.loads(call.kwargs['Body'])
@@ -193,6 +193,55 @@ class Tests(unittest.TestCase):
         self.assertEqual(table.query.call_count, 59)
         self.assertEqual(table.query.call_args_list[1].kwargs['ExclusiveStartKey'], {'pk': 'continuation'})
         self.assertEqual(len(s3.put_object.call_args.kwargs['Body'].splitlines()), 2)
+
+    def test_export_checkpoints_and_resumes_inside_a_week(self):
+        table = Mock()
+        item = {'dimensions': {'metric': 'app_session'}, 'count': 1,
+                'total': 0, 'contributors': 1, 'expires': 9999999999}
+        table.query.return_value = {'Items': [item], 'LastEvaluatedKey': {'pk': 'next'}}
+        resource = Mock(); resource.Table.return_value = table
+        s3 = Mock(); s3.get_paginator.return_value.paginate.return_value = []
+        context = Mock()
+        context.get_remaining_time_in_millis.side_effect = [300000, 50000]
+        with patch.dict(collector.os.environ, {'AGGREGATES': 'test', 'BUCKET': 'test'}), \
+             patch.object(collector.boto3, 'resource', return_value=resource), \
+             patch.object(collector.boto3, 'client', return_value=s3), \
+             patch('export_checkpoint.save_job') as save, \
+             patch('export_checkpoint.continue_job') as continuation:
+            pending = collector.export_handler({'namespace': 'e2e'}, context)
+            state = copy.deepcopy(save.call_args.args[-1])
+            self.assertTrue(pending['pending'])
+            self.assertEqual(state['cursor'], {'pk': 'next'})
+            self.assertEqual(len(state['rows']), 1)
+            continuation.assert_called_once()
+            table.reset_mock()
+            table.query.side_effect = [{'Items': [item]}, *[{'Items': []} for _ in range(57)]]
+            context.get_remaining_time_in_millis.side_effect = None
+            context.get_remaining_time_in_millis.return_value = 300000
+            with patch('export_checkpoint.load_job', return_value=state):
+                result = collector.export_handler(dict(namespace='e2e', job_id=pending['job_id'], revision=1), context)
+            self.assertEqual(result['exported_rows'], 2)
+            self.assertEqual(table.query.call_args_list[0].kwargs['ExclusiveStartKey'], {'pk': 'next'})
+            self.assertTrue(save.call_args.args[-1]['complete'])
+            raw = next(c.kwargs['Body'] for c in s3.put_object.call_args_list if c.kwargs['Key'].endswith('metrics.jsonl'))
+            self.assertEqual(len(raw.splitlines()), 2)
+            table.reset_mock()
+            with patch('export_checkpoint.load_job', return_value={'complete': True, 'revision': 1, 'exported': 2}):
+                duplicate = collector.export_handler(dict(namespace='e2e', job_id=pending['job_id'], revision=1), context)
+            self.assertTrue(duplicate['stale'])
+            table.query.assert_not_called()
+
+    def test_export_does_not_queue_a_continuation_without_progress(self):
+        resource = Mock()
+        s3 = Mock(); s3.get_paginator.return_value.paginate.return_value = []
+        context = Mock(); context.get_remaining_time_in_millis.return_value = 50000
+        with patch.dict(collector.os.environ, {'AGGREGATES': 'test', 'BUCKET': 'test'}), \
+             patch.object(collector.boto3, 'resource', return_value=resource), \
+             patch.object(collector.boto3, 'client', return_value=s3), \
+             patch('export_checkpoint.continue_job') as continuation:
+            with self.assertRaisesRegex(RuntimeError, 'export_no_time_for_progress'):
+                collector.export_handler({'namespace': 'e2e'}, context)
+            continuation.assert_not_called()
 
     def test_public_trends_suppresses_small_current_and_private_cells(self):
         def item(metric, contributors):

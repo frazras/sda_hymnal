@@ -66,7 +66,9 @@ def template(code=None):
         {"Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:BatchGetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"], "Resource": [attr("Aggregates", "Arn"), attr("Ledger", "Arn")]},
         {"Effect": "Allow", "Action": ["s3:GetObject"], "Resource": sub("${Reports.Arn}/public/*")},
         {"Effect": "Allow", "Action": ["s3:ListBucket"], "Resource": attr("Reports", "Arn")}]),
-        ("ExporterRole", [{"Effect": "Allow", "Action": ["dynamodb:Query"], "Resource": attr("Aggregates", "Arn")},
+        ("ExporterRole", [
+        {"Effect": "Allow", "Action": ["lambda:InvokeFunction"], "Resource": sub("arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-exporter")},
+        {"Effect": "Allow", "Action": ["s3:GetObject"], "Resource": sub("${Reports.Arn}/reports/*")},{"Effect": "Allow", "Action": ["dynamodb:Query"], "Resource": attr("Aggregates", "Arn")},
         {"Effect": "Allow", "Action": ["s3:PutObject", "s3:DeleteObject"], "Resource": [sub("${Reports.Arn}/reports/*"), sub("${Reports.Arn}/public/*"), sub("${Reports.Arn}/admin/*")]},
         {"Effect": "Allow", "Action": ["s3:ListBucket"], "Resource": attr("Reports", "Arn")},
         {"Effect": "Allow", "Action": ["glue:BatchCreatePartition"], "Resource": [sub("arn:${AWS::Partition}:glue:${AWS::Region}:${AWS::AccountId}:catalog"),
@@ -83,6 +85,7 @@ def template(code=None):
         resources[name + "Logs"] = {"Type": "AWS::Logs::LogGroup", "Properties": {"LogGroupName": sub("/aws/lambda/${AWS::StackName}-" + name.lower()), "RetentionInDays": 7}}
         resources[name] = {"Type": "AWS::Lambda::Function", "DependsOn": name + "Logs", "Properties": {"FunctionName": sub("${AWS::StackName}-" + name.lower()),
             "Runtime": "python3.13", "Handler": ("collector." if code else "index.") + handler, "Role": attr(name + "Role", "Arn"), "Code": code or {"ZipFile": source},
+            "RecursiveLoop": "Allow" if name == "Exporter" else "Terminate",
             "MemorySize": 512, "Timeout": timeout, "ReservedConcurrentExecutions": 3 if name == "Collector" else 1,
             "Environment": {"Variables": env}}}
     resources["Api"] = {"Type": "AWS::ApiGatewayV2::Api", "Properties": {"Name": "sdahymnal-analytics", "ProtocolType": "HTTP"}}
