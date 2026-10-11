@@ -80,9 +80,6 @@ class AppAnalytics extends ChangeNotifier {
 
   void event(String metric,
       {String variant = '', int hymn = 0, String edition = '', int total = 0}) {
-    // Native ingestion passes live QA; production snapshot refresh must be
-    // verified before enabling foreign counters in the released app.
-    if (edition.isNotEmpty && edition != 'new' && edition != 'old') return;
     final store = _store;
     if (store == null || !store.enabled) return;
     unawaited(store

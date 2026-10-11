@@ -298,3 +298,27 @@ distinguishes first-party analytics from tracking across other companies' apps
 for advertising. [Google Play's Data Safety guidance](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)
 explicitly includes IP-inferred location. No OS permission prompt does not mean
 the collection is exempt from privacy disclosures.
+
+## Native hymnal identities (11 October 2026)
+
+The collector accepts legacy batch schema 1 and native batch schema 2. Native
+rows include a canonical `book_id`; the deployed catalog validates the exact
+published hymn numbers. English aliases retain their existing aggregate and
+repeat-history keys. Mixed upload batches add canonical book IDs to English
+rows without changing pending legacy outbox payloads. Publishing an additional
+hymnal or changing its number coverage requires redeploying this registry.
+
+The `/v2/trends` endpoint serves multilingual snapshots; `/v1/trends` retains
+English-compatible rankings for older clients. Both keep the existing minimum
+of 20 contributors and book-specific country suppression. Book labels and titles
+come from packaged content. Settings passes all installed books to the shared
+statistics reader, and the native cache falls back to the older report offline.
+No production foreign measurements are fabricated to seed rankings.
+
+The exporter checkpoints private progress in S3 before its execution deadline,
+including the current week/page cursor and accumulated reporting data. It queues
+an asynchronous continuation using the same job ID and incremented revision.
+Completed/stale deliveries do no work; continuations without progress are
+rejected. The production run completed across executions and published both
+snapshots after exporting 569,213 fine rows. This preserves the 58-week export
+scope instead of dropping older weeks to fit one execution.

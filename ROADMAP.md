@@ -51,9 +51,10 @@ Items below are plans, not claims that multilingual content is already installed
       catalog. Support offline number/text/topic browsing, reading, paging,
       credits, and mixed-book favorites in both designs. Preserve English
       readings/media and hide unavailable foreign music controls.
-- [ ] Extend deployed analytics/error-report schemas to native book identities.
-      Native book identities are deployed for error reports and the dashboard.
-      Analytics still suppress foreign per-hymn statistics pending its schema update.
+- [x] Extend deployed analytics/error-report schemas to native book identities.
+      Native counters, translated titles, book-specific suppression, and statistics
+      links are implemented. Deployed native and legacy public snapshots are
+      verified; older clients retain English-compatible reports.
 - [x] Import Spanish 2009 (614 hymns), Spanish 1962 (527), Portuguese 1996 (610),
       and Russian 1997 (385) from pinned GoGoShift sources, including their topic
       indexes. Keep existing English corrections and music mappings.

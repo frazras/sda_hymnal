@@ -68,3 +68,19 @@ rows and successfully queuing revision 1. This proves continuation was accepted;
 final snapshot publication remains under observation. Installed-book statistics
 routing and native Russian song opening pass their widget tests. App analysis
 reports no issues. Foreign app counters remain gated until production finishes.
+
+### Production publication verified
+
+The resumed production export completed with 569,213 fine rows. Both public
+snapshots were written at 21:42:43 UTC on 11 October. The native API route now
+has an exact GET /v2/trends invocation permission; a deployment regression test
+covers that route and permission together. The delivered native snapshot matches
+the stored completed snapshot, and the public legacy route retains English
+aliases. All 32 backend tests pass. Native app counters are now enabled; ordinary
+opt-out, weekly batching, and minimum 20-contributor publication remain intact.
+Earlier notes about the pending snapshot/gate above describe the investigation
+and have been superseded by this verified publication.
+
+The full app regression suite passes 750 tests with native counters enabled.
+The subsequent offline-upgrade fallback passes all nine focused statistics
+tests. Canonical English repeat history and installed-book routing are covered.
