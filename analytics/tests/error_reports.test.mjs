@@ -30,3 +30,10 @@ test('a later page failure never returns a partial export', async () => {
     ? {ok: true, json: async () => ({reports: [{}], cursor: 'next'})}
     : {ok: false, status: 503}));
 });
+
+test('CSV retains native book and item identities alongside legacy editions', () => {
+  const csv = reportsCsv([{book_id: 'sda-es-2009', edition: '', item_id: '303', number: 303}]);
+  assert.ok(csv.includes('"book_id"'));
+  assert.ok(csv.includes('"sda-es-2009"'));
+  assert.ok(csv.includes('"303"'));
+});

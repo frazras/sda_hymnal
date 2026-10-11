@@ -9,6 +9,8 @@ class ErrorReportSubject {
   final String title;
   final String edition;
   final String itemId;
+  final String bookId;
+  final String bookLabel;
   final int number;
 
   const ErrorReportSubject(
@@ -16,10 +18,13 @@ class ErrorReportSubject {
       this.title = '',
       this.edition = '',
       this.itemId = '',
+      this.bookId = '',
+      this.bookLabel = '',
       this.number = 0});
 
   Map<String, dynamic> toJson() => {
         'kind': kind,
+        if (bookId.isNotEmpty) 'book_id': bookId,
         'edition': edition,
         'item_id': itemId,
         'number': number,

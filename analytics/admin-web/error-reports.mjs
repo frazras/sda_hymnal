@@ -1,4 +1,4 @@
-export const reportColumns = ['id', 'created_at', 'status', 'kind', 'edition', 'number', 'item_id', 'title', 'description', 'version'];
+export const reportColumns = ['id', 'created_at', 'status', 'kind', 'edition', 'book_id', 'number', 'item_id', 'title', 'description', 'version'];
 
 export function reportsCsv(reports) {
   const cell = value => {

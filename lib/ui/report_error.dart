@@ -68,11 +68,13 @@ class _ReportErrorPageState extends State<ReportErrorPage> {
                 children: [
                   if (widget.subject.kind != 'general') ...[
                     Text(context.appText.reportSubject(
-                        switch (widget.subject.edition) {
-                          'old' => context.appText.oldHymnal,
-                          'new' => context.appText.newHymnal,
-                          _ => widget.subject.edition,
-                        },
+                        widget.subject.bookLabel.isNotEmpty
+                            ? widget.subject.bookLabel
+                            : switch (widget.subject.edition) {
+                                'old' => context.appText.oldHymnal,
+                                'new' => context.appText.newHymnal,
+                                _ => widget.subject.edition,
+                              },
                         widget.subject.kind == 'reading'
                             ? context.appText.reading
                             : context.appText.hymnLabel,

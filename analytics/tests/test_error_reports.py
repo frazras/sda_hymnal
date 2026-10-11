@@ -35,6 +35,36 @@ class ErrorReportsTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 error_reports.validate(fixture() | changes)
 
+    def test_native_book_subjects_and_legacy_normalization(self):
+        self.assertEqual(error_reports.validate(fixture())['book_id'], 'sda-en-1985')
+        for book in ('sda-es-2009', 'sda-es-1962', 'sda-pt-1996',
+                     'sda-ru-1997', 'sda-fr-hymnes-et-louanges',
+                     'sda-sw-nyimbo-za-kristo', 'sda-ny-khristu-mu-nyimbo'):
+            report = fixture() | dict(book_id=book, edition='', number=303, item_id='303')
+            self.assertEqual(error_reports.validate(report)['book_id'], book)
+        english = fixture() | dict(book_id='sda-en-1985', item_id='1')
+        self.assertEqual(error_reports.validate(english)['book_id'], 'sda-en-1985')
+        general = fixture() | dict(kind='general', edition='', number=0, item_id='', book_id='')
+        self.assertEqual(error_reports.validate(general)['book_id'], '')
+        for changes in ({'book_id': '../escape'}, {'book_id': 'sda-ES-2009'},
+                        {'book_id': 'sda-es-2009', 'edition': 'new'},
+                        {'item_id': '302'}, {'number': True},
+                        {'kind': 'reading'}, {'book_id': None}):
+            with self.assertRaises(ValueError):
+                error_reports.validate(fixture() | dict(book_id='sda-es-2009', edition='', number=303, item_id='303') | changes)
+        with self.assertRaises(ValueError):
+            error_reports.validate(general | {'book_id': 'sda-es-2009'})
+
+    @patch.dict(os.environ, {'ERROR_REPORTS': 'feedback'})
+    @patch.object(error_reports.boto3, 'resource')
+    def test_native_subject_is_stored_without_rewriting_the_book(self, resource):
+        report = fixture() | dict(book_id='sda-es-2009', edition='', number=303, item_id='303')
+        self.assertEqual(error_reports.submit({'body': json.dumps(report)})['statusCode'], 201)
+        stored = resource.return_value.Table.return_value.put_item.call_args.kwargs['Item']
+        self.assertEqual(stored['book_id'], 'sda-es-2009')
+        self.assertEqual(stored['item_id'], '303')
+        self.assertEqual(stored['kind'], 'hymn')
+
     @patch.dict(os.environ, {'ERROR_REPORTS': 'feedback'})
     @patch.object(error_reports.boto3, 'resource')
     def test_submit_retry_and_storage_failure(self, resource):

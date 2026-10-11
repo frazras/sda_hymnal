@@ -7,6 +7,25 @@ import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:sdahymnal/theme.dart';
 
 void main() {
+  test('native hymn payload retains book identity without display metadata',
+      () {
+    const subject = ErrorReportSubject(
+        kind: 'hymn',
+        title: 'Sublime Gracia',
+        bookId: 'sda-es-2009',
+        bookLabel: 'Himnario Adventista',
+        number: 303,
+        itemId: '303');
+    expect(subject.toJson(), {
+      'kind': 'hymn',
+      'book_id': 'sda-es-2009',
+      'edition': '',
+      'item_id': '303',
+      'number': 303
+    });
+    expect(const ErrorReportSubject().toJson().containsKey('book_id'), isFalse);
+  });
+
   Future<void> open(WidgetTester tester, ErrorReportSubject subject,
       Future<void> Function(Map<String, dynamic>) submit,
       {Locale? locale, bool classic = false, bool dark = false}) async {

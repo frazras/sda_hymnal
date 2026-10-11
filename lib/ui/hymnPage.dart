@@ -593,18 +593,17 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                 Navigator.push(
                     context,
                     slideRoute(ReportErrorPage(
-                        subject: widget.hymn.isEnglishEdition
-                            ? ErrorReportSubject(
-                                kind: 'hymn',
-                                title: widget.hymn.title,
-                                edition: widget.hymn.version,
-                                number: widget.hymn.number,
-                                itemId:
-                                    '${widget.hymn.version}:${widget.hymn.number}',
-                              )
-                            : ErrorReportSubject(
-                                title:
-                                    '${widget.hymn.bookLabel} · ${widget.hymn.number} · ${widget.hymn.title}'))));
+                        subject: ErrorReportSubject(
+                      kind: 'hymn',
+                      title: widget.hymn.title,
+                      edition: widget.hymn.isEnglishEdition
+                          ? widget.hymn.version
+                          : '',
+                      bookId: widget.hymn.ref.bookId,
+                      bookLabel: widget.hymn.bookLabel,
+                      number: widget.hymn.number,
+                      itemId: widget.hymn.ref.itemId,
+                    ))));
               case _ReaderAction.musicalStyle:
                 showMusicalStyleSheet(context);
               case _ReaderAction.choirPractice:

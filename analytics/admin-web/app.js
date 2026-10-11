@@ -173,7 +173,7 @@ async function loadFixes() {
     for (const report of fixes) {
       const row = element('tr');
       for (const value of [report.created_at, report.kind,
-        report.kind === 'general' ? '—' : `${report.edition} / ${report.number}`,
+        report.kind === 'general' ? '—' : `${report.book_id || report.edition} / ${report.number}`,
         report.title, report.description, report.version]) row.append(element('td', value));
       $('fixes-rows').append(row);
     }
