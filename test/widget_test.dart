@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/main.dart';
+import 'package:sdahymnal/models/hymnal_pack.dart';
 import 'package:sdahymnal/models/release_notes.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'hymnal_pack_test.dart' show FilePackBundle;
@@ -15,8 +16,9 @@ void main() {
     SharedPreferences.setMockInitialValues({
       ReleaseNotesService.seenVersionsKey: <String>[appReleaseVersion],
     });
-    await tester.pumpWidget(
-        DefaultAssetBundle(bundle: FilePackBundle(), child: const Hymnal()));
+    await tester.pumpWidget(DefaultAssetBundle(
+        bundle: FilePackBundle(),
+        child: const Hymnal(packLoader: loadHymnalPacks)));
     for (var i = 0; i < 12; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }

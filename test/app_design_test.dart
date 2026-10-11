@@ -9,6 +9,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:sdahymnal/main.dart';
+import 'package:sdahymnal/models/hymnal_pack.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
@@ -905,8 +906,9 @@ void main() {
   });
 
   Future<void> pumpApp(WidgetTester tester) async {
-    await tester.pumpWidget(
-        DefaultAssetBundle(bundle: _HymnAssets(), child: const Hymnal()));
+    await tester.pumpWidget(DefaultAssetBundle(
+        bundle: _HymnAssets(),
+        child: const Hymnal(packLoader: loadHymnalPacks)));
     await tester
         .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 80)));
     await tester.pump(const Duration(milliseconds: 400));

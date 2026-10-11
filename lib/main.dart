@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'models/hymnal_pack.dart';
+import 'services/installed_language_packs.dart';
 import 'package:sdahymnal/services/system_audio.dart';
 
 import 'package:sdahymnal/l10n/app_localizations.dart';
@@ -49,7 +51,8 @@ Future<void> main() async {
 }
 
 class Hymnal extends StatefulWidget {
-  const Hymnal({super.key});
+  const Hymnal({super.key, this.packLoader = loadInstalledLanguagePacks});
+  final Future<List<HymnalPack>> Function(AssetBundle) packLoader;
 
   @override
   State<Hymnal> createState() => _HymnalState();
@@ -101,7 +104,7 @@ class _HymnalState extends State<Hymnal> with WidgetsBindingObserver {
         darkTheme: buildHymnalTheme(HymnalTokens.dark,
             classic: AppDesignController.instance.value == AppDesign.classic),
         themeMode: ThemeController.instance.value,
-        home: const Tabs(),
+        home: Tabs(packLoader: widget.packLoader),
       ),
     );
   }
