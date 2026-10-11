@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'score_packs.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import '../l10n/app_text.dart';
@@ -150,6 +151,14 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
                   : const CircularProgressIndicator())
           : ListView(padding: const EdgeInsets.all(16), children: [
               Text(text.languagePacksHelp),
+              ListTile(
+                  leading: const Icon(Icons.library_music_outlined),
+                  title: Text(text.sheetMusic),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                          builder: (_) => const ScorePacksPage()))),
               const SizedBox(height: 16),
               for (final download in _downloads!)
                 Card(

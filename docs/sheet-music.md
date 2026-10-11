@@ -103,8 +103,8 @@ Opening or changing score pages retains the reader's playback owner.
 Source-loading tests cover installation, exact-edition isolation, partial
 coverage, corruption, removal, and zero implicit downloads. Rendering checks
 open real installed PNGs and turn pages. Existing theme/locale and playback
-continuation checks remain in the focused suite. The Settings score download
-controls and published trusted collection catalog are still unfinished.
+continuation checks remain in the focused suite. The Settings score controls and trusted collection catalog are now implemented
+below; the current published collections remain bundled.
 
 ## Trusted score download catalog
 
@@ -121,6 +121,22 @@ its pinned checksum; this remote check does not download every hosted PNG.
 The app reader rejects mutable revisions, checksum/coverage mismatches,
 unknown/repeated collections, and incomplete metadata before creating downloads.
 
-These collections remain included in the app. Settings score management still
-needs to expose included/installed states and avoid redundant downloads. This
+These collections remain included in the app. Settings score management now exposes included/installed states and avoids
+redundant downloads. This
 catalog does not claim an additional optional score collection is available.
+
+## Score management controls
+
+Settings > Hymnal downloads > Sheet music shows score collection sizes and
+included/downloaded status. Optional entries offer download, progress, cancel,
+update, and remove actions. A changed page catalog offers Update; changing only
+the hosting revision does not create a redundant update. Closing the page cancels
+a pending download. Removal affects local score copies only; included assets,
+text books, favorites, service references, and music settings are retained.
+
+The actual three collections are included and do not offer redundant downloads.
+Compact regression fixtures exercise optional download, update, removal, failure,
+and cancellation. They do not claim an additional optional score collection has
+been published. Four interface locales and both designs are checked at 320×568
+with increased text size. Published optional additions and physical device
+workflow review remain separate follow-ups.

@@ -78,8 +78,10 @@ Items below are plans, not claims that multilingual content is already installed
       preserve the last working version and saved favorites, and keep the current
       English books available offline. Settings text-pack download, cancellation,
       update, removal, and live book refresh are implemented. Chichewa is the
-      first optional collection; optional score packs and physical download-flow
-      review remain.
+      first optional text collection. Score transport, atomic storage, viewer
+      integration, catalog publication, and management controls are implemented;
+      current score collections remain included. Additional optional score
+      collections and physical download-flow review remain.
 - [ ] Localize the app interface independently of the selected book, starting
       with Spanish, Portuguese, and Russian; add a reviewed community translation
       workflow. The independent preference, Flutter delegates, and initial four

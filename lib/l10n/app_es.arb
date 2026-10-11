@@ -580,5 +580,7 @@
   "packNoMusic": "Solo letras; no incluye música.",
   "packDetails": "{count} himnos · {size} MB",
   "packReviewPending": "Revisión independiente de las letras pendiente",
-  "packUpdate": "Actualizar"
+  "packUpdate": "Actualizar",
+  "scorePacksHelp": "Guarda las partituras para usarlas sin conexión. Las tonalidades y los arreglos impresos no cambian.",
+  "scorePackDetails": "{count} páginas de partituras · {size} MB"
 }

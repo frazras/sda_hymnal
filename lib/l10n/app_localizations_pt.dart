@@ -2036,4 +2036,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get packUpdate => 'Atualizar';
+
+  @override
+  String get scorePacksHelp =>
+      'Mantenha as partituras disponíveis offline. As tonalidades e os arranjos impressos permanecem iguais.';
+
+  @override
+  String scorePackDetails(int count, String size) {
+    return '$count páginas de partituras · $size MB';
+  }
 }

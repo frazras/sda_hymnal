@@ -3587,6 +3587,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update'**
   String get packUpdate;
+
+  /// No description provided for @scorePacksHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep score collections available offline. Printed keys and arrangements stay unchanged.'**
+  String get scorePacksHelp;
+
+  /// No description provided for @scorePackDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} score pages · {size} MB'**
+  String scorePackDetails(int count, String size);
 }
 
 class _AppLocalizationsDelegate

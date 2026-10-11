@@ -933,5 +933,17 @@
       }
     }
   },
-  "packUpdate": "Update"
+  "packUpdate": "Update",
+  "scorePacksHelp": "Keep score collections available offline. Printed keys and arrangements stay unchanged.",
+  "scorePackDetails": "{count} score pages · {size} MB",
+  "@scorePackDetails": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  }
 }

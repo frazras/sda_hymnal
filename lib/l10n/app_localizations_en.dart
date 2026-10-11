@@ -2024,4 +2024,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get packUpdate => 'Update';
+
+  @override
+  String get scorePacksHelp =>
+      'Keep score collections available offline. Printed keys and arrangements stay unchanged.';
+
+  @override
+  String scorePackDetails(int count, String size) {
+    return '$count score pages · $size MB';
+  }
 }

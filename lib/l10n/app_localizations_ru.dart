@@ -2063,4 +2063,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get packUpdate => 'Обновить';
+
+  @override
+  String get scorePacksHelp =>
+      'Сохраните сборники нот для использования без интернета. Напечатанные тональности и аранжировки не изменяются.';
+
+  @override
+  String scorePackDetails(int count, String size) {
+    return 'Страниц нот: $count · $size МБ';
+  }
 }

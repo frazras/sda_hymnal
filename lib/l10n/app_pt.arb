@@ -580,5 +580,7 @@
   "packNoMusic": "Somente letras; não inclui música.",
   "packDetails": "{count} hinos · {size} MB",
   "packReviewPending": "Revisão independente das letras pendente",
-  "packUpdate": "Atualizar"
+  "packUpdate": "Atualizar",
+  "scorePacksHelp": "Mantenha as partituras disponíveis offline. As tonalidades e os arranjos impressos permanecem iguais.",
+  "scorePackDetails": "{count} páginas de partituras · {size} MB"
 }

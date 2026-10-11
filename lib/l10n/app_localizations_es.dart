@@ -2042,4 +2042,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get packUpdate => 'Actualizar';
+
+  @override
+  String get scorePacksHelp =>
+      'Guarda las partituras para usarlas sin conexión. Las tonalidades y los arreglos impresos no cambian.';
+
+  @override
+  String scorePackDetails(int count, String size) {
+    return '$count páginas de partituras · $size MB';
+  }
 }
