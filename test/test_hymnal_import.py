@@ -1,4 +1,6 @@
 import copy
+import json
+import tempfile
 import importlib.util
 import unittest
 import sys
@@ -21,7 +23,42 @@ class HymnalImportTest(unittest.TestCase):
 
     def build(self):
         return importer.build_pack(self.book, self.lyrics, self.topics,
-                                   dict(revision='pinned'))
+                                   dict(repository='test/source', revision='pinned'))
+
+    def test_reviewed_corrections_preserve_unmodified_source_text(self):
+        original = self.build()
+        review = dict(sourceRevision='pinned', changes=[dict(itemId='1', field='title',
+            before='Señor', after='Señor corregido', reviewer='Editorial reviewer', reason='Verified printed title')])
+        corrected = importer.build_pack(self.book, self.lyrics, self.topics,
+            dict(repository='test/source', revision='pinned'), review)
+        self.assertEqual(corrected['items'][0]['title'], 'Señor corregido')
+        self.assertEqual(corrected['items'][0]['sourceText'], original['items'][0]['sourceText'])
+        self.assertEqual(corrected['items'][1], original['items'][1])
+        self.assertEqual(corrected['reviewedOverrides'], review)
+        self.assertNotEqual(corrected['contentVersion'], original['contentVersion'])
+        repeated = importer.build_pack(self.book, self.lyrics, self.topics, dict(repository='test/source', revision='pinned'), review)
+        self.assertEqual(repeated['contentVersion'], corrected['contentVersion'])
+        self.assertEqual(self.lyrics[0]['title'], 'Señor')
+        for change in [dict(sourceRevision='stale'),
+                       dict(changes=[dict(review['changes'][0], before='Wrong title')]),
+                       dict(changes=[dict(review['changes'][0], reviewer='')])]:
+            with self.assertRaises(ValueError):
+                importer.build_pack(self.book, self.lyrics, self.topics,
+                    dict(repository='test/source', revision='pinned'), review | change)
+
+    def test_main_import_review_files_are_pinned_and_confined(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            content = json.dumps(dict(sourceRevision='pinned', changes=[])).encode()
+            (base / 'review.json').write_bytes(content)
+            descriptor = dict(path='review.json', bytes=len(content),
+                              sha256=importer.hashlib.sha256(content).hexdigest())
+            self.assertEqual(importer.reviewed_overrides({'reviewedOverrides': descriptor}, base), json.loads(content))
+            self.assertIsNone(importer.reviewed_overrides({}, base))
+            for bad in [descriptor | {'sha256': '0' * 64}, descriptor | {'bytes': 1},
+                        descriptor | {'path': '../outside.json'}, descriptor | {'path': '/absolute.json'}]:
+                with self.assertRaises(ValueError):
+                    importer.reviewed_overrides({'reviewedOverrides': bad}, base)
 
     def test_shipped_packs_match_verified_sources_offline(self):
         importer.build(check=True)

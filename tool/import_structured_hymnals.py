@@ -97,8 +97,10 @@ def convert(source, manifest):
 
 def apply_overrides(pack, overrides):
     result = copy.deepcopy(pack)
-    if not overrides:
+    if overrides is None:
         return result
+    if not isinstance(overrides, dict):
+        raise ValueError('Reviewed overrides must be an object')
     if overrides.get('sourceRevision') != pack['source']['revision']:
         raise ValueError('Overrides target a different source revision')
     changes = sequence(overrides.get('changes'), 'reviewed changes')
@@ -121,9 +123,12 @@ def apply_overrides(pack, overrides):
     errors = inspect_pack(result)['errors']
     if errors:
         raise ValueError(json.dumps(errors))
+    changed_blocks = {change['itemId'] for change in changes if change['field'] == 'blocks'}
     for item in result['items']:
-        item['sourceText'] = '\n\n'.join(block['text'] for block in item['blocks'])
+        if item['id'] in changed_blocks:
+            item['sourceText'] = '\n\n'.join(block['text'] for block in item['blocks'])
     result['reviewedOverrides'] = copy.deepcopy(overrides)
+    result['contentVersion'] = pack['contentVersion'] + '-review-' + hashlib.sha256(json_bytes(overrides)).hexdigest()
     return result
 
 

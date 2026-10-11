@@ -368,3 +368,21 @@ shell reloads its shared content: newly installed books become selectable, and
 removing the selected optional book safely returns to English. Audio remains
 on demand with its existing bounded cache. Optional score-pack management and a
 remote catalog update channel are still separate unfinished work.
+
+## Reviewed corrections in the main publication path
+
+GoGoShift book entries in `tool/data/hymnal_sources.json` may now declare an
+optional `reviewedOverrides` descriptor with `path`, exact `bytes`, and SHA-256.
+The path is relative to the manifest directory and must stay inside it, including
+when resolving symlinks. French/Swahili structured manifests use the same field.
+Review files retain the existing source-revision, before/after, reviewer, and
+reason contract. Invalid hashes, stale decisions, missing reviewer details, or
+identity changes fail before generated assets are replaced.
+
+A corrected pack retains its original source revision and records the applied
+review decisions; its content version adds a deterministic review fingerprint.
+Original source snapshots remain untouched. Title/credit corrections preserve
+original lyric text, while block corrections rebuild search text only for the
+affected hymn. Without a review descriptor, generated bundled packs remain
+byte-identical. These checks validate review records; they do not certify that
+a named reviewer has performed fluent editorial or musical review.

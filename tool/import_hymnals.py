@@ -79,7 +79,26 @@ def lyric_blocks(content):
     return blocks
 
 
-def build_pack(book, lyrics, topic_groups, provenance):
+def reviewed_overrides(metadata, base):
+    """Only explicitly pinned local review decisions may alter published text."""
+    descriptor = metadata.get('reviewedOverrides')
+    if descriptor is None:
+        return None
+    if not isinstance(descriptor, dict) or set(descriptor) != {'path', 'bytes', 'sha256'}:
+        raise ValueError('Invalid reviewed override descriptor')
+    name = descriptor['path']
+    if not isinstance(name, str) or not name or Path(name).is_absolute():
+        raise ValueError('Invalid reviewed override path')
+    path = (base / name).resolve()
+    if not path.is_relative_to(base.resolve()):
+        raise ValueError('Reviewed override path escapes manifest directory')
+    result = verified(path.read_bytes(), descriptor)
+    if not isinstance(result, dict):
+        raise ValueError('Reviewed overrides must be an object')
+    return result
+
+
+def build_pack(book, lyrics, topic_groups, provenance, overrides=None):
     if not isinstance(lyrics, list) or len(lyrics) != book['expectedCount']:
         raise ValueError(f'Unexpected count in {book["id"]}')
     seen = set()
@@ -113,11 +132,15 @@ def build_pack(book, lyrics, topic_groups, provenance):
                            'group': group_name, 'title': text(topic['ambit'], 'topic'),
                            'itemIds': [str(number) for number in numbers]})
     metadata = {key: book[key] for key in ['id', 'languageTag', 'displayName', 'year']}
-    return {'schemaVersion': 1, 'book': metadata, 'contentVersion': provenance['revision'],
+    pack = {'schemaVersion': 1, 'book': metadata, 'contentVersion': provenance['revision'],
             'source': provenance,
             'coverage': {'sourceRecords': len(items), 'structurallyComplete': True,
                          'note': 'Imported source edition; independent lyric review pending.'},
             'items': items, 'topics': topics}
+    if overrides is not None:
+        from import_structured_hymnals import apply_overrides
+        pack = apply_overrides(pack, overrides)
+    return pack
 
 
 def build(check=False):
@@ -129,7 +152,8 @@ def build(check=False):
                    for kind, source in book['sources'].items()}
         provenance = {'repository': manifest['repository'], 'revision': manifest['revision'],
                       'files': book['sources']}
-        pack = build_pack(book, sources['lyrics'], sources['topics'], provenance)
+        pack = build_pack(book, sources['lyrics'], sources['topics'], provenance,
+                          reviewed_overrides(book, MANIFEST.parent))
         data = json_bytes(pack)
         asset = f'assets/hymnals/{book["id"]}.json'
         outputs[ROOT / asset] = data
@@ -137,13 +161,14 @@ def build(check=False):
                       'topicCount': len(pack['topics']), 'bytes': len(data),
                       'sha256': hashlib.sha256(data).hexdigest()})
     # Import lazily to avoid a module cycle with the shared text helpers.
-    from import_structured_hymnals import convert
+    from import_structured_hymnals import convert, apply_overrides
     for name in ('french', 'swahili'):
         manifest_path = ROOT / 'tool/data/structured_sources' / f'{name}.manifest.json'
         structured = json.loads(manifest_path.read_text())
         snapshot = manifest_path.parent / structured['snapshot']
         source = verified(snapshot.read_bytes(), structured['source'])
-        pack = convert(source, structured)
+        pack = apply_overrides(convert(source, structured),
+                               reviewed_overrides(structured, manifest_path.parent))
         data = json_bytes(pack)
         asset = f'assets/hymnals/{pack["book"]["id"]}.json'
         outputs[ROOT / asset] = data
