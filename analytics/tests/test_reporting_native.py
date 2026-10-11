@@ -31,3 +31,15 @@ class NativeReportingTest(unittest.TestCase):
         rows = [self.row('sda-es-2009', 20, view='country_song', country='JM', contributors=20),
                 self.row('sda-es-1962', 1, view='country_song', country='JM', contributors=1)]
         self.assertEqual(reporting.safe_public_rows(rows), [rows[0]])
+
+    def test_legacy_public_report_retains_english_ranking(self):
+        import datetime as dt
+        rows = [self.row('sda-es-2009', 50, view='song', contributors=20),
+                dict(self.row('sda-en-1985', 20, view='song', contributors=20), edition='new')]
+        weeks = {'2026-08-31': rows}
+        native = reporting.public_report(weeks, dt.date(2026, 9, 7), 'now')
+        legacy = reporting.public_report(weeks, dt.date(2026, 9, 7), 'now', legacy=True)
+        self.assertEqual(len(native['periods']['1']['top_songs']), 2)
+        songs = legacy['periods']['1']['top_songs']
+        self.assertEqual(len(songs), 1)
+        self.assertEqual(songs[0]['edition'], 'new')

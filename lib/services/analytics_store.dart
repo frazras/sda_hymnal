@@ -197,12 +197,19 @@ class AnalyticsStore {
   Future<void> record(String metric,
       {String variant = '', int hymn = 0, String edition = '', int total = 0}) {
     if (!enabled) return Future.value();
+    final nativeBook =
+        RegExp(r'^sda-[a-z]{2,3}-[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(edition);
     if (!(analyticsVariants[metric]?.contains(variant) ?? false) ||
         hymn < 0 ||
-        hymn > (edition == 'new' ? 695 : 703) ||
+        hymn >
+            (nativeBook
+                ? 9999
+                : edition == 'new'
+                    ? 695
+                    : 703) ||
         total < 0 ||
         total > 3600000 ||
-        !['', 'new', 'old'].contains(edition) ||
+        (!nativeBook && !['', 'new', 'old'].contains(edition)) ||
         (hymn == 0) != (edition == '')) {
       return Future.error(ArgumentError('Invalid analytics measurement'));
     }
@@ -218,7 +225,8 @@ class AnalyticsStore {
       'metric': metric,
       'variant': variant,
       'hymn': hymn,
-      'edition': edition,
+      'edition': nativeBook ? '' : edition,
+      if (nativeBook) 'book_id': edition,
       'weekday': now.weekday,
       'time': now.hour < 6
           ? 'night'
@@ -307,8 +315,10 @@ class AnalyticsStore {
             await tx.insert('periods', {'week': week, 'token': token});
           }
           final id = analyticsId();
+          final native = group.any((r) =>
+              (jsonDecode(r['row'] as String) as Map).containsKey('book_id'));
           final body = {
-            'schema': 1,
+            'schema': native ? 2 : 1,
             'batch_id': id,
             'token': token,
             ...header,
@@ -316,6 +326,15 @@ class AnalyticsStore {
               for (final r in group)
                 {
                   ...jsonDecode(r['row'] as String) as Map<String, dynamic>,
+                  if (native)
+                    'book_id':
+                        (jsonDecode(r['row'] as String) as Map)['book_id'] ??
+                            switch ((jsonDecode(r['row'] as String)
+                                as Map)['edition']) {
+                              'new' => 'sda-en-1985',
+                              'old' => 'sda-en-1941',
+                              _ => '',
+                            },
                   'count': r['count'],
                   'total': r['total']
                 }

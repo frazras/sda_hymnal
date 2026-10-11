@@ -13,22 +13,22 @@ GROUP BY metric, variant
 ORDER BY actions DESC;
 
 -- Hymns by country, weekday and broad time. Do not sum contributors as uniques.
-SELECT edition, hymn, country, weekday, "time", sum("count") AS opens
+SELECT book_id, edition, hymn, country, weekday, "time", sum("count") AS opens
 FROM metrics
 WHERE week >= cast(date_add('week', -4, date_trunc('week', current_date)) AS varchar)
   AND week < cast(date_trunc('week', current_date) AS varchar)
   AND metric = 'hymn_open'
-GROUP BY edition, hymn, country, weekday, "time"
+GROUP BY book_id, edition, hymn, country, weekday, "time"
 ORDER BY opens DESC
 LIMIT 100;
 
 -- Favorite additions since statistics were enabled; not saved-list size.
-SELECT edition, hymn, sum("count") AS additions
+SELECT book_id, edition, hymn, sum("count") AS additions
 FROM metrics
 WHERE week >= cast(date_add('week', -4, date_trunc('week', current_date)) AS varchar)
   AND week < cast(date_trunc('week', current_date) AS varchar)
   AND metric = 'favorite_add'
-GROUP BY edition, hymn
+GROUP BY book_id, edition, hymn
 ORDER BY additions DESC
 LIMIT 100;
 

@@ -217,11 +217,11 @@ def handler(event, context):
                 'cache-control': 'public, max-age=3600', 'x-content-type-options': 'nosniff'}, 'body': html}
         except ClientError:
             return response(503, {'error': 'policy_unavailable'})
-    if route == "GET /v1/trends":
+    if route in ("GET /v1/trends", "GET /v2/trends"):
         # Serve a precomputed, suppressed public summary. Never expose the
         # database or permit arbitrary filtering of small cells.
         try:
-            data = boto3.client("s3").get_object(Bucket=os.environ["BUCKET"], Key="public/trends.json")["Body"].read()
+            data = boto3.client("s3").get_object(Bucket=os.environ["BUCKET"], Key="public/trends-native.json" if route == "GET /v2/trends" else "public/trends.json")["Body"].read()
             result = response(200, json.loads(data))
         except ClientError as exc:
             if exc.response["Error"]["Code"] != "NoSuchKey":
@@ -318,7 +318,8 @@ def export_handler(event, context):
     if namespace == "prod" or event.get('preview') is True:
         generated = dt.datetime.now(dt.timezone.utc).isoformat()
         prefix = '' if namespace == 'prod' else 'reports/e2e/preview/'
-        for key, report in [(prefix + 'public/trends.json', public_report(reporting_weeks, monday, generated)),
+        for key, report in [(prefix + 'public/trends.json', public_report(reporting_weeks, monday, generated, legacy=True)),
+                            (prefix + 'public/trends-native.json', public_report(reporting_weeks, monday, generated)),
                             (prefix + 'admin/overview.json', admin_report(admin_weeks, monday, generated, compiled=True))]:
             s3.put_object(Bucket=os.environ['BUCKET'], Key=key, ContentType='application/json',
                 Body=json.dumps(report, separators=(',', ':')).encode())

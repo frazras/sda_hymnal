@@ -69,6 +69,33 @@ class Repository extends TrendsRepository {
 }
 
 void main() {
+  test('native statistic preserves book identity and label', () {
+    final song = SongStatistic.parse({
+      'hymn': 303,
+      'edition': '',
+      'book_id': 'sda-es-2009',
+      'book_label': 'Español · 2009',
+      'title': 'Sublime Gracia',
+      'count': 20
+    });
+    expect(song.bookId, 'sda-es-2009');
+    expect(song.bookLabel, 'Español · 2009');
+    expect(
+        SongStatistic.parse(
+                {'hymn': 1, 'edition': 'new', 'title': 'Praise', 'count': 20})
+            .bookId,
+        'sda-en-1985');
+    expect(
+        () => SongStatistic.parse({
+              'hymn': 303,
+              'edition': 'new',
+              'book_id': 'sda-es-2009',
+              'title': 'Sublime Gracia',
+              'count': 20
+            }),
+        throwsFormatException);
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
 

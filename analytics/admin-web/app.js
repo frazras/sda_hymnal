@@ -82,7 +82,7 @@ function bars(id, rows, label = row => pretty(row.label), limit = 10) {
     const wrap = element('div', undefined, 'bar-row');
     const caption = element('div', undefined, 'bar-label');
     const name = element('span', label(row));
-    if (row.edition) name.append(element('small', pretty(row.edition) + ' ' + row.hymn, 'song-edition'));
+    if (row.edition || row.book_id) name.append(element('small', (row.book_label || pretty(row.edition) || row.book_id) + ' ' + row.hymn, 'song-edition'));
     caption.append(name, element('strong', format.format(row.count)));
     const chart = svg('svg', {viewBox: '0 0 100 7', preserveAspectRatio: 'none', class: 'bar-svg', 'aria-hidden': 'true'});
     chart.append(svg('rect', {width: 100, height: 7, class: 'bar-track'}),

@@ -41,6 +41,30 @@ void main() {
     await directory.delete(recursive: true);
   });
 
+  test('mixed native and legacy counters seal without losing book identities',
+      () async {
+    await store.record('hymn_open',
+        variant: 'keypad', hymn: 303, edition: 'sda-es-2009');
+    await store.record('hymn_open',
+        variant: 'keypad', hymn: 303, edition: 'sda-es-1962');
+    await store.record('hymn_open',
+        variant: 'keypad', hymn: 303, edition: 'sda-es-2009');
+    await store.record('hymn_open', variant: 'keypad', hymn: 1, edition: 'new');
+    await store.record('app_session');
+    await store.uploadIfDue(force: true);
+    expect(sent.single['schema'], 2);
+    final rows = sent.single['rows'] as List;
+    expect(rows.every((r) => (r as Map).containsKey('book_id')), isTrue);
+    final repeats = rows.where((r) => r['metric'] == 'hymn_repeat').toList();
+    expect(repeats, hasLength(1));
+    expect(repeats.single['book_id'], 'sda-es-2009');
+    expect(rows.where((r) => r['book_id'] == 'sda-es-1962'), hasLength(1));
+    expect(rows.where((r) => r['book_id'] == 'sda-en-1985').single['edition'],
+        'new');
+    expect(
+        rows.where((r) => r['metric'] == 'app_session').single['book_id'], '');
+  });
+
   test('on by default; first upload waits a week; explicit opt-out persists',
       () async {
     expect(store.enabled, isTrue);

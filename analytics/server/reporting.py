@@ -4,6 +4,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+BOOK_LABELS = {}  # BOOK_LABELS
 MINIMUM = 20
 catalog_path = Path(__file__).with_name('catalog.json')
 CATALOG = json.loads(catalog_path.read_text()) if catalog_path.exists() else {}
@@ -27,6 +28,7 @@ def songs(rows, metric, limit=20):
         value = dict(edition=edition, hymn=hymn, title=title, count=count)
         if not edition:
             value['book_id'] = book
+            value['book_label'] = BOOK_LABELS.get(book, '')
         result.append(value)
     return result
 
@@ -62,9 +64,13 @@ def safe_public_rows(rows):
     return eligible
 
 
-def public_report(weeks, monday, generated):
+def public_report(weeks, monday, generated, legacy=False):
     safe = {week: safe_public_rows(rows) for week, rows in weeks.items()
         if monday - dt.timedelta(weeks=8) <= dt.date.fromisoformat(week) < monday}
+    if legacy:
+        safe = {week: [r for r in rows if not r.get('hymn') or
+            song_identity(r)[0] in ('sda-en-1941', 'sda-en-1985')]
+            for week, rows in safe.items()}
     periods = {}
     for length in (1, 4, 8):
         start = monday - dt.timedelta(weeks=length)
@@ -111,7 +117,7 @@ def compile_admin_week(rows):
     # Keep complete song totals until period ranking: a song outside each
     # week's top 20 can still rank highly over a longer reporting period.
     fine = [r for r in rows if not r.get('view')]
-    return {platform: admin_period([r for r in fine if platform == 'all' or r.get('platform') == platform], 1400)
+    return {platform: admin_period([r for r in fine if platform == 'all' or r.get('platform') == platform], 10000)
             for platform in ('all', 'android', 'ios')}
 
 

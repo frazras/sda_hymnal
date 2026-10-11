@@ -74,14 +74,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Future<void> _open(SongStatistic song) async {
     final matches = widget.hymns
-        .where((h) => h.version == song.edition && h.number == song.hymn);
+        .where((h) => h.ref.bookId == song.bookId && h.number == song.hymn);
     if (matches.isEmpty) return;
     await Navigator.push(
         context,
         slideRoute(HymnPage(
             hymn: matches.first,
             hymns:
-                widget.hymns.where((h) => h.version == song.edition).toList(),
+                widget.hymns.where((h) => h.ref.bookId == song.bookId).toList(),
             analyticsSource: 'statistics')));
     // The hymn page records its own reading time; return to this screen.
     if (mounted) AppAnalytics.instance.screen('statistics');
@@ -284,6 +284,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
           String Function(int) unit) =>
       _card(title, subtitle, songs.isEmpty ? _empty() : _songList(songs, unit));
 
+  String _songBookLabel(SongStatistic song) {
+    if (song.edition == 'new') return context.appText.statisticsNewEdition;
+    if (song.edition == 'old') return context.appText.statisticsOldEdition;
+    final matches = widget.hymns.where((h) => h.ref.bookId == song.bookId);
+    return matches.isNotEmpty ? matches.first.bookLabel : song.bookLabel;
+  }
+
   Widget _songList(List<SongStatistic> songs, String Function(int) unit) {
     final t = context.tokens;
     final max = songs.fold<int>(
@@ -294,7 +301,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
             color: Colors.transparent,
             child: InkWell(
                 onTap: widget.hymns.any((h) =>
-                        h.number == song.hymn && h.version == song.edition)
+                        h.number == song.hymn && h.ref.bookId == song.bookId)
                     ? () => _open(song)
                     : null,
                 borderRadius: BorderRadius.circular(8),
@@ -321,7 +328,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 4),
                                 Text(
-                                    '${song.edition == 'new' ? context.appText.statisticsNewEdition : context.appText.statisticsOldEdition} ${song.hymn} · ${unit(song.count)}',
+                                    '${_songBookLabel(song)} ${song.hymn} · ${unit(song.count)}',
                                     style: TextStyle(
                                         fontSize: 12, color: t.muted)),
                                 const SizedBox(height: 8),

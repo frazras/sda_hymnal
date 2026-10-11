@@ -34,7 +34,7 @@ def sub(value):
 def template(code=None):
     source = (ROOT / "analytics/server/collector.py").read_text().replace("METRICS = {}  # SCHEMA", "METRICS = " + repr(SCHEMA["metrics"]))
     columns = [{"Name": n, "Type": "bigint" if n in ("hymn", "weekday", "count", "total", "contributors") else "string"}
-        for n in ("metric", "variant", "hymn", "edition", "weekday", "time", "platform", "version", "design", "country", "count", "total", "contributors")]
+        for n in ("metric", "variant", "hymn", "edition", "book_id", "weekday", "time", "platform", "version", "design", "country", "count", "total", "contributors")]
     descriptor = {"Columns": columns, "InputFormat": "org.apache.hadoop.mapred.TextInputFormat",
         "OutputFormat": "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat",
         "SerdeInfo": {"SerializationLibrary": "org.openx.data.jsonserde.JsonSerDe"}}
@@ -87,7 +87,7 @@ def template(code=None):
             "Environment": {"Variables": env}}}
     resources["Api"] = {"Type": "AWS::ApiGatewayV2::Api", "Properties": {"Name": "sdahymnal-analytics", "ProtocolType": "HTTP"}}
     resources["Integration"] = {"Type": "AWS::ApiGatewayV2::Integration", "Properties": {"ApiId": ref("Api"), "IntegrationType": "AWS_PROXY", "IntegrationUri": attr("Collector", "Arn"), "PayloadFormatVersion": "2.0"}}
-    for name, route in (("ErrorReports", "POST /v1/error-reports"), ("Batches", "POST /v1/batches"), ("Trends", "GET /v1/trends"), ("Health", "GET /v1/health"), ("Privacy", "GET /privacy-policy")):
+    for name, route in (("ErrorReports", "POST /v1/error-reports"), ("Batches", "POST /v1/batches"), ("Trends", "GET /v1/trends"), ("NativeTrends", "GET /v2/trends"), ("Health", "GET /v1/health"), ("Privacy", "GET /privacy-policy")):
         resources[name + "Route"] = {"Type": "AWS::ApiGatewayV2::Route", "Properties": {"ApiId": ref("Api"), "RouteKey": route, "Target": sub("integrations/${Integration}")}}
     resources["Stage"] = {"Type": "AWS::ApiGatewayV2::Stage", "Properties": {"ApiId": ref("Api"), "StageName": "$default", "AutoDeploy": True,
         "DefaultRouteSettings": {"ThrottlingBurstLimit": 10, "ThrottlingRateLimit": 5}}}

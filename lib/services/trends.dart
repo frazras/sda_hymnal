@@ -5,9 +5,15 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'analytics_endpoint.dart';
+import '../models/hymn_ref.dart';
 
 class SongStatistic {
-  const SongStatistic(this.hymn, this.edition, this.title, this.count);
+  const SongStatistic(this.hymn, this.edition, this.title, this.count,
+      {this.nativeBookId = '', this.bookLabel = ''});
+  final String nativeBookId;
+  final String bookLabel;
+  String get bookId =>
+      nativeBookId.isEmpty ? canonicalBookId(edition) : nativeBookId;
   final int hymn;
   final String edition;
   final String title;
@@ -16,13 +22,25 @@ class SongStatistic {
     final hymn = value['hymn'] as int;
     final edition = value['edition'] as String;
     final count = value['count'] as int;
-    if (!['old', 'new'].contains(edition) ||
+    final book = value['book_id'] as String? ?? '';
+    final native = book.isNotEmpty &&
+        RegExp(r'^sda-[a-z]{2,3}-[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(book);
+    if (book.isNotEmpty && (!native || edition.isNotEmpty)) {
+      throw const FormatException('Invalid native song statistic');
+    }
+    if ((!native && !['old', 'new'].contains(edition)) ||
         hymn < 1 ||
-        hymn > (edition == 'new' ? 695 : 703) ||
+        hymn >
+            (native
+                ? 9999
+                : edition == 'new'
+                    ? 695
+                    : 703) ||
         count < 0) {
       throw const FormatException('Invalid song statistic');
     }
-    return SongStatistic(hymn, edition, value['title'] as String, count);
+    return SongStatistic(hymn, edition, value['title'] as String, count,
+        nativeBookId: book, bookLabel: value['book_label'] as String? ?? '');
   }
 }
 
@@ -78,8 +96,8 @@ class TrendsSnapshot {
 /// The same public snapshot for everyone, including people who opted out.
 /// Only the public report is cached; no login, identifier, or location request.
 class TrendsRepository {
-  static const cacheKey = 'communityTrendsV2';
-  static const fetchedKey = 'communityTrendsFetchedV2';
+  static const cacheKey = 'communityTrendsNativeV2';
+  static const fetchedKey = 'communityTrendsNativeFetchedV2';
   Future<TrendsSnapshot> load({bool force = false}) async {
     final prefs = await SharedPreferences.getInstance();
     final cached = prefs.getString(cacheKey);
@@ -115,7 +133,7 @@ class TrendsRepository {
     try {
       return await (() async {
         final request =
-            await client.getUrl(Uri.parse('$analyticsEndpoint/v1/trends'));
+            await client.getUrl(Uri.parse('$analyticsEndpoint/v2/trends'));
         request.followRedirects = false;
         request.headers
             .set(HttpHeaders.userAgentHeader, 'SDAHymnal-Community/1');
