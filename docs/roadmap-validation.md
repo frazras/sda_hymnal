@@ -53,3 +53,18 @@ for completeness but is not yet proven to resolve the timeout. Export needs
 bounded, resumable work rather than claiming deployment alone proves delivery.
 The multilingual public snapshot is not yet present in production. This keeps
 the native-analytics roadmap item unchecked.
+
+### Resumable exporter follow-up
+
+The exporter now checkpoints its week, page cursor, accumulated private rows,
+compiled weekly reports, and revision in private S3 storage. It queues the next
+execution before the deadline, rejects stale revisions/completed retries, and
+refuses continuations that make no progress. Query pages are bounded at 500
+records. Thirty-one backend tests pass, including mid-week pause/resume and
+rollout fallback to the existing legacy public report.
+
+The deployed production job returned a pending result after exporting 381,311
+rows and successfully queuing revision 1. This proves continuation was accepted;
+final snapshot publication remains under observation. Installed-book statistics
+routing and native Russian song opening pass their widget tests. App analysis
+reports no issues. Foreign app counters remain gated until production finishes.
