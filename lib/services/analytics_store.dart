@@ -7,6 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import 'analytics_schema.dart';
+import '../models/hymn_ref.dart';
 
 typedef BatchSender = Future<({int status, Map<String, dynamic> body})>
     Function(Map<String, dynamic> batch);
@@ -197,6 +198,7 @@ class AnalyticsStore {
   Future<void> record(String metric,
       {String variant = '', int hymn = 0, String edition = '', int total = 0}) {
     if (!enabled) return Future.value();
+    edition = legacyBookAlias(edition);
     final nativeBook =
         RegExp(r'^sda-[a-z]{2,3}-[a-z0-9]+(?:-[a-z0-9]+)*$').hasMatch(edition);
     if (!(analyticsVariants[metric]?.contains(variant) ?? false) ||

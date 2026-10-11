@@ -41,6 +41,19 @@ void main() {
     await directory.delete(recursive: true);
   });
 
+  test('canonical English IDs share repeat history with legacy aliases',
+      () async {
+    await store.record('hymn_open',
+        variant: 'keypad', hymn: 1, edition: 'sda-en-1985');
+    await store.record('hymn_open', variant: 'keypad', hymn: 1, edition: 'new');
+    await store.uploadIfDue(force: true);
+    final rows = sent.single['rows'] as List;
+    expect(sent.single['schema'], 1);
+    expect(rows.where((r) => r['metric'] == 'hymn_open').single['count'], 2);
+    expect(rows.where((r) => r['metric'] == 'hymn_repeat').single['count'], 1);
+    expect(rows.every((r) => r['edition'] == 'new'), isTrue);
+  });
+
   test('mixed native and legacy counters seal without losing book identities',
       () async {
     await store.record('hymn_open',
