@@ -17,6 +17,7 @@ import 'package:sdahymnal/ui/hymnal_browser.dart';
 import 'package:sdahymnal/ui/alphabetical_hymns.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/tabs.dart';
+import 'package:sdahymnal/ui/report_error.dart';
 import 'hymnal_pack_test.dart' show FilePackBundle;
 
 void main() {
@@ -56,6 +57,42 @@ void main() {
       }
       return null;
     });
+  });
+
+  testWidgets('foreign reader reports retain native book and hymn identity',
+      (tester) async {
+    for (final book in [
+      'sda-es-2009',
+      'sda-es-1962',
+      'sda-pt-1996',
+      'sda-ru-1997',
+      'sda-fr-hymnes-et-louanges',
+      'sda-sw-nyimbo-za-kristo'
+    ]) {
+      final pack = HymnalPack.fromJson(
+          File('assets/hymnals/$book.json').readAsStringSync());
+      final hymn = pack.hymns.first;
+      await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: HymnPage(hymn: hymn, hymns: pack.hymns),
+      ));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Report Errors'));
+      await tester.pumpAndSettle();
+      final subject =
+          tester.widget<ReportErrorPage>(find.byType(ReportErrorPage)).subject;
+      expect(subject.kind, 'hymn');
+      expect(subject.bookId, book);
+      expect(subject.itemId, hymn.ref.itemId);
+      expect(subject.number, hymn.number);
+      expect(subject.title, hymn.title);
+      expect(subject.edition, isEmpty);
+      expect(find.textContaining(hymn.bookLabel), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpAndSettle();
+    }
   });
 
   for (final classic in [false, true]) {

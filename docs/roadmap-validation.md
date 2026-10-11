@@ -25,3 +25,13 @@ Device installation and physical background-audio, share/browser, and browsing
 validation remain pending while the connected iPhone requires its passcode.
 Native book identities also remain unsupported by the deployed analytics schema;
 foreign per-hymn measurements stay suppressed until the backend is extended.
+
+## Native error reports
+
+The collector and admin dashboard deployments completed on 11 October. The
+published Lambda archive was downloaded and its error-report validator compared
+byte-for-byte with the committed source. Legacy and native subject validation
+pass locally (19 backend tests, four dashboard tests). App checks pass (81 tests)
+and analysis reports no issues. Reports now carry canonical book identities;
+analytics still uses the legacy schema and remains a separate pending item.
+The release build succeeds; installation remains pending the phone unlock.
