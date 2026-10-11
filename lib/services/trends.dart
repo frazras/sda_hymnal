@@ -116,6 +116,18 @@ class TrendsRepository {
             const Duration(hours: 24).inMilliseconds) {
       return TrendsSnapshot.parse(cached!);
     }
+    // Upgrade without losing the last usable offline community report. Always
+    // attempt a native refresh before using this older cache as a fallback.
+    if (previous == null) {
+      final legacy = prefs.getString('communityTrendsV2');
+      if (legacy != null) {
+        try {
+          previous = TrendsSnapshot.parse(legacy, offline: true);
+        } catch (_) {
+          // An unreadable old cache must not prevent a fresh report download.
+        }
+      }
+    }
     try {
       final source = await fetch();
       final report = TrendsSnapshot.parse(source);

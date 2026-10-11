@@ -158,6 +158,21 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  test('native upgrade retains the previous offline report', () async {
+    SharedPreferences.setMockInitialValues({'communityTrendsV2': fixture()});
+    final repo = Repository()..offline = true;
+    final report = await repo.load();
+    expect(report.offline, isTrue);
+    expect(report.periods['4']!.songs.single.edition, 'new');
+    expect(repo.requests, 1);
+    repo.offline = false;
+    expect((await repo.load()).offline, isFalse);
+    expect(
+        (await SharedPreferences.getInstance())
+            .getString(TrendsRepository.cacheKey),
+        isNotNull);
+  });
+
   test('cache avoids repeated requests and provides offline fallback',
       () async {
     final repo = Repository();
