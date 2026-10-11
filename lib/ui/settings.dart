@@ -319,8 +319,8 @@ class Settings extends StatelessWidget {
               leading: Icon(Icons.bar_chart_rounded, color: t.accent),
               title: context.appText.communityStatistics,
               subtitle: context.appText.communityStatisticsHelp,
-              onTap: () => Navigator.push(
-                  context, slideRoute(StatisticsPage(hymns: hymns))),
+              onTap: () => Navigator.push(context,
+                  slideRoute(StatisticsPage(hymns: historyHymns ?? hymns))),
             )),
         const SizedBox(height: 10),
         _card(t,

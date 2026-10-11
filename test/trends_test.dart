@@ -6,6 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/services/trends.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/statistics.dart';
+import 'package:sdahymnal/ui/settings.dart';
+import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/services/prefs.dart';
+import 'package:sdahymnal/models/hymnal_pack.dart';
 
 String fixture({bool empty = false}) => jsonEncode({
       'schema': 2,
@@ -98,6 +102,61 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  testWidgets('Settings statistics receives every installed hymnal',
+      (tester) async {
+    final pack = HymnalPack.fromJson(
+        File('assets/hymnals/sda-es-2009.json').readAsStringSync());
+    await tester.pumpWidget(MaterialApp(
+      theme: buildHymnalTheme(HymnalTokens.light),
+      home: Scaffold(body: Settings(hymns: const [], historyHymns: pack.hymns)),
+    ));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Community statistics'), 300,
+        scrollable: find.descendant(
+            of: find.byKey(const ValueKey('settings-list')),
+            matching: find.byType(Scrollable)));
+    await tester.tap(find.text('Community statistics'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<StatisticsPage>(find.byType(StatisticsPage)).hymns,
+        pack.hymns);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'native statistics opens the selected book instead of an English alias',
+      (tester) async {
+    final pack = HymnalPack.fromJson(
+        File('assets/hymnals/sda-ru-1997.json').readAsStringSync());
+    await KeepScreenOn.instance.set(false);
+    final data = jsonDecode(fixture()) as Map<String, dynamic>;
+    for (final period in (data['periods'] as Map).values) {
+      period['top_songs'] = [
+        {
+          'hymn': 1,
+          'edition': '',
+          'book_id': pack.edition.id,
+          'book_label': pack.hymns.first.bookLabel,
+          'title': 'Native ranking result',
+          'count': 30
+        }
+      ];
+    }
+    await tester.pumpWidget(MaterialApp(
+      theme: buildHymnalTheme(HymnalTokens.light),
+      home: StatisticsPage(
+          hymns: pack.hymns,
+          load: (_) async => TrendsSnapshot.parse(jsonEncode(data))),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Native ranking result'));
+    await tester.pumpAndSettle();
+    final hymn = tester.widget<HymnPage>(find.byType(HymnPage)).hymn;
+    expect(hymn.ref.bookId, 'sda-ru-1997');
+    expect(hymn.number, 1);
+    expect(hymn.title, pack.hymns.first.title);
+    expect(tester.takeException(), isNull);
+  });
 
   test('cache avoids repeated requests and provides offline fallback',
       () async {
