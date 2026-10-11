@@ -35,3 +35,21 @@ pass locally (19 backend tests, four dashboard tests). App checks pass (81 tests
 and analysis reports no issues. Reports now carry canonical book identities;
 analytics still uses the legacy schema and remains a separate pending item.
 The release build succeeds; installation remains pending the phone unlock.
+
+## Multilingual statistics verification
+
+The complete Flutter regression run now passes 747 tests. Live isolated QA
+checks cover native Spanish Old/New book separation, 20 contributor publication,
+translated report titles, legacy English snapshots, and retry deduplication.
+`flutter test tool/analytics_multilingual_e2e_test.dart` also verifies the real
+app SQLite store and HTTPS transport, offline restart, mixed schema-2 batches,
+and unknown-book rejection. The collector, exporter, API routes and dashboard
+are deployed; foreign app counters remain gated until production export works.
+
+Production export remains incomplete: the aggregate table contains 648,233
+items, and scheduled exports repeatedly reach their 300-second limit. Recent
+DynamoDB read-throttle metrics report zero; reducing query page size is verified
+for completeness but is not yet proven to resolve the timeout. Export needs
+bounded, resumable work rather than claiming deployment alone proves delivery.
+The multilingual public snapshot is not yet present in production. This keeps
+the native-analytics roadmap item unchecked.
