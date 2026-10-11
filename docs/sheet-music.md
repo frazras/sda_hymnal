@@ -67,8 +67,8 @@ before a downloaded page may be activated. Regression checks apply it to all
 
 This does not yet implement score-pack downloads or remove bundled score images.
 The existing offline viewer and its page order are retained. Score transport
-and atomic storage are implemented below. Management controls and viewer
-loading from installed packs remain unfinished.
+and atomic storage are implemented below. Management controls remain unfinished; installed-file viewer loading is
+implemented below.
 
 ## Atomic score storage and transport
 
@@ -89,4 +89,19 @@ Removal deactivates only that edition and leaves unrelated data untouched.
 Twenty focused storage, transport, catalog, and viewer regressions pass. The
 transport uses mocked responses; this does not claim a published optional score
 catalog or physical download-flow validation. The trusted score catalog publisher,
-Settings management, and installed-file viewer loading remain to be connected.
+Settings management remain to be connected.
+
+## Installed score viewer integration
+
+Opening scores checks the local collection for that exact book, without starting
+networking. Verified installed pages use file images through the same zoom/page
+controls. Bundled pages remain available for hymns omitted from a partial local
+collection; missing, corrupt, or unreadable local content falls back to bundled
+scores. Switching books refreshes the source and resets page/zoom position.
+Opening or changing score pages retains the reader's playback owner.
+
+Source-loading tests cover installation, exact-edition isolation, partial
+coverage, corruption, removal, and zero implicit downloads. Rendering checks
+open real installed PNGs and turn pages. Existing theme/locale and playback
+continuation checks remain in the focused suite. The Settings score download
+controls and published trusted collection catalog are still unfinished.

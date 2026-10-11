@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/models/hymn_sheet_music.dart';
+import 'package:sdahymnal/services/installed_score_packs.dart';
+import 'package:sdahymnal/services/score_pack_store.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/hymn_sheet_music.dart';
 import 'package:sdahymnal/l10n/app_localizations.dart';
@@ -146,6 +148,54 @@ void main() {
     }
   });
 
+  testWidgets(
+      'viewer renders installed file with existing zoom and page controls',
+      (tester) async {
+    final directory = (await tester
+        .runAsync(() => Directory.systemTemp.createTemp('score-view-')))!;
+    addTearDown(() => directory.delete(recursive: true));
+    final descriptor = ScorePackDownload(
+        'sda-en-1985',
+        HymnSheetMusicCatalog({
+          'sda-en-1985': {4: catalog.forHymn('new', 4)}
+        }),
+        Uri.parse(
+            'https://raw.githubusercontent.com/frazras/sda_hymnal/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/'));
+    final installed = InstalledScorePack(descriptor, directory);
+    await tester.runAsync(() async {
+      for (final page in descriptor.pages) {
+        await File(page.asset).copy(installed.fileFor(page).path);
+      }
+    });
+    await tester.pumpWidget(MaterialApp(
+        theme: buildHymnalTheme(HymnalTokens.light),
+        home: Scaffold(
+            body: HymnSheetMusic(
+          hymn: Hymn(number: 4, title: 'Test', body: '', version: 'new'),
+          onLyrics: () {},
+          sourceLoader: (_, __) async =>
+              ScoreViewSource(descriptor.catalog, installed: installed),
+        ))));
+    for (var i = 0; i < 4; i++) {
+      await tester.runAsync(() async {
+        await tester.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+    }
+    await tester.pumpAndSettle();
+    expect(tester.widget<Image>(find.byType(Image)).image, isA<FileImage>());
+    expect(find.text('1 of 2'), findsOneWidget);
+    await tester.tap(find.byTooltip('Next score page'));
+    await tester.runAsync(() async {
+      await tester.pump();
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pumpAndSettle();
+    expect(find.text('2 of 2'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   Hymn hymn(int number, {String version = 'new'}) =>
       Hymn(number: number, title: 'Score test', body: '', version: version);
 
@@ -165,6 +215,9 @@ void main() {
             bundle: _ScoreAssets(),
             child: Scaffold(
               body: HymnSheetMusic(
+                sourceLoader: (bundle, _) async => ScoreViewSource(
+                    HymnSheetMusicCatalog.fromJson(await bundle
+                        .loadString('assets/sheet_music/catalog.json'))),
                 hymn: hymn(4),
                 onLyrics: () => lyricsRequested = true,
               ),
@@ -214,7 +267,11 @@ void main() {
             bundle: _ScoreAssets(),
             child: Scaffold(
                 body: HymnSheetMusic(
-                    hymn: hymn(number, version: version), onLyrics: () {})),
+                    sourceLoader: (bundle, _) async => ScoreViewSource(
+                        HymnSheetMusicCatalog.fromJson(await bundle
+                            .loadString('assets/sheet_music/catalog.json'))),
+                    hymn: hymn(number, version: version),
+                    onLyrics: () {})),
           ),
         );
     await tester.pumpWidget(app('sda-es-2009', 388));
@@ -246,8 +303,13 @@ void main() {
           theme: buildHymnalTheme(HymnalTokens.light),
           home: DefaultAssetBundle(
             bundle: bundle,
-            child:
-                Scaffold(body: HymnSheetMusic(hymn: current, onLyrics: () {})),
+            child: Scaffold(
+                body: HymnSheetMusic(
+                    sourceLoader: (bundle, _) async => ScoreViewSource(
+                        HymnSheetMusicCatalog.fromJson(await bundle
+                            .loadString('assets/sheet_music/catalog.json'))),
+                    hymn: current,
+                    onLyrics: () {})),
           ),
         );
     await tester.pumpWidget(app(hymn(4)));
@@ -291,6 +353,9 @@ void main() {
               bundle: _ScoreAssets(),
               child: Scaffold(
                 body: HymnSheetMusic(
+                  sourceLoader: (bundle, _) async => ScoreViewSource(
+                      HymnSheetMusicCatalog.fromJson(await bundle
+                          .loadString('assets/sheet_music/catalog.json'))),
                   hymn: Hymn(
                       number: 663,
                       version: 'new',

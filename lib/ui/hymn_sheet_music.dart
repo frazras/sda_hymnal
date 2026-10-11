@@ -2,7 +2,7 @@ import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
 import '../models/hymn.dart';
-import '../models/hymn_sheet_music.dart';
+import '../services/installed_score_packs.dart';
 import '../theme.dart';
 
 /// Stays inside the reader so playback, autoplay and category order keep their
@@ -10,8 +10,13 @@ import '../theme.dart';
 class HymnSheetMusic extends StatefulWidget {
   final Hymn hymn;
   final VoidCallback onLyrics;
+  final Future<ScoreViewSource> Function(AssetBundle, String) sourceLoader;
 
-  const HymnSheetMusic({super.key, required this.hymn, required this.onLyrics});
+  const HymnSheetMusic(
+      {super.key,
+      required this.hymn,
+      required this.onLyrics,
+      this.sourceLoader = loadScoreViewSource});
 
   @override
   State<HymnSheetMusic> createState() => _HymnSheetMusicState();
@@ -21,7 +26,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
   final _transform = TransformationController();
   final _viewport = GlobalKey();
   AssetBundle? _bundle;
-  Future<HymnSheetMusicCatalog>? _catalog;
+  Future<ScoreViewSource>? _catalog;
   int _page = 0;
 
   @override
@@ -35,9 +40,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
   }
 
   void _load() {
-    _catalog = _bundle!
-        .loadString('assets/sheet_music/catalog.json')
-        .then(HymnSheetMusicCatalog.fromJson);
+    _catalog = widget.sourceLoader(_bundle!, widget.hymn.version);
   }
 
   @override
@@ -45,6 +48,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.hymn.version != widget.hymn.version ||
         oldWidget.hymn.number != widget.hymn.number) {
+      if (oldWidget.hymn.version != widget.hymn.version) _load();
       _page = 0;
       _resetZoom();
     }
@@ -99,7 +103,7 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
         ]),
       ),
       Expanded(
-        child: FutureBuilder<HymnSheetMusicCatalog>(
+        child: FutureBuilder<ScoreViewSource>(
           future: _catalog,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -108,8 +112,8 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
-            final pages =
-                snapshot.data!.forHymn(widget.hymn.version, widget.hymn.number);
+            final pages = snapshot.data!.catalog
+                .forHymn(widget.hymn.version, widget.hymn.number);
             if (pages.isEmpty) {
               return _message(context.appText.scoreUnavailable);
             }
@@ -125,8 +129,10 @@ class _HymnSheetMusicState extends State<HymnSheetMusic> {
                       minScale: 1,
                       maxScale: 5,
                       child: SizedBox.expand(
-                        child: Image.asset(
-                          page.asset,
+                        child: Image(
+                          image: snapshot.data!.fileFor(page) == null
+                              ? AssetImage(page.asset) as ImageProvider<Object>
+                              : FileImage(snapshot.data!.fileFor(page)!),
                           key: ValueKey(page.asset),
                           fit: BoxFit.contain,
                           filterQuality: FilterQuality.high,
