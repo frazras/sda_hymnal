@@ -233,17 +233,35 @@ def report(root=ROOT):
     manifest = json.loads((root / 'tool/data/hymnal_sources.json').read_text())
     scores = json.loads((root / 'assets/sheet_music/catalog.json').read_text())['books']
     expected = {b['id']: range(1, b['expectedCount'] + 1) for b in manifest['books']}
-    for name in ('french', 'swahili'):
-        extra = json.loads((root / f'tool/data/structured_sources/{name}.manifest.json').read_text()) if (root / f'tool/data/structured_sources/{name}.manifest.json').exists() else None
-        if extra:
+    for path in sorted((root / 'tool/data/structured_sources').glob('*.manifest.json')):
+        extra = json.loads(path.read_text())
+        if 'expectedNumbers' in extra:
             expected[extra['book']['id']] = extra['expectedNumbers']
+    entries = list(catalog['books'])
+    download_errors = []
+    downloads_path = root / 'assets/hymnals/downloads.json'
+    if downloads_path.exists():
+        downloads = json.loads(downloads_path.read_text())
+        seen = {entry['id'] for entry in entries}
+        for book in downloads['books']:
+            if 'path' not in book:
+                continue
+            identity = book['bookId']
+            if identity in seen:
+                download_errors.append({'code': 'duplicate_optional_book', 'location': identity})
+                continue
+            seen.add(identity)
+            entries.append(dict(id=identity, asset=book['path'], bytes=book['bytes'],
+                sha256=book['sha256'], hymnCount=book['hymnCount'], topicCount=book['topicCount'],
+                displayName=book['displayName'], languageTag=book['languageTag'],
+                year=book['year'], optional=True))
     midi_catalog = root / 'assets/midi/verified_tunes.json'
     midi_data = json.loads(midi_catalog.read_text()) if midi_catalog.exists() else None
     recording_catalog = root / 'assets/hymnals/spanish_recordings.json'
     recording_data = json.loads(recording_catalog.read_text()) if recording_catalog.exists() else None
     book_items = {}
     books = []
-    for entry in catalog['books']:
+    for entry in entries:
         try:
             data = local_asset(root, entry['asset']).read_bytes()
             pack = json.loads(data)
@@ -253,6 +271,10 @@ def report(root=ROOT):
                     ('id', result.get('bookId')), ('hymnCount', result.get('items')),
                     ('topicCount', result.get('topics'))):
                 if entry[field] != actual:
+                    result['errors'].append({'code': 'catalog_mismatch', 'location': field})
+            result['optionalDownload'] = entry.get('optional', False)
+            for field in ('displayName', 'languageTag', 'year'):
+                if field in entry and entry[field] != pack['book'].get(field):
                     result['errors'].append({'code': 'catalog_mismatch', 'location': field})
             item_ids = {i['id'] for i in pack.get('items', [])
                         if isinstance(i, dict) and isinstance(i.get('id'), str)}
@@ -287,6 +309,7 @@ def report(root=ROOT):
     midi, midi_errors = inspect_midi(midi_data, book_items, root) if midi_data is not None else ({}, [])
     recordings, catalog_errors = inspect_recordings(recording_data, book_items) if recording_data is not None else ({}, [])
     catalog_errors.extend(midi_errors)
+    catalog_errors.extend(download_errors)
     for book in books:
         if 'media' in book:
             book['media']['verifiedInstrumentalItemIds'] = sorted(midi.get(book['bookId'], set()), key=lambda x: (len(x), x))
@@ -294,7 +317,7 @@ def report(root=ROOT):
             book['media']['instrumentalRecordingItemIds'] = sorted(valid, key=lambda x: (len(x), x))
             book['media']['missingInstrumentalRecordingItemIds'] = sorted(
                 book_items.get(book['bookId'], set()) - valid, key=lambda x: (len(x), x))
-    return {'schemaVersion': 1, 'catalogErrors': catalog_errors, 'scope': 'Bundled imported language packs',
+    return {'schemaVersion': 1, 'catalogErrors': catalog_errors, 'scope': 'Bundled and published optional imported language packs',
             'errorCount': len(catalog_errors) + sum(len(b['errors']) for b in books), 'books': books}
 
 

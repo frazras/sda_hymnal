@@ -178,16 +178,54 @@ class ContentReportTest(unittest.TestCase):
         for malformed in [None, [], {}, dict(schemaVersion=1, mappings=[None, {}])]:
             self.assertTrue(validator.inspect_midi(malformed, {}, ROOT)[1])
 
+    def test_optional_publication_checks_hash_numbering_and_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def write(name, value):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(value))
+                return path.read_bytes()
+            pack = copy.deepcopy(self.pack)
+            pack['book']['id'] = 'sda-ny-example'
+            data = write('resources/hymnals/sda-ny-example.json', pack)
+            write('assets/hymnals/catalog.json', {'books': []})
+            write('tool/data/hymnal_sources.json', {'books': []})
+            write('assets/sheet_music/catalog.json', {'books': {}})
+            book = dict(bookId='sda-ny-example', path='resources/hymnals/sda-ny-example.json',
+                        bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                        hymnCount=1, topicCount=1, displayName='Prueba', languageTag='es', year=None)
+            write('assets/hymnals/downloads.json', {'books': [book]})
+            manifest = dict(book={'id': 'sda-ny-example'}, expectedNumbers=[1])
+            write('tool/data/structured_sources/optional.manifest.json', manifest)
+            result = validator.report(root)
+            self.assertEqual(result['errorCount'], 0)
+            self.assertTrue(result['books'][0]['optionalDownload'])
+            write('tool/data/structured_sources/optional.manifest.json', dict(manifest, expectedNumbers=[1, 2]))
+            self.assertIn('missing_number', {e['code'] for e in validator.report(root)['books'][0]['errors']})
+            write('tool/data/structured_sources/optional.manifest.json', manifest)
+            for field, invalid in [('sha256', '0' * 64), ('displayName', 'Wrong edition'), ('hymnCount', 2)]:
+                write('assets/hymnals/downloads.json', {'books': [dict(book, **{field: invalid})]})
+                errors = validator.report(root)['books'][0]['errors']
+                self.assertIn({'code': 'catalog_mismatch', 'location': field}, errors)
+            write('assets/hymnals/downloads.json', {'books': [book, book]})
+            self.assertIn('duplicate_optional_book', {e['code'] for e in validator.report(root)['catalogErrors']})
+            (root / book['path']).unlink()
+            self.assertIn('unreadable_pack', {e['code'] for e in validator.report(root)['books'][0]['errors']})
+
     def test_shipped_report_is_deterministic_and_exposes_known_score_gap(self):
         result = validator.report()
         self.assertEqual(result, validator.report())
         self.assertEqual(result['errorCount'], 0)
         books = {b['bookId']: b for b in result['books']}
-        self.assertEqual(sum(b['items'] for b in books.values()), 2876)
+        self.assertEqual(sum(b['items'] for b in books.values()), 3226)
         self.assertEqual(books['sda-es-2009']['media']['scoreHymns'], 614)
         self.assertEqual(books['sda-ru-1997']['media']['missingScoreItemIds'], ['244'])
         self.assertEqual(books['sda-es-1962']['media']['scoreHymns'], 0)
         self.assertEqual(result['catalogErrors'], [])
+        self.assertTrue(books['sda-ny-khristu-mu-nyimbo']['optionalDownload'])
+        self.assertEqual(books['sda-ny-khristu-mu-nyimbo']['items'], 350)
+        self.assertEqual(len(books['sda-ny-khristu-mu-nyimbo']['media']['missingScoreItemIds']), 350)
         for book, count in [('sda-es-2009', 614), ('sda-es-1962', 527)]:
             self.assertEqual(len(books[book]['media']['instrumentalRecordingItemIds']), count)
             self.assertEqual(books[book]['media']['missingInstrumentalRecordingItemIds'], [])

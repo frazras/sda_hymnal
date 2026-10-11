@@ -386,3 +386,17 @@ original lyric text, while block corrections rebuild search text only for the
 affected hymn. Without a review descriptor, generated bundled packs remain
 byte-identical. These checks validate review records; they do not certify that
 a named reviewer has performed fluent editorial or musical review.
+
+## Published optional-pack coverage
+
+The offline content report now includes every optional book carrying a local
+resource path in the published download catalog, alongside bundled imported
+books. It verifies the resource checksum, count, language/edition metadata, and
+explicit expected numbers from its structured-source manifest. Media reference
+checks apply to these books too; unavailable scores/recordings remain coverage
+gaps rather than fabricated assets. Duplicate optional identities fail the gate.
+
+The current report covers seven imported packs and 3,226 hymns, including the
+350-hymn optional Chichewa collection. This total excludes the original English
+books. The full publication gate passes 39 content tests and checks all seven
+text downloads, three score collections, and 583 interface messages.

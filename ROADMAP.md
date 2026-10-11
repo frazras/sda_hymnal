@@ -60,7 +60,7 @@ Items below are plans, not claims that multilingual content is already installed
       indexes. Keep existing English corrections and music mappings.
       [Source and validation details](docs/language-packs.md). Reader/selector
       integration remains the separate item above.
-- [ ] Build repeatable source importers and a content validation report for
+- [x] Build repeatable source importers and a content validation report for
       GoGoShift text, VideoPsalm JSON, and structured verse/refrain JSON. Track
       provenance and reviewed overrides; catch duplicate numbers, empty lyrics,
       numbering gaps, invalid references, and missing media before publishing.
