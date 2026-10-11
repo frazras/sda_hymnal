@@ -27,6 +27,34 @@ def fixture():
              'weekday': 7, 'time': 'morning', 'count': 3, 'total': 0}]}
 
 
+class NativeCollectorTest(unittest.TestCase):
+    def test_native_validation_and_book_specific_cells(self):
+        body = fixture()
+        body['schema'] = 2
+        body['rows'][0].update(book_id='sda-es-2009', edition='', hymn=303)
+        with patch.dict(collector.BOOK_HYMNS, {'sda-es-2009': [303]}):
+            collector.validate(body, dt.date(2026, 9, 1))
+            cells = collector.cells_for(body, 'JM', 'prod')
+            songs = [c for c in cells if c['dimensions'].get('view') == 'song']
+            self.assertEqual(songs[0]['dimensions']['book_id'], 'sda-es-2009')
+            for changes in ({'hymn': 999}, {'book_id': 'sda-es-1962'},
+                            {'edition': 'new'}, {'book_id': None}):
+                invalid = copy.deepcopy(body)
+                invalid['rows'][0].update(changes)
+                with self.assertRaises(ValueError):
+                    collector.validate(invalid, dt.date(2026, 9, 1))
+
+    def test_native_english_preserves_legacy_cells(self):
+        legacy = fixture()
+        native = copy.deepcopy(legacy)
+        native['schema'] = 2
+        native['rows'][0]['book_id'] = 'sda-en-1985'
+        with patch.dict(collector.BOOK_HYMNS, {'sda-en-1985': [1]}):
+            collector.validate(native, dt.date(2026, 9, 1))
+        self.assertEqual(collector.cells_for(native, 'JM', 'prod'),
+                         collector.cells_for(legacy, 'JM', 'prod'))
+
+
 class Table:
     def __init__(self, name):
         self.name, self.items = name, {}

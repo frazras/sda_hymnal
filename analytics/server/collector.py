@@ -15,6 +15,7 @@ from botocore.exceptions import ClientError
 
 # Injected from the shared schema into the deployed module.
 METRICS = {}  # SCHEMA
+BOOK_HYMNS = {}  # BOOKS
 MAX_ROWS = 40
 serializer = TypeSerializer()
 
@@ -35,7 +36,7 @@ def response(status, value):
 def validate(body, today):
     if not isinstance(body, dict) or set(body) != {"schema", "batch_id", "week", "token", "platform", "version", "design", "rows"}:
         raise ValueError("invalid_fields")
-    if type(body["schema"]) is not int or body["schema"] != 1:
+    if type(body["schema"]) is not int or body["schema"] not in (1, 2):
         raise ValueError("unsupported_schema")
     for key in ("batch_id", "token"):
         if not isinstance(body[key], str) or not re.fullmatch(r"[a-f0-9]{32}", body[key]):
@@ -54,7 +55,10 @@ def validate(body, today):
         raise ValueError("invalid_rows")
     seen = set()
     for row in rows:
-        if not isinstance(row, dict) or set(row) != {"metric", "variant", "hymn", "edition", "weekday", "time", "count", "total"}:
+        fields = {"metric", "variant", "hymn", "edition", "weekday", "time", "count", "total"}
+        if body["schema"] == 2:
+            fields.add("book_id")
+        if not isinstance(row, dict) or set(row) != fields:
             raise ValueError("invalid_row_fields")
         if not isinstance(row["metric"], str) or row["metric"] not in METRICS or row["variant"] not in METRICS[row["metric"]]:
             raise ValueError("invalid_metric")
@@ -63,9 +67,20 @@ def validate(body, today):
                 raise ValueError("invalid_number")
         if row["edition"] not in ("", "old", "new"):
             raise ValueError("invalid_edition")
-        max_hymn = {"": 0, "old": 703, "new": 695}[row["edition"]]
-        if not 0 <= row["hymn"] <= max_hymn or (row["hymn"] == 0) != (row["edition"] == ""):
-            raise ValueError("invalid_hymn")
+        if body['schema'] == 2:
+            book = row['book_id']
+            aliases = {'old': 'sda-en-1941', 'new': 'sda-en-1985'}
+            if not isinstance(book, str) or (row['edition'] and aliases[row['edition']] != book):
+                raise ValueError('invalid_book')
+            if row['hymn'] == 0:
+                if book or row['edition']:
+                    raise ValueError('invalid_hymn')
+            elif row['hymn'] not in BOOK_HYMNS.get(book, ()):
+                raise ValueError('invalid_hymn')
+        else:
+            max_hymn = {"": 0, "old": 703, "new": 695}[row["edition"]]
+            if not 0 <= row["hymn"] <= max_hymn or (row["hymn"] == 0) != (row["edition"] == ""):
+                raise ValueError("invalid_hymn")
         if not 1 <= row["weekday"] <= 7 or row["time"] not in ("night", "morning", "afternoon", "evening"):
             raise ValueError("invalid_time")
         if not 1 <= row["count"] <= 100000 or not 0 <= row["total"] <= row["count"] * 3600000:
@@ -82,11 +97,19 @@ def cells_for(body, country, namespace):
     cells = {}
     for row in body['rows']:
         detail = {k: v for k, v in row.items() if k not in ('count', 'total')}
+        english = {'sda-en-1941': 'old', 'sda-en-1985': 'new'}.get(detail.get('book_id'))
+        if english:
+            detail['edition'] = english
+            detail.pop('book_id')
+        elif not detail.get('book_id'):
+            detail.pop('book_id', None)
         detail.update({k: body[k] for k in ('platform', 'version', 'design')})
         detail['country'] = country
         dimensions = [detail]
         if row['hymn'] and row['metric'] in ('hymn_open', 'hymn_repeat', 'favorite_add'):
-            song = {k: row[k] for k in ('metric', 'hymn', 'edition')}
+            song = {k: detail[k] for k in ('metric', 'hymn', 'edition')}
+            if detail.get('book_id'):
+                song['book_id'] = detail['book_id']
             dimensions.append(dict(song, view='song'))
             if row['metric'] == 'hymn_open':
                 dimensions.extend([dict(song, view='country_song', country=country),

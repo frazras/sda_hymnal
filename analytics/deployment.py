@@ -56,13 +56,27 @@ def package_code(session):
         'Outputs': {'Bucket': {'Value': {'Ref': 'Artifacts'}}}})
     buffer = io.BytesIO()
     metrics = json.loads((ROOT / 'analytics/schema.json').read_text())['metrics']
+    hymns = json.loads((ROOT / 'assets/hymns.json').read_text())['hymns']
+    catalog = {f"{h['version']}:{h['number']}": h['title'] for h in hymns}
+    books = {}
+    aliases = {'old': 'sda-en-1941', 'new': 'sda-en-1985'}
+    for h in hymns:
+        book = aliases[h['version']]
+        books.setdefault(book, []).append(h['number'])
+        catalog[f"{book}:{h['number']}"] = h['title']
+    for path in sorted((ROOT / 'assets/hymnals').glob('sda-*.json')):
+        pack = json.loads(path.read_text())
+        if 'book' not in pack or 'items' not in pack:
+            continue
+        book = pack['book']['id']
+        books[book] = [item['number'] for item in pack['items']]
+        catalog.update({f"{book}:{item['number']}": item['title'] for item in pack['items']})
+
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
         # Fixed timestamps keep identical deployments content-addressable.
         for path in sorted((ROOT / 'analytics/server').glob('*.py')):
-            source = path.read_text().replace('METRICS = {}  # SCHEMA', 'METRICS = ' + repr(metrics))
+            source = path.read_text().replace('METRICS = {}  # SCHEMA', 'METRICS = ' + repr(metrics)).replace('BOOK_HYMNS = {}  # BOOKS', 'BOOK_HYMNS = ' + repr(books))
             archive.writestr(zipfile.ZipInfo(path.name, (2026, 1, 1, 0, 0, 0)), source)
-        hymns = json.loads((ROOT / 'assets/hymns.json').read_text())['hymns']
-        catalog = {f"{h['version']}:{h['number']}": h['title'] for h in hymns}
         archive.writestr(zipfile.ZipInfo('catalog.json', (2026, 1, 1, 0, 0, 0)), json.dumps(catalog))
     payload = buffer.getvalue()
     key = 'lambda/' + hashlib.sha256(payload).hexdigest() + '.zip'
