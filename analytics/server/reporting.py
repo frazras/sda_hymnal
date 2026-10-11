@@ -9,13 +9,26 @@ catalog_path = Path(__file__).with_name('catalog.json')
 CATALOG = json.loads(catalog_path.read_text()) if catalog_path.exists() else {}
 
 
+def song_identity(row):
+    """Canonical identities keep translated books apart and merge English aliases."""
+    book = row.get('book_id') or {'old': 'sda-en-1941', 'new': 'sda-en-1985'}.get(row.get('edition'), '')
+    return book, int(row['hymn'])
+
+
 def songs(rows, metric, limit=20):
     counts = defaultdict(int)
     for row in rows:
         if row['metric'] == metric and row.get('hymn'):
-            counts[(row['edition'], int(row['hymn']))] += int(row['count'])
-    return [{'edition': edition, 'hymn': hymn, 'title': CATALOG.get(f'{edition}:{hymn}', f'Hymn {hymn}'), 'count': count}
-        for (edition, hymn), count in sorted(counts.items(), key=lambda x: (-x[1], x[0]))[:limit]]
+            counts[song_identity(row)] += int(row['count'])
+    result = []
+    for (book, hymn), count in sorted(counts.items(), key=lambda x: (-x[1], x[0]))[:limit]:
+        edition = {'sda-en-1941': 'old', 'sda-en-1985': 'new'}.get(book, '')
+        title = CATALOG.get(f'{book}:{hymn}', CATALOG.get(f'{edition}:{hymn}', f'Hymn {hymn}'))
+        value = dict(edition=edition, hymn=hymn, title=title, count=count)
+        if not edition:
+            value['book_id'] = book
+        result.append(value)
+    return result
 
 
 def breakdown(rows, field, metric=None, value='count'):
@@ -43,7 +56,7 @@ def safe_public_rows(rows):
     countries = defaultdict(list)
     for row in coarse:
         if row['view'] == 'country_song':
-            countries[(row['edition'], row['hymn'])].append(row)
+            countries[song_identity(row)].append(row)
     for partition in countries.values():
         eligible.extend(suppress_partition(partition))
     return eligible
