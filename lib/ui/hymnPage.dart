@@ -506,30 +506,6 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                                       ),
                               ),
                       ),
-                      if (!MidiPlayer.hasMusic(widget.hymn) ||
-                          !_showPlayer ||
-                          _videoVisible)
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                  key: const ValueKey('reader-previous'),
-                                  tooltip: widget.sequence == null
-                                      ? context.appText.previousHymn
-                                      : context.appText.previousItem,
-                                  onPressed:
-                                      !_canMove(-1) ? null : () => _move(-1),
-                                  icon: const Icon(Icons.chevron_left)),
-                              const Spacer(),
-                              IconButton(
-                                  key: const ValueKey('reader-next'),
-                                  tooltip: widget.sequence == null
-                                      ? context.appText.nextHymn
-                                      : context.appText.nextItem,
-                                  onPressed:
-                                      !_canMove(1) ? null : () => _move(1),
-                                  icon: const Icon(Icons.chevron_right)),
-                            ]),
                     ],
                   ),
                 ),

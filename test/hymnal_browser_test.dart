@@ -268,12 +268,9 @@ void main() {
         expect(reader.hymn.version, 'sda-ru-1997');
         expect(reader.hymn.title, russian.hymns.last.title);
         expect(find.byKey(const ValueKey('hymn-music-player')), findsNothing);
-        expect(
-            tester
-                .widget<IconButton>(find.byKey(const ValueKey('reader-next')))
-                .onPressed,
-            isNull);
-        await tester.tap(find.byKey(const ValueKey('reader-previous')));
+        expect(find.byKey(const ValueKey('reader-next')), findsNothing);
+        expect(find.byKey(const ValueKey('reader-previous')), findsNothing);
+        await tester.fling(find.byType(HymnPage), const Offset(300, 0), 1000);
         await tester.pumpAndSettle();
         expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.number, 384);
         await tester
@@ -286,6 +283,32 @@ void main() {
         expect(find.text('Choir practice'), findsNothing);
         expect(find.text('Sheet music'), findsOneWidget);
         expect(audioCalls.where((m) => m.startsWith('setSource')), isEmpty);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+      });
+    }
+  }
+
+  for (final classic in [false, true]) {
+    for (final dark in [false, true]) {
+      testWidgets(
+          'hidden music player has no bottom arrows classic=$classic dark=$dark',
+          (tester) async {
+        MusicPlayerVisible.instance.value = false;
+        await tester.pumpWidget(MaterialApp(
+          theme: buildHymnalTheme(dark ? HymnalTokens.dark : HymnalTokens.light,
+              classic: classic),
+          home: HymnPage(hymn: spanish.hymns[302], hymns: spanish.hymns),
+        ));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey('hymn-music-player')), findsNothing);
+        expect(find.byKey(const ValueKey('reader-previous')), findsNothing);
+        expect(find.byKey(const ValueKey('reader-next')), findsNothing);
+        await tester.fling(find.byType(HymnPage), const Offset(-300, 0), 1000);
+        await tester.pumpAndSettle();
+        expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.number, 304);
+        expect(find.byKey(const ValueKey('reader-next')), findsNothing);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
         await tester.pumpAndSettle();
