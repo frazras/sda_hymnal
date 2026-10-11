@@ -324,9 +324,6 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
         : null;
   }
 
-  bool _canMove(int dir) =>
-      widget.sequence?.canMove(dir) ?? (_adjacent(dir) != null);
-
   void _move(int dir, {bool turned = false}) {
     if (widget.sequence != null) {
       final page =
