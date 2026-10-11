@@ -282,7 +282,9 @@ def export_handler(event, context):
             s3.delete_objects(Bucket=os.environ['BUCKET'], Delete={'Objects': expired})
     for offset in range(58):
         week = str(monday - dt.timedelta(weeks=offset))
-        args = {"KeyConditionExpression": "pk = :p", "ExpressionAttributeValues": {":p": namespace + "#W#" + week}, "ConsistentRead": True}
+        # Bound each read below the table capacity; a full 1 MiB page can
+        # exceed the configured on-demand cap and repeatedly throttle.
+        args = {"KeyConditionExpression": "pk = :p", "ExpressionAttributeValues": {":p": namespace + "#W#" + week}, "ConsistentRead": True, "Limit": 50}
         rows = []
         while True:
             page = table.query(**args)

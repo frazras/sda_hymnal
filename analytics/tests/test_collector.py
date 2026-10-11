@@ -170,6 +170,7 @@ class Tests(unittest.TestCase):
              patch.object(collector.boto3, 'client', return_value=s3):
             result = collector.export_handler({'namespace': 'e2e'}, None)
         self.assertEqual(result['exported_rows'], 58)
+        self.assertTrue(all(call.kwargs['Limit'] == 50 for call in table.query.call_args_list))
         for call in s3.put_object.call_args_list:
             self.assertTrue(call.kwargs['Key'].startswith('reports/e2e/'))
             row = json.loads(call.kwargs['Body'])
