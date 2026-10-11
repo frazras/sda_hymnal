@@ -69,3 +69,24 @@ This does not yet implement score-pack downloads or remove bundled score images.
 The existing offline viewer and its page order are retained. Score transport,
 atomic storage, management controls, and viewer loading from installed packs
 remain unfinished.
+
+## Atomic score storage and transport
+
+`ScorePackDownload` snapshots one edition's validated catalog and pins its image
+URLs to a full Git commit on raw.githubusercontent.com. Each collection is
+limited to 5,000 pages and 256 MiB; each page retains the validator's 16 MiB cap.
+`downloadScorePage` rejects redirects/status/size mismatches, buffers only one
+bounded page, validates its checksum and PNG header, and supports cancellation
+and request/idle timeouts. It does not start networking on initialization.
+
+`ScorePackStore` serializes mutations and writes all pages to a staging folder.
+Only a complete verified collection activates through an atomic pointer rename.
+Cancellation or a bad page removes staging and keeps the prior pointer. Successful
+replacement cleans obsolete revisions. Offline reopening verifies every stored
+page; corrupt or linked files return no installed pack for bundled fallback.
+Removal deactivates only that edition and leaves unrelated data untouched.
+
+Twenty focused storage, transport, catalog, and viewer regressions pass. The
+transport uses mocked responses; this does not claim a published optional score
+catalog or physical download-flow validation. The trusted score catalog publisher,
+Settings management, and installed-file viewer loading remain to be connected.
