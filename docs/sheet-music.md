@@ -105,3 +105,22 @@ coverage, corruption, removal, and zero implicit downloads. Rendering checks
 open real installed PNGs and turn pages. Existing theme/locale and playback
 continuation checks remain in the focused suite. The Settings score download
 controls and published trusted collection catalog are still unfinished.
+
+## Trusted score download catalog
+
+`assets/sheet_music/downloads.json` adds only 832 bytes of metadata. It pins the
+three existing collections to a published repository commit and records exact
+hymn/page counts, byte totals, and included status. Its SHA-256 binds the complete
+existing page catalog; no score images or page metadata are duplicated.
+
+`tool/build_score_download_catalog.py` verifies every local PNG, its hash, size,
+dimensions, edition directory, and unique assignment before generating metadata.
+The offline content publication gate requires byte-identical regeneration. Use
+`--check --verify-remote` to additionally verify the hosted page catalog against
+its pinned checksum; this remote check does not download every hosted PNG.
+The app reader rejects mutable revisions, checksum/coverage mismatches,
+unknown/repeated collections, and incomplete metadata before creating downloads.
+
+These collections remain included in the app. Settings score management still
+needs to expose included/installed states and avoid redundant downloads. This
+catalog does not claim an additional optional score collection is available.

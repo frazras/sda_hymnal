@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "frazras/sda_hymnal",
+    "revision": "c8501b78b5b5329979eceb0eef8950dd242ab7af"
+  },
+  "catalogSha256": "1132337f5f30fcf30faa548d0de6d9132951762f715063200ff750aa6ddca705",
+  "books": [
+    {
+      "bookId": "sda-en-1985",
+      "displayName": "Seventh-day Adventist Hymnal (1985)",
+      "hymnCount": 695,
+      "pageCount": 723,
+      "bytes": 13116224,
+      "bundled": true
+    },
+    {
+      "bookId": "sda-es-2009",
+      "displayName": "Himnario Adventista (2009)",
+      "hymnCount": 614,
+      "pageCount": 614,
+      "bytes": 16680543,
+      "bundled": true
+    },
+    {
+      "bookId": "sda-ru-1997",
+      "displayName": "Гимны Надежды (1997)",
+      "hymnCount": 384,
+      "pageCount": 506,
+      "bytes": 15188755,
+      "bundled": true
+    }
+  ]
+}

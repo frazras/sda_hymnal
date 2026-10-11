@@ -19,6 +19,7 @@ def check(output):
          '--output', 'resources/hymnals/sda-ny-khristu-mu-nyimbo.json', '--check'],
         ['tool/validate_translations.py'],
         ['tool/build_language_download_catalog.py', '--check'],
+        ['tool/build_score_download_catalog.py', '--check'],
         ['tool/validate_hymnal_content.py', '--output', str(output)],
     ]
     for command in commands:

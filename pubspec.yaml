@@ -85,6 +85,7 @@ flutter:
     - assets/hymn_videos.json
     - assets/additional_readings.json
     - assets/sheet_music/catalog.json
+    - assets/sheet_music/downloads.json
     - assets/sheet_music/en_1985/
     - assets/sheet_music/es_2009/
     - assets/sheet_music/ru_1997/
