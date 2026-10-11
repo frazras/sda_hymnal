@@ -66,9 +66,9 @@ before a downloaded page may be activated. Regression checks apply it to all
 1,843 published pages and reject changed, truncated, mislabeled, and non-PNG data.
 
 This does not yet implement score-pack downloads or remove bundled score images.
-The existing offline viewer and its page order are retained. Score transport,
-atomic storage, management controls, and viewer loading from installed packs
-remain unfinished.
+The existing offline viewer and its page order are retained. Score transport
+and atomic storage are implemented below. Management controls and viewer
+loading from installed packs remain unfinished.
 
 ## Atomic score storage and transport
 
