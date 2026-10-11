@@ -95,6 +95,7 @@ def template(code=None):
     resources["Stage"] = {"Type": "AWS::ApiGatewayV2::Stage", "Properties": {"ApiId": ref("Api"), "StageName": "$default", "AutoDeploy": True,
         "DefaultRouteSettings": {"ThrottlingBurstLimit": 10, "ThrottlingRateLimit": 5}}}
     resources["InvokePermission"] = {"Type": "AWS::Lambda::Permission", "Properties": {"FunctionName": ref("Collector"), "Action": "lambda:InvokeFunction", "Principal": "apigateway.amazonaws.com", "SourceArn": sub("arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/*/v1/*")}}
+    resources["NativeTrendsPermission"] = {"Type": "AWS::Lambda::Permission", "Properties": {"FunctionName": ref("Collector"), "Action": "lambda:InvokeFunction", "Principal": "apigateway.amazonaws.com", "SourceArn": sub("arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/GET/v2/trends")}}
     resources["PrivacyPermission"] = {"Type": "AWS::Lambda::Permission", "Properties": {"FunctionName": ref("Collector"), "Action": "lambda:InvokeFunction", "Principal": "apigateway.amazonaws.com", "SourceArn": sub("arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/GET/privacy-policy")}}
     resources["OriginPolicy"] = {"Type": "AWS::CloudFront::OriginRequestPolicy", "Properties": {"OriginRequestPolicyConfig": {
         "Name": sub("${AWS::StackName}-country"), "CookiesConfig": {"CookieBehavior": "none"}, "QueryStringsConfig": {"QueryStringBehavior": "none"},
