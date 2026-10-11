@@ -176,6 +176,24 @@ class Tests(unittest.TestCase):
             row = json.loads(call.kwargs['Body'])
             self.assertEqual(row['hymn'], 1)
 
+    def test_export_follows_bounded_pages_without_dropping_rows(self):
+        table = Mock()
+        item = {'dimensions': {'metric': 'app_session'}, 'count': 1,
+                'total': 0, 'contributors': 1, 'expires': 9999999999}
+        table.query.side_effect = [
+            {'Items': [item], 'LastEvaluatedKey': {'pk': 'continuation'}},
+            {'Items': [item]}, *[{'Items': []} for _ in range(57)]]
+        resource = Mock(); resource.Table.return_value = table
+        s3 = Mock(); s3.get_paginator.return_value.paginate.return_value = []
+        with patch.dict(collector.os.environ, {'AGGREGATES': 'test', 'BUCKET': 'test'}), \
+             patch.object(collector.boto3, 'resource', return_value=resource), \
+             patch.object(collector.boto3, 'client', return_value=s3):
+            result = collector.export_handler({'namespace': 'e2e'}, None)
+        self.assertEqual(result['exported_rows'], 2)
+        self.assertEqual(table.query.call_count, 59)
+        self.assertEqual(table.query.call_args_list[1].kwargs['ExclusiveStartKey'], {'pk': 'continuation'})
+        self.assertEqual(len(s3.put_object.call_args.kwargs['Body'].splitlines()), 2)
+
     def test_public_trends_suppresses_small_current_and_private_cells(self):
         def item(metric, contributors):
             dimensions = {k: v for k, v in fixture()['rows'][0].items() if k not in ('count', 'total')}
