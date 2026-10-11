@@ -226,7 +226,18 @@ def handler(event, context):
         except ClientError as exc:
             if exc.response["Error"]["Code"] != "NoSuchKey":
                 raise
-            result = response(200, {"schema": 1, "weeks": [], "minimum_contributors": 20})
+            if route == 'GET /v2/trends':
+                # During rollout, a valid legacy summary remains useful until
+                # the first native snapshot has finished exporting.
+                try:
+                    data = boto3.client('s3').get_object(Bucket=os.environ['BUCKET'], Key='public/trends.json')['Body'].read()
+                    result = response(200, json.loads(data))
+                except ClientError as fallback:
+                    if fallback.response['Error']['Code'] != 'NoSuchKey':
+                        raise
+                    result = response(200, {"schema": 1, "weeks": [], "minimum_contributors": 20})
+            else:
+                result = response(200, {"schema": 1, "weeks": [], "minimum_contributors": 20})
         result["headers"]["cache-control"] = "public, max-age=86400"
         return result
     if route != "POST /v1/batches":

@@ -1,4 +1,5 @@
 import copy
+import io
 import datetime as dt
 import importlib.util
 import json
@@ -242,6 +243,18 @@ class Tests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'export_no_time_for_progress'):
                 collector.export_handler({'namespace': 'e2e'}, context)
             continuation.assert_not_called()
+
+    def test_native_route_uses_valid_legacy_snapshot_during_rollout(self):
+        report = {'schema': 2, 'minimum_contributors': 20, 'periods': {}}
+        s3 = Mock()
+        s3.get_object.side_effect = [ClientError({'Error': {'Code': 'NoSuchKey'}}, 'GetObject'),
+                                     {'Body': io.BytesIO(json.dumps(report).encode())}]
+        with patch.dict(collector.os.environ, {'ORIGIN_SECRET': 'secret', 'BUCKET': 'test'}), \
+             patch.object(collector.boto3, 'client', return_value=s3):
+            result = collector.handler({'routeKey': 'GET /v2/trends', 'headers': {'x-origin-verify': 'secret'}}, None)
+        self.assertEqual(json.loads(result['body']), report)
+        self.assertEqual(s3.get_object.call_args_list[0].kwargs['Key'], 'public/trends-native.json')
+        self.assertEqual(s3.get_object.call_args_list[1].kwargs['Key'], 'public/trends.json')
 
     def test_public_trends_suppresses_small_current_and_private_cells(self):
         def item(metric, contributors):
