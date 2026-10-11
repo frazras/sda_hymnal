@@ -400,3 +400,25 @@ The current report covers seven imported packs and 3,226 hymns, including the
 350-hymn optional Chichewa collection. This total excludes the original English
 books. The full publication gate passes 39 content tests and checks all seven
 text downloads, three score collections, and 583 interface messages.
+
+## Importing community interface reviews
+
+Export a fresh CSV with `tool/export_translation_review.py`. Reviewers leave
+untouched messages `unreviewed`; use `reviewed` only for messages actually checked,
+with a reviewer name and an ISO date (`YYYY-MM-DD`). A suggested translation on
+an unreviewed row is never applied. An empty suggestion on a reviewed row keeps
+the existing translation and records that decision.
+
+Run `python3 tool/import_translation_review.py review.csv /path/to/new-stage`.
+The importer requires the complete exported key set and rejects stale English,
+translations, hashes, context, or placeholder descriptions. It validates required
+arguments and ICU syntax with Flutter in a separate temporary project, then
+compares the generated localization API to prevent undeclared arguments from
+changing app callers. Successful output contains one staged ARB, the original CSV, and a review
+audit with file checksum, counts, before/after decisions, names, and dates.
+The live catalogs are never overwritten; existing output directories are refused.
+
+Fluent review remains pending for the current drafts. This workflow provides a
+way to receive and validate human corrections; it does not itself approve the
+583 existing messages. Publishing staged corrections still requires updating the
+catalog, regenerating localizations, and checking the affected app layouts.

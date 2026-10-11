@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def check(output):
     commands = [
         ['-m', 'unittest', 'discover', '-s', 'test', '-p', 'test_hymnal*.py'],
-        ['-m', 'unittest', 'discover', '-s', 'tool', '-p', 'test_validate_translations.py'],
+        ['-m', 'unittest', 'discover', '-s', 'tool', '-p', 'test_*translation*.py'],
         ['tool/import_hymnals.py', '--check'],
         ['tool/import_structured_hymnals.py',
          'tool/data/structured_sources/chichewa.manifest.json',

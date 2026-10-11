@@ -88,8 +88,9 @@ Items below are plans, not claims that multilingual content is already installed
       workflow. The independent preference, Flutter delegates, and initial four
       translation catalogs are staged. Navigation, reader menus, settings, keypad
       labels, search, and favorites controls now consume translations; child
-      screens are covered and an App language setting is exposed. Fluent community
-      review and future right-to-left book support remain.
+      screens are covered and an App language setting is exposed. Review CSV export
+      and staged import with stale-text, ICU, and generated-API checks are implemented.
+      Fluent community review and future right-to-left book support remain.
 - [x] Improve multilingual search with Unicode normalization, accent-insensitive
       matching where appropriate, book filters, and localized refrain handling.
       Retain exact-number/title ranking and benchmark a large installed catalog.
