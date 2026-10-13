@@ -29,6 +29,10 @@ class Buttons extends StatefulWidget {
   final String oldLabel;
   final VoidCallback? onTopics;
 
+  /// Shown beside the number heading on short screens, where the shell
+  /// drops its brand header (the hymnal picker pill).
+  final Widget? headerAction;
+
   const Buttons({
     super.key,
     this.active = true,
@@ -36,6 +40,7 @@ class Buttons extends StatefulWidget {
     this.newLabel = 'New Hymnal',
     this.oldLabel = 'Old Hymnal',
     this.onTopics,
+    this.headerAction,
     required this.hymnsOld,
     required this.hymnsNew,
     this.additionalReadings = const AdditionalReadingCatalog([]),
@@ -248,6 +253,9 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     return LayoutBuilder(builder: (context, bounds) {
       final minimumHeight =
           370 + (MediaQuery.textScalerOf(context).scale(16) - 16) * 7;
+      // Recent and Popular shortcuts step aside while a number is typed on a
+      // short screen, so the typed number and its previews stay in view.
+      final discovery = _display.isEmpty || bounds.maxHeight >= 520;
       if (bounds.maxHeight < minimumHeight) {
         return SingleChildScrollView(
             child: Column(children: [
@@ -267,9 +275,11 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
                 children: [
                   SizedBox(height: displayTop),
                   _displayZone(t, numSize),
-                  _browseLinks(t),
-                  _recentsRow(t),
-                  _popularRow(t),
+                  if (discovery) ...[
+                    _browseLinks(t),
+                    _recentsRow(t),
+                    _popularRow(t),
+                  ],
                   if (_display.isEmpty) _previewZone(t),
                 ],
               ),
@@ -349,12 +359,21 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
   // ---- Display zone: HYMN NUMBER label + giant number with blinking caret
 
   Widget _displayZone(HymnalTokens t, double numSize) {
+    final heading = SectionLabel(widget.english
+        ? context.appText.hymnOrReadingNumber
+        : context.appText.hymnNumberHeading);
     return Column(
       children: [
-        Center(
-            child: SectionLabel(widget.english
-                ? context.appText.hymnOrReadingNumber
-                : context.appText.hymnNumberHeading)),
+        if (widget.headerAction == null)
+          Center(child: heading)
+        else
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 2, 16, 0),
+            child: Row(children: [
+              Expanded(child: heading),
+              widget.headerAction!,
+            ]),
+          ),
         ConstrainedBox(
           constraints: BoxConstraints(minHeight: numSize * 1.15),
           child: Row(

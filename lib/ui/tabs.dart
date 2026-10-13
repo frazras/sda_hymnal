@@ -63,8 +63,8 @@ class _TabsState extends State<Tabs> {
               secondaryLabel: 'Old Hymnal')
           : _books.first);
 
-  void _openTopics() => Navigator.push(
-      context, slideRoute(BookTopicsPage(packs: _book.packs)));
+  void _openTopics() =>
+      Navigator.push(context, slideRoute(BookTopicsPage(packs: _book.packs)));
 
   Future<void> _pickBook() async {
     final choice = await showHymnalPicker(context,
@@ -73,14 +73,18 @@ class _TabsState extends State<Tabs> {
         allowAll: _tab == 1);
     if (!mounted || choice == null) return;
     if (choice == morePicksId) {
-      await Navigator.push(context,
-          slideRoute(LanguagePacksPage(onChanged: _loadHymns)));
+      await Navigator.push(
+          context, slideRoute(LanguagePacksPage(onChanged: _loadHymns)));
       return;
     }
-    AppAnalytics.instance.event('hymnal_select',
-        variant: choice == 'all' ? 'all' : choice);
+    AppAnalytics.instance
+        .event('hymnal_select', variant: choice == 'all' ? 'all' : choice);
     _selectBook(choice);
   }
+
+  /// Short phones give the number pad the full height: no brand header.
+  bool _shortNumbers(BuildContext context) =>
+      _tab == 0 && MediaQuery.sizeOf(context).height < 650;
 
   Widget _bookPill() => BookPill(
       book: _book,
@@ -252,10 +256,9 @@ class _TabsState extends State<Tabs> {
                       onSelect: _selectTab,
                       onFavorites: () => _selectTab(2),
                       leading: _tab <= 1 && _contentLoaded ? _bookPill() : null)
-                else if (!typing)
+                else if (!typing && !_shortNumbers(context))
                   BrandHeader(
                       onLogoTap: () => _selectTab(0),
-                      compact: _tab == 0 && MediaQuery.sizeOf(context).height < 700,
                       trailing:
                           _tab <= 1 && _contentLoaded ? _bookPill() : null),
                 const SavedHymnNotice(),
@@ -288,6 +291,12 @@ class _TabsState extends State<Tabs> {
                                             english: _book.english,
                                             newLabel: _book.primaryLabel,
                                             oldLabel: _book.secondaryLabel,
+                                            headerAction:
+                                                _shortNumbers(context) &&
+                                                        !t.isClassic &&
+                                                        _contentLoaded
+                                                    ? _bookPill()
+                                                    : null,
                                             onTopics: _book.english ||
                                                     !_book.hasTopics
                                                 ? null
