@@ -27,34 +27,6 @@ void main() {
       hymnCount: 614,
       topicCount: 47);
 
-  // Published optional text that the app parser does not open yet. Remove an
-  // id when it is registered as a supported imported book; the catalog test
-  // then validates it through the runtime parser like every other download.
-  const awaitingRegistration = {
-    'sda-ceb-cebuano-hymns',
-    'sda-sn-kristu-munzwiyo',
-    'sda-toi-kristu-mu-nyimbo',
-    'sda-tum-nyimbo-za-mpingo-wa-sda',
-    'sda-luo-wende-nyasae',
-    'sda-guz-ogotera-kwa-nyasae',
-    'sda-en-adventist-youth-songs',
-    'sda-ki-nyimbo-cia-agendi',
-    'sda-bem-klistu-mu-nyimbo',
-    'sda-rw-indirimbo-zo-guhimbaza-imana',
-    'sda-xh-ukristu-engomeni',
-    'sda-zu-ukrestu-esihlabelelweni',
-    'sda-kln-tienwogik-che-kilosune-jehovah',
-    'sda-kam-mbathi-sya-kumutaia-ngai',
-    'sda-mas-isinkolioitin',
-    'sda-nso-kreste-ka-kopelo',
-    'sda-st-keresete-pineng',
-    'sda-tn-keresete-mo-kopelong',
-    'sda-tl-tagalog-hymns',
-    'sda-ve-ngosha-yadzingosha',
-    'sda-tw-memeneda-akwanhwefo-nnwom',
-    'sda-ts-tinsimu-ta-mhalamhala',
-  };
-
   test('download catalog pins every exact edition object', () async {
     final downloads = await loadLanguagePackDownloads(FilePackBundle());
     final catalog =
@@ -69,22 +41,14 @@ void main() {
     expect(downloads.first.hymnCount, 614);
     expect(downloads.first.topicCount, 47);
     expect(() => downloads.clear(), throwsUnsupportedError);
-    expect(downloads.map((d) => d.bookId), containsAll(awaitingRegistration));
+    // Every published book opens through the runtime parser the app uses.
     for (final download in downloads) {
       final source = File(paths[download.bookId]!).readAsBytesSync();
       expect(source.length, download.bytes);
       expect(sha256.convert(source).toString(), download.checksum);
-      if (!awaitingRegistration.contains(download.bookId)) {
-        expect(download.validate(source).edition.id, download.bookId);
-        continue;
-      }
-      final pack = jsonDecode(utf8.decode(source));
-      expect(pack['book']['id'], download.bookId);
-      expect(pack['book']['languageTag'], download.bookId.split('-')[1]);
-      expect(pack['items'].length, download.hymnCount);
-      expect(pack['items'].every((item) => item['id'] == '${item['number']}'),
-          isTrue);
-      expect(() => download.validate(source), throwsFormatException);
+      final pack = download.validate(source);
+      expect(pack.edition.id, download.bookId, reason: download.bookId);
+      expect(pack.hymns.length, download.hymnCount, reason: download.bookId);
     }
   });
 

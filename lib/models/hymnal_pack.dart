@@ -11,7 +11,29 @@ bool _supportedImportedBook(String id) =>
     const {
       'sda-fr-hymnes-et-louanges',
       'sda-sw-nyimbo-za-kristo',
-      'sda-ny-khristu-mu-nyimbo'
+      'sda-ny-khristu-mu-nyimbo',
+      'sda-bem-klistu-mu-nyimbo',
+      'sda-ceb-cebuano-hymns',
+      'sda-en-adventist-youth-songs',
+      'sda-guz-ogotera-kwa-nyasae',
+      'sda-kam-mbathi-sya-kumutaia-ngai',
+      'sda-ki-nyimbo-cia-agendi',
+      'sda-kln-tienwogik-che-kilosune-jehovah',
+      'sda-luo-wende-nyasae',
+      'sda-mas-isinkolioitin',
+      'sda-nso-kreste-ka-kopelo',
+      'sda-rw-indirimbo-zo-guhimbaza-imana',
+      'sda-sn-kristu-munzwiyo',
+      'sda-st-keresete-pineng',
+      'sda-tl-tagalog-hymns',
+      'sda-tn-keresete-mo-kopelong',
+      'sda-toi-kristu-mu-nyimbo',
+      'sda-ts-tinsimu-ta-mhalamhala',
+      'sda-tum-nyimbo-za-mpingo-wa-sda',
+      'sda-tw-memeneda-akwanhwefo-nnwom',
+      'sda-ve-ngosha-yadzingosha',
+      'sda-xh-ukristu-engomeni',
+      'sda-zu-ukrestu-esihlabelelweni',
     }.contains(id);
 
 typedef LyricBlock = ({bool refrain, String label, String text});
