@@ -21,7 +21,7 @@ recognized for ranking. Displayed titles and lyrics are never normalized.
 
 The interface remains English. Hymn text, titles, credits, and topics retain
 their source language. UI translation and audio are separate roadmap items.
-Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Both Spanish editions now offer instrumental recordings for every hymn (614 New and 527 Old). Spanish New #303 (three verses) and #230 (two verses) prefer their score-reviewed MIDI arrangements, retaining styles, choir parts, and key changes. Other Spanish hymns use the same player with recording-supported controls; other foreign editions remain silent. Recordings download on first play into a bounded temporary cache, so first use requires a connection. Cyrillic labels use a bundled font fallback.
+Spanish 2009 and Russian 1997 scores use the shared offline sheet-music viewer. Recordings cover every hymn in four editions: instrumental for Spanish 2009 (614), Spanish 1962 (527), and Russian 1997 (385); sung for Spanish 2009 (614) and Portuguese 1996 (610). Spanish New #303 (three verses) and #230 (two verses) prefer their score-reviewed MIDI arrangements, retaining styles, choir parts, and key changes. Other recorded hymns use the same player with recording-supported controls; a saved sung/instrumental preference applies where both exist. French, Swahili, and Chichewa remain silent. Recordings download on first play into a bounded temporary cache, so first use requires a connection. Cyrillic labels use a bundled font fallback.
 
 Foreign per-hymn analytics are suppressed while the deployed collector still
 accepts only English aliases. Content reports use its existing general-report
@@ -86,14 +86,16 @@ the pinned manifest, catalog hashes/counts, and exact-edition score references.
 Every referenced score file is checked against its byte count and SHA-256.
 Missing scores are listed separately as coverage gaps; absent language audio
 is explicitly disclosed. No media association is inferred from a title or number.
-Instrumental recording references now require a known exact book and item,
-unique book/item entries, pinned repository/revision metadata, positive byte
-counts, valid Git blob hashes, and the matching edition-specific source path.
-Declared counts and total sizes must agree with their entries. Catalog failures
+Instrumental and sung recording references require a known exact book and item,
+one collection per book and medium, a reviewed source (settings ID and
+directory) for that book and medium, unique items, pinned repository/revision
+metadata, positive byte counts, valid Git blob hashes, and the matching source
+path. Every item must have a file or appear in `missingItemIds`. Declared counts
+and total sizes must agree with their entries. Catalog failures
 are collected in `catalogErrors` and contribute to the nonzero publication status.
-Coverage lists include only valid recording references and explicitly list
-missing recordings. This offline report validates catalog metadata; the separate
-recording audit verifies downloaded bytes and durations.
+Coverage lists per medium include only valid recording references and explicitly
+list missing recordings. This offline report validates catalog metadata; the
+separate recording audit verifies downloaded bytes and durations.
 
 The reusable pack inspector accepts an explicit expected-number set for partial
 collections; it never fills gaps or renumbers source records. This report
@@ -187,31 +189,76 @@ This corroborates a source conflict; it does not establish which label matches
 the printed book. Both staging manifests preserve the structured source labels.
 
 
-### Spanish instrumental recordings (2026-10-07)
+### Recordings: instrumental and sung (2026-10-13)
 
-`assets/hymnals/spanish_recordings.json` pins 1,141 edition-specific files from
-`isax5/hymnal` revision `dc744acaa3971fa630e6d68193d9ddfb4c11a710`.
-The source settings explicitly associate Spanish 2009 and 1962 with their own
-instrumental directories. This is not a cross-language number match.
-All files were downloaded and checked against source byte counts and Git blob
-hashes; M4A headers and positive audio durations were checked with macOS afinfo.
-The per-file results are in `tool/data/spanish_recording_audit.json`.
-Re-run the network audit with `python3 tool/validate_spanish_recordings.py`.
-It downloads about 1.8 GiB; it is intentionally separate from routine checks.
+`assets/hymnals/recordings.json`, a copy of `tool/data/recording_sources.json`,
+pins 2,750 files from `isax5/hymnal` revision
+`dc744acaa3971fa630e6d68193d9ddfb4c11a710`. Each collection names one exact
+book and medium (`instrumentalRecording` or `sungRecording`):
 
-These checks establish source integrity and complete file coverage, not a manual
-musical review of every recording. The supplied performances vary in duration;
-some Old hymns are short and may cover only one verse. No inferred repetition,
-transposition, or style transformation is applied to recordings. Complete MIDI
-coverage and individual musical/form review remain open work.
+| Book | Medium | Files | Gaps | Bytes | Audited |
+|---|---|---:|---:|---:|---|
+| `sda-es-2009` | instrumental | 614 | 0 | 1,194,774,139 | 2026-10-07 |
+| `sda-es-1962` | instrumental | 527 | 0 | 771,075,461 | 2026-10-07 |
+| `sda-es-2009` | sung | 614 | 0 | 1,197,473,215 | 2026-10-13 |
+| `sda-pt-1996` | sung | 610 | 0 | 1,268,867,227 | 2026-10-13 |
+| `sda-ru-1997` | instrumental | 385 | 0 | 453,708,837 | 2026-10-13 |
 
-Playback validates each download before use, retains up to 128 MiB in temporary
-storage, and repairs corrupt cached files. The OS may clear this cache. Permanent
-offline downloads remain a separate roadmap item. Loading and connection failures
-are visible in the existing player. Recordings use the media player on iOS;
-verified MIDI continues through the native soundfont player. Only the active
-engine can publish completion events. Autoplay remains opt-in and starts only
-after manual playback; pausing does not advance the queue.
+The source's pinned `backend-data/v1/settings.json` (Git blob `f45543dc`)
+assigns each directory to one edition ID. Our lyric source, GoGoShift
+Hymnal-Flutter at the imported revision, reads those settings: its
+`info_constants.json` maps `es-newVersion`, `es-oldVersion`, `pt-newVersion`,
+and `ru-newVersion` to the files imported as `sda-es-2009`, `sda-es-1962`,
+`sda-pt-1996`, and `sda-ru-1997`, and its player fills `###` with the hymn
+number padded to three digits. File `NNN.m4a` therefore belongs to item NNN of
+the same book; this is not a cross-language number match. Every book's item
+numbers, including Russian 1–385, were compared with the actual file names:
+each item has one file and no file is unassigned, so no gaps are declared. A
+missing file is listed in the collection's `missingItemIds`, never filled from
+another book or medium. The source's English recordings are not used.
+
+`python3 tool/build_recording_catalog.py --enumerate` rebuilds the collections
+from the pinned Git tree after checking the settings blob and each directory
+assignment. Without `--enumerate` it regenerates the bundled catalog and the
+synchronous availability table `lib/services/recording_availability.dart`;
+`--check` compares both offline as part of `tool/check_content.py`. A new
+collection needs a reviewed `RECORDING_SOURCES` entry in
+`tool/validate_hymnal_content.py` and a manifest stub before enumeration.
+
+`python3 tool/validate_recordings.py` replaces `validate_spanish_recordings.py`.
+It downloads each selected file once into the ignored `tmp/recording_audit/`,
+reusing files already checked, and verifies byte count, Git blob SHA-1, the M4A
+`ftyp` header, and a positive macOS `afinfo` duration; throttled requests back
+off and retry. Fully validated collections are merged into
+`tool/data/recording_audit.json`, which keeps the 2026-10-07 Spanish results.
+Select with `--collection sda-pt-1996:sungRecording`, `--book`, or `--medium`.
+All 1,609 new files (2.72 GiB) passed without a retry. The whole catalog is
+about 4.55 GiB, so this network audit stays outside routine checks.
+
+These checks establish source integrity and complete file coverage, not a
+manual musical review. Durations vary; some Old hymns cover only one verse. Sung
+lyrics and verse order are the source's and have not been compared with the
+bundled text. Spanish 2009 sung and instrumental durations nearly match (median
+difference 0.2 s, at most 2.4 s), but no shared timeline is verified. Two pairs
+share one identical file: Russian #182 and #193, which the bundled scores set
+to the same Goncharov tune, and Spanish 1962 #28 and #31 (no 1962 score is
+bundled to confirm a shared tune). Recordings are never repeated, transposed,
+or restyled. Complete MIDI coverage and individual musical review remain open.
+
+Verified MIDI keeps precedence (English, Spanish New #303 and #230). Other
+hymns play the saved `recordingVoice` preference (`RecordingVoice`, default
+`instrumental`) when recorded, otherwise their other recorded kind. Changing it
+swaps a loaded recording from its start and keeps a paused one paused; a
+stopped player stays stopped. Each download is validated before use; up to
+128 MiB stays in temporary storage and corrupt cached files are repaired. Cache
+names include the kind, so a hymn's two recordings never collide. The OS may
+clear this cache; nothing is bundled and no full edition is downloaded. Loading
+and connection failures are visible in the existing player. Recordings use the
+media player on iOS; verified MIDI continues through the native soundfont
+player. Only the active engine can publish completion events. Autoplay remains
+opt-in and starts only after manual playback; pausing does not advance the
+queue. The player has no Sung/Instrumental control yet;
+`MidiPlayer.recordingKinds` lists a hymn's choices.
 
 The MIDI publication gate checks all catalog mappings globally, including unknown
 book references. Duplicate book/item mappings fail validation and are excluded
@@ -398,8 +445,9 @@ gaps rather than fabricated assets. Duplicate optional identities fail the gate.
 
 The current report covers seven imported packs and 3,226 hymns, including the
 350-hymn optional Chichewa collection. This total excludes the original English
-books. The full publication gate passes 39 content tests and checks all seven
-text downloads, three score collections, and 583 interface messages.
+books. The full publication gate passes 46 content tests and checks all seven
+text downloads, three score collections, five recording collections, and 583
+interface messages.
 
 ## Importing community interface reviews
 

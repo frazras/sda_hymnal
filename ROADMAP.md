@@ -117,7 +117,10 @@ Items below are plans, not claims that multilingual content is already installed
       exist, alongside MIDI and video. Download individual recordings on demand
       with bounded caching and the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
       matching hymn numbers across languages; musical styles and choir controls
-      require verified MIDI assets or reviewed tune mappings.
+      require verified MIDI assets or reviewed tune mappings. Audited sung
+      Spanish 2009 and Portuguese 1996 and instrumental Russian 1997 recordings
+      now play on demand with a saved sung/instrumental preference; the
+      player's Sung/Instrumental control remains.
 - [ ] Add persistent background audio with lock-screen/notification controls,
       headphone actions, interruption handling, and one shared playback queue.
       Start with audio playback; retain each medium's supported behavior. The existing
