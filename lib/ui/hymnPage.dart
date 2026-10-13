@@ -12,6 +12,7 @@ import 'saved_hymn_notice.dart';
 import 'hymn_page_turn.dart';
 import 'hymn_sheet_music.dart';
 import 'hymn_share.dart';
+import 'hymn_options_sheet.dart';
 // ignore_for_file: file_names
 
 import 'dart:ui' show ImageFilter;
@@ -79,18 +80,6 @@ class HymnPage extends StatefulWidget {
   State<HymnPage> createState() => _HymnPageState();
 }
 
-enum _ReaderAction {
-  shareLyrics,
-  reportError,
-  video,
-  player,
-  scrollSpeed,
-  chords,
-  fontSize,
-  musicalStyle,
-  choirPractice,
-  sheetMusic
-}
 
 class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
   late bool _sheetMusicVisible = widget.showSheetMusic;
@@ -572,187 +561,76 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
         },
       );
 
-  Widget _readerMenu(HymnalTokens t) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: ChordTabs.instance,
-      builder: (context, chordsVisible, _) {
-        return PopupMenuButton<_ReaderAction>(
-          key: const ValueKey('hymn-reader-options'),
-          tooltip: context.appText.readerOptions,
-          color: t.isDark ? const Color(0xFF1C2721) : t.surface,
-          surfaceTintColor: Colors.transparent,
-          elevation: 8,
-          icon: Icon(Icons.more_vert, color: t.ink),
-          onSelected: (action) {
-            switch (action) {
-              case _ReaderAction.shareLyrics:
-                Navigator.push(
-                    context, slideRoute(HymnSharePage(hymn: widget.hymn)));
-              case _ReaderAction.sheetMusic:
-                setState(() => _sheetMusicVisible = !_sheetMusicVisible);
-              case _ReaderAction.reportError:
-                Navigator.push(
-                    context,
-                    slideRoute(ReportErrorPage(
-                        subject: ErrorReportSubject(
-                      kind: 'hymn',
-                      title: widget.hymn.title,
-                      edition: widget.hymn.isEnglishEdition
-                          ? widget.hymn.version
-                          : '',
-                      bookId: widget.hymn.ref.bookId,
-                      bookLabel: widget.hymn.bookLabel,
-                      number: widget.hymn.number,
-                      itemId: widget.hymn.ref.itemId,
-                    ))));
-              case _ReaderAction.musicalStyle:
-                showMusicalStyleSheet(context);
-              case _ReaderAction.choirPractice:
-                final enabled = !MusicOptions.instance.choirPractice;
-                MusicOptions.instance.setChoirPractice(enabled);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(enabled
-                      ? context.appText.choirPracticeOn
-                      : context.appText.choirPracticeOff),
-                ));
-              case _ReaderAction.video:
-                _showVideo();
-              case _ReaderAction.player:
-                MusicPlayerVisible.instance.set(!_showPlayer);
-                setState(() {});
-              case _ReaderAction.scrollSpeed:
-                if (!AutoScroll.instance.value) AutoScroll.instance.set(true);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) _autoScrollController.showControls();
-                });
-              case _ReaderAction.chords:
-                final show = !ChordTabs.instance.value;
-                ChordTabs.instance.set(show);
-                if (show && !_showPlayer) {
-                  MusicPlayerVisible.instance.set(true);
-                  setState(() {});
-                }
-              case _ReaderAction.fontSize:
-                Navigator.push(context, slideRoute(const FontSizer()));
-            }
-          },
-          itemBuilder: (context) => [
-            if (widget.hymn.isEnglishEdition ||
-                widget.hymn.version == 'sda-es-2009' ||
-                widget.hymn.version == 'sda-ru-1997')
-              PopupMenuItem(
-                key: const ValueKey('hymn-sheet-music'),
-                value: _ReaderAction.sheetMusic,
-                child: _menuLabel(
-                    t,
-                    Icons.library_music_outlined,
-                    _sheetMusicVisible
-                        ? context.appText.showLyrics
-                        : context.appText.sheetMusic),
-              ),
-            if (MidiPlayer.hasMidi(widget.hymn)) ...[
-              PopupMenuItem(
-                key: const ValueKey('hymn-musical-style'),
-                value: _ReaderAction.musicalStyle,
-                child: _menuLabel(
-                    t, Icons.music_note, context.appText.musicalStyle),
-              ),
-              CheckedPopupMenuItem(
-                key: const ValueKey('hymn-choir-practice'),
-                value: _ReaderAction.choirPractice,
-                checked: MusicOptions.instance.choirPractice,
-                child: Text(context.appText.choirPractice),
-              ),
-            ],
-            if (widget.hymn.video != null)
-              PopupMenuItem(
-                key: const ValueKey('hymn-youtube-button'),
-                value: _ReaderAction.video,
-                child: _menuLabel(
-                  t,
-                  _videoVisible
-                      ? Icons.smart_display
-                      : Icons.smart_display_outlined,
-                  _videoVisible
-                      ? context.appText.restartHymnVideo
-                      : context.appText.playHymnVideo,
-                ),
-              ),
-            if (MidiPlayer.hasMusic(widget.hymn))
-              PopupMenuItem(
-                key: const ValueKey('hymn-player-visibility'),
-                value: _ReaderAction.player,
-                child: _menuLabel(
-                  t,
-                  _showPlayer
-                      ? Icons.music_off_outlined
-                      : Icons.music_note_outlined,
-                  _showPlayer
-                      ? context.appText.hideMusicPlayer
-                      : context.appText.showMusicPlayer,
-                ),
-              ),
-            if (!_sheetMusicVisible &&
-                (MidiPlayer.hasMusic(widget.hymn) ||
-                    !widget.hymn.isEnglishEdition))
-              PopupMenuItem(
-                key: const ValueKey('hymn-scroll-speed-menu-item'),
-                value: _ReaderAction.scrollSpeed,
-                child: _menuLabel(
-                    t,
-                    Icons.speed,
-                    AutoScroll.instance.value
-                        ? context.appText.scrollSpeed
-                        : context.appText.autoScroll),
-              ),
-            if (MidiPlayer.hasMidi(widget.hymn))
-              PopupMenuItem(
-                key: const ValueKey('hymn-chord-tabs'),
-                value: _ReaderAction.chords,
-                child: _menuLabel(
-                  t,
-                  Icons.piano,
-                  chordsVisible
-                      ? context.appText.hideChordTabs
-                      : context.appText.showChordTabs,
-                ),
-              ),
-            if (!_sheetMusicVisible)
-              PopupMenuItem(
-                key: const ValueKey('hymn-font-size-button'),
-                value: _ReaderAction.fontSize,
-                child:
-                    _menuLabel(t, Icons.text_fields, context.appText.textSize),
-              ),
-            PopupMenuItem(
-                key: const ValueKey('hymn-share-lyrics'),
-                value: _ReaderAction.shareLyrics,
-                child: _menuLabel(t, Icons.share_outlined,
-                    context.appText.copyOrShareLyrics)),
-            PopupMenuItem(
-                value: _ReaderAction.reportError,
-                child: _menuLabel(t, Icons.report_problem_outlined,
-                    context.appText.reportErrors)),
-          ],
-        );
-      },
+  Widget _readerMenu(HymnalTokens t) => IconButton(
+        key: const ValueKey('hymn-reader-options'),
+        tooltip: context.appText.readerOptions,
+        visualDensity: VisualDensity.compact,
+        icon: Icon(Icons.more_vert, color: t.ink),
+        onPressed: _showOptions,
+      );
+
+  void _showOptions() {
+    final hasMusic = MidiPlayer.hasMusic(widget.hymn);
+    final hasMidi = MidiPlayer.hasMidi(widget.hymn);
+    showHymnOptionsSheet(
+      context,
+      HymnOptions(
+        sheetMusicAvailable: hasScoreCollection(widget.hymn),
+        sheetMusicVisible: _sheetMusicVisible,
+        videoAvailable: widget.hymn.video != null,
+        videoVisible: _videoVisible,
+        hasMidi: hasMidi,
+        hasMusic: hasMusic,
+        autoScrollAvailable: !_sheetMusicVisible &&
+            (hasMusic || !widget.hymn.isEnglishEdition),
+        onSheetMusic: () =>
+            setState(() => _sheetMusicVisible = !_sheetMusicVisible),
+        onVideo: _showVideo,
+        onTextSize: () =>
+            Navigator.push(context, slideRoute(const FontSizer())),
+        onShare: () => Navigator.push(
+            context, slideRoute(HymnSharePage(hymn: widget.hymn))),
+        onReport: () => Navigator.push(
+            context,
+            slideRoute(ReportErrorPage(
+                subject: ErrorReportSubject(
+              kind: 'hymn',
+              title: widget.hymn.title,
+              edition:
+                  widget.hymn.isEnglishEdition ? widget.hymn.version : '',
+              bookId: widget.hymn.ref.bookId,
+              bookLabel: widget.hymn.bookLabel,
+              number: widget.hymn.number,
+              itemId: widget.hymn.ref.itemId,
+            )))),
+        onMusicalStyle: () => showMusicalStyleSheet(context),
+        onPlayer: (show) {
+          MusicPlayerVisible.instance.set(show);
+          if (mounted) setState(() {});
+        },
+        onChords: (show) {
+          ChordTabs.instance.set(show);
+          if (show && !_showPlayer) MusicPlayerVisible.instance.set(true);
+          if (mounted) setState(() {});
+        },
+        onAutoScroll: (on) {
+          AutoScroll.instance.set(on);
+          if (mounted) setState(() {});
+        },
+        onScrollSpeed: () => WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _autoScrollController.showControls();
+        }),
+        onChoir: (on) {
+          MusicOptions.instance.setChoirPractice(on);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(on
+                ? context.appText.choirPracticeOn
+                : context.appText.choirPracticeOff),
+          ));
+        },
+      ),
     );
   }
-
-  Widget _menuLabel(HymnalTokens t, IconData icon, String label) => Row(
-        children: [
-          Icon(icon, size: 20, color: t.accent),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: t.ink, fontFamily: kSans),
-            ),
-          ),
-        ],
-      );
 
   Widget _headerCenter(HymnalTokens t) {
     final crumb = widget.hymn.bookLabel.toUpperCase();

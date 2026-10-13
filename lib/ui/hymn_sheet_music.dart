@@ -5,6 +5,12 @@ import '../models/hymn.dart';
 import '../services/installed_score_packs.dart';
 import '../theme.dart';
 
+/// Editions that have a printed score collection. Other books never offer
+/// the Sheet music action, rather than opening an empty viewer.
+bool hasScoreCollection(Hymn hymn) =>
+    const {'new', 'sda-en-1985', 'sda-es-2009', 'sda-ru-1997'}
+        .contains(hymn.version);
+
 /// Stays inside the reader so playback, autoplay and category order keep their
 /// existing owner. Page buttons avoid competing with a zoomed score's pan.
 class HymnSheetMusic extends StatefulWidget {

@@ -119,18 +119,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     final option = find.byKey(optionKey);
     expect(option, findsOneWidget);
-    final label = switch (optionKey) {
-      const ValueKey('hymn-player-visibility') =>
-        find.textContaining('music player'),
-      const ValueKey('hymn-youtube-button') =>
-        find.textContaining('hymn video'),
-      const ValueKey('hymn-scroll-speed-menu-item') =>
-        find.text('Scroll speed'),
-      const ValueKey('hymn-font-size-button') => find.text('Text size'),
-      const ValueKey('hymn-chord-tabs') => find.textContaining('chord tabs'),
-      _ => option,
-    };
-    await tester.tap(label);
+    await tester.ensureVisible(option);
+    await tester.pump();
+    // Every option closes the sheet, so its effect is visible at once.
+    await tester.tap(option);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
   }
@@ -179,16 +171,29 @@ void main() {
             endsWith('/assets/midi/${prefix}533.mid'));
         expect(audioCalls.any((c) => c.method == 'resume'), isTrue);
         final callsBeforeScore = audioCalls.length;
-        await chooseReaderOption(tester, const ValueKey('hymn-sheet-music'));
-        expect(find.byType(HymnSheetMusic), findsOneWidget);
-        expect(find.byType(HymnPageTurn), findsNothing);
-        expect(find.byKey(const ValueKey('hymn-music-player')), findsOneWidget);
-        expect(MidiPlayer.instance.current.value,
-            (version: version, n: 533, paused: false));
-        await tester.tap(find.byKey(const ValueKey('score-show-lyrics')));
-        await tester.pump();
-        expect(find.byType(HymnSheetMusic), findsNothing);
-        expect(find.byType(HymnPageTurn), findsOneWidget);
+        if (version == 'old') {
+          // The Old Hymnal has no score collection, so the reader never
+          // offers an empty sheet-music viewer.
+          await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 250));
+          expect(find.byKey(const ValueKey('hymn-sheet-music')), findsNothing);
+          await tester.tapAt(const Offset(20, 20));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 400));
+        } else {
+          await chooseReaderOption(tester, const ValueKey('hymn-sheet-music'));
+          expect(find.byType(HymnSheetMusic), findsOneWidget);
+          expect(find.byType(HymnPageTurn), findsNothing);
+          expect(
+              find.byKey(const ValueKey('hymn-music-player')), findsOneWidget);
+          expect(MidiPlayer.instance.current.value,
+              (version: version, n: 533, paused: false));
+          await tester.tap(find.byKey(const ValueKey('score-show-lyrics')));
+          await tester.pump();
+          expect(find.byType(HymnSheetMusic), findsNothing);
+          expect(find.byType(HymnPageTurn), findsOneWidget);
+        }
         expect(
             audioCalls.skip(callsBeforeScore).where(
                 (c) => ['pause', 'stop', 'setSourceUrl'].contains(c.method)),
@@ -339,8 +344,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('hymn-favorite-button')), findsNothing);
-    expect(find.text('Show chord tabs'), findsOneWidget);
-    await tester.tap(find.text('Show chord tabs'));
+    expect(find.byKey(const ValueKey('hymn-chord-tabs')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('hymn-chord-tabs')));
     await tester.pumpAndSettle();
     expect(ChordTabs.instance.value, isTrue);
     expect(MusicPlayerVisible.instance.value, isTrue);
