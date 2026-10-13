@@ -78,6 +78,30 @@ void main() {
     }
   });
 
+  test('compressed responses declare their wire size, not the text size',
+      () async {
+    // GitHub gzips JSON for clients that accept it; the HTTP client then
+    // reports the compressed length and streams the decompressed text.
+    final wireSize = gzip.encode(bytes).length;
+    final client = MockClient.streaming((_, body) async =>
+        http.StreamedResponse(
+            Stream.fromIterable([bytes.sublist(0, 12), bytes.sublist(12)]), 200,
+            contentLength: wireSize, headers: {'content-encoding': 'gzip'}));
+    expect(await downloadLanguagePack(descriptor, client: client), bytes);
+
+    // Size and checksum still bind the decompressed text.
+    for (final content in [
+      [...bytes, 0],
+      [...bytes.sublist(0, bytes.length - 1), 0],
+    ]) {
+      final altered = MockClient.streaming((_, body) async =>
+          http.StreamedResponse(Stream.value(content), 200,
+              contentLength: wireSize, headers: {'content-encoding': 'gzip'}));
+      await expectLater(downloadLanguagePack(descriptor, client: altered),
+          throwsFormatException);
+    }
+  });
+
   test('truncated and altered payloads fail integrity checks', () async {
     for (final content in [
       bytes.sublist(0, 12),

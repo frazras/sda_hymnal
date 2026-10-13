@@ -37,6 +37,19 @@ void main() {
     client.close();
   });
 
+  test('a compressed page is checked after decompression', () async {
+    final wireSize = gzip.encode(data).length;
+    final client = MockClient.streaming((_, body) async =>
+        http.StreamedResponse(Stream.value(data), 200,
+            contentLength: wireSize, headers: {'content-encoding': 'gzip'}));
+    expect(await downloadScorePage(pack, page, null, client: client), data);
+    final altered = MockClient.streaming((_, body) async =>
+        http.StreamedResponse(Stream.value([...data, 0]), 200,
+            contentLength: wireSize, headers: {'content-encoding': 'gzip'}));
+    await expectLater(downloadScorePage(pack, page, null, client: altered),
+        throwsFormatException);
+  });
+
   test('failed, redirected, changed and oversized responses are rejected',
       () async {
     for (final response in [

@@ -18,7 +18,8 @@ Future<Uint8List> downloadLanguagePack(LanguagePackDownload descriptor,
     final response = await transport.send(request).timeout(timeout);
     cancellation?.check();
     if (response.statusCode != 200 ||
-        (response.contentLength != null &&
+        (!_compressed(response) &&
+            response.contentLength != null &&
             response.contentLength != descriptor.bytes)) {
       throw const FormatException('Language pack response mismatch');
     }
@@ -45,3 +46,10 @@ Future<Uint8List> downloadLanguagePack(LanguagePackDownload descriptor,
     if (client == null) transport.close();
   }
 }
+
+/// GitHub serves JSON gzip-compressed to clients that accept it: the declared
+/// length is then the compressed size while the body arrives decompressed.
+/// Such bodies are still held to the reviewed size and checksum.
+bool _compressed(http.BaseResponse response) =>
+    (response.headers['content-encoding'] ?? 'identity').toLowerCase() !=
+    'identity';
