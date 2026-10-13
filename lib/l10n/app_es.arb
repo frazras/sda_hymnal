@@ -566,7 +566,7 @@
   "alphabeticalBrowse": "Explorar alfabéticamente",
   "jumpToLetter": "Ir a una letra",
   "previewPresentation": "Vista previa de diapositivas",
-  "sharePresentation": "Compartir diapositivas HTML",
+  "sharePresentation": "Compartir diapositivas",
   "presentationExportFailed": "No se pudieron exportar las diapositivas. Comprueba que todos los elementos del servicio estén disponibles.",
   "languageSaveFailed": "No se pudo guardar el idioma de la aplicación. Inténtalo de nuevo.",
   "readingLeader": "Dirigente",
@@ -604,5 +604,9 @@
   "recordingSung": "Cantado",
   "recordingInstrumentalShort": "Instr.",
   "recordingSungShort": "Cantado",
-  "recordingVoiceTooltip": "Cambiar entre grabación cantada e instrumental"
+  "recordingVoiceTooltip": "Cambiar entre grabación cantada e instrumental",
+  "shareSlidesHtml": "Diapositivas para el navegador",
+  "shareSlidesHtmlHelp": "Una página web sin conexión que funciona en cualquier dispositivo",
+  "shareVideoPsalm": "Cancionero de VideoPsalm",
+  "shareVideoPsalmHelp": "Importe el archivo .vpc en VideoPsalm para proyectar estos cantos"
 }

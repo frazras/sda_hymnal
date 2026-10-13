@@ -566,7 +566,7 @@
   "alphabeticalBrowse": "Explorar por ordem alfabética",
   "jumpToLetter": "Ir para uma letra",
   "previewPresentation": "Pré-visualizar slides",
-  "sharePresentation": "Compartilhar slides HTML",
+  "sharePresentation": "Compartilhar slides",
   "presentationExportFailed": "Não foi possível exportar os slides. Verifique se todos os itens do culto estão disponíveis.",
   "languageSaveFailed": "Não foi possível salvar o idioma do aplicativo. Tente novamente.",
   "readingLeader": "Dirigente",
@@ -604,5 +604,9 @@
   "recordingSung": "Cantado",
   "recordingInstrumentalShort": "Instr.",
   "recordingSungShort": "Cantado",
-  "recordingVoiceTooltip": "Alternar entre gravação cantada e instrumental"
+  "recordingVoiceTooltip": "Alternar entre gravação cantada e instrumental",
+  "shareSlidesHtml": "Slides para o navegador",
+  "shareSlidesHtmlHelp": "Uma página web offline que funciona em qualquer dispositivo",
+  "shareVideoPsalm": "Cancioneiro do VideoPsalm",
+  "shareVideoPsalmHelp": "Importe o arquivo .vpc no VideoPsalm para projetar estes cânticos"
 }

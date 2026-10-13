@@ -2013,7 +2013,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get previewPresentation => 'Предпросмотр слайдов';
 
   @override
-  String get sharePresentation => 'Поделиться HTML-слайдами';
+  String get sharePresentation => 'Поделиться слайдами';
 
   @override
   String get presentationExportFailed =>
@@ -2140,4 +2140,18 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get recordingVoiceTooltip =>
       'Переключить запись: с пением или инструментальную';
+
+  @override
+  String get shareSlidesHtml => 'Слайды для браузера';
+
+  @override
+  String get shareSlidesHtmlHelp =>
+      'Одна офлайн-страница, работает на любом устройстве';
+
+  @override
+  String get shareVideoPsalm => 'Сборник для VideoPsalm';
+
+  @override
+  String get shareVideoPsalmHelp =>
+      'Импортируйте файл .vpc в VideoPsalm, чтобы показывать эти песни';
 }

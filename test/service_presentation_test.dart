@@ -221,7 +221,9 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: ServicePresentationPage(
             presentation: ServicePresentation.build(service, repository))));
-    await tester.tap(find.byTooltip('Share HTML slides'));
+    await tester.tap(find.byTooltip('Share slides'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('share-html')));
     for (var i = 0; i < 30 && !shared.isCompleted; i++) {
       await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 20)));
@@ -231,6 +233,64 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
+  Map<String, dynamic> readVideoPsalm(List<int> bytes) {
+    final archive = ZipDecoder().decodeBytes(bytes);
+    expect(archive.files, hasLength(1));
+    expect(archive.files.single.name, 'Sábado_&_domingo.json');
+    final notation = utf8.decode(archive.files.single.content as List<int>);
+    // VideoPsalm writes member names unquoted; quote them to parse as JSON.
+    final quoted = notation.replaceAllMapped(
+        RegExp(r'([{,])([A-Za-z_][A-Za-z0-9_]*):'), (m) => '${m[1]}"${m[2]}":');
+    expect(notation.startsWith('{Abbreviation:'), isTrue);
+    return jsonDecode(quoted) as Map<String, dynamic>;
+  }
+
+  test('VideoPsalm package matches the songbook layout VideoPsalm exports', () {
+    final deck = ServicePresentation.build(service, repository);
+    final book = readVideoPsalm(
+        deck.videoPsalmPackage(roleLabel: (role) => role.toUpperCase()));
+    // Member names observed in rejnac/chichewa-hymnal@690b953
+    // VideoPsalm/Khristu Mu Nyimbo.vpc (VideoPsalm's own export).
+    const songbookKeys = {
+      'Abbreviation', 'Description', 'Publisher', 'Author', 'Administrator',
+      'Copyright', 'Songs', 'Guid', 'Style', 'Text'
+    };
+    expect(songbookKeys.containsAll(book.keys), isTrue, reason: '${book.keys}');
+    expect(book['Text'], 'Sábado & domingo');
+    final songs = (book['Songs'] as List).cast<Map<String, dynamic>>();
+    expect(songs.map((s) => s['ID']), [1, 2, 3]);
+    expect(songs.map((s) => s['Text']),
+        ['1 · Corazón <script>', '2 · Lectura', '1 · Corazón <script>']);
+    expect(songs.map((s) => s['Guid']).toSet(), hasLength(3),
+        reason: 'Repeated hymns stay separate occurrences');
+    for (final song in songs) {
+      expect({'ID', 'Guid', 'Text', 'Verses'}.containsAll(song.keys), isTrue);
+      for (final verse in (song['Verses'] as List).cast<Map>()) {
+        expect({'ID', 'Text', 'Tag'}.containsAll(verse.keys), isTrue);
+      }
+    }
+    final opening = (songs.first['Verses'] as List).cast<Map>();
+    expect(opening.first, {'ID': 1, 'Text': 'Ábreme\nSeñor'});
+    expect(opening.last, {'Tag': 1, 'ID': 0, 'Text': 'Gloria'});
+    final reading = (songs[1]['Verses'] as List).cast<Map>();
+    expect(reading.map((v) => v['Text']),
+        ['LEADER\nPrimera\nSegunda', 'CONGREGATION\nAmén']);
+  });
+
+  test('VideoPsalm notation quotes values and never member names', () {
+    expect(
+        videoPsalmNotation({
+          'Text': 'He said "Amen"\n',
+          'Songs': [
+            {'ID': 1}
+          ]
+        }),
+        r'{Text:"He said \"Amen\"\n",Songs:[{ID:1}]}');
+    expect(() => videoPsalmNotation({'bad key': 1}), throwsArgumentError);
+    expect(exportFileStem(' a/b:c  d '), 'abc_d');
+    expect(exportFileStem('///'), 'service');
+  });
+
   test('an empty reading segment fails instead of dropping part of a reading',
       () {
     const incomplete = AdditionalReading(

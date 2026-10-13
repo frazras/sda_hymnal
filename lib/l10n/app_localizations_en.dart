@@ -1975,7 +1975,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get previewPresentation => 'Preview slides';
 
   @override
-  String get sharePresentation => 'Share HTML slides';
+  String get sharePresentation => 'Share slides';
 
   @override
   String get presentationExportFailed =>
@@ -2101,4 +2101,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recordingVoiceTooltip =>
       'Switch between sung and instrumental recordings';
+
+  @override
+  String get shareSlidesHtml => 'Slides for any browser';
+
+  @override
+  String get shareSlidesHtmlHelp =>
+      'One offline web page that works on any device';
+
+  @override
+  String get shareVideoPsalm => 'VideoPsalm songbook';
+
+  @override
+  String get shareVideoPsalmHelp =>
+      'Import the .vpc file in VideoPsalm to project these songs';
 }

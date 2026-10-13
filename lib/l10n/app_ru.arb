@@ -566,7 +566,7 @@
   "alphabeticalBrowse": "По алфавиту",
   "jumpToLetter": "Перейти к букве",
   "previewPresentation": "Предпросмотр слайдов",
-  "sharePresentation": "Поделиться HTML-слайдами",
+  "sharePresentation": "Поделиться слайдами",
   "presentationExportFailed": "Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения.",
   "languageSaveFailed": "Не удалось сохранить язык приложения. Попробуйте ещё раз.",
   "readingLeader": "Ведущий",
@@ -604,5 +604,9 @@
   "recordingSung": "С пением",
   "recordingInstrumentalShort": "Инстр.",
   "recordingSungShort": "Пение",
-  "recordingVoiceTooltip": "Переключить запись: с пением или инструментальную"
+  "recordingVoiceTooltip": "Переключить запись: с пением или инструментальную",
+  "shareSlidesHtml": "Слайды для браузера",
+  "shareSlidesHtmlHelp": "Одна офлайн-страница, работает на любом устройстве",
+  "shareVideoPsalm": "Сборник для VideoPsalm",
+  "shareVideoPsalmHelp": "Импортируйте файл .vpc в VideoPsalm, чтобы показывать эти песни"
 }

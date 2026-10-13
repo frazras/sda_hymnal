@@ -1992,7 +1992,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get previewPresentation => 'Vista previa de diapositivas';
 
   @override
-  String get sharePresentation => 'Compartir diapositivas HTML';
+  String get sharePresentation => 'Compartir diapositivas';
 
   @override
   String get presentationExportFailed =>
@@ -2119,4 +2119,18 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get recordingVoiceTooltip =>
       'Cambiar entre grabación cantada e instrumental';
+
+  @override
+  String get shareSlidesHtml => 'Diapositivas para el navegador';
+
+  @override
+  String get shareSlidesHtmlHelp =>
+      'Una página web sin conexión que funciona en cualquier dispositivo';
+
+  @override
+  String get shareVideoPsalm => 'Cancionero de VideoPsalm';
+
+  @override
+  String get shareVideoPsalmHelp =>
+      'Importe el archivo .vpc en VideoPsalm para proyectar estos cantos';
 }

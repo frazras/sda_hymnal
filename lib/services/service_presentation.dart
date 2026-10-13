@@ -24,12 +24,35 @@ class PresentationSlide {
   final String? role;
 }
 
+/// One whole stanza, refrain or reading segment of a service occurrence.
+/// Presentation programs page stanzas themselves, so exports keep them whole.
+class PresentationStanza {
+  const PresentationStanza(
+      {required this.occurrenceId,
+      required this.title,
+      required this.text,
+      this.verse,
+      this.refrain = false,
+      this.role});
+  final String occurrenceId;
+  final String title;
+
+  /// Lyrics without the printed verse number or refrain label line.
+  final String text;
+  final int? verse;
+  final bool refrain;
+  final String? role;
+}
+
 /// A source-order snapshot, with repeated service entries kept as occurrences.
 class ServicePresentation {
-  ServicePresentation._(this.name, Iterable<PresentationSlide> slides)
-      : slides = List.unmodifiable(slides);
+  ServicePresentation._(this.name, Iterable<PresentationSlide> slides,
+      [Iterable<PresentationStanza> stanzas = const []])
+      : slides = List.unmodifiable(slides),
+        stanzas = List.unmodifiable(stanzas);
   final String name;
   final List<PresentationSlide> slides;
+  final List<PresentationStanza> stanzas;
 
   factory ServicePresentation.build(
       ServicePlaylist service, HymnalRepository repository,
@@ -38,6 +61,7 @@ class ServicePresentation {
       throw ArgumentError.value(linesPerSlide, 'linesPerSlide');
     }
     final slides = <PresentationSlide>[];
+    final stanzas = <PresentationStanza>[];
     for (final entry in service.entries) {
       final hymn = repository.hymn(entry.ref);
       final reading = repository.reading(entry.ref);
@@ -48,6 +72,33 @@ class ServicePresentation {
           ? '${reading!.number} · ${reading.title}'
           : '${hymn.number} · ${hymn.title}';
       final book = repository.edition(entry.ref.bookId)!.displayName;
+      if (hymn != null) {
+        for (final section in HymnTextExport(hymn).sections) {
+          final lines = section.text.trim().split('\n');
+          // Section text repeats its printed label as the first line.
+          final labelled = !section.generatedLabel && lines.length > 1;
+          final text = (labelled ? lines.skip(1) : lines).join('\n').trim();
+          if (text.isEmpty) continue;
+          stanzas.add(PresentationStanza(
+              occurrenceId: entry.id,
+              title: title,
+              text: text,
+              verse: section.verseNumber == null
+                  ? null
+                  : int.tryParse(
+                      section.verseNumber!.replaceAll(RegExp(r'[^0-9]'), '')),
+              refrain: !section.generatedLabel && section.verseNumber == null));
+        }
+      } else {
+        for (final segment in reading!.segments) {
+          if (segment.text.trim().isEmpty) continue;
+          stanzas.add(PresentationStanza(
+              occurrenceId: entry.id,
+              title: title,
+              text: segment.text.trim(),
+              role: segment.role));
+        }
+      }
       final blocks = hymn != null
           ? HymnTextExport(hymn)
               .sections
@@ -81,7 +132,57 @@ class ServicePresentation {
     if (slides.isEmpty) {
       throw const FormatException('Empty service presentation');
     }
-    return ServicePresentation._(service.name, slides);
+    return ServicePresentation._(service.name, slides, stanzas);
+  }
+
+  /// A VideoPsalm songbook package (`.vpc`): a zip holding one songbook in
+  /// the unquoted-key notation VideoPsalm writes when it exports songbooks
+  /// (checked against a published `.vpc` from rejnac/chichewa-hymnal at
+  /// 690b953). Each service occurrence becomes a song in service order;
+  /// numbered stanzas keep their verse ID and refrains carry VideoPsalm's
+  /// chorus tag (Tag 1, ID 0). Reading roles prefix their segment.
+  List<int> videoPsalmPackage({String Function(String)? roleLabel}) {
+    String guid(String identity) => base64
+        .encode(sha256.convert(utf8.encode(identity)).bytes.take(16).toList())
+        .replaceAll('=', '');
+    final order = <String>[];
+    for (final stanza in stanzas) {
+      if (!order.contains(stanza.occurrenceId)) order.add(stanza.occurrenceId);
+    }
+    final identity = jsonEncode([name, ...order]);
+    final songbook = <String, Object>{
+      'Abbreviation': 'SDA',
+      'Description': name,
+      'Songs': [
+        for (final (index, occurrence) in order.indexed)
+          {
+            'ID': index + 1,
+            'Guid': guid('sdahymnal:vpc-song:$identity:$occurrence'),
+            'Verses': [
+              for (final stanza
+                  in stanzas.where((s) => s.occurrenceId == occurrence))
+                {
+                  if (stanza.refrain) 'Tag': 1,
+                  if (stanza.refrain) 'ID': 0,
+                  if (!stanza.refrain && stanza.verse != null)
+                    'ID': stanza.verse!,
+                  'Text': stanza.role == null
+                      ? stanza.text
+                      : '${roleLabel?.call(stanza.role!) ?? stanza.role!}\n${stanza.text}',
+                }
+            ],
+            'Text':
+                stanzas.firstWhere((s) => s.occurrenceId == occurrence).title,
+          }
+      ],
+      'Guid': guid('sdahymnal:vpc-songbook:$identity'),
+      'Text': name,
+    };
+    final bytes = utf8.encode(videoPsalmNotation(songbook));
+    final archive = Archive()
+      ..addFile(
+          ArchiveFile('${exportFileStem(name)}.json', bytes.length, bytes));
+    return ZipEncoder().encode(archive);
   }
 
   /// VideoPsalm songbook JSON. This is not a native service agenda file.
@@ -187,4 +288,28 @@ previous.onclick=()=>show(index-1);next.onclick=()=>show(index+1);
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();show(index+1);}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(index-1);}});show(0);
 </script></body></html>''';
   }
+}
+
+/// A file name stem without separators or reserved characters.
+String exportFileStem(String name) {
+  final stem = name
+      .replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1f]'), '')
+      .trim()
+      .replaceAll(RegExp(r'\s+'), '_');
+  return stem.isEmpty ? 'service' : stem;
+}
+
+/// VideoPsalm's object notation: JSON values with unquoted member names.
+String videoPsalmNotation(Object? value) {
+  if (value is Map) {
+    return '{${value.entries.map((e) {
+      final key = e.key as String;
+      if (!RegExp(r'^[A-Za-z_][A-Za-z0-9_]*$').hasMatch(key)) {
+        throw ArgumentError.value(key, 'key');
+      }
+      return '$key:${videoPsalmNotation(e.value)}';
+    }).join(',')}}';
+  }
+  if (value is List) return '[${value.map(videoPsalmNotation).join(',')}]';
+  return jsonEncode(value);
 }

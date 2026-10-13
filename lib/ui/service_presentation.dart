@@ -20,23 +20,60 @@ class _ServicePresentationPageState extends State<ServicePresentationPage> {
   int _index = 0;
   bool _sharing = false;
 
-  Future<void> _share(BuildContext buttonContext) async {
+  Future<void> _chooseShare(BuildContext buttonContext) async {
+    final format = await showHymnalSheet<String>(
+      context,
+      title: context.appText.sharePresentation,
+      builder: (sheet) => Column(children: [
+        SheetOption(
+          key: const ValueKey('share-html'),
+          leading: const RowIcon(Icons.slideshow_outlined),
+          title: sheet.appText.shareSlidesHtml,
+          subtitle: sheet.appText.shareSlidesHtmlHelp,
+          onTap: () => Navigator.pop(sheet, 'html'),
+        ),
+        SheetOption(
+          key: const ValueKey('share-videopsalm'),
+          leading: const RowIcon(Icons.video_library_outlined),
+          title: sheet.appText.shareVideoPsalm,
+          subtitle: sheet.appText.shareVideoPsalmHelp,
+          divider: false,
+          onTap: () => Navigator.pop(sheet, 'vpc'),
+        ),
+      ]),
+    );
+    if (format == null || !mounted || !buttonContext.mounted) return;
+    await _share(buttonContext, videoPsalm: format == 'vpc');
+  }
+
+  Future<void> _share(BuildContext buttonContext,
+      {bool videoPsalm = false}) async {
     final box = buttonContext.findRenderObject() as RenderBox?;
     final origin =
         box == null ? null : box.localToGlobal(Offset.zero) & box.size;
     final text = context.appText;
     setState(() => _sharing = true);
     try {
-      final html = widget.presentation.html(
-          previousLabel: text.previousItem,
-          nextLabel: text.nextItem,
-          roleLabel: text.readingRoleLabel);
+      final XFile file;
+      final String filename;
+      if (videoPsalm) {
+        file = XFile.fromData(
+            Uint8List.fromList(widget.presentation
+                .videoPsalmPackage(roleLabel: text.readingRoleLabel)),
+            mimeType: 'application/octet-stream');
+        filename = '${exportFileStem(widget.presentation.name)}.vpc';
+      } else {
+        final html = widget.presentation.html(
+            previousLabel: text.previousItem,
+            nextLabel: text.nextItem,
+            roleLabel: text.readingRoleLabel);
+        file = XFile.fromData(Uint8List.fromList(utf8.encode(html)),
+            mimeType: 'text/html');
+        filename = 'service-slides.html';
+      }
       await SharePlus.instance.share(ShareParams(
-        files: [
-          XFile.fromData(Uint8List.fromList(utf8.encode(html)),
-              mimeType: 'text/html')
-        ],
-        fileNameOverrides: ['service-slides.html'],
+        files: [file],
+        fileNameOverrides: [filename],
         subject: widget.presentation.name,
         sharePositionOrigin: origin,
       ));
@@ -66,7 +103,7 @@ class _ServicePresentationPageState extends State<ServicePresentationPage> {
           builder: (context) => HeaderAction(
               icon: Icons.ios_share,
               tooltip: context.appText.sharePresentation,
-              onTap: _sharing ? null : () => _share(context))),
+              onTap: _sharing ? null : () => _chooseShare(context))),
       body: Column(children: [
         Expanded(
             child: GestureDetector(

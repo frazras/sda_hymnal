@@ -909,7 +909,7 @@
   "alphabeticalBrowse": "Browse alphabetically",
   "jumpToLetter": "Jump to letter",
   "previewPresentation": "Preview slides",
-  "sharePresentation": "Share HTML slides",
+  "sharePresentation": "Share slides",
   "presentationExportFailed": "Unable to export slides. Check that every service item is available.",
   "languageSaveFailed": "Could not save the app language. Please try again.",
   "readingLeader": "Leader",
@@ -1033,5 +1033,24 @@
   "recordingVoiceTooltip": "Switch between sung and instrumental recordings",
   "@recordingVoiceTooltip": {
     "description": "Tooltip for the player pill that switches recording kind."
+  },
+  "shareSlidesHtml": "Slides for any browser",
+  "@shareSlidesHtml": {
+    "description": "Share option that exports the service as one offline HTML slide page."
+  },
+  "shareSlidesHtmlHelp": "One offline web page that works on any device",
+  "@shareSlidesHtmlHelp": {
+    "description": "Subtitle of the HTML slides share option."
+  },
+  "shareVideoPsalm": "VideoPsalm songbook",
+  "@shareVideoPsalm": {
+    "description": "Share option that exports the service as a VideoPsalm .vpc songbook. VideoPsalm is a product name."
+  },
+  "shareVideoPsalmHelp": "Import the .vpc file in VideoPsalm to project these songs",
+  "@shareVideoPsalmHelp": {
+    "description": "Subtitle of the VideoPsalm share option."
+  },
+  "@sharePresentation": {
+    "description": "Tooltip of the slide preview share button; opens a choice of slide formats."
   }
 }

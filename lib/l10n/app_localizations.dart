@@ -3498,10 +3498,10 @@ abstract class AppLocalizations {
   /// **'Preview slides'**
   String get previewPresentation;
 
-  /// No description provided for @sharePresentation.
+  /// Tooltip of the slide preview share button; opens a choice of slide formats.
   ///
   /// In en, this message translates to:
-  /// **'Share HTML slides'**
+  /// **'Share slides'**
   String get sharePresentation;
 
   /// No description provided for @presentationExportFailed.
@@ -3731,6 +3731,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch between sung and instrumental recordings'**
   String get recordingVoiceTooltip;
+
+  /// Share option that exports the service as one offline HTML slide page.
+  ///
+  /// In en, this message translates to:
+  /// **'Slides for any browser'**
+  String get shareSlidesHtml;
+
+  /// Subtitle of the HTML slides share option.
+  ///
+  /// In en, this message translates to:
+  /// **'One offline web page that works on any device'**
+  String get shareSlidesHtmlHelp;
+
+  /// Share option that exports the service as a VideoPsalm .vpc songbook. VideoPsalm is a product name.
+  ///
+  /// In en, this message translates to:
+  /// **'VideoPsalm songbook'**
+  String get shareVideoPsalm;
+
+  /// Subtitle of the VideoPsalm share option.
+  ///
+  /// In en, this message translates to:
+  /// **'Import the .vpc file in VideoPsalm to project these songs'**
+  String get shareVideoPsalmHelp;
 }
 
 class _AppLocalizationsDelegate
