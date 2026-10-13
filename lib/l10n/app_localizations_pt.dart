@@ -88,7 +88,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get musicalStyleHelp => 'Como a música do hino soa';
 
   @override
-  String get autoplay => 'Reprodução contínua de vídeo e música';
+  String get autoplay => 'Reprodução automática de vídeo e música';
 
   @override
   String get choirPractice => 'Ensaio do coral';
@@ -222,7 +222,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get autoplayHelp =>
-      'Após tocar em Reproduzir, continue esta lista até pausar';
+      'Depois de tocar em Reproduzir, a lista continua tocando até você pausar';
 
   @override
   String get musiciansAndChoir => 'MÚSICOS E CORAL';
@@ -240,7 +240,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get choirPracticeHelp =>
-      'Mostre os controles das vozes no reprodutor. Usa a música original, sem estilos.';
+      'Mostra os controles das vozes no reprodutor. Usa a música original, sem estilos.';
 
   @override
   String get choirPracticeOn =>
@@ -353,7 +353,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get appDesignHelp =>
-      'Escolha o novo visual ou o layout original.\nO ícone da tela inicial muda para combinar. Seus hinos, favoritos e configurações de música permanecem iguais.';
+      'Escolha o novo visual ou o layout original.\nO ícone da tela inicial também muda. Seus hinos, favoritos e configurações de música permanecem iguais.';
 
   @override
   String get statisticsHelp =>
@@ -777,7 +777,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get storyPublisherHelp =>
-      'Uma história complementar completa está disponível com este editor.';
+      'Esta editora oferece uma história complementar completa.';
 
   @override
   String pageOfTotal(int page, int total) {
@@ -963,10 +963,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get gmProgram51 => 'Cordas sintetizadas 2';
 
   @override
-  String get gmProgram52 => 'Vozes de coro';
+  String get gmProgram52 => 'Vozes de coral';
 
   @override
-  String get gmProgram53 => 'Vozes em «u»';
+  String get gmProgram53 => 'Vozes em “u”';
 
   @override
   String get gmProgram54 => 'Voz sintetizada';
@@ -1137,7 +1137,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get gmProgram85 => 'Voz solo';
 
   @override
-  String get gmProgram86 => 'Onda de serra em quintas';
+  String get gmProgram86 => 'Onda dente de serra em quintas';
 
   @override
   String get gmProgram87 => 'Baixo e lead';
@@ -1173,7 +1173,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get instrumentFamily1 => 'Órgãos e acordeões';
 
   @override
-  String get instrumentFamily2 => 'Guitarras';
+  String get instrumentFamily2 => 'Violões e guitarras';
 
   @override
   String get instrumentFamily3 => 'Baixo';
@@ -1182,7 +1182,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get instrumentFamily4 => 'Cordas';
 
   @override
-  String get instrumentFamily5 => 'Coro e vozes';
+  String get instrumentFamily5 => 'Coral e vozes';
 
   @override
   String get instrumentFamily6 => 'Metais';
@@ -1218,7 +1218,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get ensembleInstrumentHelp =>
-      'Escolha instrumentos para cada estilo musical. Essas opções se aplicam ao conjunto inteiro. Para praticar com o coro, escolha o instrumento de cada faixa no mixer do hino.';
+      'Escolha instrumentos para cada estilo musical. Essas opções se aplicam ao conjunto inteiro. No modo “Ensaio do coral”, escolha o instrumento de cada faixa no mixer do coral do hino.';
 
   @override
   String get drumKit => 'Bateria';
@@ -1249,7 +1249,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'A prévia substitui o hino que estiver tocando e para quando você sair desta página.';
 
   @override
-  String get choirPartsOriginal => 'Vozes do coro • Música original';
+  String get choirPartsOriginal => 'Vozes do coral • Música original';
 
   @override
   String get separatePartsUnavailable => 'Vozes separadas indisponíveis';
@@ -1401,7 +1401,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Você está vendo um relatório salvo ou antigo. Atualize quando houver conexão para ver as estatísticas mais recentes disponíveis.';
 
   @override
-  String get mostOpenedHymns => 'Hinos mais abertos';
+  String get mostOpenedHymns => 'Hinos mais acessados';
 
   @override
   String get mostOpenedHelp =>
@@ -1835,7 +1835,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release450Feature4 =>
-      'Altere o estilo musical e ative ou desative a prática de coro diretamente no menu do hino.';
+      'Altere o estilo musical e ative ou desative o ensaio do coral diretamente no menu do hino.';
 
   @override
   String get release450Feature5 =>
@@ -1859,11 +1859,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release440Feature0 =>
-      'Ative a prática de coro nas Configurações para ouvir separadamente as vozes disponíveis, renomear faixas e silenciá-las ou ouvi-las sozinhas.';
+      'Ative o ensaio do coral nas Configurações para ouvir separadamente as vozes disponíveis, renomear faixas e silenciá-las ou ouvi-las sozinhas.';
 
   @override
   String get release440Feature1 =>
-      'Escolha um instrumento e ajuste o volume de cada faixa do coro com controles compactos.';
+      'Escolha um instrumento e ajuste o volume de cada faixa do coral com controles compactos.';
 
   @override
   String get release440Feature2 =>
@@ -1871,11 +1871,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release440Feature3 =>
-      'Escolha entre 111 instrumentos em 11 categorias. Encontre Steelpan em Percussão, com rulos automáticos nas notas sustentadas.';
+      'Escolha entre 111 instrumentos em 11 categorias. Encontre Steelpan em Percussão, com rufos automáticos nas notas sustentadas.';
 
   @override
   String get release440Feature4 =>
-      'A prática de coro usa as partes originais e substitui o estilo de conjunto selecionado. Esses controles opcionais ficam ocultos até serem ativados.';
+      'O ensaio do coral usa as partes originais e substitui o estilo de conjunto selecionado. Esses controles opcionais ficam ocultos até serem ativados.';
 
   @override
   String get release430Feature0 =>
@@ -1911,11 +1911,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release420Feature2 =>
-      'Toque a música de todos os 703 hinos do Hinário Antigo, com o número correto de estrofes e refrões.';
+      'Toque a música de todos os 703 hinos do Hinário Antigo, com o número correto de estrofes e coros.';
 
   @override
   String get release420Feature3 =>
-      'Ouça e leia o refrão depois de cada estrofe nos dois hinários.';
+      'Ouça e leia o coro depois de cada estrofe nos dois hinários.';
 
   @override
   String get release420Feature4 =>
@@ -1927,7 +1927,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release420Feature6 =>
-      'Mantenha o player oculto entre músicas e ao abrir o aplicativo quando preferir mais espaço para leitura.';
+      'Mantenha o reprodutor oculto entre músicas e ao abrir o aplicativo quando preferir mais espaço para leitura.';
 
   @override
   String get release420Feature7 =>
@@ -1939,7 +1939,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release411Feature0 =>
-      'Escolha o design Moderno ou Clássico, com um ícone de início correspondente.';
+      'Escolha o design Moderno ou Clássico, com um ícone da tela inicial correspondente.';
 
   @override
   String get release411Feature1 =>
@@ -1951,11 +1951,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release410Feature0 =>
-      'Foram adicionados números de estrofe e rótulos claros para os refrões em todo o Hinário Antigo.';
+      'Foram adicionados números de estrofe e rótulos claros para os coros em todo o Hinário Antigo.';
 
   @override
   String get release410Feature1 =>
-      'O acompanhamento Island Reggae e seu som no iPhone foram melhorados.';
+      'O acompanhamento Reggae caribenho e seu som no iPhone foram melhorados.';
 
   @override
   String get release410Feature2 =>
@@ -1971,11 +1971,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get release400Feature1 =>
-      'Foram adicionados reprodução musical, acordes e acompanhamentos Gospel, Island Reggae e Steel Pan Calypso.';
+      'Foram adicionados reprodução musical, acordes e acompanhamentos Gospel, Reggae caribenho e Calipso com tambores de aço.';
 
   @override
   String get release400Feature2 =>
-      'Foram corrigidos dezenas de problemas nas letras relatados e restaurado o hino 314 do Hinário Novo.';
+      'Foram corrigidos dezenas de problemas relatados nas letras, e o hino 314 do Hinário Novo foi restaurado.';
 
   @override
   String get alphabeticalBrowse => 'Explorar por ordem alfabética';
@@ -2047,7 +2047,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get searchEveryHymnal => 'Pesquisar em todos os hinários instalados';
+  String get searchEveryHymnal => 'Buscar em todos os hinários instalados';
 
   @override
   String get moreLanguages => 'Mais idiomas';
@@ -2063,7 +2063,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Verifique a ortografia ou escolha Todos os idiomas no botão do hinário, acima.';
 
   @override
-  String get musicPlayer => 'Player de música';
+  String get musicPlayer => 'Reprodutor de música';
 
   @override
   String get videoShort => 'Vídeo';
@@ -2102,13 +2102,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get recordingInstrumental => 'Instrumental';
 
   @override
-  String get recordingSung => 'Cantado';
+  String get recordingSung => 'Cantada';
 
   @override
   String get recordingInstrumentalShort => 'Instr.';
 
   @override
-  String get recordingSungShort => 'Cantado';
+  String get recordingSungShort => 'Cantada';
 
   @override
   String get recordingVoiceTooltip =>

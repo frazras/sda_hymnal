@@ -89,7 +89,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get musicalStyleHelp => 'Cómo suena la música del himno';
 
   @override
-  String get autoplay => 'Reproducción continua de video y música';
+  String get autoplay => 'Reproducción automática de video y música';
 
   @override
   String get choirPractice => 'Práctica de coro';
@@ -223,7 +223,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get autoplayHelp =>
-      'Después de pulsar Reproducir, continúa esta lista hasta que pauses';
+      'Después de pulsar Reproducir, la lista sigue reproduciéndose hasta que la pauses';
 
   @override
   String get musiciansAndChoir => 'MÚSICOS Y CORO';
@@ -354,7 +354,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get appDesignHelp =>
-      'Elige el nuevo diseño o la disposición original.\nEl icono de inicio cambiará para coincidir. Tus himnos, favoritos y ajustes de música se conservarán.';
+      'Elige el nuevo diseño o la disposición original.\nEl icono de inicio también cambiará. Tus himnos, favoritos y ajustes de música se conservarán.';
 
   @override
   String get statisticsHelp =>
@@ -770,7 +770,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get printedScoreHelp => 'Partitura original · Pellizca para ampliar';
 
   @override
-  String get closeVideo => 'Cerrar vídeo';
+  String get closeVideo => 'Cerrar video';
 
   @override
   String get hymnStory => 'Historia del himno';
@@ -1219,7 +1219,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ensembleInstrumentHelp =>
-      'Elige instrumentos para cada estilo musical. Estas opciones se aplican a todo el conjunto. Para practicar con el coro, elige el instrumento de cada pista en el mezclador del himno.';
+      'Elige instrumentos para cada estilo musical. Estas opciones se aplican a todo el conjunto. En el modo «Práctica de coro», elige el instrumento de cada pista en el mezclador del coro del himno.';
 
   @override
   String get drumKit => 'Batería';
@@ -1257,7 +1257,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get choirMixerHelp =>
-      'Solo voces originales, sin estilos musicales. Silenciar apaga una voz. Solo permite escuchar únicamente las voces seleccionadas. Silenciar tiene prioridad. Elige un instrumento para cada pista. Los cambios se guardan para este himno y se aplican a su reproducción. Toca un nombre para cambiarlo.';
+      'Solo voces originales, sin estilos musicales. «Silenciar» apaga una voz. «Solo» permite escuchar únicamente las voces seleccionadas. «Silenciar» tiene prioridad. Elige un instrumento para cada pista. Los cambios se guardan para este himno y se aplican a su reproducción. Toca un nombre para cambiarlo.';
 
   @override
   String get noSeparateMidiTracks =>
@@ -1774,18 +1774,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get enterHymnOrReadingNumber =>
-      'Introduce el número del himno o lectura';
+      'Escribe el número del himno o lectura';
 
   @override
-  String get enterHymnNumber => 'Introduce el número del himno';
+  String get enterHymnNumber => 'Escribe el número del himno';
 
   @override
   String get previewHymnOrReadingHelp =>
-      'Introduce el número de un himno o lectura para verlo aquí';
+      'Escribe el número de un himno o lectura para verlo aquí';
 
   @override
-  String get previewHymnHelp =>
-      'Introduce el número de un himno para verlo aquí';
+  String get previewHymnHelp => 'Escribe el número de un himno para verlo aquí';
 
   @override
   String notInHymnal(String book) {
@@ -1836,7 +1835,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get release450Feature3 =>
-      'Disfruta del acompañamiento Gospel jamaicano con su ritmo sincronizado original y un tempo predeterminado un 15 % más rápido.';
+      'Disfruta del acompañamiento de góspel jamaicano con su ritmo sincronizado original y un tempo predeterminado un 15 % más rápido.';
 
   @override
   String get release450Feature4 =>
@@ -1960,7 +1959,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get release410Feature1 =>
-      'Se mejoró el acompañamiento Island Reggae y su sonido en iPhone.';
+      'Se mejoró el acompañamiento Reggae isleño y su sonido en iPhone.';
 
   @override
   String get release410Feature2 =>
@@ -1976,7 +1975,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get release400Feature1 =>
-      'Se añadieron reproducción musical, acordes y acompañamientos Gospel, Island Reggae y Steel Pan Calypso.';
+      'Se añadieron la reproducción musical, los acordes y los acompañamientos de góspel, Reggae isleño y Calipso con tambores metálicos.';
 
   @override
   String get release400Feature2 =>
@@ -1996,7 +1995,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get presentationExportFailed =>
-      'No se pudieron exportar las diapositivas. Comprueba que todos los elementos del servicio estén disponibles.';
+      'No se pudieron exportar las diapositivas. Comprueba que todos los elementos del culto estén disponibles.';
 
   @override
   String get languageSaveFailed =>
@@ -2066,7 +2065,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get searchOtherLanguagesHint =>
-      'Revise la ortografía o elija Todos los idiomas con el botón del himnario, arriba.';
+      'Revisa la ortografía o elige «Todos los idiomas» con el botón del himnario de arriba.';
 
   @override
   String get musicPlayer => 'Reproductor de música';
@@ -2099,7 +2098,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reorderShort => 'Reordenar';
 
   @override
-  String get servicePlaylistsHelp => 'Planifique el orden del culto';
+  String get servicePlaylistsHelp => 'Planifica el orden del culto';
 
   @override
   String get recordingKindLabel => 'Grabación';
@@ -2108,13 +2107,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recordingInstrumental => 'Instrumental';
 
   @override
-  String get recordingSung => 'Cantado';
+  String get recordingSung => 'Cantada';
 
   @override
   String get recordingInstrumentalShort => 'Instr.';
 
   @override
-  String get recordingSungShort => 'Cantado';
+  String get recordingSungShort => 'Cantada';
 
   @override
   String get recordingVoiceTooltip =>
@@ -2132,5 +2131,5 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shareVideoPsalmHelp =>
-      'Importe el archivo .vpc en VideoPsalm para proyectar estos cantos';
+      'Importa el archivo .vpc en VideoPsalm para proyectar estos cantos';
 }

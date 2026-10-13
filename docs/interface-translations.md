@@ -30,6 +30,18 @@ The 583-message catalogs remain draft translations needing fluent community
 review. This technical rollout does not claim that review has happened or mark
 the complete translation roadmap item achieved.
 
+## Terminology review (13 October 2026)
+
+An AI-assisted review of all 605 Spanish, Portuguese and Russian messages
+corrected 73 of them: meaning errors (Russian "Гимны по случаю"), missing
+Russian `one/few/many/other` plurals for percentages, Brazilian usage
+("coral", "violões e guitarras", "mais acessados"), consistent church terms
+("culto", "богослужение", «Субботняя школа»), and one address form per
+language (Spanish **tú**, Portuguese **você**, Russian **вы**). The chosen terms
+are recorded in [translation-glossary.md](translation-glossary.md). This is
+not the fluent community review below: a human reviewer still needs to sign
+off each language through the review workflow.
+
 ## Contributor steps
 
 1. Add stable semantic keys to `lib/l10n/app_en.arb`. Keep hymn lyrics, hymn

@@ -143,10 +143,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get scrollSpeed => 'Скорость прокрутки';
 
   @override
-  String get showMusicPlayer => 'Показать проигрыватель';
+  String get showMusicPlayer => 'Показать плеер';
 
   @override
-  String get hideMusicPlayer => 'Скрыть проигрыватель';
+  String get hideMusicPlayer => 'Скрыть плеер';
 
   @override
   String get showChordTabs => 'Показать аккорды';
@@ -223,7 +223,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get autoplayHelp =>
-      'После нажатия «Воспроизвести» продолжать список до паузы';
+      'После нажатия «Воспроизвести» список воспроизводится дальше, пока вы не поставите паузу';
 
   @override
   String get musiciansAndChoir => 'МУЗЫКАНТЫ И ХОР';
@@ -385,14 +385,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get statisticsSent => 'Еженедельная статистика отправлена';
 
   @override
-  String get statisticsQueued => 'Ещё статистика ожидает отправки';
+  String get statisticsQueued => 'Часть статистики ещё ожидает отправки';
 
   @override
   String get statisticsSavedOffline =>
       'Сохранено без подключения; отправка будет повторена позже';
 
   @override
-  String get hymnsByOccasion => 'Гимны по случаю';
+  String get hymnsByOccasion => 'Гимны по случаям';
 
   @override
   String get additionalReadings => 'Дополнительные чтения';
@@ -453,7 +453,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noHymnInEdition => 'В этом сборнике гимны не найдены.';
 
   @override
-  String get offline => 'Без интернета';
+  String get offline => 'Нет сети';
 
   @override
   String hymnCount(num count) {
@@ -996,7 +996,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get gmProgram60 => 'Валторны';
 
   @override
-  String get gmProgram61 => 'Медная духовая секция';
+  String get gmProgram61 => 'Секция медных духовых';
 
   @override
   String get gmProgram62 => 'Синтезированные медные 1';
@@ -1134,7 +1134,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get gmProgram81 => 'Лид пилообразной волны';
 
   @override
-  String get gmProgram82 => 'Синтезированный каллиопа';
+  String get gmProgram82 => 'Синтезированная каллиопа';
 
   @override
   String get gmProgram83 => 'Лид чиффер';
@@ -1227,7 +1227,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ensembleInstrumentHelp =>
-      'Выберите инструменты для каждого музыкального стиля. Эти настройки применяются ко всему ансамблю. Для хоровой практики выберите инструмент каждой дорожки в микшере гимна.';
+      'Выберите инструменты для каждого музыкального стиля. Эти настройки применяются ко всему ансамблю. В режиме «Репетиция хора» выберите инструмент каждой дорожки в хоровом микшере гимна.';
 
   @override
   String get drumKit => 'Ударная установка';
@@ -1312,12 +1312,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String volumePercent(String name, int value) {
-    return 'Громкость $name: $value процентов';
+    String _temp0 = intl.Intl.pluralLogic(
+      value,
+      locale: localeName,
+      other: '$value процента',
+      many: '$value процентов',
+      few: '$value процента',
+      one: '$value процент',
+    );
+    return '$name: громкость $_temp0';
   }
 
   @override
   String percentValue(int value) {
-    return '$value процентов';
+    String _temp0 = intl.Intl.pluralLogic(
+      value,
+      locale: localeName,
+      other: '$value процента',
+      many: '$value процентов',
+      few: '$value процента',
+      one: '$value процент',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1376,7 +1392,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get refreshStatistics => 'Обновить статистику';
 
   @override
-  String get communityInSong => 'Сообщество в песне';
+  String get communityInSong => 'Поющее сообщество';
 
   @override
   String get communityInSongHelp =>
@@ -1422,7 +1438,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mostOpenedHelp =>
-      'Отправная точка для вашего следующего времени поклонения.';
+      'Отправная точка для вашего следующего богослужения.';
 
   @override
   String get returningHymns => 'Гимны, к которым мы возвращаемся';
@@ -1480,7 +1496,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get communityStatisticsFailed =>
-      'Статистика сообщества сейчас недоступна. Подключитесь к интернету и попробуйте снова. После первой успешной загрузки сохранённый отчёт будет доступен без сети.';
+      'Статистика сообщества сейчас недоступна. Подключитесь к интернету и попробуйте снова. После первой успешной загрузки сохранённый отчёт будет доступен без интернета.';
 
   @override
   String get loadingCommunityStatistics => 'Загрузка статистики сообщества…';
@@ -1754,7 +1770,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Изучайте тематический указатель сборника гимнов вместе с нашими подборками для разных случаев.';
 
   @override
-  String get searchTopicsOccasions => 'Поиск тем и поводов';
+  String get searchTopicsOccasions => 'Поиск по темам и случаям';
 
   @override
   String get noMatchingTopics => 'Подходящих тем нет.';
@@ -1824,7 +1840,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sabbathProgramsDescription =>
-      'Sabbath Programs — это инициатива по улучшению качества богослужений: мы предлагаем общинам по всему миру творческие программы с ясной целью, в центре которых Христос. Мы создаём новые программы для субботней школы, богослужения и адвентистской молодёжи.';
+      'Sabbath Programs — это инициатива по улучшению качества богослужений: мы предлагаем общинам по всему миру творческие программы с ясной целью, в центре которых Христос. Мы создаём новые программы для Субботней школы, богослужения и адвентистской молодёжи.';
 
   @override
   String get additionalHymnalsRetry =>
@@ -1878,7 +1894,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release450Feature8 =>
-      'Поиск упрощён: заголовки и первые строки текста имеют приоритет.';
+      'Поиск упрощён: названия и первые строки текста имеют приоритет.';
 
   @override
   String get release450Feature9 =>
@@ -1898,7 +1914,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release440Feature3 =>
-      'Выбирайте из 111 инструментов в 11 категориях. Steelpan находится в разделе ударных; на длинных нотах автоматически звучит тремоло.';
+      'Выбирайте из 111 инструментов в 11 категориях. «Стальной барабан» находится в разделе «Ударные»; на длинных нотах автоматически звучит тремоло.';
 
   @override
   String get release440Feature4 =>
@@ -1946,7 +1962,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release420Feature4 =>
-      'Слушайте непрерывные ритмы регги и steelpan в произведениях размером 3/4.';
+      'Слушайте непрерывные ритмы регги и стальных барабанов в произведениях размером 3/4.';
 
   @override
   String get release420Feature5 =>
@@ -1962,7 +1978,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release420Feature8 =>
-      'Просматривайте изменения текущей и предыдущих версий на экране новинок.';
+      'Просматривайте изменения текущей и предыдущих версий на экране «Что нового».';
 
   @override
   String get release411Feature0 =>
@@ -1981,7 +1997,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release410Feature1 =>
-      'Улучшены сопровождение Island Reggae и его звучание на iPhone.';
+      'Улучшены сопровождение в стиле «Островное регги» и его звучание на iPhone.';
 
   @override
   String get release410Feature2 =>
@@ -1997,7 +2013,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get release400Feature1 =>
-      'Добавлены воспроизведение музыки, аккорды и сопровождение Gospel, Island Reggae и Steel Pan Calypso.';
+      'Добавлены воспроизведение музыки, аккорды и сопровождение в стилях госпел, «Островное регги» и «Калипсо со стальными барабанами».';
 
   @override
   String get release400Feature2 =>
@@ -2017,7 +2033,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get presentationExportFailed =>
-      'Не удалось экспортировать слайды. Проверьте доступность всех пунктов служения.';
+      'Не удалось экспортировать слайды. Проверьте, что все элементы богослужения доступны.';
 
   @override
   String get languageSaveFailed =>
@@ -2087,7 +2103,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get searchOtherLanguagesHint =>
-      'Проверьте написание или выберите «Все языки» кнопкой сборника вверху.';
+      'Проверьте написание или выберите «Все языки», нажав кнопку сборника вверху.';
 
   @override
   String get musicPlayer => 'Музыкальный плеер';
@@ -2139,7 +2155,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get recordingVoiceTooltip =>
-      'Переключить запись: с пением или инструментальную';
+      'Переключение между записью с пением и инструментальной';
 
   @override
   String get shareSlidesHtml => 'Слайды для браузера';
