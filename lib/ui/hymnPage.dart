@@ -581,6 +581,7 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
         videoVisible: _videoVisible,
         hasMidi: hasMidi,
         hasMusic: hasMusic,
+        recordingKinds: MidiPlayer.recordingKinds(widget.hymn),
         autoScrollAvailable: !_sheetMusicVisible &&
             (hasMusic || !widget.hymn.isEnglishEdition),
         onSheetMusic: () =>
@@ -905,7 +906,10 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                         icon: HymnalIcons.backChevron(t.ink, size: 16),
                       ),
                       const SizedBox(width: 10),
-                      if (MidiPlayer.hasMidi(widget.hymn)) _keyPill(t),
+                      if (MidiPlayer.hasMidi(widget.hymn))
+                        _keyPill(t)
+                      else if (MidiPlayer.recordingKinds(widget.hymn).length > 1)
+                        _voicePill(t),
                       const SizedBox(width: 10),
                       _seekButton(t, forward: false),
                       const SizedBox(width: 10),
@@ -1468,6 +1472,49 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
   /// Current-key pill: shows the (possibly transposed) key of this hymn's
   /// tune; tap opens the transpose sheet. Dimmed and inert on Old-Hymnal
   /// pages, like the play button.
+  /// Sung / instrumental switch for books recorded both ways; it sits where
+  /// the key pill would be, since recordings cannot be transposed.
+  Widget _voicePill(HymnalTokens t) => ValueListenableBuilder<RecordingKind>(
+        valueListenable: RecordingVoice.instance,
+        builder: (context, kind, _) {
+          final sung = MidiPlayer.instance.recordingKindFor(widget.hymn) ==
+              RecordingKind.sung;
+          return Tooltip(
+            message: context.appText.recordingVoiceTooltip,
+            child: Pressable(
+              key: const ValueKey('hymn-recording-kind'),
+              onTap: () => RecordingVoice.instance.set(
+                  sung ? RecordingKind.instrumental : RecordingKind.sung),
+              pressedScale: 0.95,
+              builder: (context, pressed) => Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: sung ? t.tint : t.surface2,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(sung ? Icons.mic_none : Icons.piano_outlined,
+                      size: 13, color: sung ? t.accent : t.muted),
+                  const SizedBox(width: 4),
+                  Text(
+                    sung
+                        ? context.appText.recordingSungShort
+                        : context.appText.recordingInstrumentalShort,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: sung ? t.accent : t.muted,
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          );
+        },
+      );
+
   Widget _keyPill(HymnalTokens t) {
     final canPlay = MidiPlayer.hasMidi(widget.hymn);
     return Opacity(

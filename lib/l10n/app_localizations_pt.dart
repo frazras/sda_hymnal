@@ -2094,4 +2094,23 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get servicePlaylistsHelp => 'Planeje a ordem do culto';
+
+  @override
+  String get recordingKindLabel => 'Gravação';
+
+  @override
+  String get recordingInstrumental => 'Instrumental';
+
+  @override
+  String get recordingSung => 'Cantado';
+
+  @override
+  String get recordingInstrumentalShort => 'Instr.';
+
+  @override
+  String get recordingSungShort => 'Cantado';
+
+  @override
+  String get recordingVoiceTooltip =>
+      'Alternar entre gravação cantada e instrumental';
 }

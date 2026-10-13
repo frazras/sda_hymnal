@@ -3695,6 +3695,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan the order of worship'**
   String get servicePlaylistsHelp;
+
+  /// Reader options label above the Instrumental / Sung choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get recordingKindLabel;
+
+  /// Recorded accompaniment without singing.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrumental'**
+  String get recordingInstrumental;
+
+  /// Recorded performance with singers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sung'**
+  String get recordingSung;
+
+  /// Very short player pill label for an instrumental recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Instr.'**
+  String get recordingInstrumentalShort;
+
+  /// Very short player pill label for a sung recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Sung'**
+  String get recordingSungShort;
+
+  /// Tooltip for the player pill that switches recording kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between sung and instrumental recordings'**
+  String get recordingVoiceTooltip;
 }
 
 class _AppLocalizationsDelegate

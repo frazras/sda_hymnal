@@ -2082,4 +2082,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get servicePlaylistsHelp => 'Plan the order of worship';
+
+  @override
+  String get recordingKindLabel => 'Recording';
+
+  @override
+  String get recordingInstrumental => 'Instrumental';
+
+  @override
+  String get recordingSung => 'Sung';
+
+  @override
+  String get recordingInstrumentalShort => 'Instr.';
+
+  @override
+  String get recordingSungShort => 'Sung';
+
+  @override
+  String get recordingVoiceTooltip =>
+      'Switch between sung and instrumental recordings';
 }

@@ -598,5 +598,11 @@
   "favoriteCategories": "Категории",
   "newCategoryShort": "Новая категория",
   "reorderShort": "Порядок",
-  "servicePlaylistsHelp": "Составьте порядок богослужения"
+  "servicePlaylistsHelp": "Составьте порядок богослужения",
+  "recordingKindLabel": "Запись",
+  "recordingInstrumental": "Инструментал",
+  "recordingSung": "С пением",
+  "recordingInstrumentalShort": "Инстр.",
+  "recordingSungShort": "Пение",
+  "recordingVoiceTooltip": "Переключить запись: с пением или инструментальную"
 }

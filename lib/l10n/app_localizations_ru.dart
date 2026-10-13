@@ -2121,4 +2121,23 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get servicePlaylistsHelp => 'Составьте порядок богослужения';
+
+  @override
+  String get recordingKindLabel => 'Запись';
+
+  @override
+  String get recordingInstrumental => 'Инструментал';
+
+  @override
+  String get recordingSung => 'С пением';
+
+  @override
+  String get recordingInstrumentalShort => 'Инстр.';
+
+  @override
+  String get recordingSungShort => 'Пение';
+
+  @override
+  String get recordingVoiceTooltip =>
+      'Переключить запись: с пением или инструментальную';
 }

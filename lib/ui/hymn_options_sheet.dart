@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
+import 'package:sdahymnal/services/hymn_recordings.dart';
 import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
@@ -15,6 +16,7 @@ class HymnOptions {
     required this.videoVisible,
     required this.hasMidi,
     required this.hasMusic,
+    this.recordingKinds = const [],
     required this.autoScrollAvailable,
     required this.onSheetMusic,
     required this.onVideo,
@@ -35,6 +37,9 @@ class HymnOptions {
   final bool videoVisible;
   final bool hasMidi;
   final bool hasMusic;
+
+  /// Recorded performances available for this hymn (two offers a choice).
+  final List<RecordingKind> recordingKinds;
   final bool autoScrollAvailable;
   final VoidCallback onSheetMusic;
   final VoidCallback onVideo;
@@ -64,6 +69,7 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
       final t = sheet.tokens;
       return AnimatedBuilder(
         animation: Listenable.merge([
+          RecordingVoice.instance,
           MusicPlayerVisible.instance,
           ChordTabs.instance,
           AutoScroll.instance,
@@ -107,6 +113,39 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
             ),
           ];
           final switches = <Widget>[
+            if (o.recordingKinds.length > 1)
+              Container(
+                key: const ValueKey('hymn-recording-choice'),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: t.line2))),
+                child: Row(children: [
+                  const RowIcon(Icons.graphic_eq),
+                  const SizedBox(width: 14),
+                  Text(context.appText.recordingKindLabel,
+                      style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: t.ink)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SegmentedPills<RecordingKind>(
+                      options: [
+                        for (final kind in o.recordingKinds)
+                          (
+                            kind,
+                            kind == RecordingKind.sung
+                                ? context.appText.recordingSung
+                                : context.appText.recordingInstrumental
+                          ),
+                      ],
+                      selected: RecordingVoice.instance.value,
+                      onSelected: RecordingVoice.instance.set,
+                    ),
+                  ),
+                ]),
+              ),
             if (o.hasMidi)
               SettingsRow(
                 key: const ValueKey('hymn-musical-style'),

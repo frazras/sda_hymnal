@@ -598,5 +598,11 @@
   "favoriteCategories": "Categorias",
   "newCategoryShort": "Nova categoria",
   "reorderShort": "Reordenar",
-  "servicePlaylistsHelp": "Planeje a ordem do culto"
+  "servicePlaylistsHelp": "Planeje a ordem do culto",
+  "recordingKindLabel": "Gravação",
+  "recordingInstrumental": "Instrumental",
+  "recordingSung": "Cantado",
+  "recordingInstrumentalShort": "Instr.",
+  "recordingSungShort": "Cantado",
+  "recordingVoiceTooltip": "Alternar entre gravação cantada e instrumental"
 }

@@ -1009,5 +1009,29 @@
   "servicePlaylistsHelp": "Plan the order of worship",
   "@servicePlaylistsHelp": {
     "description": "Subtitle of the Service playlists row at the top of Favorites."
+  },
+  "recordingKindLabel": "Recording",
+  "@recordingKindLabel": {
+    "description": "Reader options label above the Instrumental / Sung choice."
+  },
+  "recordingInstrumental": "Instrumental",
+  "@recordingInstrumental": {
+    "description": "Recorded accompaniment without singing."
+  },
+  "recordingSung": "Sung",
+  "@recordingSung": {
+    "description": "Recorded performance with singers."
+  },
+  "recordingInstrumentalShort": "Instr.",
+  "@recordingInstrumentalShort": {
+    "description": "Very short player pill label for an instrumental recording."
+  },
+  "recordingSungShort": "Sung",
+  "@recordingSungShort": {
+    "description": "Very short player pill label for a sung recording."
+  },
+  "recordingVoiceTooltip": "Switch between sung and instrumental recordings",
+  "@recordingVoiceTooltip": {
+    "description": "Tooltip for the player pill that switches recording kind."
   }
 }
