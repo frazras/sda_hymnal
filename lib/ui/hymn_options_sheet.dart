@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:sdahymnal/services/hymn_recordings.dart';
@@ -119,32 +120,34 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
                 decoration: BoxDecoration(
                     border: Border(bottom: BorderSide(color: t.line2))),
-                child: Row(children: [
-                  const RowIcon(Icons.graphic_eq),
-                  const SizedBox(width: 14),
-                  Text(context.appText.recordingKindLabel,
-                      style: TextStyle(
-                          fontFamily: kSans,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: t.ink)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: SegmentedPills<RecordingKind>(
-                      options: [
-                        for (final kind in o.recordingKinds)
-                          (
-                            kind,
-                            kind == RecordingKind.sung
-                                ? context.appText.recordingSung
-                                : context.appText.recordingInstrumental
-                          ),
-                      ],
-                      selected: RecordingVoice.instance.value,
-                      onSelected: RecordingVoice.instance.set,
-                    ),
-                  ),
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        const RowIcon(Icons.graphic_eq),
+                        const SizedBox(width: 14),
+                        Text(context.appText.recordingKindLabel,
+                            style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: t.ink)),
+                      ]),
+                      const SizedBox(height: 8),
+                      SegmentedPills<RecordingKind>(
+                        options: [
+                          for (final kind in o.recordingKinds)
+                            (
+                              kind,
+                              kind == RecordingKind.sung
+                                  ? context.appText.recordingSung
+                                  : context.appText.recordingInstrumental
+                            ),
+                        ],
+                        selected: RecordingVoice.instance.value,
+                        onSelected: RecordingVoice.instance.set,
+                      ),
+                    ]),
               ),
             if (o.hasMidi)
               SettingsRow(
@@ -153,7 +156,8 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
                 title: context.appText.musicalStyle,
                 trailing: RowValue(MusicOptions.instance.choirPractice
                     ? context.appText.choirPractice
-                    : context.appText.styleLabel(InstrumentTheme.instance.value)),
+                    : context.appText
+                        .styleLabel(InstrumentTheme.instance.value)),
                 divider: true,
                 onTap: () => close(o.onMusicalStyle),
               ),
@@ -215,17 +219,27 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
-                child: Row(children: [
-                  for (final (i, tile) in tiles.indexed) ...[
-                    if (i > 0) const SizedBox(width: 8),
-                    Expanded(child: tile),
-                  ],
-                ]),
+                // Equal-height tiles even when one label takes two lines;
+                // the labels shrink to fit rather than grow the row.
+                child: SizedBox(
+                  height: 76 *
+                      MediaQuery.textScalerOf(context)
+                          .scale(1)
+                          .clamp(1.0, 1.35),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final (i, tile) in tiles.indexed) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          Expanded(child: tile),
+                        ],
+                      ]),
+                ),
               ),
               if (switches.isNotEmpty)
                 Container(
-                  decoration:
-                      BoxDecoration(border: Border(top: BorderSide(color: t.line2))),
+                  decoration: BoxDecoration(
+                      border: Border(top: BorderSide(color: t.line2))),
                   child: Column(children: switches),
                 ),
               SettingsRow(
@@ -244,7 +258,10 @@ Future<void> showHymnOptionsSheet(BuildContext context, HymnOptions o) {
 
 class _ActionTile extends StatelessWidget {
   const _ActionTile(
-      {super.key, required this.icon, required this.label, required this.onTap});
+      {super.key,
+      required this.icon,
+      required this.label,
+      required this.onTap});
   final IconData icon;
   final String label;
   final VoidCallback onTap;
@@ -270,9 +287,12 @@ class _ActionTile extends StatelessWidget {
               children: [
                 Icon(icon, size: 22, color: t.accent),
                 const SizedBox(height: 6),
-                Text(
+                // Shrinks rather than breaking a long word ("Поделиться").
+                AutoSizeText(
                   label,
                   maxLines: 2,
+                  minFontSize: 8,
+                  wrapWords: false,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: TextStyle(
