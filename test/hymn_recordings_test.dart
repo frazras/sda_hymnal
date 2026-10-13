@@ -37,6 +37,9 @@ void main() {
     expect(counts, {
       ('sda-es-2009', instrumental): 614,
       ('sda-es-1962', instrumental): 527,
+      ('sda-es-2009', sung): 614,
+      ('sda-pt-1996', sung): 610,
+      ('sda-ru-1997', instrumental): 385,
     });
   });
 
@@ -73,15 +76,17 @@ void main() {
     }
   });
 
-  test('kinds are listed per exact book', () {
-    expect(HymnRecordings.kindsFor('sda-es-2009', 1), [instrumental]);
-    expect(HymnRecordings.kindsFor('sda-es-2009', 614), [instrumental]);
+  test('kinds are listed per exact book with instrumental first', () {
+    expect(HymnRecordings.kindsFor('sda-es-2009', 1), [instrumental, sung]);
+    expect(HymnRecordings.kindsFor('sda-es-2009', 614), [instrumental, sung]);
     expect(HymnRecordings.kindsFor('sda-es-1962', 527), [instrumental]);
+    expect(HymnRecordings.kindsFor('sda-pt-1996', 610), [sung]);
+    expect(HymnRecordings.kindsFor('sda-ru-1997', 385), [instrumental]);
     for (final (book, n) in [
       ('sda-es-2009', 615),
       ('sda-es-1962', 0),
-      ('sda-pt-1996', 1),
-      ('sda-ru-1997', 1),
+      ('sda-pt-1996', 611),
+      ('sda-ru-1997', 386),
       ('new', 1),
       ('old', 1),
       ('sda-fr-hymnes-et-louanges', 1),
@@ -91,30 +96,42 @@ void main() {
       expect(HymnRecordings.kindsFor(book, n), isEmpty, reason: '$book $n');
       expect(HymnRecordings.contains(book, n), isFalse);
     }
-    expect(HymnRecordings.contains('sda-es-2009', 1, kind: sung), isFalse);
+    expect(HymnRecordings.contains('sda-pt-1996', 1), isTrue);
+    expect(
+        HymnRecordings.contains('sda-pt-1996', 1, kind: instrumental), isFalse);
+    expect(HymnRecordings.contains('sda-ru-1997', 1, kind: sung), isFalse);
   });
 
   test('the preferred kind wins when recorded, otherwise the other kind', () {
     for (final (book, preferred, expected) in [
       ('sda-es-2009', instrumental, instrumental),
-      ('sda-es-2009', sung, instrumental),
+      ('sda-es-2009', sung, sung),
+      ('sda-pt-1996', instrumental, sung),
+      ('sda-pt-1996', sung, sung),
+      ('sda-ru-1997', sung, instrumental),
       ('sda-es-1962', sung, instrumental),
     ]) {
       expect(HymnRecordings.resolveKind(book, 1, preferred), expected,
           reason: '$book prefers $preferred');
     }
-    expect(HymnRecordings.resolveKind('sda-pt-1996', 1, sung), isNull);
     expect(HymnRecordings.resolveKind('sda-fr-hymnes-et-louanges', 1, sung),
         isNull);
     expect(HymnRecordings.resolveKind('sda-es-2009', 615, sung), isNull);
   });
 
   test('explicit lookups never substitute another kind', () async {
-    expect((await HymnRecordings.lookup('sda-es-2009', 1)).kind, instrumental);
-    await expectLater(HymnRecordings.lookup('sda-es-2009', 1, kind: sung),
-        throwsArgumentError);
+    expect((await HymnRecordings.lookup('sda-pt-1996', 1)).kind, sung);
+    expect((await HymnRecordings.lookup('sda-ru-1997', 1)).kind, instrumental);
+    final instrumentalUrl =
+        (await HymnRecordings.lookup('sda-es-2009', 1, kind: instrumental)).url;
+    final sungUrl =
+        (await HymnRecordings.lookup('sda-es-2009', 1, kind: sung)).url;
+    expect(instrumentalUrl, isNot(sungUrl));
     await expectLater(
-        HymnRecordings.lookup('sda-pt-1996', 1), throwsArgumentError);
+        HymnRecordings.lookup('sda-pt-1996', 1, kind: instrumental),
+        throwsArgumentError);
+    await expectLater(HymnRecordings.lookup('sda-ru-1997', 1, kind: sung),
+        throwsArgumentError);
     await expectLater(HymnRecordings.lookup('sda-fr-hymnes-et-louanges', 1),
         throwsArgumentError);
   });

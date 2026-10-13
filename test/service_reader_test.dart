@@ -19,8 +19,11 @@ void main() {
       number: 7, version: 'new', title: 'Opening and closing', body: 'Lyrics');
   final spanish =
       Hymn(number: 7, version: 'sda-es-2009', title: 'Español', body: 'Letra');
-  final silent =
-      Hymn(number: 7, version: 'sda-ru-1997', title: 'Russian', body: 'Lyrics');
+  final silent = Hymn(
+      number: 7,
+      version: 'sda-fr-hymnes-et-louanges',
+      title: 'French',
+      body: 'Paroles');
   const reading = AdditionalReading(
       id: 'r701',
       edition: 'new',
@@ -37,10 +40,10 @@ void main() {
         displayName: 'Español',
         year: 2009),
     HymnalEdition(
-        id: 'sda-ru-1997',
-        languageTag: 'ru',
-        displayName: 'Russian',
-        year: 1997)
+        id: 'sda-fr-hymnes-et-louanges',
+        languageTag: 'fr',
+        displayName: 'Français',
+        year: null)
   ], hymns: [
     hymn,
     spanish,

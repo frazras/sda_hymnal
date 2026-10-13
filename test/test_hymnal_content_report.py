@@ -281,12 +281,14 @@ class ContentReportTest(unittest.TestCase):
         self.assertTrue(books['sda-ny-khristu-mu-nyimbo']['optionalDownload'])
         self.assertEqual(books['sda-ny-khristu-mu-nyimbo']['items'], 350)
         self.assertEqual(len(books['sda-ny-khristu-mu-nyimbo']['media']['missingScoreItemIds']), 350)
-        for book, count in [('sda-es-2009', 614), ('sda-es-1962', 527)]:
+        for book, count in [('sda-es-2009', 614), ('sda-es-1962', 527), ('sda-ru-1997', 385)]:
             self.assertEqual(len(books[book]['media']['instrumentalRecordingItemIds']), count)
             self.assertEqual(books[book]['media']['missingInstrumentalRecordingItemIds'], [])
+        for book, count in [('sda-es-2009', 614), ('sda-pt-1996', 610)]:
+            self.assertEqual(len(books[book]['media']['sungRecordingItemIds']), count)
+            self.assertEqual(books[book]['media']['missingSungRecordingItemIds'], [])
         self.assertEqual(len(books['sda-pt-1996']['media']['missingInstrumentalRecordingItemIds']), 610)
-        for book, count in [('sda-es-2009', 614), ('sda-pt-1996', 610), ('sda-ru-1997', 385)]:
-            self.assertEqual(books[book]['media']['sungRecordingItemIds'], [])
+        for book, count in [('sda-es-1962', 527), ('sda-ru-1997', 385), ('sda-fr-hymnes-et-louanges', 520)]:
             self.assertEqual(len(books[book]['media']['missingSungRecordingItemIds']), count)
 
 

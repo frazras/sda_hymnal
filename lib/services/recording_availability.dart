@@ -11,5 +11,12 @@ const recordingAvailability = <String, Map<RecordingKind, List<(int, int)>>>{
   },
   'sda-es-2009': {
     RecordingKind.instrumental: [(1, 614)],
+    RecordingKind.sung: [(1, 614)],
+  },
+  'sda-pt-1996': {
+    RecordingKind.sung: [(1, 610)],
+  },
+  'sda-ru-1997': {
+    RecordingKind.instrumental: [(1, 385)],
   },
 };

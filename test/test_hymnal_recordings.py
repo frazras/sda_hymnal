@@ -21,6 +21,9 @@ validator = load('content_report', 'tool/validate_hymnal_content.py')
 EXPECTED = {
     ('sda-es-2009', 'instrumentalRecording'): 614,
     ('sda-es-1962', 'instrumentalRecording'): 527,
+    ('sda-es-2009', 'sungRecording'): 614,
+    ('sda-pt-1996', 'sungRecording'): 610,
+    ('sda-ru-1997', 'instrumentalRecording'): 385,
 }
 # SHA-256 of the Spanish instrumental entries audited on 2026-10-07 (canonical JSON).
 SPANISH_INSTRUMENTAL = '7dafc1074c7a5c2eb4638c52782dcc6fe5be3f18c355ac877a74a643769b48db'

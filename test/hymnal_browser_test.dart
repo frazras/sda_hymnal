@@ -305,9 +305,10 @@ void main() {
         final reader = tester.widget<HymnPage>(find.byType(HymnPage));
         expect(reader.hymn.version, 'sda-ru-1997');
         expect(reader.hymn.title, russian.hymns.last.title);
-        expect(find.byKey(const ValueKey('hymn-music-player')), findsNothing);
-        expect(find.byKey(const ValueKey('reader-next')), findsNothing);
-        expect(find.byKey(const ValueKey('reader-previous')), findsNothing);
+        // Instrumental recordings show the player; nothing loads before a tap.
+        expect(find.byKey(const ValueKey('hymn-music-player')), findsOneWidget);
+        expect(find.byKey(const ValueKey('reader-next')), findsOneWidget);
+        expect(find.byKey(const ValueKey('reader-previous')), findsOneWidget);
         await tester.fling(find.byType(HymnPage), const Offset(300, 0), 1000);
         await tester.pumpAndSettle();
         expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.number, 384);
