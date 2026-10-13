@@ -475,10 +475,10 @@ gaps rather than fabricated assets. Duplicate optional identities fail the gate.
 
 The current report covers 29 imported packs and 10,353 hymns, including 23
 optional collections (7,477 hymns). This total excludes the original English
-books. The full publication gate passes 45 content tests, regenerates every
+books. The full publication gate passes 52 content tests, regenerates every
 optional pack from its single pinned manifest, and checks all 29 text downloads,
-three score collections, five recording collections, and 583
-interface messages.
+three score collections, five recording collections, and 612 interface
+messages.
 
 ## Expanded optional text collections
 
@@ -615,12 +615,20 @@ Philippine display names repeat the language.
 
 ### Registration and hosting
 
-The runtime parser opens only books registered in `_supportedImportedBook`.
-These IDs are published in the trusted catalog ahead of that registration;
-`test/installed_language_packs_test.dart` checks their bytes and structure and
-expects the parser to refuse them until they are registered. The catalog still
-pins commit `129eb7caf04d1a6e1c15655452d7ff6e2535eb4e`, which predates these
-files: re-pin `revision` after publishing, then run `--verify-remote`.
+The runtime parser opens only books registered in `_supportedImportedBook`;
+all 22 books above are registered, and
+`test/installed_language_packs_test.dart` opens every catalog entry through
+that parser. The catalog pins commit
+`ed69835a756edf026b2bb25daa8e5a0c96487008`, the first published commit that
+hosts all 23 optional packs, and
+`python3 tool/build_language_download_catalog.py --check --verify-remote`
+confirmed every pinned object's size and SHA-256 on 13 October 2026.
+
+On the Hymnal downloads page, a language search matches native names, titles,
+language codes and English language names ("Zulu" finds isiZulu, "Kikuyu"
+finds Gĩkũyũ). A finished download keeps its row in place and offers **Open**,
+which closes the page and shows the new book; from Settings it also returns to
+the number screen.
 
 ## Importing community interface reviews
 

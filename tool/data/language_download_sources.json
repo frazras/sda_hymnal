@@ -1,6 +1,6 @@
 {
   "repository": "frazras/sda_hymnal",
-  "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
+  "revision": "ed69835a756edf026b2bb25daa8e5a0c96487008",
   "optionalPacks": [
     "resources/hymnals/sda-ceb-cebuano-hymns.json",
     "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
