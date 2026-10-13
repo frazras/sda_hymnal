@@ -43,7 +43,9 @@ void main() {
         expect(hymn.number, i + 1);
         expect(hymn.title, source['items'][i]['title']);
         expect(hymn.body, isNotEmpty);
-        expect(hymn.readingBody, hymn.body);
+        // Imported books carry a styled reading copy; hymnal_book_test
+        // checks that it keeps every lyric line.
+        expect(hymn.readingHtml, isNotNull);
         expect(
             MidiPlayer.hasMidi(hymn),
             hymn.version == 'sda-es-2009' &&

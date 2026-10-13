@@ -14,6 +14,9 @@ class Hymn {
   final String languageTag;
   final String? credits;
 
+  /// Precomputed reading copy (imported books build it from their blocks).
+  final String? readingHtml;
+
   bool get isRightToLeft => Bidi.isRtlLanguage(languageTag);
 
   bool get isEnglishEdition => version == 'new' || version == 'old';
@@ -29,7 +32,7 @@ class Hymn {
 
   /// Reading order only; the source lyrics stay unchanged for search/export.
   late final String readingBody =
-      isEnglishEdition ? repeatChoruses(body) : body;
+      readingHtml ?? (isEnglishEdition ? repeatChoruses(body) : body);
 
   Hymn({
     required this.number,
@@ -41,6 +44,7 @@ class Hymn {
     this.bookTitle,
     this.languageTag = 'en',
     this.credits,
+    this.readingHtml,
   });
 
   @override

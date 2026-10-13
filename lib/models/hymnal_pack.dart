@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/hymnal_book.dart';
 import 'package:sdahymnal/services/hymnal_repository.dart';
 
 bool _supportedImportedBook(String id) =>
@@ -12,6 +13,52 @@ bool _supportedImportedBook(String id) =>
       'sda-sw-nyimbo-za-kristo',
       'sda-ny-khristu-mu-nyimbo'
     }.contains(id);
+
+typedef LyricBlock = ({bool refrain, String label, String text});
+
+/// The reader's copy of an imported hymn, marked up like the English books
+/// so verse numbers and refrain labels share one style. When the source
+/// prints a single refrain after the first verse, it is repeated after every
+/// later verse and the hymn ends on it — the order a congregation sings.
+/// Source order stays untouched in the hymn body for search, share and export.
+String lyricReadingHtml(
+    List<LyricBlock> blocks, String Function(String) escaped) {
+  final numeric = RegExp(r'^(\d+)[.)]?$');
+  String render(LyricBlock block) {
+    final text = escaped(block.text);
+    if (block.refrain) {
+      final name = block.label.replaceFirst(RegExp(r'[:：]\s*$'), '').trim();
+      return name.isEmpty
+          ? '<i>$text</i>'
+          : '<i><b><font color="#CD9B1D">${escaped(name)}:</font></b><br>$text</i>';
+    }
+    final number = numeric.firstMatch(block.label)?.group(1);
+    if (number != null) {
+      return '<font color="#0B6138"><b>$number</b></font><br>$text';
+    }
+    return block.label.isEmpty
+        ? text
+        : '<b>${escaped(block.label)}</b><br>$text';
+  }
+
+  var order = [for (var i = 0; i < blocks.length; i++) i];
+  final refrains = [
+    for (var i = 0; i < blocks.length; i++)
+      if (blocks[i].refrain) i
+  ];
+  if (refrains.length == 1 &&
+      refrains.single == 1 &&
+      blocks.length > 2 &&
+      !blocks.first.refrain) {
+    order = [0, 1];
+    for (var i = 2; i < blocks.length; i++) {
+      order
+        ..add(i)
+        ..add(1);
+    }
+  }
+  return order.map((i) => render(blocks[i])).join('<br><br>');
+}
 
 class HymnalTopic {
   final String id;
@@ -60,6 +107,7 @@ class HymnalPack {
         throw const FormatException('Duplicate or invalid hymn.');
       }
       final body = StringBuffer();
+      final blocks = <LyricBlock>[];
       for (final block in item['blocks'] as List<dynamic>) {
         final text = block['text'] as String;
         if (text.trim().isEmpty ||
@@ -73,6 +121,11 @@ class HymnalPack {
           body.write('<b>${escaped(label)}</b><br>');
         }
         body.write(escaped(text));
+        blocks.add((
+          refrain: block['kind'] == 'refrain',
+          label: label?.trim() ?? '',
+          text: text
+        ));
       }
       if (body.isEmpty) throw const FormatException('Empty hymn lyrics.');
       final hymn = Hymn(
@@ -80,9 +133,10 @@ class HymnalPack {
           title: title,
           body: body.toString(),
           version: edition.id,
-          bookTitle: edition.displayName,
+          bookTitle: editionShortLabel(edition.id, edition.displayName),
           languageTag: edition.languageTag,
-          credits: item['credits'] as String?);
+          credits: item['credits'] as String?,
+          readingHtml: lyricReadingHtml(blocks, escaped));
       hymns.add(hymn);
       byId[id] = hymn;
     }
