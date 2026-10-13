@@ -18,7 +18,7 @@ class DownloadCatalogTest(unittest.TestCase):
         catalog = builder.build()
         self.assertEqual(catalog, builder.build())
         self.assertEqual(catalog, json.loads(builder.DEST.read_text()))
-        self.assertEqual(len(catalog['books']), 20)
+        self.assertEqual(len(catalog['books']), 26)
         optional = json.loads((ROOT / 'tool/data/language_download_sources.json').read_text())['optionalPacks']
         self.assertEqual([book['path'] for book in catalog['books'] if 'path' in book], optional)
         for book in catalog['books']:

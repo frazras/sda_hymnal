@@ -65,6 +65,52 @@ class StructuredImportTest(unittest.TestCase):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 importer.convert(source, self.manifest)
 
+    def test_reviewed_omissions_withhold_only_unpublishable_or_repeated_records(self):
+        songs = [self.record,
+                 dict(ID=5, Guid='empty', Text='Vide', Verses=[]),
+                 dict(ID=6, Guid='damaged', Text='Abîmé', Verses=[dict(Text='Per\ufffdu')]),
+                 dict(ID=4, Guid='lettered', Text='(a) Variante', Verses=[dict(Text='Autre')]),
+                 dict(ID=7, Guid='copy', Text='Autre titre', Verses=copy.deepcopy(self.record['Verses']))]
+
+        def omit(number, guid, title, kind, **extra):
+            return dict(number=number, guid=guid, title=title, kind=kind,
+                        reason='Checked both source files', reviewer='Source reviewer', **extra)
+        valid = [omit(5, 'empty', 'Vide', 'empty'), omit(6, 'damaged', 'Abîmé', 'invalidText'),
+                 omit(4, 'lettered', '(a) Variante', 'duplicateNumber'),
+                 omit(7, 'copy', 'Autre titre', 'duplicateLyrics', lyricsOf=4)]
+        self.manifest['omittedRecords'] = valid
+        pack = importer.convert(dict(Songs=songs), self.manifest)
+        self.assertEqual([item['sourceRecord']['Guid'] for item in pack['items']], ['source-guid'])
+        self.assertEqual(pack['coverage']['sourceRecords'], 5)
+        same_title = copy.deepcopy(songs)
+        same_title[4]['Text'] = 'Grâce'
+        cases = [
+            ('publishable record', songs, valid[:3] + [dict(valid[3], kind='empty')]),
+            ('wrong condition', songs, [omit(5, 'empty', 'Vide', 'invalidText')] + valid[1:]),
+            ('no retained number', songs, valid + [omit(4, 'source-guid', 'Grâce', 'duplicateNumber')]),
+            ('lyric source withheld', songs, valid[:3] + [dict(valid[3], lyricsOf=6)]),
+            ('same title retained', same_title, valid[:3] + [dict(valid[3], title='Grâce')]),
+            ('unmatched record', songs, valid[:3] + [dict(valid[3], guid='other')]),
+            ('listed twice', songs, valid + [valid[0]]),
+            ('missing reviewer', songs, valid[:3] + [dict(valid[3], reviewer='')]),
+            ('unknown kind', songs, valid[:3] + [dict(valid[3], kind='typo')]),
+        ]
+        for label, source, omissions in cases:
+            with self.subTest(label), self.assertRaises(ValueError):
+                importer.convert(dict(Songs=source), dict(self.manifest, omittedRecords=omissions))
+        with self.assertRaises(ValueError):
+            importer.convert(dict(Songs=songs), dict(self.manifest, expectedNumbers=[4, 5]))
+
+    def test_structured_pages_can_withhold_records_without_lyrics(self):
+        self.manifest.update(format='structured-verses', sourceLanguage='english', expectedNumbers=[2])
+        source = [dict(pageNumber=1, language='english', title='Blank', verses=[]),
+                  dict(pageNumber=2, language='english', title='Song', verses=[dict(number=1, lines=['Line'])])]
+        with self.assertRaises(ValueError):
+            importer.convert(source, self.manifest)
+        self.manifest['omittedRecords'] = [dict(number=1, title='Blank', kind='empty',
+                                                reason='No lyrics', reviewer='Source reviewer')]
+        self.assertEqual([item['number'] for item in importer.convert(source, self.manifest)['items']], [2])
+
     def test_reviewed_override_is_guarded_and_retains_original(self):
         pack = importer.convert(self.source, self.manifest)
         before = copy.deepcopy(pack)
@@ -130,7 +176,9 @@ class StructuredImportTest(unittest.TestCase):
         for name, count in [('french', 520), ('tagalog', 237), ('swahili', 220), ('cebuano', 237), ('chichewa', 350),
                             ('icibemba', 311), ('isizulu-ndebele', 300), ('kalenjin', 245), ('kikuyu', 299),
                             ('kinyarwanda', 500), ('sepedi', 303), ('shona', 300), ('tswana', 300),
-                            ('venda', 306), ('xhosa', 352), ('xitsonga', 311), ('kamba', 469), ('maasai', 243)]:
+                            ('venda', 306), ('xhosa', 352), ('xitsonga', 311), ('kamba', 469), ('maasai', 243),
+                            ('dholuo', 329), ('ekegusii', 365), ('sotho', 268), ('tonga', 339),
+                            ('tumbuka', 352), ('twi', 751)]:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 manifest = ROOT / f'tool/data/structured_sources/{name}.manifest.json'
                 output = Path(directory) / 'pack.json'

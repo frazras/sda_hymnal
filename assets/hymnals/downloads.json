@@ -6,6 +6,10 @@
     "optionalPacks": [
       "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
       "resources/hymnals/sda-sn-kristu-munzwiyo.json",
+      "resources/hymnals/sda-toi-kristu-mu-nyimbo.json",
+      "resources/hymnals/sda-tum-nyimbo-za-mpingo-wa-sda.json",
+      "resources/hymnals/sda-luo-wende-nyasae.json",
+      "resources/hymnals/sda-guz-ogotera-kwa-nyasae.json",
       "resources/hymnals/sda-ki-nyimbo-cia-agendi.json",
       "resources/hymnals/sda-bem-klistu-mu-nyimbo.json",
       "resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json",
@@ -15,8 +19,10 @@
       "resources/hymnals/sda-kam-mbathi-sya-kumutaia-ngai.json",
       "resources/hymnals/sda-mas-isinkolioitin.json",
       "resources/hymnals/sda-nso-kreste-ka-kopelo.json",
+      "resources/hymnals/sda-st-keresete-pineng.json",
       "resources/hymnals/sda-tn-keresete-mo-kopelong.json",
       "resources/hymnals/sda-ve-ngosha-yadzingosha.json",
+      "resources/hymnals/sda-tw-memeneda-akwanhwefo-nnwom.json",
       "resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json"
     ]
   },
@@ -150,6 +156,74 @@
         "note": "All 300 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
       },
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-sn-kristu-munzwiyo.json"
+    },
+    {
+      "bookId": "sda-toi-kristu-mu-nyimbo",
+      "displayName": "Chitonga · Kristu Mu Nyimbo",
+      "languageTag": "toi",
+      "year": null,
+      "path": "resources/hymnals/sda-toi-kristu-mu-nyimbo.json",
+      "bytes": 986352,
+      "sha256": "3e533bfce49c17d5d7b1253b22a14bf6647dd43b130ee3ca6d388a1f107fda4e",
+      "hymnCount": 339,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 341,
+        "structurallyComplete": false,
+        "note": "Partial collection: 339 of 341 numbered hymns. Omitted 26 and 223: they contain a lost character (U+FFFD) in both the pinned JSON and its VideoPsalm package. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-toi-kristu-mu-nyimbo.json"
+    },
+    {
+      "bookId": "sda-tum-nyimbo-za-mpingo-wa-sda",
+      "displayName": "Chitumbuka · Nyimbo za Mpingo wa SDA",
+      "languageTag": "tum",
+      "year": null,
+      "path": "resources/hymnals/sda-tum-nyimbo-za-mpingo-wa-sda.json",
+      "bytes": 1061875,
+      "sha256": "da2c329421414c704d8672aab20ff4233034415bfca5bc377c13b9db6ad82643",
+      "hymnCount": 352,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 372,
+        "structurallyComplete": false,
+        "note": "Partial collection: 352 of 372 numbered hymns. Omitted 51, 66, 250, 266, 348–361, 363 and 365: they have no lyrics in the pinned JSON or its VideoPsalm package. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-tum-nyimbo-za-mpingo-wa-sda.json"
+    },
+    {
+      "bookId": "sda-luo-wende-nyasae",
+      "displayName": "Dholuo · Wende Nyasae",
+      "languageTag": "luo",
+      "year": null,
+      "path": "resources/hymnals/sda-luo-wende-nyasae.json",
+      "bytes": 1047572,
+      "sha256": "1cbba436a58ce67286ce37add45457afbfb7ed3c081a6b456329cbcaaab7bbbd",
+      "hymnCount": 329,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 332,
+        "structurallyComplete": false,
+        "note": "Partial collection: 329 of 332 numbered hymns. Omitted 43, 48 and 66: their source lyrics repeat hymns 44, 49 and 65 under different titles. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-luo-wende-nyasae.json"
+    },
+    {
+      "bookId": "sda-guz-ogotera-kwa-nyasae",
+      "displayName": "Ekegusii · Ogotera Kwa Nyasae",
+      "languageTag": "guz",
+      "year": null,
+      "path": "resources/hymnals/sda-guz-ogotera-kwa-nyasae.json",
+      "bytes": 1126620,
+      "sha256": "67c19c7e72b0a20dbff94852e060f443845507ab0bcc98c3f97f0bd0a48b6527",
+      "hymnCount": 365,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 371,
+        "structurallyComplete": false,
+        "note": "Partial collection: 365 of 370 numbered hymns. Omitted 13, 309, 327, 329 and 343: they have no lyrics in the pinned JSON or its VideoPsalm package. A second #86, \"(a) Ebisio Amang`ana Y`enkoro\", is omitted because lettered numbers are not supported. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-guz-ogotera-kwa-nyasae.json"
     },
     {
       "bookId": "sda-ki-nyimbo-cia-agendi",
@@ -305,6 +379,23 @@
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-nso-kreste-ka-kopelo.json"
     },
     {
+      "bookId": "sda-st-keresete-pineng",
+      "displayName": "Sesotho · Keresete Pineng",
+      "languageTag": "st",
+      "year": null,
+      "path": "resources/hymnals/sda-st-keresete-pineng.json",
+      "bytes": 851883,
+      "sha256": "06c9931c7496d6d3975ecb6eabea2cbb273c68e7cd62d9861109e7f2b36b1f03",
+      "hymnCount": 268,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 300,
+        "structurallyComplete": false,
+        "note": "Partial collection: 268 of 300 numbered hymns. Omitted 177, 180–183, 190–194, 196–199, 274, 279–282, 284–286, 288–292, 294–297 and 300: they have no lyrics in the pinned JSON or its VideoPsalm package. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-st-keresete-pineng.json"
+    },
+    {
       "bookId": "sda-tn-keresete-mo-kopelong",
       "displayName": "Setswana · Keresete mo Kopelong",
       "languageTag": "tn",
@@ -337,6 +428,23 @@
         "note": "All 306 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
       },
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ve-ngosha-yadzingosha.json"
+    },
+    {
+      "bookId": "sda-tw-memeneda-akwanhwefo-nnwom",
+      "displayName": "Twi · Memeneda Akwanhwefo Nnwom",
+      "languageTag": "tw",
+      "year": null,
+      "path": "resources/hymnals/sda-tw-memeneda-akwanhwefo-nnwom.json",
+      "bytes": 2060663,
+      "sha256": "bd7b55c408366d9ba328b3d417d1a9a6f7d4c0962555aa3c714d4e6ee09422d1",
+      "hymnCount": 751,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 770,
+        "structurallyComplete": false,
+        "note": "Partial collection: 751 of 770 numbered hymns. Omitted 215–219 and 740–750: they have no lyrics in the pinned JSON or its VideoPsalm package. Omitted 312, 640 and 737: their source lyrics repeat hymns 311, 639 and 736 under different titles. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-tw-memeneda-akwanhwefo-nnwom.json"
     },
     {
       "bookId": "sda-ts-tinsimu-ta-mhalamhala",

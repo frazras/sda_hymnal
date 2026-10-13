@@ -352,11 +352,11 @@ and optional scores remain incomplete.
 
 ## Reviewed text download catalog
 
-`assets/hymnals/downloads.json` now lists 20 exact-edition text objects (the six
-bundled books and 14 optional downloads) with byte sizes, SHA-256, hymn/topic
+`assets/hymnals/downloads.json` now lists 26 exact-edition text objects (the six
+bundled books and 20 optional downloads) with byte sizes, SHA-256, hymn/topic
 counts, and source coverage notes. URLs pin this repository's commit recorded in
 `tool/data/language_download_sources.json`; no branch-name URL or number-based
-music reuse is involved. The bundled metadata is 15,990 bytes. It does not add
+music reuse is involved. The bundled metadata is 22,229 bytes. It does not add
 another lyric pack or any audio to the app.
 
 `tool/build_language_download_catalog.py` derives it from reviewed bundled packs
@@ -447,16 +447,16 @@ explicit expected numbers from its structured-source manifest. Media reference
 checks apply to these books too; unavailable scores/recordings remain coverage
 gaps rather than fabricated assets. Duplicate optional identities fail the gate.
 
-The current report covers 20 imported packs and 7,465 hymns, including 14
-optional collections (4,589 hymns). This total excludes the original English
-books. The full publication gate passes 40 content tests, regenerates every
-optional pack from its single pinned manifest, and checks all 20 text downloads,
+The current report covers 26 imported packs and 9,869 hymns, including 20
+optional collections (6,993 hymns). This total excludes the original English
+books. The full publication gate passes 42 content tests, regenerates every
+optional pack from its single pinned manifest, and checks all 26 text downloads,
 three score collections, five recording collections, and 583
 interface messages.
 
 ## Expanded optional text collections
 
-Thirteen more Rejnac books follow the Chichewa pattern. Each has an unmodified
+The 19 remaining Rejnac books follow the Chichewa pattern. Each has an unmodified
 pinned snapshot and manifest in `tool/data/structured_sources/`, a pack generated
 by the structured importer with the Chichewa options (no reviewed refrain tags)
 in `resources/hymnals/`, and an `optionalPacks` entry. None is bundled. Paths,
@@ -505,6 +505,58 @@ Setswana and isiXhosa voice-part labels, a stray `<h2>` heading in Xitsonga #84,
 and tonic sol-fa fragments in seven Kikamba records. Same-title pairs with
 identical lyrics (Kalenjin 199/200, Kinyarwanda 439/440) are kept as possible
 alternate settings. These are lyric-review items, not structural failures.
+
+### Reconciled partial collections
+
+Ekegusii, Sesotho, Chitumbuka and Twi had known empty entries and a duplicate
+number. Dholuo and Chitonga were listed as clean, but closer checks found lyrics
+filed under the wrong titles and lost characters. For every Rejnac book, the
+VideoPsalm package (`.vpc`) at the same pinned revision was verified against its
+Git blob hash, opened in memory, and compared record by record. All 19 packages
+match their JSON (Kikuyu differs only in an explicit verse ID and a description
+typo), so no package supplies missing or corrected text and no text override was
+applied. `tool/data/structured_sources/rejnac-vpc-reconciliation.json` records
+each package's path, size, hashes and result.
+
+| Book ID | Tag | Display name | Hymns | Numbers | Withheld numbers |
+|---|---|---|---:|---|---|
+| `sda-toi-kristu-mu-nyimbo` | `toi` | Chitonga · Kristu Mu Nyimbo | 339 | 1–341 | 26, 223 (lost character) |
+| `sda-tum-nyimbo-za-mpingo-wa-sda` | `tum` | Chitumbuka · Nyimbo za Mpingo wa SDA | 352 | 1–372 | 51, 66, 250, 266, 348–361, 363, 365 (no lyrics) |
+| `sda-luo-wende-nyasae` | `luo` | Dholuo · Wende Nyasae | 329 | 1–332 | 43, 48, 66 (lyrics of 44, 49, 65) |
+| `sda-guz-ogotera-kwa-nyasae` | `guz` | Ekegusii · Ogotera Kwa Nyasae | 365 | 1–370 | 13, 309, 327, 329, 343 (no lyrics); second #86 |
+| `sda-st-keresete-pineng` | `st` | Sesotho · Keresete Pineng | 268 | 1–300 | 177, 180–183, 190–194, 196–199, 274, 279–282, 284–286, 288–292, 294–297, 300 (no lyrics) |
+| `sda-tw-memeneda-akwanhwefo-nnwom` | `tw` | Twi · Memeneda Akwanhwefo Nnwom | 751 | 1–770 | 215–219, 740–750 (no lyrics); 312, 640, 737 (lyrics of 311, 639, 736) |
+
+Manifests withhold records through `omittedRecords`. Each entry names the
+record by number, GUID and title, with a kind, reason and reviewer
+("Claude (automated source reconciliation)"). The importer accepts four kinds and
+verifies each against the source: `empty` (no lyric text), `invalidText` (text
+contains U+FFFD), `duplicateNumber` (another record with that number is kept),
+and `duplicateLyrics` (lyrics exactly equal a kept record's, named by
+`lyricsOf`, under a different title). A publishable unique record cannot be
+withheld, numbers are never reassigned, and `expectedNumbers` must leave out
+every withheld number. Each coverage note lists the omitted numbers.
+
+- **Ekegusii #86.** Both records are complete hymns. The second is titled
+  "(a) Ebisio Amang`ana Y`enkoro", a lettered 86a. Its lyrics match no other
+  record and every number 1–370 already has a record, so it is not a misnumbered
+  hymn. The first occurrence is kept; 86a is withheld because numeric identities
+  cannot represent it without renumbering.
+- **Misfiled lyrics.** Six records (Dholuo 43, 48, 66; Twi 312, 640, 737) carry
+  the complete lyrics of a neighbouring hymn, opening with that hymn's title, so
+  their own lyrics are absent. They are withheld rather than shown under the
+  wrong title. Same-title identical pairs, such as Twi's alternate settings
+  154/155 and 694/695, are kept.
+- **Chitonga.** The README names "Sotho", "Chitonga, Zambezi" and "Lea
+  Faka-Tonga" (Polynesian Tongan, `to`). The lyrics are Zambian Tonga: *Leza*
+  occurs 199 times and *Mwami* 553 times, while Malawian Tonga/Tumbuka *Chiuta*
+  never does. The tag is therefore ISO 639-3 `toi`. #26 and #223 each lost a
+  character to U+FFFD in both files and are withheld rather than guessed;
+  apostrophes garbled as Ô/Õ elsewhere are kept for lyric review.
+- **Twi** entries 696–770 carry source labels N1–N55 and NG1–NG20. The N-series
+  titles name the English originals; their lyrics are Twi.
+
+### Registration and hosting
 
 The runtime parser opens only books registered in `_supportedImportedBook`.
 These IDs are published in the trusted catalog ahead of that registration;

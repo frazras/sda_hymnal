@@ -1,0 +1,791 @@
+{
+  "reviewer": "Claude (automated source reconciliation)",
+  "reviewedOn": "2026-10-13",
+  "method": "Each VideoPsalm package was fetched from the same pinned revision as its lyric JSON and verified against its Git blob hash. It is a ZIP archive holding one object literal with bare keys; that member was read in memory, its keys quoted, and every record compared with the JSON. No upstream program was executed.",
+  "result": "No package contains lyrics missing from its JSON or corrects damaged text, so no package text was applied and no reviewed text override was needed. Withheld records are listed in each manifest under omittedRecords.",
+  "collections": [
+    {
+      "repository": "rejnac/dholuo-hymnal",
+      "revision": "dffa6f74d32a794d7ddba0202d224b5c6f4a6b81",
+      "manifest": "dholuo.manifest.json",
+      "lyricsJson": {
+        "path": "Wende Nyasaye Lyrics.json",
+        "sha256": "b1b6cfa9ee080cb98630ce290151e4bca17d3ac806b1f92cc23529b37595689a"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Wende Nyasaye.vpc",
+        "bytes": 74654,
+        "sha256": "9ac9c869f5dd1a8a42e9ac76a8242a81b2b7f2deb2c52f2588010d3b30d696d6",
+        "gitBlobSha1": "f3d67bd8b6c26baf2e18e5d9c3cff3fcce1ae2f7",
+        "member": "Wende Nyasaye.json",
+        "memberBytes": 281783,
+        "records": 332
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 43,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 48,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 66,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/ekegusii-hymnal",
+      "revision": "1f9d6b6b9eb9e6f996b9b6dd3f8d5b981003e69e",
+      "manifest": "ekegusii.manifest.json",
+      "lyricsJson": {
+        "path": "Ogotera Kwa Nyasae Lyrics.json",
+        "sha256": "4715b8ccdac560198c0da4940557da378881b1ba43ef20eaae946fb204325727"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Ogotera Kwa Nyasae.vpc",
+        "bytes": 82291,
+        "sha256": "f4f65b41e3c1898a38958bb66b57be687277704935e1f4f83d478efacba22f7c",
+        "gitBlobSha1": "8a03939b17572c65f74017f492c816b9b7633d4b",
+        "member": "Ogotera Kwa Nyasae.json",
+        "memberBytes": 297518,
+        "records": 371
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 13,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 86,
+          "kind": "duplicateNumber",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 309,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 327,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 329,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 343,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/icibemba-hymnal",
+      "revision": "3574f03112fef5a2a738dd0882e14d7f1512063f",
+      "manifest": "icibemba.manifest.json",
+      "lyricsJson": {
+        "path": "Klistu Mu Nyimbo Lyrics.json",
+        "sha256": "077eecd8704b97ba0b6b9eed6554ba8a093001b82777fb50daa830a647c5cff5"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Klistu Mu Nyimbo.vpc",
+        "bytes": 69080,
+        "sha256": "577d40b6a742ef8260c146e66f7186a7908add3bfceb6b98db43aa3229f01d25",
+        "gitBlobSha1": "bc7245dd11efd93d75706214033825813935cd13",
+        "member": "Klistu Mu Nyimbo.json",
+        "memberBytes": 242314,
+        "records": 311
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/isiZulu-ndebele-hymnal",
+      "revision": "4e943e107456ada5917832a844e4f169866a853a",
+      "manifest": "isizulu-ndebele.manifest.json",
+      "lyricsJson": {
+        "path": "UKrestu Esihlabelelweni Lyrics.json",
+        "sha256": "c0e2066ce22f522ba75412281e67f33ab73415dbeaa778420614143ec64a3efa"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/UKrestu Esihlabelelweni.vpc",
+        "bytes": 71209,
+        "sha256": "8055b9a6d71260435ca844d8d424b69da612ef4a4c041ab818587c530910344b",
+        "gitBlobSha1": "8647e4650dc7408f413dad7ac22000505b0ba575",
+        "member": "UKrestu Esihlabelelweni.json",
+        "memberBytes": 249393,
+        "records": 300
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/kalenjin-hymnal",
+      "revision": "2a8aec8a7fba0cc9fd84c2f7adf49748a4838e24",
+      "manifest": "kalenjin.manifest.json",
+      "lyricsJson": {
+        "path": "Tienwogik che Kilosune Jehovah Lyrics.json",
+        "sha256": "b24b2220456cc7e2273b903c6b944307855854fb400c5d3528d008a42a12dd8c"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Tienwogik che Kilosune Jehovah.vpc",
+        "bytes": 51276,
+        "sha256": "907797491d5e44305a2760567545507f8a241eb0eb31e05f2ce27424a73fa86f",
+        "gitBlobSha1": "095c7a91625d8119b3a5f54b9aa7e2fb9f092786",
+        "member": "Tienwogik che Kilosune Jehovah.json",
+        "memberBytes": 185933,
+        "records": 245
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/kamba-hymnal",
+      "revision": "b52c80cd6d7dd9010d13c4202fb46451d15dbfcb",
+      "manifest": "kamba.manifest.json",
+      "lyricsJson": {
+        "path": "Mbathi sya Kumutaia Ngai Lyrics.json",
+        "sha256": "6d0b9e8e67666fb791521d6233717c41e3d16ce928904b31cc56e8260fa683ec"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Mbathi sya Kumutaia Ngai.vpc",
+        "bytes": 112085,
+        "sha256": "596a21843994341f95067984fc51777d7a2b64884c8a823f1d6f732185fd391a",
+        "gitBlobSha1": "346e08440d50c71a9b8d2ed5090e7e0c49eedda2",
+        "member": "Mbathi sya Kumutaia Ngai.json",
+        "memberBytes": 448315,
+        "records": 469
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/kikuyu-hymnal",
+      "revision": "59f1a6904641b7024caec1a93dfe7cee987dc6e6",
+      "manifest": "kikuyu.manifest.json",
+      "lyricsJson": {
+        "path": "Nyimbo Cia Agendi Lyrics.json",
+        "sha256": "3befc8ca04372724d67a961a505738dd12a86a98c0293b8acccc9c77ffc67cb9"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Nyimbo Cia Agendi.vpc",
+        "bytes": 65406,
+        "sha256": "326849b8c7e36d8b57b67b825406b82f3df4c2ce30b0c57e5584b95ac90904d1",
+        "gitBlobSha1": "e4fb968d9439c88a31c1dbe17c8b78847cc153d4",
+        "member": "Nyimbo Cia Agendi.json",
+        "memberBytes": 232036,
+        "records": 299
+      },
+      "comparison": "Lyric text identical for all 299 records. The JSON adds an explicit first-verse ID of 1 that the package omits, and the package description reads \"Nymbo Cia Agendi\"."
+    },
+    {
+      "repository": "rejnac/kinyarwanda-hymnal",
+      "revision": "370dbe9850580b516fb097d76d9e71114b89fc2d",
+      "manifest": "kinyarwanda.manifest.json",
+      "lyricsJson": {
+        "path": "Indirimbo Zo Guhimbaza Imana Lyrics.json",
+        "sha256": "d76bf1d32a2fe88e6e0543ffbd471b0eb4775528cec2c502e5c04fc864e225a3"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Indirimbo Zo Guhimbaza Imana.vpc",
+        "bytes": 114400,
+        "sha256": "37cb403113442f3821c94fceaeaf0a3e91b02633d46242492b93915b5eb2d507",
+        "gitBlobSha1": "487f75384ff07b37de472de1e366c426fb1df2c7",
+        "member": "Indirimbo Zo Guhimbaza Imana.json",
+        "memberBytes": 416427,
+        "records": 500
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/maasai-hymnal",
+      "revision": "1a919853ab57115abffc3e00a394bb34c11ef856",
+      "manifest": "maasai.manifest.json",
+      "lyricsJson": {
+        "path": "Isinkolioitin Lyrics.json",
+        "sha256": "fc77f4262e1b7d9d1241820cb286020b8e5ad28b10c620f9637eaf2aadb4ea27"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Isinkolioitin.vpc",
+        "bytes": 54489,
+        "sha256": "7f9a33149746ac991445dd3ad08bf1fd92ecd86059d2d241fa46639148ee2240",
+        "gitBlobSha1": "b3e82d8fd6b84a4e1bd51b2ebab6c24337700ef7",
+        "member": "Isinkolioitin Lyrics.json",
+        "memberBytes": 192194,
+        "records": 243
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/sepedi-hymnal",
+      "revision": "f97edb6c05252ad222c8acaf45d6108a73a18781",
+      "manifest": "sepedi.manifest.json",
+      "lyricsJson": {
+        "path": "Kreste Ka Kopelo Lyrics.json",
+        "sha256": "47fe50270dddb739634417a68238dd329de041a9217fca81becc5d4355922d6d"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Kreste Ka Kopelo.vpc",
+        "bytes": 66687,
+        "sha256": "d046fe3c6d0cee0439d5bda7d9162916119d7b2aada37efa17a16f1b02d5fa45",
+        "gitBlobSha1": "8387763799cf222871f0e765b5f47b7ab5ae973d",
+        "member": "Kreste Ka Kopelo.json",
+        "memberBytes": 205756,
+        "records": 303
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/shona-hymnal",
+      "revision": "4bd8a5b92d49e9ff9c5ac772598c6f8c67c16f7d",
+      "manifest": "shona.manifest.json",
+      "lyricsJson": {
+        "path": "Kristu MuNzwiyo Lyrics.json",
+        "sha256": "5fbcc2119ecdc97c97dd7de7ffe921f5c8aed14823b509f2586f4f376b7db2c4"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Kristu MuNzwiyo.vpc",
+        "bytes": 63538,
+        "sha256": "d055da7bfacda901af023c62a7fef901d7a295791cae328809a90065eaf00dcf",
+        "gitBlobSha1": "c183b68e1a33d5619ba8aa256a78b659778cec75",
+        "member": "Kristu MuNzwiyo.json",
+        "memberBytes": 226621,
+        "records": 300
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/sotho-hymnal",
+      "revision": "2af56e338d5477a3ad4e6de4042dfb75dfc794bb",
+      "manifest": "sotho.manifest.json",
+      "lyricsJson": {
+        "path": "Keresete Pineng Lyrics.json",
+        "sha256": "343d835ec62ad18f0640d78cfb75a234e6b16e8018c3d8decfa8e0671e68463a"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Keresete Pineng.vpc",
+        "bytes": 62059,
+        "sha256": "e306140908f8d9fd084b66499524d8aad061e298afbb87b3865dadd2914344de",
+        "gitBlobSha1": "b27eff633b43226e7a81ce9edb4f8787b55fea01",
+        "member": "Keresete Pineng.json",
+        "memberBytes": 231810,
+        "records": 300
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 177,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 180,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 181,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 182,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 183,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 190,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 191,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 192,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 193,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 194,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 196,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 197,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 198,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 199,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 274,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 279,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 280,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 281,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 282,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 284,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 285,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 286,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 288,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 289,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 290,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 291,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 292,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 294,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 295,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 296,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 297,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 300,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/tonga-hymnal",
+      "revision": "6698d71e2f8c03eadd0debc53f031a7cb518f479",
+      "manifest": "tonga.manifest.json",
+      "lyricsJson": {
+        "path": "Kristu Mu Nyimbo Lyrics.json",
+        "sha256": "3cc8f36311167f6d21cf21338e4a3374837ae3f12d3437627e5a6decfd917ee1"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Kristu Mu Nyimbo.vpc",
+        "bytes": 69595,
+        "sha256": "3bfdb87368e1ff1a80a5cf1c4220b7e570e0d29809a34c1a550a46e8e8990264",
+        "gitBlobSha1": "64d6f369b39141a573a099a0968bc9a9d014fb50",
+        "member": "Kristu Mu Nyimbo.json",
+        "memberBytes": 258466,
+        "records": 341
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 26,
+          "kind": "invalidText",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 223,
+          "kind": "invalidText",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/tswana-hymnal",
+      "revision": "4c31060cc4f3a308972aa1829d040874cb2d7db9",
+      "manifest": "tswana.manifest.json",
+      "lyricsJson": {
+        "path": "Keresete mo Kopelong Lyrics.json",
+        "sha256": "31431bcb4408b8d1958a8cde632c663da76c86cf089d40a2e602d78d43ba12e3"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Keresete mo Kopelong.vpc",
+        "bytes": 72219,
+        "sha256": "6bf96c0357f9ba8156beb40e116eb35b0d7067b3467c5739fa4d9e0e98bfdda5",
+        "gitBlobSha1": "69b96edee01cad4a4677bb264dd165eeb8156c73",
+        "member": "Keresete mo Kopelong.json",
+        "memberBytes": 269405,
+        "records": 300
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/tumbuka-hymnal",
+      "revision": "71355f57721127d6dbb6499c821add8cb6a3cbe8",
+      "manifest": "tumbuka.manifest.json",
+      "lyricsJson": {
+        "path": "Nyimbo za Mpingo wa SDA Lyrics.json",
+        "sha256": "dac096656fd7a6bf72b19be15a9fe932e45ab1f64aec8963c45c8b34b9e14d74"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Nyimbo za Mpingo wa SDA.vpc",
+        "bytes": 77785,
+        "sha256": "31ed4e11199b513e5de3ada999196b180ee43c47eb611091336b18bfc7b92f27",
+        "gitBlobSha1": "0e4d520b4a6b1187348a7b6f583c2d4128ec4703",
+        "member": "Nyimbo za Mpingo wa SDA.json",
+        "memberBytes": 282220,
+        "records": 372
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 51,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 66,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 250,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 266,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 348,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 349,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 350,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 351,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 352,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 353,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 354,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 355,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 356,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 357,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 358,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 359,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 360,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 361,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 363,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 365,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/twi-hymnal",
+      "revision": "a3cbd87452929ec24ea9f601c4b1bf2b08a6eea8",
+      "manifest": "twi.manifest.json",
+      "lyricsJson": {
+        "path": "Memeneda Akwanhwefo Nnwom Lyrics.json",
+        "sha256": "9434a1add36bab02ff8813a53c119767619cdff07e99bf6106410a425c5840e1"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Memeneda Akwanhwefo Nnwom.vpc",
+        "bytes": 188428,
+        "sha256": "ae7f0339693721b54f896b0aaa2971e2ffb450f4a543fdc887390adb6f523f1e",
+        "gitBlobSha1": "22e85d6b7000c199575eb86a0d37e77ddc5e71c1",
+        "member": "Memeneda Akwanhwefo Nnwom.json",
+        "memberBytes": 567164,
+        "records": 770
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text.",
+      "withheldRecords": [
+        {
+          "number": 215,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 216,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 217,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 218,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 219,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 740,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 741,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 742,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 743,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 744,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 745,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 746,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 747,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 748,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 749,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 750,
+          "kind": "empty",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 312,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 640,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        },
+        {
+          "number": 737,
+          "kind": "duplicateLyrics",
+          "packageRecord": "identical to the JSON record"
+        }
+      ]
+    },
+    {
+      "repository": "rejnac/venda-hymnal",
+      "revision": "7b807f10c3f7b1ef55bf9aca10cb1b89c1b6ef09",
+      "manifest": "venda.manifest.json",
+      "lyricsJson": {
+        "path": "Ngosha YaDzingosha Lyrics.json",
+        "sha256": "b3ffdba90add46cd554eb763a403685220daea80a151b0b3c33eadc97f981291"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Ngosha YaDzingosha.vpc",
+        "bytes": 68975,
+        "sha256": "4b594cdc82e9782e2a1fcb2beb85407163afa6198468c8748d49d4801249365b",
+        "gitBlobSha1": "f3f5a8ffd812dfaefc246e975430d536a17dbaf1",
+        "member": "Ngosha YaDzingosha.json",
+        "memberBytes": 263709,
+        "records": 306
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/xhosa-hymnal",
+      "revision": "0cb83c6f4f7d4f9591f3cca61665624718db9fe1",
+      "manifest": "xhosa.manifest.json",
+      "lyricsJson": {
+        "path": "uKrestu Engomeni Lyrics.json",
+        "sha256": "e46306068c5b84e15fbb4e66aa74d1617ae289374542fb9e572f8bcd0a60fcf5"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/uKrestu Engomeni.vpc",
+        "bytes": 84141,
+        "sha256": "5dbb3b1de347bca47a3c3b294eae26cd2a09c33528317dd82ce6467f1ae34b72",
+        "gitBlobSha1": "fe7a71c3bf108e4f6be92f46dc5c9bb82394d716",
+        "member": "uKrestu Engomeni.json",
+        "memberBytes": 291660,
+        "records": 352
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    },
+    {
+      "repository": "rejnac/xitsonga-hymnal",
+      "revision": "e53d2c7c9b78aa122020edefcea21e76e4b50136",
+      "manifest": "xitsonga.manifest.json",
+      "lyricsJson": {
+        "path": "Tinsimu ta Mhalamhala Lyrics.json",
+        "sha256": "40acf30c1603b74f238124984be040df96343b363b6de9c80b202320227f2475"
+      },
+      "videoPsalm": {
+        "path": "VideoPsalm/Tinsimu ta Mhalamhala.vpc",
+        "bytes": 68001,
+        "sha256": "6cfbf2cbe987bbf38a075828f34c9aaf2b0ad504ee733c6ed435635d384d3469",
+        "gitBlobSha1": "4b8f354e3782171708afa65d03dbe70b8c3688a8",
+        "member": "Tinsimu ta Mhalamhala.json",
+        "memberBytes": 273250,
+        "records": 311
+      },
+      "comparison": "Identical: same metadata, record order, IDs, GUIDs, titles and verse text."
+    }
+  ]
+}

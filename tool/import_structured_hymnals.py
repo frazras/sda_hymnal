@@ -12,6 +12,8 @@ from pathlib import Path
 from import_hymnals import json_bytes, text
 from validate_hymnal_content import inspect_pack, local_asset
 
+OMISSIONS = ('empty', 'invalidText', 'duplicateNumber', 'duplicateLyrics')
+
 
 def sequence(value, field):
     if not isinstance(value, list) or not value:
@@ -36,6 +38,64 @@ def lines(block):
     return text('\n'.join(value), 'lyric block')
 
 
+def record_fields(record, fmt):
+    """Return a source record's number, title and lyric strings in source order."""
+    if fmt == 'videopsalm':
+        verses = record.get('Verses')
+        strings = [verse.get('Text') for verse in verses if isinstance(verse, dict)] \
+            if isinstance(verses, list) else []
+        return record.get('ID'), record.get('Text'), strings
+    verses = record.get('verses')
+    strings = []
+    for block in (verses if isinstance(verses, list) else []) + [record.get('refrain')]:
+        if isinstance(block, dict) and isinstance(block.get('lines'), list):
+            strings.extend(block['lines'])
+    return record.get('pageNumber'), record.get('title'), strings
+
+
+def omitted_records(records, manifest, fmt):
+    """Indexes of source records withheld by explicit manifest decisions.
+
+    Only unpublishable records (no lyrics, or text damaged by U+FFFD), a later
+    duplicate of a retained number, or an exact lyric copy of a retained hymn
+    filed under a different title may be withheld. Every decision names the
+    record, a reason and a reviewer; numbers are never reassigned.
+    """
+    entries = manifest.get('omittedRecords', [])
+    if not isinstance(entries, list):
+        raise ValueError('Omitted records must be a list')
+    fields = [record_fields(record, fmt) for record in records]
+    chosen = {}
+    for entry in entries:
+        if not isinstance(entry, dict) or entry.get('kind') not in OMISSIONS:
+            raise ValueError('Invalid omitted record')
+        text(entry.get('reason'), 'omission reason')
+        text(entry.get('reviewer'), 'omission reviewer')
+        matches = [index for index, (number, title, _) in enumerate(fields)
+                   if number == entry.get('number') and title == entry.get('title')
+                   and ('guid' not in entry or records[index].get('Guid') == entry['guid'])]
+        if len(matches) != 1 or matches[0] in chosen:
+            raise ValueError('Omitted record must identify exactly one source record')
+        chosen[matches[0]] = entry
+    retained = [index for index in range(len(records)) if index not in chosen]
+    for index, entry in chosen.items():
+        number, title, strings = fields[index]
+        kind = entry['kind']
+        if kind == 'empty':
+            allowed = not any(isinstance(s, str) and s.strip() for s in strings)
+        elif kind == 'invalidText':
+            allowed = any(isinstance(s, str) and '\ufffd' in s for s in [title, *strings])
+        elif kind == 'duplicateNumber':
+            allowed = any(fields[other][0] == number for other in retained)
+        else:
+            others = [other for other in retained if fields[other][0] == entry.get('lyricsOf')]
+            allowed = (len(others) == 1 and bool(strings) and fields[others[0]][2] == strings
+                       and fields[others[0]][1] != title)
+        if not allowed:
+            raise ValueError(f'Omitted record {number} does not meet the {kind} condition')
+    return set(chosen)
+
+
 def convert(source, manifest):
     fmt = manifest['format']
     if fmt == 'videopsalm':
@@ -49,8 +109,11 @@ def convert(source, manifest):
             or any(type(n) is not int or n < 1 for n in expected)
             or len(expected) != len(set(expected))):
         raise ValueError('Expected numbers must be explicit, positive and unique')
+    omitted = omitted_records(records, manifest, fmt)
     items = []
-    for record in records:
+    for index, record in enumerate(records):
+        if index in omitted:
+            continue
         if fmt == 'videopsalm':
             number = positive_number(record.get('ID'))
             title = text(record.get('Text'), 'title')
