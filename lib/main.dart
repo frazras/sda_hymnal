@@ -23,6 +23,7 @@ Future<void> main() async {
   await KeepScreenOn.instance.load();
   await AutoScroll.instance.load();
   await Autoplay.instance.load();
+  await RecordingVoice.instance.load();
   await MusicPlayerVisible.instance.load();
   await Recents.instance.load();
   await Favorites.instance.load();

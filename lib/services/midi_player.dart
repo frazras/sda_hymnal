@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'hymn_recordings.dart';
+export 'hymn_recordings.dart' show RecordingKind;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
@@ -22,7 +23,9 @@ import 'package:sdahymnal/services/prefs.dart';
 /// Plays the bundled New-Hymnal MIDI files (assets/midi/001.mid … 695.mid)
 /// and Old-Hymnal files (assets/midi/C001.mid … C703.mid). One hymn at a
 /// time; play/pause toggles. [hasMidi] identifies editable arrangements;
-/// [hasMusic] also includes edition-specific instrumental recordings.
+/// [hasMusic] also includes edition-specific instrumental and sung
+/// recordings. Verified MIDI always takes precedence over recordings; among
+/// recordings, [RecordingVoice] picks the kind ([recordingKindFor]).
 ///
 /// Two engines behind one API:
 ///  * Recordings on every platform, plus Android MIDI: audioplayers.
@@ -37,11 +40,18 @@ import 'package:sdahymnal/services/prefs.dart';
 /// verbatim into the same cache (iOS).
 typedef MidiPlayback = ({String version, int n, bool paused});
 
+/// Supplies the verified local file for one recording of an exact hymn.
+typedef RecordingFileLoader = Future<File> Function(
+    String book, int number, RecordingKind kind);
+
 class MidiPlayer {
   MidiPlayer._(
-      {bool? useNative, Future<File> Function(String, int)? recordingFile})
+      {bool? useNative,
+      RecordingFileLoader? recordingFile,
+      ValueListenable<RecordingKind>? recordingVoice})
       : _useChannel = useNative ?? (!kIsWeb && Platform.isIOS),
-        _recordingFile = recordingFile ?? HymnRecordings.file {
+        _recordingFile = recordingFile ?? _pinnedRecording,
+        _voice = recordingVoice ?? RecordingVoice.instance {
     if (_useChannel) {
       _channel.setMethodCallHandler((call) async {
         if (call.method == 'onComplete' && _nativeActive) _onComplete();
@@ -60,6 +70,8 @@ class MidiPlayer {
     // An instrument change re-renders the loaded tune in place.
     InstrumentTheme.instance.addListener(_restartWithTransform);
     MusicOptions.instance.addListener(_restartWithTransform);
+    // A new sung/instrumental preference swaps a loaded recording in place.
+    _voice.addListener(_switchRecordingKind);
   }
 
   static final MidiPlayer instance = MidiPlayer._();
@@ -67,10 +79,24 @@ class MidiPlayer {
   @visibleForTesting
   factory MidiPlayer.forTesting(
           {required bool useNative,
-          required Future<File> Function(String, int) recordingFile}) =>
-      MidiPlayer._(useNative: useNative, recordingFile: recordingFile);
+          required RecordingFileLoader recordingFile,
+          ValueListenable<RecordingKind>? recordingVoice}) =>
+      MidiPlayer._(
+          useNative: useNative,
+          recordingFile: recordingFile,
+          recordingVoice: recordingVoice);
 
-  final Future<File> Function(String, int) _recordingFile;
+  static Future<File> _pinnedRecording(
+          String book, int number, RecordingKind kind) =>
+      HymnRecordings.file(book, number, kind: kind);
+
+  final RecordingFileLoader _recordingFile;
+
+  /// Preferred recording kind; [RecordingVoice] outside tests.
+  final ValueListenable<RecordingKind> _voice;
+
+  /// Kind of the loaded recording; null while stopped or playing MIDI.
+  final ValueNotifier<RecordingKind?> recordingKind = ValueNotifier(null);
 
   final ValueNotifier<List<({int index, String name})>> parts =
       ValueNotifier([]);
@@ -214,6 +240,19 @@ class MidiPlayer {
   static bool hasMusic(Hymn hymn) =>
       hasMidi(hymn) || HymnRecordings.contains(hymn.version, hymn.number);
 
+  /// Recording kinds the player can offer for [hymn], instrumental first.
+  /// Empty when verified MIDI takes precedence or nothing is recorded, so a
+  /// Sung/Instrumental choice is only meaningful when this has two entries.
+  static List<RecordingKind> recordingKinds(Hymn hymn) => hasMidi(hymn)
+      ? const []
+      : HymnRecordings.kindsFor(hymn.version, hymn.number);
+
+  /// The kind playback uses for [hymn]: the preferred kind when recorded,
+  /// otherwise the hymn's other recorded kind; null for MIDI or silent hymns.
+  RecordingKind? recordingKindFor(Hymn hymn) => hasMidi(hymn)
+      ? null
+      : HymnRecordings.resolveKind(hymn.version, hymn.number, _voice.value);
+
   static bool isCurrent(MidiPlayback? playback, Hymn hymn) =>
       playback?.version == hymn.version && playback?.n == hymn.number;
 
@@ -248,6 +287,7 @@ class MidiPlayer {
     // the timeline reach the final chorus even if the last native poll was early.
     if (duration.value > Duration.zero) position.value = duration.value;
     current.value = null;
+    recordingKind.value = null;
     position.value = Duration.zero;
     duration.value = Duration.zero;
     if (finished != null && !finished.paused) _completions.add(finished);
@@ -349,7 +389,9 @@ class MidiPlayer {
   /// defaults, otherwise the cached render from [_renderFile].
   Future<Source> _source(String version, int n) async {
     if (hymnMidiAsset(version, n) == null) {
-      return DeviceFileSource((await _recordingFile(version, n)).path);
+      final kind = recordingKind.value ??
+          (throw ArgumentError('No recording for $version:$n'));
+      return DeviceFileSource((await _recordingFile(version, n, kind)).path);
     }
     if (transpose.value == 0 &&
         !InstrumentTheme.instance.transforms &&
@@ -507,6 +549,8 @@ class MidiPlayer {
     await _player.stop();
     position.value = Duration.zero;
     duration.value = Duration.zero;
+    // Resolved once per start; a later preference change swaps it explicitly.
+    recordingKind.value = _recording ? recordingKindFor(hymn) : null;
     current.value = (version: hymn.version, n: hymn.number, paused: false);
     try {
       loading.value = true;
@@ -514,6 +558,7 @@ class MidiPlayer {
       final source = await _source(hymn.version, hymn.number);
       if (generation != _stopGeneration || (canStart != null && !canStart())) {
         current.value = null;
+        recordingKind.value = null;
         position.value = Duration.zero;
         duration.value = Duration.zero;
         return;
@@ -522,11 +567,56 @@ class MidiPlayer {
       await _applySpeed();
     } catch (_) {
       current.value = null;
+      recordingKind.value = null;
       rethrow;
     } finally {
       loading.value = false;
     }
   }
+
+  /// Swaps a loaded recording to the newly preferred kind, from its start
+  /// (the two performances have no verified common timeline). A paused
+  /// recording stays paused and a stopped player stays stopped, so
+  /// manual-start, pause and autoplay rules are unchanged. MIDI is unaffected.
+  Future<void> _switchRecordingKind() => _enqueue(() async {
+        final cur = current.value;
+        final hymn = _loadedHymn;
+        final loaded = recordingKind.value;
+        if (cur == null ||
+            hymn == null ||
+            loaded == null ||
+            !_recording ||
+            !isCurrent(cur, hymn)) {
+          return;
+        }
+        final kind = recordingKindFor(hymn);
+        if (kind == null || kind == loaded) return;
+        final generation = _stopGeneration;
+        await _player.stop();
+        position.value = Duration.zero;
+        duration.value = Duration.zero;
+        recordingKind.value = kind;
+        try {
+          loading.value = true;
+          final file = await _recordingFile(hymn.version, hymn.number, kind);
+          if (generation != _stopGeneration || current.value != cur) return;
+          final source = DeviceFileSource(file.path);
+          if (cur.paused) {
+            await _player.setSource(source);
+          } else {
+            await _player.play(source);
+            await _applySpeed();
+          }
+        } catch (_) {
+          AppAnalytics.instance.event('play_error', variant: 'restart');
+          current.value = null;
+          recordingKind.value = null;
+          position.value = Duration.zero;
+          duration.value = Duration.zero;
+        } finally {
+          loading.value = false;
+        }
+      });
 
   Future<void> _channelToggle(Hymn hymn, {bool Function()? canStart}) async {
     final cur = current.value;
@@ -758,6 +848,7 @@ class MidiPlayer {
     _preview = false;
     final stopped = current.value;
     current.value = null;
+    recordingKind.value = null;
     if (stopped != null) {
       AppAnalytics.instance
           .event('play_stop', hymn: stopped.n, edition: stopped.version);

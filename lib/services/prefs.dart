@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/app_icon.dart';
 import 'package:sdahymnal/services/chord_detect.dart';
+import 'package:sdahymnal/services/hymn_recordings.dart';
 import 'package:sdahymnal/services/saved_hymn_store.dart';
 
 /// Layout is independent of brightness and of the MIDI instrument named
@@ -153,6 +154,28 @@ class Autoplay extends ValueNotifier<bool> {
   Future<void> set(bool enabled) async {
     value = enabled;
     await (await SharedPreferences.getInstance()).setBool('autoplay', enabled);
+  }
+}
+
+/// Preferred recorded performance (SharedPreferences key 'recordingVoice':
+/// 'instrumental' or 'sung', default 'instrumental'). A hymn recorded in only
+/// one kind plays that kind; hymns with verified MIDI keep MIDI playback.
+/// Changing it swaps a loaded recording in place without starting a paused one.
+class RecordingVoice extends ValueNotifier<RecordingKind> {
+  RecordingVoice._() : super(RecordingKind.instrumental);
+  static final RecordingVoice instance = RecordingVoice._();
+
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    value = prefs.getString('recordingVoice') == RecordingKind.sung.name
+        ? RecordingKind.sung
+        : RecordingKind.instrumental;
+  }
+
+  Future<void> set(RecordingKind kind) async {
+    value = kind;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('recordingVoice', kind.name);
   }
 }
 

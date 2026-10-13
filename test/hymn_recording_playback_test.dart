@@ -77,7 +77,7 @@ void main() {
     Completer<File>? pendingDownload;
     final player = MidiPlayer.forTesting(
         useNative: true,
-        recordingFile: (book, n) async {
+        recordingFile: (book, n, kind) async {
           fetched++;
           if (pendingDownload != null) return pendingDownload.future;
           return File('${dir.path}/$book-$n.m4a');
