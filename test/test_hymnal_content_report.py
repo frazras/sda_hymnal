@@ -11,6 +11,24 @@ spec = importlib.util.spec_from_file_location('content_report', ROOT / 'tool/val
 validator = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(validator)
 
+# Published optional text downloads and their exact source-numbered hymn counts.
+OPTIONAL_HYMNS = {
+    'sda-ny-khristu-mu-nyimbo': 350,
+    'sda-sn-kristu-munzwiyo': 300,
+    'sda-ki-nyimbo-cia-agendi': 299,
+    'sda-bem-klistu-mu-nyimbo': 311,
+    'sda-rw-indirimbo-zo-guhimbaza-imana': 500,
+    'sda-xh-ukristu-engomeni': 352,
+    'sda-zu-ukrestu-esihlabelelweni': 300,
+    'sda-kln-tienwogik-che-kilosune-jehovah': 245,
+    'sda-kam-mbathi-sya-kumutaia-ngai': 469,
+    'sda-mas-isinkolioitin': 243,
+    'sda-nso-kreste-ka-kopelo': 303,
+    'sda-tn-keresete-mo-kopelong': 300,
+    'sda-ve-ngosha-yadzingosha': 306,
+    'sda-ts-tinsimu-ta-mhalamhala': 311,
+}
+
 
 class ContentReportTest(unittest.TestCase):
     def setUp(self):
@@ -273,14 +291,20 @@ class ContentReportTest(unittest.TestCase):
         self.assertEqual(result, validator.report())
         self.assertEqual(result['errorCount'], 0)
         books = {b['bookId']: b for b in result['books']}
-        self.assertEqual(sum(b['items'] for b in books.values()), 3226)
+        self.assertEqual(sum(b['items'] for b in books.values()), 2876 + sum(OPTIONAL_HYMNS.values()))
         self.assertEqual(books['sda-es-2009']['media']['scoreHymns'], 614)
         self.assertEqual(books['sda-ru-1997']['media']['missingScoreItemIds'], ['244'])
         self.assertEqual(books['sda-es-1962']['media']['scoreHymns'], 0)
         self.assertEqual(result['catalogErrors'], [])
-        self.assertTrue(books['sda-ny-khristu-mu-nyimbo']['optionalDownload'])
-        self.assertEqual(books['sda-ny-khristu-mu-nyimbo']['items'], 350)
-        self.assertEqual(len(books['sda-ny-khristu-mu-nyimbo']['media']['missingScoreItemIds']), 350)
+        self.assertEqual({identity for identity, book in books.items() if book['optionalDownload']},
+                         set(OPTIONAL_HYMNS))
+        for identity, count in OPTIONAL_HYMNS.items():
+            with self.subTest(book=identity):
+                self.assertEqual(books[identity]['items'], count)
+                self.assertEqual(books[identity]['errors'], [])
+                self.assertEqual(books[identity]['missingNumbers'], [])
+                self.assertEqual(len(books[identity]['media']['missingScoreItemIds']), count)
+                self.assertEqual(books[identity]['media']['instrumentalRecordingItemIds'], [])
         for book, count in [('sda-es-2009', 614), ('sda-es-1962', 527), ('sda-ru-1997', 385)]:
             self.assertEqual(len(books[book]['media']['instrumentalRecordingItemIds']), count)
             self.assertEqual(books[book]['media']['missingInstrumentalRecordingItemIds'], [])

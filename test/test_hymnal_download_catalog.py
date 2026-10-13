@@ -14,11 +14,13 @@ spec.loader.exec_module(builder)
 
 
 class DownloadCatalogTest(unittest.TestCase):
-    def test_shipped_catalog_is_deterministic_and_pins_all_six_text_objects(self):
+    def test_shipped_catalog_is_deterministic_and_pins_every_text_object(self):
         catalog = builder.build()
         self.assertEqual(catalog, builder.build())
         self.assertEqual(catalog, json.loads(builder.DEST.read_text()))
-        self.assertEqual(len(catalog['books']), 7)
+        self.assertEqual(len(catalog['books']), 20)
+        optional = json.loads((ROOT / 'tool/data/language_download_sources.json').read_text())['optionalPacks']
+        self.assertEqual([book['path'] for book in catalog['books'] if 'path' in book], optional)
         for book in catalog['books']:
             self.assertIn(catalog['source']['revision'], book['url'])
             self.assertTrue(book['url'].endswith('/' + book.get('path', f'assets/hymnals/{book["bookId"]}.json')))

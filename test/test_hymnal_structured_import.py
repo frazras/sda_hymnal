@@ -127,7 +127,10 @@ class StructuredImportTest(unittest.TestCase):
             self.assertEqual(importer.build(manifest_path, output, override_path, check=True), result)
 
     def test_pinned_full_sources_regenerate_offline_and_detect_stale_output(self):
-        for name, count in [('french', 520), ('tagalog', 237), ('swahili', 220), ('cebuano', 237), ('chichewa', 350)]:
+        for name, count in [('french', 520), ('tagalog', 237), ('swahili', 220), ('cebuano', 237), ('chichewa', 350),
+                            ('icibemba', 311), ('isizulu-ndebele', 300), ('kalenjin', 245), ('kikuyu', 299),
+                            ('kinyarwanda', 500), ('sepedi', 303), ('shona', 300), ('tswana', 300),
+                            ('venda', 306), ('xhosa', 352), ('xitsonga', 311), ('kamba', 469), ('maasai', 243)]:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 manifest = ROOT / f'tool/data/structured_sources/{name}.manifest.json'
                 output = Path(directory) / 'pack.json'
@@ -138,6 +141,25 @@ class StructuredImportTest(unittest.TestCase):
                 output.write_text('{}')
                 with self.assertRaises(ValueError):
                     importer.build(manifest, output, check=True)
+
+    def test_published_optional_packs_regenerate_from_one_manifest(self):
+        sources = json.loads((ROOT / 'tool/data/language_download_sources.json').read_text())
+        manifests = {}
+        for path in sorted((ROOT / 'tool/data/structured_sources').glob('*.manifest.json')):
+            manifests.setdefault(json.loads(path.read_text())['book']['id'], []).append(path)
+        self.assertEqual(len(sources['optionalPacks']), len(set(sources['optionalPacks'])))
+        for asset in sources['optionalPacks']:
+            with self.subTest(asset=asset):
+                identity = Path(asset).stem
+                self.assertEqual(len(manifests.get(identity, [])), 1)
+                pack = importer.build(manifests[identity][0], ROOT / asset, check=True)
+                book = pack['book']
+                # The app parser requires the tag to match the identity segment.
+                self.assertEqual(book['id'], identity)
+                self.assertEqual(book['languageTag'], identity.split('-')[1])
+                self.assertIsNone(book['year'])
+                self.assertEqual(pack['topics'], [])
+                self.assertTrue(all(item['id'] == str(item['number']) for item in pack['items']))
 
 
 if __name__ == '__main__':

@@ -4,7 +4,20 @@
     "repository": "frazras/sda_hymnal",
     "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
     "optionalPacks": [
-      "resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
+      "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
+      "resources/hymnals/sda-sn-kristu-munzwiyo.json",
+      "resources/hymnals/sda-ki-nyimbo-cia-agendi.json",
+      "resources/hymnals/sda-bem-klistu-mu-nyimbo.json",
+      "resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json",
+      "resources/hymnals/sda-xh-ukristu-engomeni.json",
+      "resources/hymnals/sda-zu-ukrestu-esihlabelelweni.json",
+      "resources/hymnals/sda-kln-tienwogik-che-kilosune-jehovah.json",
+      "resources/hymnals/sda-kam-mbathi-sya-kumutaia-ngai.json",
+      "resources/hymnals/sda-mas-isinkolioitin.json",
+      "resources/hymnals/sda-nso-kreste-ka-kopelo.json",
+      "resources/hymnals/sda-tn-keresete-mo-kopelong.json",
+      "resources/hymnals/sda-ve-ngosha-yadzingosha.json",
+      "resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json"
     ]
   },
   "books": [
@@ -120,6 +133,227 @@
         "note": "All 350 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
       },
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
+    },
+    {
+      "bookId": "sda-sn-kristu-munzwiyo",
+      "displayName": "chiShona · Kristu MuNzwiyo",
+      "languageTag": "sn",
+      "year": null,
+      "path": "resources/hymnals/sda-sn-kristu-munzwiyo.json",
+      "bytes": 872568,
+      "sha256": "d71e2ad192ba24e314fefec7fee30f99582080a472604e302edd3b8e9390699e",
+      "hymnCount": 300,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 300,
+        "structurallyComplete": true,
+        "note": "All 300 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-sn-kristu-munzwiyo.json"
+    },
+    {
+      "bookId": "sda-ki-nyimbo-cia-agendi",
+      "displayName": "Gĩkũyũ · Nyimbo Cia Agendi",
+      "languageTag": "ki",
+      "year": null,
+      "path": "resources/hymnals/sda-ki-nyimbo-cia-agendi.json",
+      "bytes": 870927,
+      "sha256": "b7fe8d7cc6d21c42ad811414dfd3e2596e9711937070e5c06cbb37fec21e0c81",
+      "hymnCount": 299,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 299,
+        "structurallyComplete": true,
+        "note": "All 299 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ki-nyimbo-cia-agendi.json"
+    },
+    {
+      "bookId": "sda-bem-klistu-mu-nyimbo",
+      "displayName": "Icibemba · Klistu Mu Nyimbo",
+      "languageTag": "bem",
+      "year": null,
+      "path": "resources/hymnals/sda-bem-klistu-mu-nyimbo.json",
+      "bytes": 929471,
+      "sha256": "754457a970879d6b21d0978d9310a89c0c08343a93051892eac2c289ebede892",
+      "hymnCount": 311,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 311,
+        "structurallyComplete": true,
+        "note": "All 311 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-bem-klistu-mu-nyimbo.json"
+    },
+    {
+      "bookId": "sda-rw-indirimbo-zo-guhimbaza-imana",
+      "displayName": "Ikinyarwanda · Indirimbo Zo Guhimbaza Imana",
+      "languageTag": "rw",
+      "year": null,
+      "path": "resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json",
+      "bytes": 1555571,
+      "sha256": "cc8dd3dc3a97fce186257336d419b622e84d9a7be3b02afc4cc8ba57c479c16e",
+      "hymnCount": 500,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 500,
+        "structurallyComplete": true,
+        "note": "All 500 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json"
+    },
+    {
+      "bookId": "sda-xh-ukristu-engomeni",
+      "displayName": "isiXhosa · UKristu Engomeni",
+      "languageTag": "xh",
+      "year": null,
+      "path": "resources/hymnals/sda-xh-ukristu-engomeni.json",
+      "bytes": 1100743,
+      "sha256": "4fd2bbdc64e1b19336d85a0880d4097a2b9920244035c0495440af2eb4091985",
+      "hymnCount": 352,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 352,
+        "structurallyComplete": true,
+        "note": "All 352 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-xh-ukristu-engomeni.json"
+    },
+    {
+      "bookId": "sda-zu-ukrestu-esihlabelelweni",
+      "displayName": "isiZulu · UKrestu Esihlabelelweni",
+      "languageTag": "zu",
+      "year": null,
+      "path": "resources/hymnals/sda-zu-ukrestu-esihlabelelweni.json",
+      "bytes": 944940,
+      "sha256": "f5656452445130e1d1a70b20d777d5d51e3155a9865a913dfe28110942e9e5ca",
+      "hymnCount": 300,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 300,
+        "structurallyComplete": true,
+        "note": "All 300 source entries included. The source describes the book as isiZulu/Ndebele; its text follows isiZulu usage. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-zu-ukrestu-esihlabelelweni.json"
+    },
+    {
+      "bookId": "sda-kln-tienwogik-che-kilosune-jehovah",
+      "displayName": "Kalenjin · Tienwogik che Kilosune Jehovah",
+      "languageTag": "kln",
+      "year": null,
+      "path": "resources/hymnals/sda-kln-tienwogik-che-kilosune-jehovah.json",
+      "bytes": 701747,
+      "sha256": "77cd025552f3584ea07cc3bdde459dd36006def7d602c450b5041401d412b72d",
+      "hymnCount": 245,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 245,
+        "structurallyComplete": true,
+        "note": "All 245 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-kln-tienwogik-che-kilosune-jehovah.json"
+    },
+    {
+      "bookId": "sda-kam-mbathi-sya-kumutaia-ngai",
+      "displayName": "Kikamba · Mbathi sya Kumutaia Ngai",
+      "languageTag": "kam",
+      "year": null,
+      "path": "resources/hymnals/sda-kam-mbathi-sya-kumutaia-ngai.json",
+      "bytes": 1670202,
+      "sha256": "5aaefcd1a8ebc48ec9c0d527e6a66980544a0caaff2e23d72090c58a34236382",
+      "hymnCount": 469,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 469,
+        "structurallyComplete": true,
+        "note": "All 469 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-kam-mbathi-sya-kumutaia-ngai.json"
+    },
+    {
+      "bookId": "sda-mas-isinkolioitin",
+      "displayName": "Maa · Isinkolioitin",
+      "languageTag": "mas",
+      "year": null,
+      "path": "resources/hymnals/sda-mas-isinkolioitin.json",
+      "bytes": 735614,
+      "sha256": "0a809582b4a84c361f99c1f312fef551c02ac1fa445e7760b8d27c34f22b2da8",
+      "hymnCount": 243,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 243,
+        "structurallyComplete": true,
+        "note": "All 243 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-mas-isinkolioitin.json"
+    },
+    {
+      "bookId": "sda-nso-kreste-ka-kopelo",
+      "displayName": "Sepedi · Kreste Ka Kopelo",
+      "languageTag": "nso",
+      "year": null,
+      "path": "resources/hymnals/sda-nso-kreste-ka-kopelo.json",
+      "bytes": 768961,
+      "sha256": "bf7a96600c01e19b112c9b6549683beca7b387ef554614658a097136aea1c826",
+      "hymnCount": 303,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 303,
+        "structurallyComplete": true,
+        "note": "All 303 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-nso-kreste-ka-kopelo.json"
+    },
+    {
+      "bookId": "sda-tn-keresete-mo-kopelong",
+      "displayName": "Setswana · Keresete mo Kopelong",
+      "languageTag": "tn",
+      "year": null,
+      "path": "resources/hymnals/sda-tn-keresete-mo-kopelong.json",
+      "bytes": 1001599,
+      "sha256": "b9d216668bcef9a6bea5be1d0c64121ea4c3cc24a6e592b3fcc4fd935d2d584e",
+      "hymnCount": 300,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 300,
+        "structurallyComplete": true,
+        "note": "All 300 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-tn-keresete-mo-kopelong.json"
+    },
+    {
+      "bookId": "sda-ve-ngosha-yadzingosha",
+      "displayName": "Tshivenḓa · Ngosha YaDzingosha",
+      "languageTag": "ve",
+      "year": null,
+      "path": "resources/hymnals/sda-ve-ngosha-yadzingosha.json",
+      "bytes": 990576,
+      "sha256": "d108480531e6e142b92b174cc18f9618631569dcde0ae024e572073660f57fd3",
+      "hymnCount": 306,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 306,
+        "structurallyComplete": true,
+        "note": "All 306 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ve-ngosha-yadzingosha.json"
+    },
+    {
+      "bookId": "sda-ts-tinsimu-ta-mhalamhala",
+      "displayName": "Xitsonga · Tinsimu Ta Mhalamhala",
+      "languageTag": "ts",
+      "year": null,
+      "path": "resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json",
+      "bytes": 1026660,
+      "sha256": "ad5d7e1986f0557395d01de9c81a3c3a65f37daf5b6b76db27978dea010570fd",
+      "hymnCount": 311,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 311,
+        "structurallyComplete": true,
+        "note": "All 311 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json"
     }
   ]
 }

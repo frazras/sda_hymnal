@@ -70,6 +70,8 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Expand to the remaining reviewed Rejnac collections.
       Validate edition/language labels and disclose partial coverage; resolve
       known empty entries and duplicate numbers instead of silently renumbering.
+      Thirteen complete collections are generated, pinned, and listed in the
+      trusted text-download catalog; app registration of their IDs remains.
 - [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
       each in the audited source), plus optional Adventist Youth, Scripture-song,
       and supplemental songbooks. Preserve their source page numbering.

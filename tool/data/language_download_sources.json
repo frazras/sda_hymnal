@@ -2,6 +2,19 @@
   "repository": "frazras/sda_hymnal",
   "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
   "optionalPacks": [
-    "resources/hymnals/sda-ny-khristu-mu-nyimbo.json"
+    "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
+    "resources/hymnals/sda-sn-kristu-munzwiyo.json",
+    "resources/hymnals/sda-ki-nyimbo-cia-agendi.json",
+    "resources/hymnals/sda-bem-klistu-mu-nyimbo.json",
+    "resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json",
+    "resources/hymnals/sda-xh-ukristu-engomeni.json",
+    "resources/hymnals/sda-zu-ukrestu-esihlabelelweni.json",
+    "resources/hymnals/sda-kln-tienwogik-che-kilosune-jehovah.json",
+    "resources/hymnals/sda-kam-mbathi-sya-kumutaia-ngai.json",
+    "resources/hymnals/sda-mas-isinkolioitin.json",
+    "resources/hymnals/sda-nso-kreste-ka-kopelo.json",
+    "resources/hymnals/sda-tn-keresete-mo-kopelong.json",
+    "resources/hymnals/sda-ve-ngosha-yadzingosha.json",
+    "resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json"
   ]
 }

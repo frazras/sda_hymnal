@@ -352,11 +352,12 @@ and optional scores remain incomplete.
 
 ## Reviewed text download catalog
 
-`assets/hymnals/downloads.json` now lists six exact-edition text objects with byte
-sizes, SHA-256, hymn/topic counts, and source coverage notes. URLs pin this
-repository's commit `52c3a841f1d70fecf254486a7c0326d5a4318572`; no branch-name URL
-or number-based music reuse is involved. The bundled metadata is 3,951 bytes.
-It does not add another lyric pack or any audio to the app.
+`assets/hymnals/downloads.json` now lists 20 exact-edition text objects (the six
+bundled books and 14 optional downloads) with byte sizes, SHA-256, hymn/topic
+counts, and source coverage notes. URLs pin this repository's commit recorded in
+`tool/data/language_download_sources.json`; no branch-name URL or number-based
+music reuse is involved. The bundled metadata is 15,990 bytes. It does not add
+another lyric pack or any audio to the app.
 
 `tool/build_language_download_catalog.py` derives it from reviewed bundled packs
 and `tool/data/language_download_sources.json`. `--check` is part of the offline
@@ -446,11 +447,71 @@ explicit expected numbers from its structured-source manifest. Media reference
 checks apply to these books too; unavailable scores/recordings remain coverage
 gaps rather than fabricated assets. Duplicate optional identities fail the gate.
 
-The current report covers seven imported packs and 3,226 hymns, including the
-350-hymn optional Chichewa collection. This total excludes the original English
-books. The full publication gate passes 46 content tests and checks all seven
-text downloads, three score collections, five recording collections, and 583
+The current report covers 20 imported packs and 7,465 hymns, including 14
+optional collections (4,589 hymns). This total excludes the original English
+books. The full publication gate passes 40 content tests, regenerates every
+optional pack from its single pinned manifest, and checks all 20 text downloads,
+three score collections, five recording collections, and 583
 interface messages.
+
+## Expanded optional text collections
+
+Thirteen more Rejnac books follow the Chichewa pattern. Each has an unmodified
+pinned snapshot and manifest in `tool/data/structured_sources/`, a pack generated
+by the structured importer with the Chichewa options (no reviewed refrain tags)
+in `resources/hymnals/`, and an `optionalPacks` entry. None is bundled. Paths,
+revisions, byte sizes and SHA-256 match the [source inventory](multilingual-source-inventory.json),
+and every fetched file also matched its pinned Git blob hash.
+
+Identity rules: the ID is `sda-<tag>-<slug of the source title>`, where the title
+is the source metadata `Text` field (not the file name). The tag is the ISO 639-1
+code where one exists, otherwise ISO 639-2/3. Display names read
+`<native language name> · <source title>`. Years are null: no source states an
+edition year, and repository copyright dates are not edition years.
+
+| Book ID | Tag | Display name | Hymns | Numbers | Coverage |
+|---|---|---|---:|---|---|
+| `sda-sn-kristu-munzwiyo` | `sn` | chiShona · Kristu MuNzwiyo | 300 | 1–300 | Complete |
+| `sda-ki-nyimbo-cia-agendi` | `ki` | Gĩkũyũ · Nyimbo Cia Agendi | 299 | 1–299 | Complete |
+| `sda-bem-klistu-mu-nyimbo` | `bem` | Icibemba · Klistu Mu Nyimbo | 311 | 1–311 | Complete |
+| `sda-rw-indirimbo-zo-guhimbaza-imana` | `rw` | Ikinyarwanda · Indirimbo Zo Guhimbaza Imana | 500 | 1–500 | Complete |
+| `sda-xh-ukristu-engomeni` | `xh` | isiXhosa · UKristu Engomeni | 352 | 1–352 | Complete |
+| `sda-zu-ukrestu-esihlabelelweni` | `zu` | isiZulu · UKrestu Esihlabelelweni | 300 | 1–300 | Complete |
+| `sda-kln-tienwogik-che-kilosune-jehovah` | `kln` | Kalenjin · Tienwogik che Kilosune Jehovah | 245 | 1–245 | Complete |
+| `sda-kam-mbathi-sya-kumutaia-ngai` | `kam` | Kikamba · Mbathi sya Kumutaia Ngai | 469 | 1–469 | Complete |
+| `sda-mas-isinkolioitin` | `mas` | Maa · Isinkolioitin | 243 | 1–243 | Complete |
+| `sda-nso-kreste-ka-kopelo` | `nso` | Sepedi · Kreste Ka Kopelo | 303 | 1–303 | Complete |
+| `sda-tn-keresete-mo-kopelong` | `tn` | Setswana · Keresete mo Kopelong | 300 | 1–300 | Complete |
+| `sda-ve-ngosha-yadzingosha` | `ve` | Tshivenḓa · Ngosha YaDzingosha | 306 | 1–306 | Complete |
+| `sda-ts-tinsimu-ta-mhalamhala` | `ts` | Xitsonga · Tinsimu Ta Mhalamhala | 311 | 1–311 | Complete |
+
+Identity decisions, also recorded in each manifest's `notes`:
+
+- **isiZulu/Ndebele.** The README says "isiZulu and Ndebele" and the metadata
+  names no language. A book carries one tag, so the text was checked for forms
+  that differ between isiZulu and Northern Ndebele: Zulu comitatives
+  (*nami/nawe/naye/nathi/nani*) occur 124 times against one Ndebele *la-* form,
+  *manje* ("now") 54 times against no *khathesi*, and *nina* six times against
+  no *lina*. The text follows isiZulu, so the tag is `zu`; the coverage note
+  repeats the source's isiZulu/Ndebele label.
+- **Icibemba.** The metadata declares `ibb`, the ISO 639-3 code for Ibibio. The
+  README and the lyrics (*Lesa*, *Yesu*, *Mfumu*) are Bemba, so the tag is `bem`.
+- **Kalenjin** uses the macrolanguage code `kln`; the source names no variety.
+- **Xhosa and Xitsonga** use the metadata titles "UKristu Engomeni" and
+  "Tinsimu Ta Mhalamhala", which differ slightly from their file names.
+
+Source text is kept as published, including literal `&amp;` entities in
+Setswana and isiXhosa voice-part labels, a stray `<h2>` heading in Xitsonga #84,
+and tonic sol-fa fragments in seven Kikamba records. Same-title pairs with
+identical lyrics (Kalenjin 199/200, Kinyarwanda 439/440) are kept as possible
+alternate settings. These are lyric-review items, not structural failures.
+
+The runtime parser opens only books registered in `_supportedImportedBook`.
+These IDs are published in the trusted catalog ahead of that registration;
+`test/installed_language_packs_test.dart` checks their bytes and structure and
+expects the parser to refuse them until they are registered. The catalog still
+pins commit `129eb7caf04d1a6e1c15655452d7ff6e2535eb4e`, which predates these
+files: re-pin `revision` after publishing, then run `--verify-remote`.
 
 ## Importing community interface reviews
 

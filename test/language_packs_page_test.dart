@@ -14,6 +14,21 @@ import 'hymnal_pack_test.dart' show FilePackBundle;
 void main() {
   final bytes =
       File('resources/hymnals/sda-ny-khristu-mu-nyimbo.json').readAsBytesSync();
+  // Every optional book has its own row and controls; act on Chichewa's.
+  Finder chichewa(String action) =>
+      find.byKey(ValueKey('pack-$action-sda-ny-khristu-mu-nyimbo'));
+  // The page list, not the search field's own text scrollable.
+  final pageList = find
+      .descendant(
+          of: find.byKey(const ValueKey('language-packs')),
+          matching: find.byType(Scrollable))
+      .first;
+  final bundledIds = [
+    for (final book in jsonDecode(
+            File('assets/hymnals/catalog.json').readAsStringSync())['books']
+        as List<dynamic>)
+      book['id'] as String
+  ];
   for (final cancel in [false, true]) {
     testWidgets('failed or cancelled download remains retryable cancel=$cancel',
         (tester) async {
@@ -52,8 +67,8 @@ void main() {
         }
       }
       await tester.pumpAndSettle();
-      final download = find.byType(PillAction);
-      await tester.scrollUntilVisible(download, 300);
+      final download = chichewa('download');
+      await tester.scrollUntilVisible(download, 300, scrollable: pageList);
       await tester.ensureVisible(download);
       await tester.pumpAndSettle();
       await tester.tap(download);
@@ -70,9 +85,8 @@ void main() {
       expect(
           await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
           isNull);
-      expect(find.byType(PillAction), findsOneWidget);
-      expect(tester.widget<PillAction>(find.byType(PillAction)).onTap,
-          isNotNull);
+      expect(chichewa('download'), findsOneWidget);
+      expect(tester.widget<PillAction>(chichewa('download')).onTap, isNotNull);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });
@@ -148,12 +162,19 @@ void main() {
         }
       }
       await tester.pumpAndSettle();
-      final download = find.byType(PillAction);
-      await tester.scrollUntilVisible(download, 300);
+      // Bundled copies never download redundantly.
+      for (final id in bundledIds) {
+        await tester.scrollUntilVisible(find.byKey(ValueKey('pack-$id')), 300,
+            scrollable: pageList);
+        expect(find.byKey(ValueKey('pack-download-$id')), findsNothing);
+      }
+      // A previously installed older copy offers an update instead. Both
+      // groups sit above the included books, so scroll back up.
+      final download = chichewa(locale == 'en' ? 'update' : 'download');
+      await tester.scrollUntilVisible(download, -300, scrollable: pageList);
       await tester.ensureVisible(download);
       await tester.pumpAndSettle();
-      expect(download,
-          findsOneWidget); // Bundled copies never download redundantly.
+      expect(download, findsOneWidget);
       expect(requests, 0);
       if (locale == 'en') {
         expect(find.text('Update'), findsOneWidget);
@@ -180,7 +201,7 @@ void main() {
       expect(
           await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
           isNotNull);
-      final remove = find.byType(TextButton).last;
+      final remove = chichewa('remove');
       await tester.ensureVisible(remove);
       await tester.pumpAndSettle();
       await tester.runAsync(() async {
@@ -204,7 +225,7 @@ void main() {
       expect(
           await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
           isNull);
-      expect(find.byType(PillAction), findsOneWidget);
+      expect(chichewa('download'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });
