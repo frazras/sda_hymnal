@@ -3599,6 +3599,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} score pages · {size} MB'**
   String scorePackDetails(int count, String size);
+
+  /// Subtitle of the All languages choice in the hymnal picker (Search tab).
+  ///
+  /// In en, this message translates to:
+  /// **'Search every installed hymnal'**
+  String get searchEveryHymnal;
+
+  /// Last row of the hymnal picker; opens hymnal downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'More languages'**
+  String get moreLanguages;
+
+  /// Subtitle of the More languages row in the hymnal picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Download hymnals in other languages'**
+  String get moreLanguagesHelp;
+
+  /// Short label for browsing hymn titles alphabetically.
+  ///
+  /// In en, this message translates to:
+  /// **'A–Z'**
+  String get alphabeticalShort;
+
+  /// Shown under 'No matching hymns' when searching one hymnal.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the spelling, or choose All languages from the hymnal button above.'**
+  String get searchOtherLanguagesHint;
+
+  /// Reader options switch that shows or hides the floating music player.
+  ///
+  /// In en, this message translates to:
+  /// **'Music player'**
+  String get musicPlayer;
+
+  /// Reader options tile that plays the hymn's video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get videoShort;
+
+  /// Settings section holding the app language and hymnal downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get languagesSection;
+
+  /// Label above the Light / Dark / System choice in Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeLabel;
+
+  /// Hymnal downloads section listing optional books not yet downloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Available to download'**
+  String get packAvailableSection;
+
+  /// Short note on an optional hymnal: lyrics without music.
+  ///
+  /// In en, this message translates to:
+  /// **'Words only'**
+  String get packWordsOnly;
+
+  /// Short note on a hymnal download that does not contain every hymn of the printed book.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial collection'**
+  String get packPartial;
+
+  /// Favorites tab heading above the user's named favorite categories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get favoriteCategories;
+
+  /// Short action that creates a named favorite category.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get newCategoryShort;
+
+  /// Short action that opens the reorder page for favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder'**
+  String get reorderShort;
+
+  /// Subtitle of the Service playlists row at the top of Favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan the order of worship'**
+  String get servicePlaylistsHelp;
 }
 
 class _AppLocalizationsDelegate

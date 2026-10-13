@@ -582,5 +582,21 @@
   "packReviewPending": "Независимая проверка текстов ещё не выполнена",
   "packUpdate": "Обновить",
   "scorePacksHelp": "Сохраните сборники нот для использования без интернета. Напечатанные тональности и аранжировки не изменяются.",
-  "scorePackDetails": "Страниц нот: {count} · {size} МБ"
+  "scorePackDetails": "Страниц нот: {count} · {size} МБ",
+  "searchEveryHymnal": "Искать во всех установленных сборниках",
+  "moreLanguages": "Другие языки",
+  "moreLanguagesHelp": "Загрузить сборники на других языках",
+  "alphabeticalShort": "А–Я",
+  "searchOtherLanguagesHint": "Проверьте написание или выберите «Все языки» кнопкой сборника вверху.",
+  "musicPlayer": "Музыкальный плеер",
+  "videoShort": "Видео",
+  "languagesSection": "Языки",
+  "themeLabel": "Тема",
+  "packAvailableSection": "Доступно для загрузки",
+  "packWordsOnly": "Только текст",
+  "packPartial": "Неполный сборник",
+  "favoriteCategories": "Категории",
+  "newCategoryShort": "Новая категория",
+  "reorderShort": "Порядок",
+  "servicePlaylistsHelp": "Составьте порядок богослужения"
 }

@@ -2033,4 +2033,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String scorePackDetails(int count, String size) {
     return '$count score pages · $size MB';
   }
+
+  @override
+  String get searchEveryHymnal => 'Search every installed hymnal';
+
+  @override
+  String get moreLanguages => 'More languages';
+
+  @override
+  String get moreLanguagesHelp => 'Download hymnals in other languages';
+
+  @override
+  String get alphabeticalShort => 'A–Z';
+
+  @override
+  String get searchOtherLanguagesHint =>
+      'Check the spelling, or choose All languages from the hymnal button above.';
+
+  @override
+  String get musicPlayer => 'Music player';
+
+  @override
+  String get videoShort => 'Video';
+
+  @override
+  String get languagesSection => 'Languages';
+
+  @override
+  String get themeLabel => 'Theme';
+
+  @override
+  String get packAvailableSection => 'Available to download';
+
+  @override
+  String get packWordsOnly => 'Words only';
+
+  @override
+  String get packPartial => 'Partial collection';
+
+  @override
+  String get favoriteCategories => 'Categories';
+
+  @override
+  String get newCategoryShort => 'New category';
+
+  @override
+  String get reorderShort => 'Reorder';
+
+  @override
+  String get servicePlaylistsHelp => 'Plan the order of worship';
 }

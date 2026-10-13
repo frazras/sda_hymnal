@@ -582,5 +582,21 @@
   "packReviewPending": "Revisão independente das letras pendente",
   "packUpdate": "Atualizar",
   "scorePacksHelp": "Mantenha as partituras disponíveis offline. As tonalidades e os arranjos impressos permanecem iguais.",
-  "scorePackDetails": "{count} páginas de partituras · {size} MB"
+  "scorePackDetails": "{count} páginas de partituras · {size} MB",
+  "searchEveryHymnal": "Pesquisar em todos os hinários instalados",
+  "moreLanguages": "Mais idiomas",
+  "moreLanguagesHelp": "Baixar hinários em outros idiomas",
+  "alphabeticalShort": "A–Z",
+  "searchOtherLanguagesHint": "Verifique a ortografia ou escolha Todos os idiomas no botão do hinário, acima.",
+  "musicPlayer": "Player de música",
+  "videoShort": "Vídeo",
+  "languagesSection": "Idiomas",
+  "themeLabel": "Tema",
+  "packAvailableSection": "Disponíveis para baixar",
+  "packWordsOnly": "Somente letra",
+  "packPartial": "Coleção parcial",
+  "favoriteCategories": "Categorias",
+  "newCategoryShort": "Nova categoria",
+  "reorderShort": "Reordenar",
+  "servicePlaylistsHelp": "Planeje a ordem do culto"
 }

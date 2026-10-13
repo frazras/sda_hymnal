@@ -2051,4 +2051,53 @@ class AppLocalizationsEs extends AppLocalizations {
   String scorePackDetails(int count, String size) {
     return '$count páginas de partituras · $size MB';
   }
+
+  @override
+  String get searchEveryHymnal => 'Buscar en todos los himnarios instalados';
+
+  @override
+  String get moreLanguages => 'Más idiomas';
+
+  @override
+  String get moreLanguagesHelp => 'Descargar himnarios en otros idiomas';
+
+  @override
+  String get alphabeticalShort => 'A–Z';
+
+  @override
+  String get searchOtherLanguagesHint =>
+      'Revise la ortografía o elija Todos los idiomas con el botón del himnario, arriba.';
+
+  @override
+  String get musicPlayer => 'Reproductor de música';
+
+  @override
+  String get videoShort => 'Video';
+
+  @override
+  String get languagesSection => 'Idiomas';
+
+  @override
+  String get themeLabel => 'Tema';
+
+  @override
+  String get packAvailableSection => 'Disponibles para descargar';
+
+  @override
+  String get packWordsOnly => 'Solo letra';
+
+  @override
+  String get packPartial => 'Colección parcial';
+
+  @override
+  String get favoriteCategories => 'Categorías';
+
+  @override
+  String get newCategoryShort => 'Nueva categoría';
+
+  @override
+  String get reorderShort => 'Reordenar';
+
+  @override
+  String get servicePlaylistsHelp => 'Planifique el orden del culto';
 }

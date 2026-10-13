@@ -240,7 +240,15 @@ class BrandHeader extends StatelessWidget {
   /// When set, the logo mark + wordmark become tappable (Numbers tab home).
   final VoidCallback? onLogoTap;
 
-  const BrandHeader({super.key, this.onLogoTap});
+  /// Right-aligned control (the hymnal picker pill); the wordmark stays
+  /// centered on the screen regardless of its width.
+  final Widget? trailing;
+
+  /// Shorter header for small screens.
+  final bool compact;
+
+  const BrandHeader(
+      {super.key, this.onLogoTap, this.trailing, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
@@ -251,21 +259,30 @@ class BrandHeader extends StatelessWidget {
       t.isDark
           ? 'assets/brand/wordmark_dark.png'
           : 'assets/brand/wordmark_light.png',
-      height: 38,
+      height: compact ? 30 : 38,
       fit: BoxFit.contain,
       filterQuality: FilterQuality.medium,
     );
-    return Container(
-      height: 52,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      alignment: Alignment.center,
-      child: onLogoTap == null
-          ? brand
-          : Pressable.child(
-              onTap: onLogoTap,
-              pressedScale: 0.97,
-              child: brand,
-            ),
+    final logo = onLogoTap == null
+        ? brand
+        : Pressable.child(
+            onTap: onLogoTap,
+            pressedScale: 0.97,
+            child: brand,
+          );
+    return SizedBox(
+      height: compact ? 42 : 52,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: trailing == null ? 24 : 92),
+            child: logo,
+          ),
+          if (trailing != null) Positioned(right: 16, child: trailing!),
+        ],
+      ),
     );
   }
 }
@@ -288,47 +305,62 @@ class SubPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Container(
-      constraints: const BoxConstraints(minHeight: 56),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: t.line2)),
-      ),
-      child: Row(
-        children: [
-          Pressable(
-            onTap: () => Navigator.pop(context),
-            pressedScale: 1.0,
-            builder: (context, pressed) => Container(
-              width: 42,
-              height: 42,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: pressed ? t.surface2 : null,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: HymnalIcons.backChevron(t.ink),
-            ),
+    // Headers stay compact at very large text sizes; page content still
+    // scales fully.
+    return MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.6,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: t.line2)),
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: center ??
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 16.5,
-                    fontWeight: FontWeight.w600,
-                    color: t.ink,
+          child: Row(
+            children: [
+              Tooltip(
+                message: MaterialLocalizations.of(context).backButtonTooltip,
+                child: Semantics(
+                  button: true,
+                  label: MaterialLocalizations.of(context).backButtonTooltip,
+                  excludeSemantics: true,
+                  child: Pressable(
+                    key: const ValueKey('subpage-back'),
+                    onTap: () => Navigator.maybePop(context),
+                    pressedScale: 1.0,
+                    builder: (context, pressed) => Container(
+                      width: 42,
+                      height: 42,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: pressed ? t.surface2 : null,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: HymnalIcons.backChevron(t.ink),
+                    ),
                   ),
                 ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: center ??
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600,
+                        color: t.ink,
+                      ),
+                    ),
+              ),
+              const SizedBox(width: 6),
+              trailing ?? const SizedBox(width: 42),
+            ],
           ),
-          const SizedBox(width: 6),
-          trailing ?? const SizedBox(width: 42),
-        ],
-      ),
-    );
+        ));
   }
 }
 
@@ -483,8 +515,8 @@ class SectionLabel extends StatelessWidget {
 // Slide route (kept from the old app; sub-pages slide in from the right)
 // ---------------------------------------------------------------------------
 
-PageRouteBuilder slideRoute(Widget page, {bool fromLeft = false}) {
-  return PageRouteBuilder(
+PageRouteBuilder<T> slideRoute<T>(Widget page, {bool fromLeft = false}) {
+  return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => page,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final tween = Tween(
@@ -517,9 +549,11 @@ String styleHymnBody(String html, HymnalTokens t, double fontSize) {
         (m) =>
             '<span style="font-family:$kSans;font-size:${versePx.toStringAsFixed(1)}px;font-weight:700;letter-spacing:${trackingEm(0.14, versePx).toStringAsFixed(2)}px;color:$accent">${m[1]}</span>',
       )
-      .replaceAll(
-        '<font color="#CD9B1D">CHORUS:</font>',
-        '<span style="font-family:$kSans;font-size:${chorusPx.toStringAsFixed(1)}px;font-weight:700;letter-spacing:${trackingEm(0.14, chorusPx).toStringAsFixed(2)}px;color:$gold;font-style:normal">CHORUS</span>',
+      // English "CHORUS:" and imported refrain labels ("Coro:", "Припев:").
+      .replaceAllMapped(
+        RegExp(r'<font color="#CD9B1D">([^<:]+):</font>'),
+        (m) =>
+            '<span style="font-family:$kSans;font-size:${chorusPx.toStringAsFixed(1)}px;font-weight:700;letter-spacing:${trackingEm(0.14, chorusPx).toStringAsFixed(2)}px;color:$gold;font-style:normal">${m[1]!.trim().toUpperCase()}</span>',
       )
       .replaceAllMapped(RegExp(r'<font color="([^"]*)"[^>]*>'), (m) {
     final lc = m[1]!.toLowerCase();

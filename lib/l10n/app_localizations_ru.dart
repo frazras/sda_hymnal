@@ -2072,4 +2072,53 @@ class AppLocalizationsRu extends AppLocalizations {
   String scorePackDetails(int count, String size) {
     return 'Страниц нот: $count · $size МБ';
   }
+
+  @override
+  String get searchEveryHymnal => 'Искать во всех установленных сборниках';
+
+  @override
+  String get moreLanguages => 'Другие языки';
+
+  @override
+  String get moreLanguagesHelp => 'Загрузить сборники на других языках';
+
+  @override
+  String get alphabeticalShort => 'А–Я';
+
+  @override
+  String get searchOtherLanguagesHint =>
+      'Проверьте написание или выберите «Все языки» кнопкой сборника вверху.';
+
+  @override
+  String get musicPlayer => 'Музыкальный плеер';
+
+  @override
+  String get videoShort => 'Видео';
+
+  @override
+  String get languagesSection => 'Языки';
+
+  @override
+  String get themeLabel => 'Тема';
+
+  @override
+  String get packAvailableSection => 'Доступно для загрузки';
+
+  @override
+  String get packWordsOnly => 'Только текст';
+
+  @override
+  String get packPartial => 'Неполный сборник';
+
+  @override
+  String get favoriteCategories => 'Категории';
+
+  @override
+  String get newCategoryShort => 'Новая категория';
+
+  @override
+  String get reorderShort => 'Порядок';
+
+  @override
+  String get servicePlaylistsHelp => 'Составьте порядок богослужения';
 }

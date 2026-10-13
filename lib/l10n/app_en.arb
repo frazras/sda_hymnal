@@ -945,5 +945,69 @@
         "type": "String"
       }
     }
+  },
+  "searchEveryHymnal": "Search every installed hymnal",
+  "@searchEveryHymnal": {
+    "description": "Subtitle of the All languages choice in the hymnal picker (Search tab)."
+  },
+  "moreLanguages": "More languages",
+  "@moreLanguages": {
+    "description": "Last row of the hymnal picker; opens hymnal downloads."
+  },
+  "moreLanguagesHelp": "Download hymnals in other languages",
+  "@moreLanguagesHelp": {
+    "description": "Subtitle of the More languages row in the hymnal picker."
+  },
+  "alphabeticalShort": "A–Z",
+  "@alphabeticalShort": {
+    "description": "Short label for browsing hymn titles alphabetically."
+  },
+  "searchOtherLanguagesHint": "Check the spelling, or choose All languages from the hymnal button above.",
+  "@searchOtherLanguagesHint": {
+    "description": "Shown under 'No matching hymns' when searching one hymnal."
+  },
+  "musicPlayer": "Music player",
+  "@musicPlayer": {
+    "description": "Reader options switch that shows or hides the floating music player."
+  },
+  "videoShort": "Video",
+  "@videoShort": {
+    "description": "Reader options tile that plays the hymn's video."
+  },
+  "languagesSection": "Languages",
+  "@languagesSection": {
+    "description": "Settings section holding the app language and hymnal downloads."
+  },
+  "themeLabel": "Theme",
+  "@themeLabel": {
+    "description": "Label above the Light / Dark / System choice in Settings."
+  },
+  "packAvailableSection": "Available to download",
+  "@packAvailableSection": {
+    "description": "Hymnal downloads section listing optional books not yet downloaded."
+  },
+  "packWordsOnly": "Words only",
+  "@packWordsOnly": {
+    "description": "Short note on an optional hymnal: lyrics without music."
+  },
+  "packPartial": "Partial collection",
+  "@packPartial": {
+    "description": "Short note on a hymnal download that does not contain every hymn of the printed book."
+  },
+  "favoriteCategories": "Categories",
+  "@favoriteCategories": {
+    "description": "Favorites tab heading above the user's named favorite categories."
+  },
+  "newCategoryShort": "New category",
+  "@newCategoryShort": {
+    "description": "Short action that creates a named favorite category."
+  },
+  "reorderShort": "Reorder",
+  "@reorderShort": {
+    "description": "Short action that opens the reorder page for favorites."
+  },
+  "servicePlaylistsHelp": "Plan the order of worship",
+  "@servicePlaylistsHelp": {
+    "description": "Subtitle of the Service playlists row at the top of Favorites."
   }
 }
