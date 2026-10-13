@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_text.dart';
 import '../services/app_language.dart';
+import '../theme.dart';
+import 'kit.dart';
 
 const interfaceLanguageNames = {
   'en': 'English',
@@ -10,34 +12,31 @@ const interfaceLanguageNames = {
 };
 
 Future<void> showAppLanguagePicker(BuildContext context) async {
-  final selected = await showModalBottomSheet<String>(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => SafeArea(
-        child: ConstrainedBox(
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .75),
-      child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(context.appText.interfaceLanguage,
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text(context.appText.interfaceLanguageHelp),
-            const SizedBox(height: 8),
-            for (final entry in interfaceLanguageNames.entries)
-              ListTile(
-                  key: ValueKey('interface-language-${entry.key}'),
-                  title: Text(entry.value),
-                  selected:
-                      AppLanguage.instance.value.languageCode == entry.key,
-                  trailing: AppLanguage.instance.value.languageCode == entry.key
-                      ? const Icon(Icons.check)
-                      : null,
-                  onTap: () => Navigator.pop(context, entry.key)),
-          ]),
-    )),
+  final current = AppLanguage.instance.value.languageCode;
+  final selected = await showHymnalSheet<String>(
+    context,
+    title: context.appText.interfaceLanguage,
+    builder: (sheet) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          child: Text(sheet.appText.interfaceLanguageHelp,
+              style: TextStyle(
+                  fontFamily: kSans, fontSize: 13, color: sheet.tokens.muted)),
+        ),
+        for (final (i, entry) in interfaceLanguageNames.entries.indexed)
+          SheetOption(
+            key: ValueKey('interface-language-${entry.key}'),
+            leading: CodeTile(entry.key.toUpperCase(),
+                selected: current == entry.key),
+            title: entry.value,
+            selected: current == entry.key,
+            divider: i < interfaceLanguageNames.length - 1,
+            onTap: () => Navigator.pop(sheet, entry.key),
+          ),
+      ],
+    ),
   );
   if (selected == null) return;
   try {
