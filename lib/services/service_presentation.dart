@@ -102,10 +102,15 @@ class ServicePresentation {
       final blocks = hymn != null
           ? HymnTextExport(hymn)
               .sections
-              .map((s) => (text: s.text, role: null as String?))
+              .map((s) => (
+                    text: s.text,
+                    role: null as String?,
+                    labelled: !s.generatedLabel
+                  ))
               .toList()
           : reading!.segments
-              .map((s) => (text: s.text, role: s.role as String?))
+              .map((s) =>
+                  (text: s.text, role: s.role as String?, labelled: false))
               .toList();
       final before = slides.length;
       for (final block in blocks) {
@@ -114,14 +119,24 @@ class ServicePresentation {
           throw FormatException('Empty service block: ${entry.id}');
         }
         final lines = text.split('\n');
-        for (var start = 0; start < lines.length; start += linesPerSlide) {
-          final end = (start + linesPerSlide).clamp(0, lines.length);
+        // A printed verse number or refrain name rides with the first lines
+        // and never counts toward the limit. Long blocks divide evenly, so a
+        // slide is never left holding one orphaned line.
+        final label = block.labelled && lines.length > 1 ? lines.first : null;
+        final body = label == null ? lines : lines.sublist(1);
+        final pieces = (body.length / linesPerSlide).ceil();
+        final size = (body.length / pieces).ceil();
+        for (var start = 0; start < body.length; start += size) {
+          final end = (start + size).clamp(0, body.length);
           slides.add(PresentationSlide(
               occurrenceId: entry.id,
               ref: entry.ref,
               title: title,
               bookLabel: book,
-              text: lines.sublist(start, end).join('\n'),
+              text: [
+                if (start == 0 && label != null) label,
+                ...body.sublist(start, end)
+              ].join('\n'),
               role: block.role));
         }
       }

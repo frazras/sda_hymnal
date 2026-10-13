@@ -69,6 +69,26 @@ void main() {
     expect(deck.slides.first.ref, hymn.ref);
     expect(() => deck.slides.clear(), throwsUnsupportedError);
   });
+  test('long stanzas divide evenly and labels never leave an orphan line', () {
+    final long = Hymn(
+        number: 9,
+        title: 'Siete',
+        body: ['<b>1</b>', for (var i = 1; i <= 7; i++) 'Línea $i'].join('<br>'),
+        version: 'sda-es-2009',
+        languageTag: 'es');
+    final repo =
+        HymnalRepository(editions: repository.editions, hymns: [long]);
+    final deck = ServicePresentation.build(
+        ServicePlaylist(
+            id: 'long',
+            name: 'Long',
+            entries: [ServiceEntry(id: 'only', ref: long.ref)]),
+        repo);
+    expect(deck.slides.map((s) => s.text.split('\n').length), [5, 3],
+        reason: 'Label plus four lines, then three; never six and one');
+    expect(deck.slides.first.text.split('\n').first, '1');
+  });
+
   test('VideoPsalm songbook preserves occurrences, Unicode and reading roles',
       () {
     final deck =
