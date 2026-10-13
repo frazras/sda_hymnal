@@ -7,6 +7,10 @@ import '../models/hymnal_pack.dart';
 import '../services/installed_language_packs.dart';
 import '../services/language_pack_download.dart';
 import '../services/language_pack_store.dart';
+import '../models/hymnal_book.dart';
+import '../theme.dart';
+import 'common.dart';
+import 'kit.dart';
 
 typedef PackFetch = Future<Uint8List> Function(LanguagePackDownload descriptor,
     {LanguagePackCancellation? cancellation,
@@ -29,6 +33,8 @@ class LanguagePacksPage extends StatefulWidget {
 class _LanguagePacksPageState extends State<LanguagePacksPage> {
   List<LanguagePackDownload>? _downloads;
   final _names = <String, String>{};
+  final _tags = <String, String>{};
+  final _partial = <String>{};
   final _bundled = <String>{};
   final _installed = <String>{};
   final _updates = <String>{};
@@ -74,8 +80,16 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
         _downloads = downloads;
         _store = store;
         _names.clear();
+        _tags.clear();
+        _partial.clear();
         for (final book in metadata['books'] as List) {
-          _names[book['bookId'] as String] = book['displayName'] as String;
+          final id = book['bookId'] as String;
+          _names[id] = book['displayName'] as String;
+          _tags[id] = book['languageTag'] as String? ?? '';
+          final coverage = book['coverage'];
+          if (coverage is Map && coverage['structurallyComplete'] == false) {
+            _partial.add(id);
+          }
         }
         _bundled
           ..clear()
@@ -142,75 +156,123 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
   @override
   Widget build(BuildContext context) {
     final text = context.appText;
-    return Scaffold(
-      appBar: AppBar(title: Text(text.languagePacks)),
-      body: _downloads == null
-          ? Center(
-              child: _failed
-                  ? TextButton(onPressed: _load, child: Text(text.retry))
-                  : const CircularProgressIndicator())
-          : ListView(padding: const EdgeInsets.all(16), children: [
-              Text(text.languagePacksHelp),
-              ListTile(
-                  leading: const Icon(Icons.library_music_outlined),
-                  title: Text(text.sheetMusic),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (_) => const ScorePacksPage()))),
-              const SizedBox(height: 16),
-              for (final download in _downloads!)
-                Card(
-                    child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(_names[download.bookId] ?? download.bookId,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium),
-                              const SizedBox(height: 8),
-                              Text(text.packDetails(
-                                  download.hymnCount,
-                                  (download.bytes / (1024 * 1024))
-                                      .toStringAsFixed(1))),
-                              if (_bundled.contains(download.bookId))
-                                Text(text.packBundled)
-                              else ...[
-                                Text(text.packNoMusic),
-                                Text(text.packReviewPending),
-                              ],
-                              if (_installed.contains(download.bookId))
-                                Text(text.packInstalled),
-                              if (_updates.contains(download.bookId) &&
-                                  _busy != download.bookId)
-                                FilledButton(
-                                    onPressed: _busy == null
-                                        ? () => _change(download, remove: false)
-                                        : null,
-                                    child: Text(text.packUpdate)),
-                              if (_busy == download.bookId) ...[
-                                LinearProgressIndicator(value: _progress),
-                                TextButton(
-                                    onPressed: _removing
-                                        ? null
-                                        : () => _cancel?.cancel(),
-                                    child: Text(text.cancel)),
-                              ] else if (_installed.contains(download.bookId))
-                                TextButton(
-                                    onPressed: _busy == null
-                                        ? () => _change(download, remove: true)
-                                        : null,
-                                    child: Text(text.remove))
-                              else if (!_bundled.contains(download.bookId))
-                                FilledButton(
-                                    onPressed: _busy == null
-                                        ? () => _change(download, remove: false)
-                                        : null,
-                                    child: Text(text.packDownload)),
-                            ]))),
-            ]),
+    final t = context.tokens;
+    final downloads = _downloads;
+    if (downloads == null) {
+      return HymnalPage(
+        title: text.languagePacks,
+        body: _failed
+            ? EmptyHint(
+                title: text.packDownloadFailed,
+                action: TextButton(onPressed: _load, child: Text(text.retry)))
+            : const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final optional =
+        downloads.where((d) => !_bundled.contains(d.bookId)).toList();
+    final installed =
+        optional.where((d) => _installed.contains(d.bookId)).toList();
+    final available =
+        optional.where((d) => !_installed.contains(d.bookId)).toList();
+    final included =
+        downloads.where((d) => _bundled.contains(d.bookId)).toList();
+    Widget group(String label, List<LanguagePackDownload> books) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SectionLabel(label.toUpperCase(), padding: sectionPadding()),
+            HymnalCard(
+              child: Column(children: [
+                for (final (i, book) in books.indexed)
+                  _row(book, divider: i < books.length - 1),
+              ]),
+            ),
+          ],
+        );
+    return HymnalPage(
+      title: text.languagePacks,
+      body: ListView(
+        key: const ValueKey('language-packs'),
+        padding: const EdgeInsets.only(bottom: 28),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+            child: Text(text.languagePacksHelp,
+                style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 13,
+                    height: 1.4,
+                    color: t.muted)),
+          ),
+          HymnalCard(
+            child: SettingsRow(
+              key: const ValueKey('score-packs-link'),
+              leading: const RowIcon(Icons.library_music_outlined),
+              title: text.sheetMusic,
+              subtitle: text.scorePacksHelp,
+              onTap: () => Navigator.push(
+                  context, slideRoute(const ScorePacksPage())),
+            ),
+          ),
+          if (installed.isNotEmpty) group(text.packInstalled, installed),
+          if (available.isNotEmpty) group(text.packAvailableSection, available),
+          if (included.isNotEmpty) group(text.packBundled, included),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(LanguagePackDownload download, {required bool divider}) {
+    final text = context.appText;
+    final t = context.tokens;
+    final id = download.bookId;
+    final name = _names[id] ?? id;
+    final bundled = _bundled.contains(id);
+    final installed = _installed.contains(id);
+    final busy = _busy == id;
+    final details = [
+      editionShortLabel(id, name),
+      text.packDetails(download.hymnCount,
+          (download.bytes / (1024 * 1024)).toStringAsFixed(1)),
+      if (_partial.contains(id)) text.packPartial,
+      if (!bundled) text.packWordsOnly,
+    ].join(' · ');
+    Widget trailing;
+    if (busy) {
+      trailing = BusyAction(
+          key: ValueKey('pack-cancel-$id'),
+          progress: _progress,
+          cancelTooltip: text.cancel,
+          onCancel: _removing ? null : () => _cancel?.cancel());
+    } else if (_updates.contains(id)) {
+      trailing = PillAction(
+          key: ValueKey('pack-update-$id'),
+          label: text.packUpdate,
+          onTap: _busy == null ? () => _change(download, remove: false) : null);
+    } else if (installed) {
+      trailing = TextButton(
+          key: ValueKey('pack-remove-$id'),
+          onPressed:
+              _busy == null ? () => _change(download, remove: true) : null,
+          child: Text(text.remove));
+    } else if (bundled) {
+      trailing = Icon(Icons.check_circle, size: 20, color: t.accent);
+    } else {
+      trailing = PillAction(
+          key: ValueKey('pack-download-$id'),
+          label: text.packDownload,
+          icon: Icons.download_rounded,
+          onTap: _busy == null ? () => _change(download, remove: false) : null);
+    }
+    return DownloadRow(
+      key: ValueKey('pack-$id'),
+      code: id.split('-')[1].toUpperCase(),
+      title: languageNameFor(_tags[id] ?? '', name),
+      details: details,
+      active: installed || bundled,
+      progress: _progress,
+      showProgress: busy && !_removing && _progress != null,
+      divider: divider,
+      trailing: trailing,
     );
   }
 }

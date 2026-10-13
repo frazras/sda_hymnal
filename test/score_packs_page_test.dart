@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sdahymnal/ui/kit.dart';
 import 'package:sdahymnal/l10n/app_localizations.dart';
 import 'package:sdahymnal/services/score_pack_store.dart';
 import 'package:sdahymnal/models/hymn_sheet_music.dart';
@@ -109,7 +110,7 @@ void main() {
               bundle: bundle(false), child: ScorePacksPage(store: store)),
         ));
         await settleIo(tester);
-        final download = find.byType(FilledButton);
+        final download = find.byType(PillAction);
         await tester.ensureVisible(download);
         await tester.pumpAndSettle();
         expect(requests, 0);
@@ -127,7 +128,7 @@ void main() {
         await tester.tap(remove);
         await settleIo(tester);
         expect(await tester.runAsync(() => store.load('sda-en-1985')), isNull);
-        expect(find.byType(FilledButton), findsOneWidget);
+        expect(find.byType(PillAction), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       });
@@ -150,14 +151,14 @@ void main() {
           home: DefaultAssetBundle(
               bundle: bundle(false), child: ScorePacksPage(store: store))));
       await settleIo(tester);
-      await tester.tap(find.byType(FilledButton));
+      await tester.tap(find.byType(PillAction));
       await tester.pump();
       if (cancel) {
-        await tester.tap(find.text('Cancel'));
+        await tester.tap(find.byTooltip('Cancel'));
       }
       await settleIo(tester);
       expect(await tester.runAsync(() => store.load('sda-en-1985')), isNull);
-      expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      expect(tester.widget<PillAction>(find.byType(PillAction)).onTap,
           isNotNull);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
@@ -175,8 +176,8 @@ void main() {
         home: DefaultAssetBundle(
             bundle: bundle(true), child: ScorePacksPage(store: store))));
     await settleIo(tester);
-    expect(find.text('Included in the app'), findsOneWidget);
-    expect(find.byType(FilledButton), findsNothing);
+    expect(find.textContaining('Included in the app'), findsOneWidget);
+    expect(find.byType(PillAction), findsNothing);
     expect(find.byType(TextButton), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());

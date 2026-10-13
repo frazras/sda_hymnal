@@ -1,4 +1,6 @@
 import 'common.dart';
+import 'kit.dart';
+import 'package:sdahymnal/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/services.dart';
@@ -62,64 +64,67 @@ class _HymnSharePageState extends State<HymnSharePage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: Text(context.appText.copyOrShareLyrics)),
-      body: SafeArea(
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: DropdownButtonFormField<int>(
-              key: const ValueKey('share-lyric-section'),
-              initialValue: -1,
-              isExpanded: true,
-              decoration:
-                  InputDecoration(labelText: context.appText.includeLyrics),
-              items: [
-                DropdownMenuItem(
-                    value: -1, child: Text(context.appText.fullHymn)),
-                for (var i = 0; i < _export.sections.length; i++)
-                  DropdownMenuItem(
-                      value: i,
-                      child: Text(_sectionLabel(i),
-                          overflow: TextOverflow.ellipsis)),
-              ],
-              onChanged: (value) => setState(() => _selection = value ?? -1),
-            ),
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Align(
-                alignment: widget.hymn.isRightToLeft
-                    ? Alignment.topRight
-                    : Alignment.topLeft,
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return HymnalPage(
+      title: context.appText.copyOrShareLyrics,
+      body: Column(children: [
+        SingleChildScrollView(
+          key: const ValueKey('share-lyric-section'),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+          child: Row(children: [
+            for (var i = -1; i < _export.sections.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(right: 7),
+                child: FilterPill(
+                  label: i < 0 ? context.appText.fullHymn : _sectionLabel(i),
+                  selected: _selection == i,
+                  onTap: () => setState(() => _selection = i),
+                ),
+              ),
+          ]),
+        ),
+        Expanded(
+          child: HymnalCard(
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+              child: SizedBox(
+                width: double.infinity,
                 child: SelectableText(_text,
                     textDirection: hymnTextDirection(widget.hymn),
                     textAlign: TextAlign.start,
                     key: const ValueKey('share-lyric-preview'),
-                    style: Theme.of(context).textTheme.bodyLarge)),
-          )),
+                    style: TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 16,
+                        height: 1.55,
+                        color: t.ink)),
+              ),
+            ),
+          ),
+        ),
+      ]),
+      bottom: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+        child: Row(children: [
+          Expanded(
+            child: OutlinedButton.icon(
+                onPressed: _copy,
+                icon: const Icon(Icons.copy, size: 18),
+                label: Text(context.appText.copyControl)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Builder(
+                builder: (buttonContext) => FilledButton.icon(
+                    onPressed: _sharing ? null : () => _share(buttonContext),
+                    icon: const Icon(Icons.ios_share, size: 18),
+                    label: Text(context.appText.shareControl))),
+          ),
         ]),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              children: [
-                OutlinedButton.icon(
-                    onPressed: _copy,
-                    icon: const Icon(Icons.copy),
-                    label: Text(context.appText.copyControl)),
-                Builder(
-                    builder: (buttonContext) => FilledButton.icon(
-                        onPressed:
-                            _sharing ? null : () => _share(buttonContext),
-                        icon: const Icon(Icons.share_outlined),
-                        label: Text(context.appText.shareControl))),
-              ],
-            )),
-      ));
+    );
+  }
 }

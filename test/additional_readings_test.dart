@@ -4,6 +4,8 @@ import 'package:sdahymnal/l10n/app_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sdahymnal/ui/kit.dart';
+import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/additional_readings.dart';
@@ -28,9 +30,9 @@ void main() {
       theme: buildHymnalTheme(HymnalTokens.light),
       home: AdditionalReadingsPage(catalog: catalog),
     ));
-    await tester.tap(find.widgetWithText(ChoiceChip, category));
+    await tester.tap(find.widgetWithText(FilterPill, category));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('${group.first.number}  ${group.first.title}'));
+    await tester.tap(find.text(group.first.title));
     await tester.pumpAndSettle();
     expect(find.text('Category: $category · 1 of ${group.length}'),
         findsOneWidget);
@@ -41,10 +43,12 @@ void main() {
     await tester.pump();
     final preview = find.byKey(const ValueKey('reading-turn-preview'));
     expect(preview, findsOneWidget);
-    expect(find.descendant(of: preview, matching: find.byType(AppBar)),
+    expect(find.descendant(of: preview, matching: find.byType(SubPageHeader)),
         findsOneWidget);
     expect(
-        find.descendant(of: preview, matching: find.text('Start auto-scroll')),
+        find.descendant(
+            of: preview,
+            matching: find.text('${group[1].number}  ${group[1].title}')),
         findsOneWidget);
     expect(
         find.descendant(

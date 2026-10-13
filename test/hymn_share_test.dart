@@ -69,9 +69,10 @@ void main() {
           expect(copied, contains('388 · Señor\nEspañol 2009'));
           expect(copied, contains('Primera línea'));
           expect(copied, contains('Segunda línea'));
-          await tester.tap(find.byKey(const ValueKey('share-lyric-section')));
-          await tester.pumpAndSettle();
+          // Sections are pills; every choice is visible without a menu.
           expect(find.text('Coro:'), findsOneWidget);
+          await tester.ensureVisible(find.text(text.lyricVerse('2')).last);
+          await tester.pumpAndSettle();
           await tester.tap(find.text(text.lyricVerse('2')).last);
           await tester.pumpAndSettle();
           await tester.tap(find.text(text.copyControl));
@@ -129,9 +130,9 @@ void main() {
       await tester.pumpAndSettle();
       final text = tester.element(find.byType(HymnSharePage)).appText;
       expect(find.text(text.fullHymn), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('share-lyric-section')));
-      await tester.pumpAndSettle();
       expect(find.text(text.lyricSection(1)), findsOneWidget);
+      await tester.ensureVisible(find.text(text.lyricSection(2)).last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text(text.lyricSection(2)).last);
       await tester.pumpAndSettle();
       final preview = tester

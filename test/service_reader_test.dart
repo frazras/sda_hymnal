@@ -129,7 +129,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AdditionalReadingPage), findsOneWidget);
       expect(find.text('Service: Sabbath · 2 of 3'), findsOneWidget);
-      await tester.tap(find.text('Next'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
       await tester.pumpAndSettle();
       expect(find.byType(HymnPage), findsOneWidget);
       expect(find.text('Service: Sabbath · 3 of 3'), findsOneWidget);

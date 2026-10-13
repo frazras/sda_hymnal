@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/ui/saved_hymn_notice.dart';
+import 'package:sdahymnal/theme.dart';
+import 'package:sdahymnal/ui/kit.dart';
 
 class FavoriteOrderPage extends StatelessWidget {
   final String? sublistId;
@@ -21,44 +23,51 @@ class FavoriteOrderPage extends StatelessWidget {
                 .where((list) => list.id == sublistId)
                 .firstOrNull;
         final entries = sublistId == null ? saved.value : category?.hymns ?? [];
-        return Scaffold(
-          appBar: AppBar(
-              title: Text(context.appText
-                  .reorderList(category?.name ?? context.appText.favorites))),
-          body: SafeArea(
-            child: ReorderableListView.builder(
-              header: Column(children: [
-                const SavedHymnNotice(),
-                Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(context.appText.reorderHelp)),
-              ]),
-              buildDefaultDragHandles: false,
-              itemCount: entries.length,
-              onReorderItem: (from, to) =>
-                  saved.reorderHymns(from, to, sublistId: sublistId),
-              itemBuilder: (context, index) {
-                final entry = entries[index];
-                final hymn = resolve(entry);
-                return ListTile(
-                  key: ValueKey('order-${entry.v}-${entry.n}'),
-                  leading: Text('${entry.n}'),
-                  title: Text(hymn?.title ?? context.appText.hymnUnavailable),
-                  subtitle: Text(hymn?.bookLabel ?? entry.v),
+        return HymnalPage(
+          title: context.appText
+              .reorderList(category?.name ?? context.appText.favorites),
+          body: ReorderableListView.builder(
+            header: Column(children: [
+              const SavedHymnNotice(),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 14, 24, 10),
+                  child: Text(context.appText.reorderHelp,
+                      style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 13,
+                          height: 1.4,
+                          color: context.tokens.muted))),
+            ]),
+            buildDefaultDragHandles: false,
+            itemCount: entries.length,
+            onReorderItem: (from, to) =>
+                saved.reorderHymns(from, to, sublistId: sublistId),
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              final hymn = resolve(entry);
+              return Material(
+                key: ValueKey('order-${entry.v}-${entry.n}'),
+                color: context.tokens.bg,
+                child: HymnRow(
+                  number: '${entry.n}',
+                  title: hymn?.title ?? context.appText.hymnUnavailable,
+                  subtitle: hymn?.bookLabel ?? entry.v,
+                  onTap: () {},
                   trailing: saved.storageError.value
-                      ? null
+                      ? const SizedBox(width: 14)
                       : ReorderableDragStartListener(
                           index: index,
                           child: Semantics(
                               label: context.appText
                                   .moveHymn(hymn?.title ?? entry.n.toString()),
                               child: Padding(
-                                  padding: EdgeInsets.all(12),
-                                  child: Icon(Icons.drag_handle))),
+                                  padding: const EdgeInsets.all(8),
+                                  child: Icon(Icons.drag_handle,
+                                      color: context.tokens.faint))),
                         ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },

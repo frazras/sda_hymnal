@@ -10,6 +10,8 @@ import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/kit.dart';
+import 'package:sdahymnal/models/hymnal_book.dart';
 
 /// Favorites tab — content only (the shell renders the brand header above and
 /// the bottom nav below): the hymns the user hearted, most recently added
@@ -60,6 +62,41 @@ class FavoritesTab extends StatelessWidget {
       context,
       slideRoute(FavoriteOrderPage(sublistId: categoryId, resolve: _resolve)));
 
+  Future<void> _manage(BuildContext context, FavoriteSublist list,
+      String action) async {
+    final saved = Favorites.instance;
+    if (action == 'rename') {
+      await editFavoriteSublist(context, list: list);
+    } else if (action == 'reorder') {
+      _reorder(context, categoryId: list.id);
+    } else {
+      final remove = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(context.appText.deleteListQuestion(list.name)),
+                content: Text(context.appText.deleteCategoryHelp),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(context.appText.cancel)),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(context.appText.delete)),
+                ],
+              ));
+      if (remove == true) await saved.deleteSublist(list.id);
+    }
+  }
+
+  Widget _sectionHeader(BuildContext context, String label, Widget? action) =>
+      Padding(
+        padding: const EdgeInsets.fromLTRB(24, 18, 12, 4),
+        child: Row(children: [
+          Expanded(child: SectionLabel(label.toUpperCase())),
+          if (action != null) Flexible(child: action),
+        ]),
+      );
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
@@ -68,108 +105,122 @@ class FavoritesTab extends StatelessWidget {
       animation: Listenable.merge([saved, saved.sublists]),
       builder: (context, _) {
         final hymns = saved.value.map(_resolve).whereType<Hymn>().toList();
+        final categories = saved.sublists.value;
         return ListView(
-          padding: EdgeInsets.zero,
+          padding: const EdgeInsets.only(bottom: 24),
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Flexible(
-                    child: TextButton.icon(
-                  key: const ValueKey('create-favorite-sublist'),
-                  onPressed: () => editFavoriteSublist(context),
-                  icon: const Icon(Icons.playlist_add),
-                  label: Text(context.appText.newFavoriteCategory),
-                )),
-                if (serviceRepository != null)
-                  PopupMenuButton<String>(
-                      tooltip: context.appText.moreFavoritesOptions,
-                      onSelected: (_) => Navigator.push(
-                          context,
-                          slideRoute(ServicePlaylistsPage(
-                              repository: serviceRepository!))),
-                      itemBuilder: (_) => [
-                            PopupMenuItem(
-                                value: 'services',
-                                child: Text(context.appText.servicePlaylists))
-                          ]),
-              ],
-            ),
-            for (final list in saved.sublists.value)
-              ExpansionTile(
-                key: PageStorageKey('favorite-sublist-${list.id}'),
-                leading: Icon(Icons.folder_outlined, color: t.accent),
-                title: Text(list.name),
-                subtitle: Text(context.appText.hymnCount(list.hymns.length)),
-                trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                  PopupMenuButton<String>(
-                    tooltip: context.appText.manageList(list.name),
-                    onSelected: (action) async {
-                      if (action == 'rename') {
-                        await editFavoriteSublist(context, list: list);
-                      } else if (action == 'reorder') {
-                        _reorder(context, categoryId: list.id);
-                      } else {
-                        final remove = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                                  title: Text(context.appText
-                                      .deleteListQuestion(list.name)),
-                                  content:
-                                      Text(context.appText.deleteCategoryHelp),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, false),
-                                        child: Text(context.appText.cancel)),
-                                    TextButton(
-                                        onPressed: () =>
-                                            Navigator.pop(context, true),
-                                        child: Text(context.appText.delete)),
-                                  ],
-                                ));
-                        if (remove == true) await saved.deleteSublist(list.id);
-                      }
-                    },
-                    itemBuilder: (_) => [
-                      PopupMenuItem(
-                          value: 'rename', child: Text(context.appText.rename)),
-                      PopupMenuItem(
-                          value: 'reorder',
-                          child: Text(context.appText.reorderHymns)),
-                      PopupMenuItem(
-                          value: 'delete',
-                          child: Text(context.appText.deleteCategory)),
-                    ],
-                  ),
-                  const Icon(Icons.expand_more),
-                ]),
-                children: [
-                  if (list.hymns.isEmpty)
-                    Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(context.appText.emptyFavoriteCategory)),
-                  for (final hymn in list.hymns.map(_resolve).whereType<Hymn>())
-                    _buildRow(context, hymn, category: list),
-                ],
+            if (serviceRepository != null)
+              HymnalCard(
+                margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                child: SettingsRow(
+                  key: const ValueKey('open-service-playlists'),
+                  leading: RowIcon(Icons.queue_music_outlined, color: t.accent),
+                  title: context.appText.servicePlaylists,
+                  subtitle: context.appText.servicePlaylistsHelp,
+                  onTap: () => Navigator.push(
+                      context,
+                      slideRoute(
+                          ServicePlaylistsPage(repository: serviceRepository!))),
+                ),
               ),
-            if (saved.sublists.value.isNotEmpty)
-              Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(context.appText.mainFavorites,
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-            if (hymns.isEmpty)
-              Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: _emptyState(context, t)),
-            if (saved.value.length > 1)
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
+            _sectionHeader(
+              context,
+              context.appText.favoriteCategories,
+              LinkAction(
+                key: const ValueKey('create-favorite-sublist'),
+                icon: Icons.add,
+                label: context.appText.newCategoryShort,
+                onTap: () => editFavoriteSublist(context),
+              ),
+            ),
+            if (categories.isNotEmpty)
+              HymnalCard(
+                child: Column(children: [
+                  for (final (i, list) in categories.indexed)
+                    Container(
+                      decoration: BoxDecoration(
+                          border: i < categories.length - 1
+                              ? Border(bottom: BorderSide(color: t.line2))
+                              : null),
+                      child: Theme(
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
+                        child: ExpansionTile(
+                          key: PageStorageKey('favorite-sublist-${list.id}'),
+                          tilePadding: const EdgeInsets.only(left: 16, right: 4),
+                          leading:
+                              Icon(Icons.folder_outlined, color: t.accent, size: 22),
+                          title: Text(list.name,
+                              style: TextStyle(
+                                  fontFamily: kSans,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: t.ink)),
+                          subtitle: Text(
+                              context.appText.hymnCount(list.hymns.length),
+                              style: TextStyle(
+                                  fontFamily: kSans,
+                                  fontSize: 12.5,
+                                  color: t.muted)),
+                          trailing:
+                              Row(mainAxisSize: MainAxisSize.min, children: [
+                            PopupMenuButton<String>(
+                              tooltip: context.appText.manageList(list.name),
+                              icon: Icon(Icons.more_vert,
+                                  size: 20, color: t.faint),
+                              onSelected: (action) =>
+                                  _manage(context, list, action),
+                              itemBuilder: (_) => [
+                                PopupMenuItem(
+                                    value: 'rename',
+                                    child: Text(context.appText.rename)),
+                                PopupMenuItem(
+                                    value: 'reorder',
+                                    child: Text(context.appText.reorderHymns)),
+                                PopupMenuItem(
+                                    value: 'delete',
+                                    child: Text(context.appText.deleteCategory)),
+                              ],
+                            ),
+                            Icon(Icons.expand_more, color: t.faint),
+                          ]),
+                          children: [
+                            if (list.hymns.isEmpty)
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                                  child: Text(
+                                      context.appText.emptyFavoriteCategory,
+                                      style: TextStyle(
+                                          fontFamily: kSans,
+                                          fontSize: 12.5,
+                                          color: t.muted))),
+                            for (final hymn
+                                in list.hymns.map(_resolve).whereType<Hymn>())
+                              _buildRow(context, hymn, category: list),
+                          ],
+                        ),
+                      ),
+                    ),
+                ]),
+              ),
+            _sectionHeader(
+              context,
+              categories.isNotEmpty
+                  ? context.appText.mainFavorites
+                  : context.appText.favorites,
+              saved.value.length > 1
+                  ? LinkAction(
                       key: const ValueKey('reorder-main-favorites'),
-                      onPressed: () => _reorder(context),
-                      icon: const Icon(Icons.reorder),
-                      label: Text(context.appText.reorderFavorites))),
+                      icon: Icons.swap_vert,
+                      label: context.appText.reorderShort,
+                      onTap: () => _reorder(context))
+                  : null,
+            ),
+            if (hymns.isEmpty)
+              EmptyHint(
+                  title: context.appText.noFavoritesYet,
+                  message: context.appText.addFavoritesHelp),
             for (final hymn in hymns) _buildRow(context, hymn),
           ],
         );
@@ -177,83 +228,33 @@ class FavoritesTab extends StatelessWidget {
     );
   }
 
-  Widget _emptyState(BuildContext context, HymnalTokens t) {
-    return Center(
-      child: Text.rich(
-        TextSpan(children: [
-          TextSpan(text: '${context.appText.noFavoritesYet}\n'),
-          TextSpan(
-            text: context.appText.addFavoritesHelp,
-            style: TextStyle(fontSize: 11.5),
-          ),
-        ]),
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: 13,
-          color: t.faint,
-        ),
-      ),
-    );
-  }
-
   Widget _buildRow(BuildContext context, Hymn hymn,
       {FavoriteSublist? category}) {
     final t = context.tokens;
-    return Pressable(
+    final badge = hymn.isEnglishEdition
+        ? VersionBadge(
+            isNew: hymn.version == 'new',
+            fontSize: 7.5,
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3))
+        : VersionBadge(
+            isNew: true,
+            label: crossLanguageBadge(hymn),
+            fontSize: 7.5,
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3));
+    return HymnRow(
+      key: ValueKey(
+          'favorite-${category?.id ?? 'main'}-${hymn.version}-${hymn.number}'),
+      number: '${hymn.number}',
+      title: hymn.title,
+      textDirection: hymnTextDirection(hymn),
+      badge: badge,
       onTap: () => _openHymn(context, hymn, category: category),
-      pressedScale: 1.0,
-      builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          color: pressed ? t.surface2 : Colors.transparent,
-          border: Border(bottom: BorderSide(color: t.line2)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              constraints: const BoxConstraints(minWidth: 28),
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${hymn.number}',
-                style: TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w600,
-                  color: t.accent,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                hymn.title,
-                textDirection: hymnTextDirection(hymn),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.12,
-                  color: t.ink,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            VersionBadge(
-              isNew: hymn.version == 'new',
-              label: hymn.isEnglishEdition ? null : hymn.bookLabel,
-              fontSize: 7.5,
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-            ),
-            const SizedBox(width: 12),
-            Pressable.child(
-              onTap: () => saveFavorite(context, hymn),
-              pressedScale: 0.9,
-              child: HymnalIcons.heart(t.accent, filled: true),
-            ),
-          ],
+      trailing: Pressable.child(
+        onTap: () => saveFavorite(context, hymn),
+        pressedScale: 0.9,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: HymnalIcons.heart(t.accent, filled: true),
         ),
       ),
     );

@@ -5,9 +5,13 @@ import '../services/error_reports.dart';
 import 'report_error.dart';
 import 'hymn_page_turn.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
+import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/fontsize.dart';
+import 'package:sdahymnal/ui/kit.dart';
 
 class AdditionalReadingsPage extends StatefulWidget {
   final AdditionalReadingCatalog catalog;
@@ -20,13 +24,18 @@ class AdditionalReadingsPage extends StatefulWidget {
 
 class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
   String _category = 'ALL';
-  String _query = '';
+  final _query = TextEditingController();
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final t = context.tokens;
     final categories = ['ALL', ...widget.catalog.categories];
-    final query = normalizeHymnSearch(_query);
+    final query = normalizeHymnSearch(_query.text);
     final readings = widget.catalog.readings.where((reading) {
       final categoryMatch = _category == 'ALL' || reading.category == _category;
       final queryMatch = query.isEmpty ||
@@ -37,88 +46,63 @@ class _AdditionalReadingsPageState extends State<AdditionalReadingsPage> {
       return categoryMatch && queryMatch;
     }).toList(growable: false);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.appText.additionalReadingsTitle),
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: HymnalIcons.backChevron(t.ink),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+    return HymnalPage(
+      title: context.appText.additionalReadingsTitle,
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-            child: TextField(
-              onChanged: (value) => setState(() => _query = value),
-              decoration: InputDecoration(
-                hintText: context.appText.searchReadings,
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: t.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: t.line),
-                ),
-              ),
-            ),
+          HymnSearchField(
+            controller: _query,
+            hint: context.appText.searchReadings,
+            clearTooltip: context.appText.clearSearch,
+            onChanged: (_) => setState(() {}),
+            margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
             child: Row(children: [
               for (final category in categories)
                 Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(category == 'ALL'
+                    padding: const EdgeInsets.only(right: 7),
+                    child: FilterPill(
+                      label: category == 'ALL'
                           ? context.appText.allReadings
-                          : category),
+                          : category,
                       selected: _category == category,
-                      onSelected: (_) => setState(() => _category = category),
+                      onTap: () => setState(() => _category = category),
                     )),
             ]),
           ),
           Expanded(
             child: readings.isEmpty
-                ? Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Text(context.appText.noMatchingReadings)))
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                ? EmptyHint(title: context.appText.noMatchingReadings)
+                : ListView.builder(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    padding: const EdgeInsets.only(bottom: 24),
                     itemCount: readings.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final reading = readings[index];
-                      return Card(
-                        child: ListTile(
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(16, 8, 12, 8),
-                          title: Text('${reading.number}  ${reading.title}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: Text([
-                              reading.category,
-                              if (reading.scriptureReference?.isNotEmpty ??
-                                  false)
-                                reading.scriptureReference!,
-                            ].join('  •  ')),
-                          ),
-                          trailing: HymnalIcons.rowChevron(t.muted),
-                          onTap: () => Navigator.push(
+                      return HymnRow(
+                        key: ValueKey('reading-row-${reading.id}'),
+                        number: '${reading.number}',
+                        title: reading.title,
+                        subtitle: [
+                          reading.category,
+                          if (reading.scriptureReference?.isNotEmpty ?? false)
+                            reading.scriptureReference!,
+                        ].join(' · '),
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (_) => AdditionalReadingPage(
-                                    reading: reading,
-                                    readings: readings,
-                                    categoryTitle:
-                                        _category == 'ALL' ? null : _category)),
-                          ),
-                        ),
+                            slideRoute(AdditionalReadingPage(
+                                reading: reading,
+                                readings: readings,
+                                categoryTitle:
+                                    _category == 'ALL' ? null : _category)),
+                          );
+                        },
                       );
                     },
                   ),
@@ -249,150 +233,212 @@ class _AdditionalReadingPageState extends State<AdditionalReadingPage>
           child: _reader(context),
         );
 
+  void _report() => Navigator.push(
+      context,
+      slideRoute(ReportErrorPage(
+          subject: ErrorReportSubject(
+              kind: 'reading',
+              title: widget.reading.title,
+              edition: widget.reading.edition,
+              number: widget.reading.number,
+              itemId: widget.reading.id))));
+
+  void _showOptions() {
+    showHymnalSheet<void>(
+      context,
+      title: context.appText.readingOptions,
+      builder: (sheet) => ValueListenableBuilder<bool>(
+        valueListenable: AutoScroll.instance,
+        builder: (context, autoScroll, _) => Column(children: [
+          SettingsRow(
+            key: const ValueKey('reading-text-size'),
+            leading: const RowIcon(Icons.text_fields),
+            title: context.appText.textSize,
+            divider: true,
+            onTap: () {
+              Navigator.pop(sheet);
+              Navigator.push(context, slideRoute(const FontSizer()));
+            },
+          ),
+          SettingsSwitchRow(
+            key: const ValueKey('reading-auto-scroll'),
+            leading: const RowIcon(Icons.vertical_align_bottom),
+            title: context.appText.autoScroll,
+            value: autoScroll,
+            divider: true,
+            onChanged: (on) {
+              AutoScroll.instance.set(on);
+              if (!on && _running) _toggleAutoScroll();
+            },
+          ),
+          SettingsRow(
+            key: const ValueKey('reading-report-error'),
+            leading: const RowIcon(Icons.flag_outlined),
+            title: context.appText.reportErrors,
+            onTap: () {
+              Navigator.pop(sheet);
+              _report();
+            },
+          ),
+        ]),
+      ),
+    );
+  }
+
   Widget _reader(BuildContext context) {
     final t = context.tokens;
     return Scaffold(
-      bottomNavigationBar: widget.sequence == null
-          ? null
-          : SafeArea(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                  Expanded(
-                      child: TextButton.icon(
-                          onPressed: widget.sequence!.canMove(-1)
-                              ? () => _move(-1)
-                              : null,
-                          icon: const Icon(Icons.chevron_left),
-                          label: Text(context.appText.previousControl))),
-                  Expanded(
-                      child: TextButton.icon(
-                          onPressed: widget.sequence!.canMove(1)
-                              ? () => _move(1)
-                              : null,
-                          icon: const Icon(Icons.chevron_right),
-                          label: Text(context.appText.nextControl))),
-                ])),
-      appBar: AppBar(
-        title: Text('${widget.reading.number}  ${widget.reading.title}'),
-        actions: [
-          PopupMenuButton<String>(
-            tooltip: context.appText.readingOptions,
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                  value: 'report', child: Text(context.appText.reportErrors))
-            ],
-            onSelected: (_) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => ReportErrorPage(
-                        subject: ErrorReportSubject(
-                            kind: 'reading',
-                            title: widget.reading.title,
-                            edition: widget.reading.edition,
-                            number: widget.reading.number,
-                            itemId: widget.reading.id)))),
-          )
-        ],
-        leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: HymnalIcons.backChevron(t.ink),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Column(
-        children: [
-          if (widget.categoryTitle != null || widget.sequence != null)
-            Container(
-              key: const ValueKey('reading-category-indicator'),
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: t.surface,
-                border: Border(bottom: BorderSide(color: t.line2)),
-              ),
-              child: Text(
-                widget.sequence?.labelFor(context) ??
-                    context.appText.categoryPosition(
-                        widget.categoryTitle!,
-                        widget.readings
-                                .indexWhere((r) => r.id == widget.reading.id) +
-                            1,
-                        widget.readings.length),
-                style:
-                    TextStyle(fontFamily: kSans, fontSize: 13, color: t.accent),
-              ),
-            ),
-          Expanded(
-              child: Stack(
-            children: [
-              ListView(
-                key: const ValueKey('additional-reading-scroll'),
-                controller: _scroll,
-                padding: const EdgeInsets.fromLTRB(22, 18, 22, 100),
-                children: [
-                  Text(widget.reading.category.toUpperCase(),
-                      style: TextStyle(
-                          color: t.accent,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.1)),
-                  if (widget.reading.scriptureReference?.isNotEmpty ??
-                      false) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.menu_book_outlined,
-                            size: 18, color: t.muted),
-                        const SizedBox(width: 7),
-                        Expanded(
-                          child: Text(
-                              context.appText.readingScripture(
-                                  widget.reading.scriptureReference!),
-                              style: TextStyle(color: t.muted)),
-                        ),
-                      ],
-                    ),
-                  ],
-                  const SizedBox(height: 24),
-                  ...widget.reading.segments.expand((segment) => [
-                        Text(segment.text,
+      backgroundColor: t.bg,
+      // Same keyboard paging as the hymn reader.
+      body: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _move(-1),
+          const SingleActivator(LogicalKeyboardKey.arrowRight): () => _move(1),
+        },
+        child: Focus(
+          autofocus: !widget.previewOnly,
+          child: SafeArea(
+            child: Column(
+              children: [
+                SubPageHeader(
+                  center: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Text(widget.reading.category.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: trackingEm(0.14, 10),
+                          color: t.muted,
+                        )),
+                    const SizedBox(height: 1),
+                    Text.rich(
+                      TextSpan(children: [
+                        TextSpan(
+                            text: '${widget.reading.number}  ',
                             style: TextStyle(
-                              fontFamily: kSerif,
-                              fontSize: 19,
-                              height: 1.55,
-                              fontWeight: segment.isCongregation
-                                  ? FontWeight.w700
-                                  : FontWeight.w400,
-                              fontStyle: segment.isCongregation
-                                  ? FontStyle.italic
-                                  : FontStyle.normal,
-                              color: t.ink,
-                            )),
-                        const SizedBox(height: 24),
+                                color: t.accent, fontWeight: FontWeight.w700)),
+                        TextSpan(text: widget.reading.title),
                       ]),
-                ],
-              ),
-              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 20,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: FloatingActionButton.extended(
-                    heroTag: widget.previewOnly ? null : 'reading-auto-scroll',
-                    onPressed: _toggleAutoScroll,
-                    icon: Icon(_running ? Icons.pause : Icons.play_arrow),
-                    label: Text(_running
-                        ? context.appText.pauseReading
-                        : context.appText.startAutoScroll),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600,
+                        height: 1.1,
+                        color: t.ink,
+                      ),
+                    ),
+                  ]),
+                  trailing: IconButton(
+                    key: const ValueKey('reading-options'),
+                    tooltip: context.appText.readingOptions,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(Icons.more_vert, color: t.ink),
+                    onPressed: _showOptions,
                   ),
                 ),
-              ),
-            ],
-          )),
-        ],
+                if (widget.categoryTitle != null || widget.sequence != null)
+                  Container(
+                    key: const ValueKey('reading-category-indicator'),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: t.surface,
+                      border: Border(bottom: BorderSide(color: t.line2)),
+                    ),
+                    child: Text(
+                      widget.sequence?.labelFor(context) ??
+                          context.appText.categoryPosition(
+                              widget.categoryTitle!,
+                              widget.readings.indexWhere(
+                                      (r) => r.id == widget.reading.id) +
+                                  1,
+                              widget.readings.length),
+                      style: TextStyle(
+                          fontFamily: kSans, fontSize: 13, color: t.accent),
+                    ),
+                  ),
+                Expanded(
+                    child: Stack(
+                  children: [
+                    ValueListenableBuilder<double>(
+                      valueListenable: FontSizeController.instance,
+                      builder: (context, fontSize, _) => ListView(
+                        key: const ValueKey('additional-reading-scroll'),
+                        controller: _scroll,
+                        padding: const EdgeInsets.fromLTRB(24, 18, 24, 100),
+                        children: [
+                          if (widget.reading.scriptureReference?.isNotEmpty ??
+                              false)
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(Icons.menu_book_outlined,
+                                    size: 16, color: t.muted),
+                                const SizedBox(width: 7),
+                                Expanded(
+                                  child: Text(
+                                      context.appText.readingScripture(
+                                          widget.reading.scriptureReference!),
+                                      style: TextStyle(
+                                          fontFamily: kSans,
+                                          fontSize: 12.5,
+                                          color: t.muted)),
+                                ),
+                              ],
+                            ),
+                          const SizedBox(height: 18),
+                          ...widget.reading.segments.expand((segment) => [
+                                Text(segment.text,
+                                    style: TextStyle(
+                                      fontFamily: kSerif,
+                                      fontSize: fontSize,
+                                      height: 1.6,
+                                      fontWeight: segment.isCongregation
+                                          ? FontWeight.w700
+                                          : FontWeight.w400,
+                                      fontStyle: segment.isCongregation
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
+                                      color: t.ink,
+                                    )),
+                                SizedBox(height: fontSize * 1.1),
+                              ]),
+                        ],
+                      ),
+                    ),
+                    // Auto-scroll is opt-in, as in the hymn reader.
+                    ValueListenableBuilder<bool>(
+                      valueListenable: AutoScroll.instance,
+                      builder: (context, enabled, _) => !enabled
+                          ? const SizedBox.shrink()
+                          : Positioned(
+                              right: 20,
+                              bottom: 20,
+                              child: FloatingActionButton.extended(
+                                heroTag: widget.previewOnly
+                                    ? null
+                                    : 'reading-auto-scroll',
+                                onPressed: _toggleAutoScroll,
+                                icon: Icon(
+                                    _running ? Icons.pause : Icons.play_arrow),
+                                label: Text(_running
+                                    ? context.appText.pauseReading
+                                    : context.appText.startAutoScroll),
+                              ),
+                            ),
+                    ),
+                  ],
+                )),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

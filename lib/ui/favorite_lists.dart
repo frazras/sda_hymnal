@@ -1,4 +1,6 @@
 import 'common.dart';
+import 'kit.dart';
+import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
@@ -17,56 +19,55 @@ void saveFavorite(BuildContext context, Hymn hymn) {
   if (!favorites.containsAnywhere(hymn.number, hymn.version)) {
     favorites.toggle(hymn);
   }
-  showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => SafeArea(
-      child: ConstrainedBox(
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .75),
-        child: AnimatedBuilder(
-          animation: Listenable.merge(
-              [favorites, favorites.sublists, favorites.storageError]),
-          builder: (context, _) => ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            children: [
-              const SavedHymnNotice(),
-              ListTile(
-                title: Text(context.appText.saveToFavorites,
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(hymn.title.trim(),
-                    textDirection: hymnTextDirection(hymn)),
-                trailing: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(context.appText.done)),
-              ),
-              CheckboxListTile(
-                key: const ValueKey('favorite-parent-checkbox'),
-                title: Text(context.appText.favorites),
-                subtitle: Text(context.appText.mainFavoritesList),
-                value: favorites.contains(hymn.number, hymn.version),
-                onChanged: favorites.storageError.value
-                    ? null
-                    : (_) => favorites.toggle(hymn),
-              ),
-              for (final list in favorites.sublists.value)
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: CheckboxListTile(
-                    key: ValueKey('favorite-sublist-checkbox-${list.id}'),
-                    title: Text(list.name),
-                    value:
-                        list.hymns.contains((n: hymn.number, v: hymn.version)),
-                    onChanged: favorites.storageError.value
-                        ? null
-                        : (selected) => favorites.setSublistHymn(
-                            list.id, hymn, selected ?? false),
-                  ),
-                ),
-            ],
+  showHymnalSheet<void>(
+    context,
+    title: context.appText.saveToFavorites,
+    titleTrailing: Builder(
+        builder: (sheet) => TextButton(
+            onPressed: () => Navigator.pop(sheet),
+            child: Text(sheet.appText.done))),
+    builder: (sheet) => AnimatedBuilder(
+      animation:
+          Listenable.merge([favorites, favorites.sublists, favorites.storageError]),
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SavedHymnNotice(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 6),
+            child: Text(hymn.title.trim(),
+                textDirection: hymnTextDirection(hymn),
+                style: TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: context.tokens.ink)),
           ),
-        ),
+          CheckboxListTile(
+            key: const ValueKey('favorite-parent-checkbox'),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            secondary: Icon(Icons.favorite, color: context.tokens.accent),
+            title: Text(context.appText.favorites),
+            subtitle: Text(context.appText.mainFavoritesList),
+            value: favorites.contains(hymn.number, hymn.version),
+            onChanged: favorites.storageError.value
+                ? null
+                : (_) => favorites.toggle(hymn),
+          ),
+          for (final list in favorites.sublists.value)
+            CheckboxListTile(
+              key: ValueKey('favorite-sublist-checkbox-${list.id}'),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+              secondary: Icon(Icons.folder_outlined,
+                  color: context.tokens.accent),
+              title: Text(list.name),
+              value: list.hymns.contains((n: hymn.number, v: hymn.version)),
+              onChanged: favorites.storageError.value
+                  ? null
+                  : (selected) =>
+                      favorites.setSublistHymn(list.id, hymn, selected ?? false),
+            ),
+        ],
       ),
     ),
   );

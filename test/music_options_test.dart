@@ -251,7 +251,8 @@ void main() {
     await InstrumentTheme.instance.set('jamaican_gospel');
     await tester.pumpWidget(const MaterialApp(home: EnsembleInstrumentsPage()));
     final slider = find.byKey(const ValueKey('style-volume-9'));
-    await tester.scrollUntilVisible(slider, 200);
+    await tester.scrollUntilVisible(slider, 200,
+        scrollable: find.byType(Scrollable).first);
     tester.widget<Slider>(slider).onChanged!(35);
     await tester.pumpAndSettle();
     final solo = find.byKey(const ValueKey('style-solo-9'));
@@ -281,9 +282,11 @@ void main() {
     ));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-        find.textContaining('All melodic parts'), 150);
+        find.textContaining('All melodic parts'), 150,
+        scrollable: find.byType(Scrollable).first);
     expect(find.textContaining('All melodic parts'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Preview • Amazing Grace'), 150);
+    await tester.scrollUntilVisible(find.text('Preview • Amazing Grace'), 150,
+        scrollable: find.byType(Scrollable).first);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
     await tester.pumpAndSettle();

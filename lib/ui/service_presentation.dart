@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../l10n/app_text.dart';
 import '../services/service_presentation.dart';
+import '../theme.dart';
+import 'kit.dart';
 
 class ServicePresentationPage extends StatefulWidget {
   const ServicePresentationPage({super.key, required this.presentation});
@@ -48,68 +50,96 @@ class _ServicePresentationPageState extends State<ServicePresentationPage> {
     }
   }
 
+  void _go(int delta) {
+    final next = _index + delta;
+    if (next < 0 || next >= widget.presentation.slides.length) return;
+    setState(() => _index = next);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final t = context.tokens;
     final slide = widget.presentation.slides[_index];
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.presentation.name), actions: [
-        Builder(
-            builder: (context) => IconButton(
-                tooltip: context.appText.sharePresentation,
-                icon: const Icon(Icons.share_outlined),
-                onPressed: _sharing ? null : () => _share(context))),
-      ]),
-      body: SafeArea(
-          child: Column(children: [
+    return HymnalPage(
+      title: widget.presentation.name,
+      trailing: Builder(
+          builder: (context) => HeaderAction(
+              icon: Icons.ios_share,
+              tooltip: context.appText.sharePresentation,
+              onTap: _sharing ? null : () => _share(context))),
+      body: Column(children: [
         Expanded(
-            child: Container(
-          margin: const EdgeInsets.all(12),
-          padding: const EdgeInsets.all(20),
-          color: const Color(0xff101510),
-          child: SingleChildScrollView(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                Text(slide.title,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                SelectableText(slide.text,
-                    key: const ValueKey('presentation-slide-text'),
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 26, height: 1.3)),
-                const SizedBox(height: 20),
-                Text(
-                    '${slide.bookLabel}${slide.role == null ? '' : ' · ${context.appText.readingRoleLabel(slide.role!)}'}',
-                    style: const TextStyle(
-                        color: Color(0xffbec9be), fontSize: 14)),
-              ])),
+            child: GestureDetector(
+          // Swipe between slides, like turning hymn pages.
+          onHorizontalDragEnd: (details) {
+            final velocity = details.primaryVelocity ?? 0;
+            if (velocity < -200) _go(1);
+            if (velocity > 200) _go(-1);
+          },
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: const Color(0xff101510),
+              borderRadius: BorderRadius.circular(t.isClassic ? 4 : 18),
+            ),
+            child: SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                  Text(slide.title,
+                      style: const TextStyle(
+                          fontFamily: kSerif,
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 20),
+                  SelectableText(slide.text,
+                      key: const ValueKey('presentation-slide-text'),
+                      style: const TextStyle(
+                          fontFamily: kSerif,
+                          color: Colors.white,
+                          fontSize: 26,
+                          height: 1.35)),
+                  const SizedBox(height: 20),
+                  Text(
+                      '${slide.bookLabel}${slide.role == null ? '' : ' · ${context.appText.readingRoleLabel(slide.role!)}'}',
+                      style: const TextStyle(
+                          fontFamily: kSans,
+                          color: Color(0xffbec9be),
+                          fontSize: 13.5)),
+                ])),
+          ),
         )),
-        Padding(
-            padding: const EdgeInsets.all(12),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 12,
-              runSpacing: 8,
-              children: [
-                IconButton(
-                    tooltip: context.appText.previousItem,
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed:
-                        _index == 0 ? null : () => setState(() => _index--)),
-                Text('${_index + 1} / ${widget.presentation.slides.length}'),
-                IconButton(
-                    tooltip: context.appText.nextItem,
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: _index == widget.presentation.slides.length - 1
-                        ? null
-                        : () => setState(() => _index++)),
-              ],
-            )),
-      ])),
+        MediaQuery.withClampedTextScaling(
+          maxScaleFactor: 1.6,
+          child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      tooltip: context.appText.previousItem,
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: _index == 0 ? null : () => _go(-1)),
+                  SizedBox(
+                    width: 72,
+                    child: Text(
+                        '${_index + 1} / ${widget.presentation.slides.length}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: kSans, fontSize: 13, color: t.muted)),
+                  ),
+                  IconButton(
+                      tooltip: context.appText.nextItem,
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: _index == widget.presentation.slides.length - 1
+                          ? null
+                          : () => _go(1)),
+                ],
+              )),
+        ),
+      ]),
     );
   }
 }

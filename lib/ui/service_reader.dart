@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'kit.dart';
 import '../l10n/app_text.dart';
 import '../models/hymn_ref.dart';
 import '../models/service_playlist.dart';
@@ -92,37 +93,33 @@ class _UnavailableEntry extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(context.appText.unavailableItem)),
-        body: Padding(
-            padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text(sequence.labelFor(context)),
-                  const SizedBox(height: 24),
-                  Text(context.appText.serviceItemNotInstalled),
-                  const SizedBox(height: 12),
-                  Text('${entry.ref.bookId} · ${entry.ref.itemId}'),
-                ]))),
-        bottomNavigationBar: SafeArea(
+  Widget build(BuildContext context) => HymnalPage(
+        title: context.appText.unavailableItem,
+        body: EmptyHint(
+          title: sequence.labelFor(context),
+          message: context.appText.serviceItemNotInstalled,
+          action: Text('${entry.ref.bookId} · ${entry.ref.itemId}',
+              style: const TextStyle(fontSize: 12.5)),
+        ),
+        bottom: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              Expanded(
-                  child: TextButton.icon(
-                      onPressed: sequence.canMove(-1)
-                          ? () => _move(context, -1)
-                          : null,
-                      icon: const Icon(Icons.chevron_left),
-                      label: Text(context.appText.previousControl))),
-              Expanded(
-                  child: TextButton.icon(
-                      onPressed:
-                          sequence.canMove(1) ? () => _move(context, 1) : null,
-                      icon: const Icon(Icons.chevron_right),
-                      label: Text(context.appText.nextControl))),
-            ])),
+                  Expanded(
+                      child: TextButton.icon(
+                          onPressed: sequence.canMove(-1)
+                              ? () => _move(context, -1)
+                              : null,
+                          icon: const Icon(Icons.chevron_left),
+                          label: Text(context.appText.previousControl))),
+                  Expanded(
+                      child: TextButton.icon(
+                          onPressed: sequence.canMove(1)
+                              ? () => _move(context, 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_right),
+                          label: Text(context.appText.nextControl))),
+                ])),
       );
 }

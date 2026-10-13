@@ -101,7 +101,7 @@ void main() {
           await tester.scrollUntilVisible(find.text('Source reading'), 200,
               scrollable: scroll);
           await tester.pumpAndSettle();
-          expect(find.text(text.scriptureReadings), findsOneWidget);
+          expect(find.text(text.scriptureReadings.toUpperCase()), findsOneWidget);
           expect(find.text('${text.reading} • Juan 3:16'), findsOneWidget);
           await tester.tap(find.text('Source reading'));
           await tester.pumpAndSettle();

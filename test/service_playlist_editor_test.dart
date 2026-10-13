@@ -78,8 +78,8 @@ void main() {
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField), 'cancion');
           await tester.pumpAndSettle();
-          expect(find.text('Español · Antiguo'), findsOneWidget);
-          await tester.tap(find.text('1  Canción de esperanza'));
+          expect(find.text('Himnario Antiguo'), findsWidgets);
+          await tester.tap(find.text('Canción de esperanza'));
           await tester.pumpAndSettle();
           expect(
               store.playlists.single.entries.single.ref.bookId, 'sda-es-1962');
@@ -103,7 +103,7 @@ void main() {
                       (w) => w is IconButton && w.tooltip == text.nextItem))
                   .onPressed,
               isNull);
-          await tester.tap(find.byType(BackButton));
+          await tester.tap(find.byKey(const ValueKey('subpage-back')));
           await tester.pumpAndSettle();
           expect(store.playlists.single.entries, hasLength(2));
 
@@ -111,7 +111,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField), '701');
           await tester.pumpAndSettle();
-          await tester.tap(find.text('701  Responsive reading'));
+          await tester.tap(find.text('Responsive reading'));
           await tester.pumpAndSettle();
           expect(store.playlists.single.entries.last.ref.kind.name, 'reading');
           final handles = find.byIcon(Icons.drag_handle);
@@ -140,7 +140,7 @@ void main() {
                   .join(','));
           expect(reloaded.playlists.single.entries, hasLength(3));
           expect(reloaded.playlists.single.name, 'Culto corazón — сердце');
-          await tester.tap(find.byType(BackButton));
+          await tester.tap(find.byKey(const ValueKey('subpage-back')));
           await tester.pumpAndSettle();
           expect(find.text(text.serviceItemCount(3)), findsOneWidget);
           await tester.tap(find.byType(PopupMenuButton<String>));

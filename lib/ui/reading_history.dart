@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sdahymnal/models/hymn.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/ui/common.dart';
+import 'package:sdahymnal/ui/kit.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/saved_hymn_notice.dart';
 
@@ -36,37 +37,35 @@ class ReadingHistoryPage extends StatelessWidget {
     final recents = Recents.instance;
     return AnimatedBuilder(
       animation: Listenable.merge([recents, recents.storageError]),
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: Text(context.appText.readingHistory), actions: [
-          IconButton(
-              tooltip: context.appText.clearHistory,
-              icon: const Icon(Icons.delete_outline),
-              onPressed: recents.value.isEmpty || recents.storageError.value
-                  ? null
-                  : () => _clear(context)),
-        ]),
-        body: SafeArea(
-            child: Column(children: [
+      builder: (context, _) => HymnalPage(
+        title: context.appText.readingHistory,
+        trailing: HeaderAction(
+            icon: Icons.delete_outline,
+            tooltip: context.appText.clearHistory,
+            onTap: recents.value.isEmpty || recents.storageError.value
+                ? null
+                : () => _clear(context)),
+        body: Column(children: [
           const SavedHymnNotice(),
           Expanded(
               child: recents.value.isEmpty
-                  ? Center(child: Text(context.appText.noRecentHymns))
+                  ? EmptyHint(title: context.appText.noRecentHymns)
                   : ListView.builder(
+                      padding: const EdgeInsets.only(top: 6, bottom: 24),
                       itemCount: recents.value.length,
                       itemBuilder: (context, position) {
                         final entry = recents.value[position];
                         final hymn = index[entry];
-                        return ListTile(
+                        return HymnRow(
                           key: ValueKey('history-${entry.v}-${entry.n}'),
-                          leading: Text('${entry.n}'),
-                          title: Text(
-                              hymn?.title ?? context.appText.hymnUnavailable),
-                          subtitle: Text(hymn?.bookLabel ?? entry.v),
-                          trailing: hymn == null
-                              ? null
-                              : const Icon(Icons.chevron_right),
+                          number: '${entry.n}',
+                          title: hymn?.title ?? context.appText.hymnUnavailable,
+                          textDirection:
+                              hymn == null ? null : hymnTextDirection(hymn),
+                          subtitle: hymn?.bookLabel ?? entry.v,
+                          trailing: hymn == null ? const SizedBox(width: 14) : null,
                           onTap: hymn == null
-                              ? null
+                              ? () {}
                               : () => Navigator.push(
                                   context,
                                   slideRoute(HymnPage(
@@ -79,7 +78,7 @@ class ReadingHistoryPage extends StatelessWidget {
                         );
                       },
                     )),
-        ])),
+        ]),
       ),
     );
   }

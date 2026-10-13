@@ -5,6 +5,8 @@ import '../services/installed_score_packs.dart';
 import '../services/language_pack_store.dart';
 import '../services/score_download_catalog.dart';
 import '../services/score_pack_store.dart';
+import '../theme.dart';
+import 'kit.dart';
 
 class ScorePacksPage extends StatefulWidget {
   const ScorePacksPage({super.key, this.store});
@@ -122,66 +124,89 @@ class _ScorePacksPageState extends State<ScorePacksPage> {
   @override
   Widget build(BuildContext context) {
     final text = context.appText;
-    return Scaffold(
-        appBar: AppBar(title: Text(text.sheetMusic)),
-        body: _downloads == null
-            ? Center(
-                child: _failed
-                    ? TextButton(onPressed: _load, child: Text(text.retry))
-                    : const CircularProgressIndicator())
-            : ListView(padding: const EdgeInsets.all(16), children: [
-                Text(text.scorePacksHelp),
-                const SizedBox(height: 16),
-                for (final download in _downloads!)
-                  Card(
-                      child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(_names[download.bookId] ?? download.bookId,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
-                                const SizedBox(height: 8),
-                                Text(text.scorePackDetails(
-                                    download.pages.length,
-                                    (download.bytes / (1024 * 1024))
-                                        .toStringAsFixed(1))),
-                                if (_bundled.contains(download.bookId))
-                                  Text(text.packBundled),
-                                if (_installed.contains(download.bookId))
-                                  Text(text.packInstalled),
-                                if (_busy == download.bookId) ...[
-                                  LinearProgressIndicator(value: _progress),
-                                  if (_cancel != null)
-                                    TextButton(
-                                        onPressed: () => _cancel?.cancel(),
-                                        child: Text(text.cancel)),
-                                ] else ...[
-                                  if (_updates.contains(download.bookId))
-                                    FilledButton(
-                                        onPressed: _busy == null
-                                            ? () =>
-                                                _change(download, remove: false)
-                                            : null,
-                                        child: Text(text.packUpdate)),
-                                  if (_installed.contains(download.bookId))
-                                    TextButton(
-                                        onPressed: _busy == null
-                                            ? () =>
-                                                _change(download, remove: true)
-                                            : null,
-                                        child: Text(text.remove))
-                                  else if (!_bundled.contains(download.bookId))
-                                    FilledButton(
-                                        onPressed: _busy == null
-                                            ? () =>
-                                                _change(download, remove: false)
-                                            : null,
-                                        child: Text(text.packDownload)),
-                                ],
-                              ]))),
-              ]));
+    final t = context.tokens;
+    final downloads = _downloads;
+    if (downloads == null) {
+      return HymnalPage(
+        title: text.sheetMusic,
+        body: _failed
+            ? EmptyHint(
+                title: text.packDownloadFailed,
+                action: TextButton(onPressed: _load, child: Text(text.retry)))
+            : const Center(child: CircularProgressIndicator()),
+      );
+    }
+    return HymnalPage(
+      title: text.sheetMusic,
+      body: ListView(
+        key: const ValueKey('score-packs'),
+        padding: const EdgeInsets.only(bottom: 28),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+            child: Text(text.scorePacksHelp,
+                style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 13,
+                    height: 1.4,
+                    color: t.muted)),
+          ),
+          HymnalCard(
+            child: Column(children: [
+              for (final (i, download) in downloads.indexed)
+                _row(download, divider: i < downloads.length - 1),
+            ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(ScorePackDownload download, {required bool divider}) {
+    final text = context.appText;
+    final t = context.tokens;
+    final id = download.bookId;
+    final name = _names[id] ?? id;
+    final bundled = _bundled.contains(id);
+    final installed = _installed.contains(id);
+    final busy = _busy == id;
+    Widget trailing;
+    if (busy) {
+      trailing = BusyAction(
+          progress: _progress,
+          cancelTooltip: text.cancel,
+          onCancel: _cancel == null ? null : () => _cancel?.cancel());
+    } else if (_updates.contains(id)) {
+      trailing = PillAction(
+          label: text.packUpdate,
+          onTap: _busy == null ? () => _change(download, remove: false) : null);
+    } else if (installed) {
+      trailing = TextButton(
+          onPressed:
+              _busy == null ? () => _change(download, remove: true) : null,
+          child: Text(text.remove));
+    } else if (bundled) {
+      trailing = Icon(Icons.check_circle, size: 20, color: t.accent);
+    } else {
+      trailing = PillAction(
+          label: text.packDownload,
+          icon: Icons.download_rounded,
+          onTap: _busy == null ? () => _change(download, remove: false) : null);
+    }
+    return DownloadRow(
+      key: ValueKey('score-pack-$id'),
+      code: id.split('-')[1].toUpperCase(),
+      title: name,
+      details: [
+        text.scorePackDetails(download.pages.length,
+            (download.bytes / (1024 * 1024)).toStringAsFixed(1)),
+        if (bundled) text.packBundled,
+      ].join(' · '),
+      active: installed || bundled,
+      progress: _progress,
+      showProgress: busy && _progress != null,
+      divider: divider,
+      trailing: trailing,
+    );
   }
 }

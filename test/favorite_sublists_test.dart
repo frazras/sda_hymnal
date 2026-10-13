@@ -114,7 +114,8 @@ void main() {
             body: FavoritesTab(hymnsNew: [hymn, third], hymnsOld: [oldHymn])),
       ));
       await tester.pumpAndSettle();
-      expect(find.text('New favorite category'), findsOneWidget);
+      expect(find.byKey(const ValueKey('create-favorite-sublist')),
+          findsOneWidget);
       await tester.tap(find.text('Childhood'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('My song').first);
@@ -200,7 +201,7 @@ void main() {
       await tester.tap(find.text('Create'));
       await tester.pumpAndSettle();
       expect(tester.getTopLeft(find.text('My childhood songs')).dy,
-          lessThan(tester.getTopLeft(find.text('Main favorites')).dy));
+          lessThan(tester.getTopLeft(find.text('MAIN FAVORITES')).dy));
       final id = saved.sublists.value.single.id;
       await tester.tap(find.text('My song'));
       await tester.pumpAndSettle();

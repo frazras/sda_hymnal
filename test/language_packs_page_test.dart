@@ -8,6 +8,7 @@ import 'package:sdahymnal/l10n/app_localizations.dart';
 import 'package:sdahymnal/services/language_pack_store.dart';
 import 'package:sdahymnal/services/installed_language_packs.dart';
 import 'package:sdahymnal/ui/language_packs.dart';
+import 'package:sdahymnal/ui/kit.dart';
 import 'hymnal_pack_test.dart' show FilePackBundle;
 
 void main() {
@@ -51,16 +52,16 @@ void main() {
         }
       }
       await tester.pumpAndSettle();
-      final download = find.byType(FilledButton);
+      final download = find.byType(PillAction);
       await tester.scrollUntilVisible(download, 300);
       await tester.ensureVisible(download);
       await tester.pumpAndSettle();
       await tester.tap(download);
       await tester.pump();
       if (cancel) {
-        await tester.ensureVisible(find.text('Cancel'));
+        await tester.ensureVisible(find.byTooltip('Cancel'));
         await tester.pump(const Duration(milliseconds: 100));
-        await tester.tap(find.text('Cancel'));
+        await tester.tap(find.byTooltip('Cancel'));
       }
       await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 100)));
@@ -69,8 +70,8 @@ void main() {
       expect(
           await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
           isNull);
-      expect(find.byType(FilledButton), findsOneWidget);
-      expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      expect(find.byType(PillAction), findsOneWidget);
+      expect(tester.widget<PillAction>(find.byType(PillAction)).onTap,
           isNotNull);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
@@ -147,7 +148,7 @@ void main() {
         }
       }
       await tester.pumpAndSettle();
-      final download = find.byType(FilledButton);
+      final download = find.byType(PillAction);
       await tester.scrollUntilVisible(download, 300);
       await tester.ensureVisible(download);
       await tester.pumpAndSettle();
@@ -181,6 +182,7 @@ void main() {
           isNotNull);
       final remove = find.byType(TextButton).last;
       await tester.ensureVisible(remove);
+      await tester.pumpAndSettle();
       await tester.runAsync(() async {
         await tester.tap(remove);
         await Future<void>.delayed(const Duration(milliseconds: 200));
@@ -202,7 +204,7 @@ void main() {
       expect(
           await tester.runAsync(() => store.load('sda-ny-khristu-mu-nyimbo')),
           isNull);
-      expect(find.byType(FilledButton), findsOneWidget);
+      expect(find.byType(PillAction), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });

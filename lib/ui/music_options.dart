@@ -6,6 +6,9 @@ import 'package:sdahymnal/services/midi_player.dart';
 import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'instrument_picker.dart';
+import 'common.dart';
+import 'kit.dart';
+import 'package:sdahymnal/theme.dart';
 
 /// All ensemble instrument configuration stays inside Settings.
 class EnsembleInstrumentsPage extends StatefulWidget {
@@ -27,8 +30,8 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(context.appText.musicalStyleInstruments)),
+  Widget build(BuildContext context) => HymnalPage(
+        title: context.appText.musicalStyleInstruments,
         body: AnimatedBuilder(
           animation: Listenable.merge([
             MusicOptions.instance,
@@ -36,110 +39,160 @@ class _EnsembleInstrumentsPageState extends State<EnsembleInstrumentsPage> {
             MidiPlayer.instance.current
           ]),
           builder: (context, _) {
+            final t = context.tokens;
             final options = MusicOptions.instance;
             final style = InstrumentTheme.instance.value;
             final playing =
                 MidiPlayer.isCurrent(MidiPlayer.instance.current.value, sample);
-            return ListView(padding: const EdgeInsets.all(20), children: [
-              Text(context.appText.ensembleInstrumentHelp),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                initialValue: style,
-                isExpanded: true,
-                decoration:
-                    InputDecoration(labelText: context.appText.musicalStyle),
-                items: [
-                  for (final theme in InstrumentTheme.themes)
-                    DropdownMenuItem(
-                        value: theme.$1,
-                        child: Text(context.appText.styleLabel(theme.$1),
-                            maxLines: 1, overflow: TextOverflow.ellipsis))
-                ],
-                onChanged: (value) {
-                  if (value != null) InstrumentTheme.instance.set(value);
-                },
-              ),
-              for (final role in instrumentRoles(style).entries)
-                Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (role.key == 9)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(context.appText.drumKit),
-                            )
-                          else
-                            InstrumentPicker(
-                              key: ValueKey(
-                                  '$style-${role.key}-${options.programs(style)[role.key]}'),
-                              program: options.programs(style)[role.key],
-                              defaultLabel: context.appText.styleDefault,
-                              label: context.appText.instrumentRole(role.value),
-                              onChanged: (value) =>
-                                  options.setProgram(style, role.key, value),
-                            ),
-                          Row(children: [
-                            Expanded(
-                                child: Slider(
-                              key: ValueKey('style-volume-${role.key}'),
-                              label:
-                                  '${options.styleVolumes(style)[role.key] ?? 100}%',
-                              semanticFormatterCallback: (value) =>
-                                  context.appText.volumePercent(
-                                      context.appText
-                                          .instrumentRole(role.value),
-                                      value.round()),
-                              value:
-                                  (options.styleVolumes(style)[role.key] ?? 100)
-                                      .toDouble(),
-                              min: 0,
-                              max: 100,
-                              divisions: 100,
-                              onChanged: (value) => options.setStyleVolume(
-                                  style, role.key, value.round()),
-                            )),
-                            FilterChip(
-                                key: ValueKey('style-solo-${role.key}'),
-                                label: Text(context.appText.solo),
-                                selected:
-                                    options.styleSolo(style).contains(role.key),
-                                onSelected: (value) => options.setStyleSolo(
-                                    style, role.key, value)),
-                          ]),
-                        ])),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: busy
-                    ? null
-                    : () async {
-                        setState(() => busy = true);
-                        try {
-                          if (playing) {
-                            await MidiPlayer.instance.stop();
-                          } else {
-                            await MidiPlayer.instance.preview(sample);
-                            if (MidiPlayer.instance.current.value == null) {
-                              throw StateError('Preview unavailable');
-                            }
-                          }
-                        } catch (_) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(context.appText.previewError)));
-                          }
-                        } finally {
-                          if (mounted) setState(() => busy = false);
-                        }
-                      },
-                icon: Icon(playing ? Icons.stop : Icons.play_arrow),
-                label: Text(playing
-                    ? context.appText.stopPreview
-                    : context.appText.previewHymn(sample.title)),
-              ),
-              Text(context.appText.previewPlaybackHelp),
-            ]);
+            return ListView(
+                padding: const EdgeInsets.only(bottom: 28),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 4),
+                    child: Text(context.appText.ensembleInstrumentHelp,
+                        style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 13,
+                            height: 1.4,
+                            color: t.muted)),
+                  ),
+                  SectionLabel(context.appText.musicalStyle.toUpperCase(),
+                      padding: sectionPadding()),
+                  SingleChildScrollView(
+                    key: const ValueKey('ensemble-style-pills'),
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(children: [
+                      for (final theme in InstrumentTheme.themes)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 7),
+                          child: FilterPill(
+                            key: ValueKey('ensemble-style-${theme.$1}'),
+                            label: context.appText.styleLabel(theme.$1),
+                            selected: style == theme.$1,
+                            onTap: () => InstrumentTheme.instance.set(theme.$1),
+                          ),
+                        ),
+                    ]),
+                  ),
+                  SectionLabel(context.appText.ensembleInstruments.toUpperCase(),
+                      padding: sectionPadding()),
+                  HymnalCard(
+                    child: Column(children: [
+                      for (final (i, role)
+                          in instrumentRoles(style).entries.indexed)
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(8, 6, 10, 4),
+                          decoration: BoxDecoration(
+                              border: i < instrumentRoles(style).length - 1
+                                  ? Border(bottom: BorderSide(color: t.line2))
+                                  : null),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (role.key == 9)
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8, 12, 8, 4),
+                                    child: Text(context.appText.drumKit,
+                                        style: TextStyle(
+                                            fontFamily: kSans,
+                                            fontSize: 14.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: t.ink)),
+                                  )
+                                else
+                                  InstrumentPicker(
+                                    key: ValueKey(
+                                        '$style-${role.key}-${options.programs(style)[role.key]}'),
+                                    program: options.programs(style)[role.key],
+                                    defaultLabel: context.appText.styleDefault,
+                                    label: context.appText
+                                        .instrumentRole(role.value),
+                                    onChanged: (value) => options.setProgram(
+                                        style, role.key, value),
+                                  ),
+                                Row(children: [
+                                  Expanded(
+                                      child: Slider(
+                                    key: ValueKey('style-volume-${role.key}'),
+                                    label:
+                                        '${options.styleVolumes(style)[role.key] ?? 100}%',
+                                    semanticFormatterCallback: (value) =>
+                                        context.appText.volumePercent(
+                                            context.appText
+                                                .instrumentRole(role.value),
+                                            value.round()),
+                                    value: (options.styleVolumes(style)[
+                                                role.key] ??
+                                            100)
+                                        .toDouble(),
+                                    min: 0,
+                                    max: 100,
+                                    divisions: 100,
+                                    onChanged: (value) => options
+                                        .setStyleVolume(
+                                            style, role.key, value.round()),
+                                  )),
+                                  FilterPill(
+                                      key: ValueKey('style-solo-${role.key}'),
+                                      label: context.appText.solo,
+                                      selected: options
+                                          .styleSolo(style)
+                                          .contains(role.key),
+                                      onTap: () => options.setStyleSolo(
+                                          style,
+                                          role.key,
+                                          !options
+                                              .styleSolo(style)
+                                              .contains(role.key))),
+                                ]),
+                              ]),
+                        ),
+                    ]),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: FilledButton.icon(
+                      onPressed: busy
+                          ? null
+                          : () async {
+                              setState(() => busy = true);
+                              try {
+                                if (playing) {
+                                  await MidiPlayer.instance.stop();
+                                } else {
+                                  await MidiPlayer.instance.preview(sample);
+                                  if (MidiPlayer.instance.current.value ==
+                                      null) {
+                                    throw StateError('Preview unavailable');
+                                  }
+                                }
+                              } catch (_) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              context.appText.previewError)));
+                                }
+                              } finally {
+                                if (mounted) setState(() => busy = false);
+                              }
+                            },
+                      icon: Icon(playing ? Icons.stop : Icons.play_arrow),
+                      label: Text(playing
+                          ? context.appText.stopPreview
+                          : context.appText.previewHymn(sample.title)),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
+                    child: Text(context.appText.previewPlaybackHelp,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: kSans, fontSize: 12, color: t.faint)),
+                  ),
+                ]);
           },
         ),
       );

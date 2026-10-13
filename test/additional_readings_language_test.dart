@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sdahymnal/ui/kit.dart';
+import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/l10n/app_localizations.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
@@ -68,20 +71,23 @@ void main() {
           expect(find.text(text.searchReadings), findsOneWidget);
           await tester.enterText(find.byType(TextField), 'corazon');
           await tester.pumpAndSettle();
-          expect(find.text('700  Corazón de oración'), findsOneWidget);
-          expect(find.text('701  Paz'), findsNothing);
+          expect(find.text('Corazón de oración'), findsOneWidget);
+          expect(find.text('Paz'), findsNothing);
           await tester.enterText(find.byType(TextField), 'missing');
           await tester.pumpAndSettle();
           expect(find.text(text.noMatchingReadings), findsOneWidget);
           await tester.enterText(find.byType(TextField), '');
           await tester.pumpAndSettle();
-          final chip = find.widgetWithText(ChoiceChip, 'Oración');
+          final chip = find.widgetWithText(FilterPill, 'Oración');
           await tester.ensureVisible(chip);
           await tester.pumpAndSettle();
           await tester.tap(chip);
           await tester.pumpAndSettle();
-          expect(tester.widget<ChoiceChip>(chip).selected, isTrue);
-          await tester.tap(find.text('700  Corazón de oración'));
+          expect(tester.widget<FilterPill>(chip).selected, isTrue);
+          // Auto-scroll is opt-in, as in the hymn reader.
+          AutoScroll.instance.value = true;
+          addTearDown(() => AutoScroll.instance.value = false);
+          await tester.tap(find.text('Corazón de oración'));
           await tester.pumpAndSettle();
           expect(find.text(text.categoryPosition('Oración', 1, 2)),
               findsOneWidget);
@@ -105,7 +111,7 @@ void main() {
           expect(report.subject.title, 'Corazón de oración');
           expect(report.subject.itemId, 'first');
           expect(report.subject.number, 700);
-          await tester.tap(find.byType(BackButton));
+          await tester.tap(find.byKey(const ValueKey('subpage-back')));
           await tester.pumpAndSettle();
           await tester.drag(
               find.byKey(const ValueKey('additional-reading-scroll')),
@@ -127,7 +133,7 @@ void main() {
     }
   }
   testWidgets(
-      'service reading buttons and position labels fit all interface languages',
+      'service reading paging and position labels fit all interface languages',
       (tester) async {
     tester.view.physicalSize = const Size(320, 568);
     tester.view.devicePixelRatio = 1;
@@ -164,24 +170,18 @@ void main() {
               tester.element(find.byType(AdditionalReadingPage)).appText;
           expect(find.text(text.servicePosition(playlist.name, 1, 2)),
               findsOneWidget);
-          expect(
-              tester
-                  .widget<TextButton>(
-                      find.widgetWithText(TextButton, text.previousControl))
-                  .onPressed,
-              isNull);
-          await tester.tap(find.text(text.nextControl));
+          // Readings page like hymns: swipe or arrow keys, no button bar.
+          expect(find.text(text.previousControl), findsNothing);
+          await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
           await tester.pumpAndSettle();
           expect(find.text('701  Paz'), findsOneWidget);
           expect(find.text(text.servicePosition(playlist.name, 2, 2)),
               findsOneWidget);
-          expect(
-              tester
-                  .widget<TextButton>(
-                      find.widgetWithText(TextButton, text.nextControl))
-                  .onPressed,
-              isNull);
-          await tester.tap(find.text(text.previousControl));
+          await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+          await tester.pumpAndSettle();
+          expect(find.text('701  Paz'), findsOneWidget,
+              reason: 'A service stops at its last occurrence');
+          await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
           await tester.pumpAndSettle();
           expect(find.text('700  Corazón de oración'), findsOneWidget);
           expect(tester.takeException(), isNull,

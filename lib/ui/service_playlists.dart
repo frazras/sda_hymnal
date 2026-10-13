@@ -9,6 +9,10 @@ import '../services/service_playlists.dart';
 import 'service_reader.dart';
 import 'service_presentation.dart';
 import '../services/service_presentation.dart';
+import '../models/hymnal_book.dart';
+import '../theme.dart';
+import 'common.dart';
+import 'kit.dart';
 
 String _id() => List.generate(16,
         (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'))
@@ -45,13 +49,47 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
 
   void _open(ServicePlaylist playlist) => Navigator.push(
       context,
-      MaterialPageRoute<void>(
-          builder: (_) => _ServiceEditor(
-              id: playlist.id, store: store, repository: widget.repository)));
+      slideRoute(_ServiceEditor(
+          id: playlist.id, store: store, repository: widget.repository)));
+
+  Future<void> _delete(ServicePlaylist list) async {
+    final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: Text(context.appText.deleteListQuestion(list.name)),
+                content: Text(context.appText.serviceDeleteHelp),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text(context.appText.cancel)),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text(context.appText.delete))
+                ]));
+    if (confirmed == true) {
+      try {
+        await store.delete(list.id);
+      } catch (_) {
+        if (mounted) _error(context);
+      }
+    }
+  }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(context.appText.servicePlaylists)),
+  Widget build(BuildContext context) => HymnalPage(
+        title: context.appText.servicePlaylists,
+        bottom: AnimatedBuilder(
+          animation: store,
+          builder: (context, _) => Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                    onPressed: store.storageError ? null : () => _name(),
+                    icon: const Icon(Icons.add),
+                    label: Text(context.appText.newService)),
+              )),
+        ),
         body: FutureBuilder<void>(
             future: loaded,
             builder: (context, snapshot) {
@@ -60,93 +98,52 @@ class _ServicePlaylistsPageState extends State<ServicePlaylistsPage> {
               }
               return AnimatedBuilder(
                   animation: store,
-                  builder: (context, _) => Column(children: [
-                        if (store.storageError) _StorageNotice(store: store),
-                        Expanded(
-                            child: store.playlists.isEmpty
-                                ? Center(
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(24),
-                                        child: Text(
-                                            context
-                                                .appText.serviceArrangementHelp,
-                                            textAlign: TextAlign.center)))
-                                : ListView(children: [
-                                    for (final list in store.playlists)
-                                      ListTile(
-                                          title: Text(list.name),
-                                          subtitle: Text(context.appText
-                                              .serviceItemCount(
-                                                  list.entries.length)),
-                                          onTap: () => _open(list),
-                                          trailing: PopupMenuButton<String>(
-                                              enabled: !store.storageError,
-                                              onSelected: (action) async {
-                                                if (action == 'rename') {
-                                                  await _name(playlist: list);
-                                                  return;
-                                                }
-                                                final confirmed = await showDialog<
-                                                        bool>(
-                                                    context: context,
-                                                    builder: (context) =>
-                                                        AlertDialog(
-                                                            title: Text(context
-                                                                .appText
-                                                                .deleteListQuestion(
-                                                                    list.name)),
-                                                            content: Text(context
-                                                                .appText
-                                                                .serviceDeleteHelp),
-                                                            actions: [
-                                                              TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context,
-                                                                          false),
-                                                                  child: Text(context
-                                                                      .appText
-                                                                      .cancel)),
-                                                              TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context,
-                                                                          true),
-                                                                  child: Text(context
-                                                                      .appText
-                                                                      .delete))
-                                                            ]));
-                                                if (confirmed == true) {
-                                                  try {
-                                                    await store.delete(list.id);
-                                                  } catch (_) {
-                                                    if (context.mounted) {
-                                                      _error(context);
-                                                    }
-                                                  }
-                                                }
-                                              },
-                                              itemBuilder: (_) => [
-                                                    PopupMenuItem(
-                                                        value: 'rename',
-                                                        child: Text(context
-                                                            .appText.rename)),
-                                                    PopupMenuItem(
-                                                        value: 'delete',
-                                                        child: Text(context
-                                                            .appText.delete))
-                                                  ]))
-                                  ])),
-                        SafeArea(
-                            child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: FilledButton.icon(
-                                    onPressed: store.storageError
-                                        ? null
-                                        : () => _name(),
-                                    icon: const Icon(Icons.add),
-                                    label: Text(context.appText.newService)))),
-                      ]));
+                  builder: (context, _) => ListView(
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
+                        children: [
+                          if (store.storageError) _StorageNotice(store: store),
+                          if (store.playlists.isEmpty)
+                            EmptyHint(
+                                title: context.appText.servicePlaylists,
+                                message: context.appText.serviceArrangementHelp)
+                          else
+                            HymnalCard(
+                              child: Column(children: [
+                                for (final (i, list) in store.playlists.indexed)
+                                  SettingsRow(
+                                    key: ValueKey('service-${list.id}'),
+                                    leading: const RowIcon(
+                                        Icons.queue_music_outlined),
+                                    title: list.name,
+                                    subtitle: context.appText
+                                        .serviceItemCount(list.entries.length),
+                                    divider: i < store.playlists.length - 1,
+                                    chevron: false,
+                                    onTap: () => _open(list),
+                                    trailing: PopupMenuButton<String>(
+                                        enabled: !store.storageError,
+                                        onSelected: (action) async {
+                                          if (action == 'rename') {
+                                            await _name(playlist: list);
+                                          } else {
+                                            await _delete(list);
+                                          }
+                                        },
+                                        itemBuilder: (_) => [
+                                              PopupMenuItem(
+                                                  value: 'rename',
+                                                  child: Text(
+                                                      context.appText.rename)),
+                                              PopupMenuItem(
+                                                  value: 'delete',
+                                                  child: Text(
+                                                      context.appText.delete))
+                                            ]),
+                                  ),
+                              ]),
+                            ),
+                        ],
+                      ));
             }),
       );
 }
@@ -241,39 +238,61 @@ class _ServiceEditor extends StatelessWidget {
       builder: (context, _) {
         final matches = store.playlists.where((e) => e.id == id);
         if (matches.isEmpty) {
-          return Scaffold(
-              appBar: AppBar(title: Text(context.appText.serviceUnavailable)));
+          return HymnalPage(
+              title: context.appText.serviceUnavailable,
+              body: const SizedBox.shrink());
         }
         final list = matches.first;
-        return Scaffold(
-            appBar: AppBar(title: Text(list.name), actions: [
-              IconButton(
-                  tooltip: context.appText.previewPresentation,
-                  icon: const Icon(Icons.slideshow_outlined),
-                  onPressed: list.entries.isEmpty
-                      ? null
-                      : () {
-                          try {
-                            final presentation =
-                                ServicePresentation.build(list, repository);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => ServicePresentationPage(
-                                        presentation: presentation)));
-                          } catch (_) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                    context.appText.presentationExportFailed)));
-                          }
-                        }),
-            ]),
+        return HymnalPage(
+            title: list.name,
+            trailing: HeaderAction(
+                icon: Icons.slideshow_outlined,
+                tooltip: context.appText.previewPresentation,
+                onTap: list.entries.isEmpty
+                    ? null
+                    : () {
+                        try {
+                          final presentation =
+                              ServicePresentation.build(list, repository);
+                          Navigator.push(
+                              context,
+                              slideRoute(ServicePresentationPage(
+                                  presentation: presentation)));
+                        } catch (_) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  context.appText.presentationExportFailed)));
+                        }
+                      }),
+            bottom: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                      onPressed: store.storageError
+                          ? null
+                          : () async {
+                              final ref = await Navigator.push<HymnRef>(
+                                  context,
+                                  slideRoute(
+                                      _ServicePicker(repository: repository)));
+                              if (ref != null && context.mounted) {
+                                await _edit(
+                                    context,
+                                    (s) => s.appended(
+                                        ServiceEntry(id: _id(), ref: ref)));
+                              }
+                            },
+                      icon: const Icon(Icons.add),
+                      label: Text(context.appText.addHymnOrReading)),
+                )),
             body: Column(children: [
               if (store.storageError) _StorageNotice(store: store),
               Expanded(
                   child: list.entries.isEmpty
-                      ? Center(child: Text(context.appText.serviceOrderHelp))
+                      ? EmptyHint(title: context.appText.serviceOrderHelp)
                       : ReorderableListView.builder(
+                          padding: const EdgeInsets.only(top: 6, bottom: 12),
                           buildDefaultDragHandles: false,
                           itemCount: list.entries.length,
                           onReorderItem: (from, to) =>
@@ -285,75 +304,64 @@ class _ServiceEditor extends StatelessWidget {
                             final title = hymn?.title ??
                                 reading?.title ??
                                 context.appText.unavailableItem;
-                            final book = repository
-                                    .edition(entry.ref.bookId)
-                                    ?.displayName ??
-                                entry.ref.bookId;
-                            return ListTile(
-                                key: ValueKey(entry.id),
-                                leading: Text('${index + 1}'),
-                                title: Text(title),
-                                subtitle: Text(
-                                    '$book · ${hymn?.number ?? reading?.number ?? entry.ref.itemId}'),
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                        builder: (_) => ServiceReader(
-                                                playlist: list,
-                                                repository: repository)
-                                            .page(index)!)),
-                                trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      PopupMenuButton<String>(
-                                          enabled: !store.storageError,
-                                          onSelected: (action) => _edit(
-                                              context,
-                                              (s) => action == 'repeat'
-                                                  ? s.appended(ServiceEntry(
-                                                      id: _id(),
-                                                      ref: entry.ref))
-                                                  : s.without(entry.id)),
-                                          itemBuilder: (_) => [
-                                                PopupMenuItem(
-                                                    value: 'repeat',
-                                                    child: Text(context
-                                                        .appText.repeatAtEnd)),
-                                                PopupMenuItem(
-                                                    value: 'remove',
-                                                    child: Text(
-                                                        context.appText.remove))
-                                              ]),
-                                      if (!store.storageError)
-                                        ReorderableDragStartListener(
-                                            index: index,
-                                            child: const Padding(
-                                                padding: EdgeInsets.all(8),
-                                                child:
-                                                    Icon(Icons.drag_handle))),
-                                    ]));
-                          })),
-              SafeArea(
-                  child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: FilledButton.icon(
-                          onPressed: store.storageError
-                              ? null
-                              : () async {
-                                  final ref = await Navigator.push<HymnRef>(
+                            final edition =
+                                repository.edition(entry.ref.bookId);
+                            final book = edition == null
+                                ? entry.ref.bookId
+                                : editionShortLabel(
+                                    edition.id, edition.displayName);
+                            return Material(
+                              key: ValueKey(entry.id),
+                              color: context.tokens.bg,
+                              child: HymnRow(
+                                  number: '${index + 1}',
+                                  title: title,
+                                  subtitle:
+                                      '$book · ${reading == null ? '#' : '${context.appText.reading} '}${hymn?.number ?? reading?.number ?? entry.ref.itemId}',
+                                  onTap: () => Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (_) => _ServicePicker(
-                                              repository: repository)));
-                                  if (ref != null && context.mounted) {
-                                    await _edit(
-                                        context,
-                                        (s) => s.appended(
-                                            ServiceEntry(id: _id(), ref: ref)));
-                                  }
-                                },
-                          icon: const Icon(Icons.add),
-                          label: Text(context.appText.addHymnOrReading)))),
+                                      slideRoute(ServiceReader(
+                                              playlist: list,
+                                              repository: repository)
+                                          .page(index)!)),
+                                  trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        PopupMenuButton<String>(
+                                            enabled: !store.storageError,
+                                            icon: Icon(Icons.more_vert,
+                                                size: 20,
+                                                color: context.tokens.faint),
+                                            onSelected: (action) => _edit(
+                                                context,
+                                                (s) => action == 'repeat'
+                                                    ? s.appended(ServiceEntry(
+                                                        id: _id(),
+                                                        ref: entry.ref))
+                                                    : s.without(entry.id)),
+                                            itemBuilder: (_) => [
+                                                  PopupMenuItem(
+                                                      value: 'repeat',
+                                                      child: Text(context
+                                                          .appText
+                                                          .repeatAtEnd)),
+                                                  PopupMenuItem(
+                                                      value: 'remove',
+                                                      child: Text(context
+                                                          .appText.remove))
+                                                ]),
+                                        if (!store.storageError)
+                                          ReorderableDragStartListener(
+                                              index: index,
+                                              child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(6),
+                                                  child: Icon(Icons.drag_handle,
+                                                      color: context
+                                                          .tokens.faint))),
+                                      ])),
+                            );
+                          })),
             ]));
       });
 }
@@ -368,6 +376,14 @@ class _ServicePicker extends StatefulWidget {
 class _ServicePickerState extends State<_ServicePicker> {
   String query = '';
   String? bookId;
+  final _query = TextEditingController();
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
   late final items = [
     for (final edition in widget.repository.editions) ...[
       for (final hymn in widget.repository.hymnsFor(edition.id))
@@ -375,14 +391,14 @@ class _ServicePickerState extends State<_ServicePicker> {
           ref: hymn.ref,
           title: hymn.title,
           number: hymn.number,
-          book: edition.displayName
+          book: editionShortLabel(edition.id, edition.displayName)
         ),
       for (final reading in widget.repository.readingsFor(edition.id))
         (
           ref: reading.ref,
           title: reading.title,
           number: reading.number,
-          book: edition.displayName
+          book: editionShortLabel(edition.id, edition.displayName)
         ),
     ]
   ];
@@ -403,44 +419,52 @@ class _ServicePickerState extends State<_ServicePicker> {
             ...matches.where((item) => item.number == number),
             ...matches.where((item) => item.number != number),
           ];
-    return Scaffold(
-        appBar: AppBar(title: Text(context.appText.addHymnOrReading)),
+    return HymnalPage(
+        title: context.appText.addHymnOrReading,
         body: Column(children: [
-          Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextField(
-                  autofocus: true,
-                  decoration: InputDecoration(
-                      labelText: context.appText.numberOrTitle,
-                      prefixIcon: Icon(Icons.search)),
-                  onChanged: (text) => setState(() => query = text))),
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: DropdownButton<String>(
-                  itemHeight: null,
-                  isExpanded: true,
-                  value: bookId ?? '',
-                  items: [
-                    DropdownMenuItem(
-                        value: '', child: Text(context.appText.allHymnals)),
-                    for (final edition in widget.repository.editions)
-                      DropdownMenuItem(
-                          value: edition.id,
-                          child: Text(edition.displayName, maxLines: 2))
-                  ],
-                  onChanged: (value) =>
-                      setState(() => bookId = value == '' ? null : value))),
+          HymnSearchField(
+              controller: _query,
+              autofocus: true,
+              hint: context.appText.numberOrTitle,
+              clearTooltip: context.appText.clearSearch,
+              margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+              onChanged: (text) => setState(() => query = text)),
+          SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 6),
+              child: Row(children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 7),
+                  child: FilterPill(
+                      label: context.appText.allHymnals,
+                      selected: bookId == null,
+                      onTap: () => setState(() => bookId = null)),
+                ),
+                for (final edition in widget.repository.editions)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 7),
+                    child: FilterPill(
+                        key: ValueKey('service-book-${edition.id}'),
+                        label:
+                            editionShortLabel(edition.id, edition.displayName),
+                        selected: bookId == edition.id,
+                        onTap: () => setState(() => bookId = edition.id)),
+                  ),
+              ])),
           Expanded(
               child: results.isEmpty
-                  ? Center(child: Text(context.appText.noMatchingServiceItems))
+                  ? EmptyHint(title: context.appText.noMatchingServiceItems)
                   : ListView.builder(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
                       itemCount: results.length,
                       itemBuilder: (context, index) {
                         final item = results[index];
-                        return ListTile(
-                            title: Text('${item.number}  ${item.title}'),
-                            subtitle: Text(
-                                '${item.book}${item.ref.kind == HymnalItemKind.reading ? ' · ${context.appText.reading}' : ''}'),
+                        return HymnRow(
+                            number: '${item.number}',
+                            title: item.title,
+                            subtitle:
+                                '${item.book}${item.ref.kind == HymnalItemKind.reading ? ' · ${context.appText.reading}' : ''}',
                             onTap: () => Navigator.pop(context, item.ref));
                       })),
         ]));

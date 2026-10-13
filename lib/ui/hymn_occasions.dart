@@ -13,6 +13,7 @@ import 'package:sdahymnal/services/trends.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
+import 'package:sdahymnal/ui/kit.dart';
 
 class HymnOccasionsPage extends StatefulWidget {
   final List<Hymn> hymns;
@@ -38,74 +39,88 @@ class _HymnOccasionsPageState extends State<HymnOccasionsPage> {
         .contains(query);
   }
 
+  final _search = TextEditingController();
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Scaffold(
-      backgroundColor: t.bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SubPageHeader(title: context.appText.hymnsByOccasion),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Text(context.appText.topicsHeading,
-                      style: TextStyle(
-                          fontFamily: kSerif, fontSize: 26, color: t.ink)),
-                  const SizedBox(height: 8),
-                  Text(context.appText.topicsIntro,
-                      style: TextStyle(
-                          fontFamily: kSans, height: 1.5, color: t.muted)),
-                  const SizedBox(height: 20),
-                  TextField(
-                    onChanged: (value) => setState(() => _query = value),
-                    decoration: InputDecoration(
-                      hintText: context.appText.searchTopicsOccasions,
-                      prefixIcon: Icon(Icons.search),
+    final occasions = hymnOccasions.where(_matches).toList();
+    return HymnalPage(
+      title: context.appText.hymnsByOccasion,
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 28),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+            child: Text(context.appText.topicsIntro,
+                style: TextStyle(
+                    fontFamily: kSans, fontSize: 13, height: 1.4, color: t.muted)),
+          ),
+          HymnSearchField(
+            controller: _search,
+            hint: context.appText.searchTopicsOccasions,
+            clearTooltip: context.appText.clearSearch,
+            onChanged: (value) => setState(() => _query = value),
+            margin: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+          ),
+          if (occasions.isEmpty)
+            EmptyHint(title: context.appText.noMatchingTopics)
+          else
+            HymnalCard(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: Column(children: [
+                for (final (i, occasion) in occasions.indexed)
+                  Pressable(
+                    key: ValueKey('occasion-${occasion.id}'),
+                    onTap: () => Navigator.push(
+                        context,
+                        slideRoute(OccasionHymnsPage(
+                            occasion: occasion, hymns: widget.hymns))),
+                    pressedScale: 1.0,
+                    builder: (context, pressed) => Container(
+                      padding: const EdgeInsets.fromLTRB(16, 13, 12, 13),
+                      decoration: BoxDecoration(
+                        color: pressed ? t.surface2 : Colors.transparent,
+                        border: i < occasions.length - 1
+                            ? Border(bottom: BorderSide(color: t.line2))
+                            : null,
+                      ),
+                      child: Row(children: [
+                        Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(occasion.title,
+                                    style: TextStyle(
+                                        fontFamily: kSerif,
+                                        fontSize: 17.5,
+                                        fontWeight: FontWeight.w500,
+                                        color: t.ink)),
+                                const SizedBox(height: 3),
+                                Text(occasion.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontFamily: kSans,
+                                        fontSize: 12.5,
+                                        height: 1.35,
+                                        color: t.muted)),
+                              ]),
+                        ),
+                        const SizedBox(width: 12),
+                        HymnalIcons.rowChevron(t.faint, size: 15),
+                      ]),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  if (!hymnOccasions.any(_matches))
-                    Text(context.appText.noMatchingTopics),
-                  for (final occasion in hymnOccasions.where(_matches))
-                    Card(
-                      color: t.surface,
-                      elevation: 0,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        side: BorderSide(color: t.line2),
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 8),
-                        title: Text(occasion.title,
-                            style: TextStyle(
-                                fontFamily: kSerif,
-                                fontSize: 20,
-                                color: t.ink)),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Text(occasion.description,
-                              style: TextStyle(
-                                  fontFamily: kSans,
-                                  height: 1.4,
-                                  color: t.muted)),
-                        ),
-                        trailing: Icon(Icons.chevron_right, color: t.accent),
-                        onTap: () => Navigator.push(
-                            context,
-                            slideRoute(OccasionHymnsPage(
-                                occasion: occasion, hymns: widget.hymns))),
-                      ),
-                    ),
-                ],
-              ),
+              ]),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -191,125 +206,89 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
             ? context.appText.topicReadingsUnavailable
             : context.appText.topicReadingsLoading)
         : context.appText.topicReadingCount(readings.length);
-    return Scaffold(
-      backgroundColor: t.bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            SubPageHeader(title: widget.occasion.title),
-            Expanded(
-              child: ListView(
-                key: ValueKey('${widget.occasion.id}-$_version'),
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Text(widget.occasion.description,
-                      style: TextStyle(
-                          fontFamily: kSerif,
-                          fontSize: 20,
-                          height: 1.5,
-                          color: t.ink)),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 8,
-                    children: [
-                      for (final version in ['new', 'old'])
-                        ChoiceChip(
-                          label: Text(version == 'new'
-                              ? context.appText.newHymnal
-                              : context.appText.oldHymnal),
-                          selected: _version == version,
-                          onSelected: (_) => setState(() => _version = version),
-                        ),
-                    ],
+    return HymnalPage(
+      title: widget.occasion.title,
+      body: ListView(
+        key: ValueKey('${widget.occasion.id}-$_version'),
+        padding: const EdgeInsets.only(bottom: 28),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+            child: Text(widget.occasion.description,
+                style: TextStyle(
+                    fontFamily: kSerif, fontSize: 17, height: 1.45, color: t.ink)),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+            child: Wrap(
+              spacing: 7,
+              runSpacing: 6,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                for (final version in ['new', 'old'])
+                  FilterPill(
+                    key: ValueKey('occasion-edition-$version'),
+                    label: version == 'new'
+                        ? context.appText.newHymnal
+                        : context.appText.oldHymnal,
+                    selected: _version == version,
+                    onTap: () => setState(() => _version = version),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                      '${context.appText.hymnCount(suggestions.length)} • $readingCount${suggestions.isNotEmpty && _popularity.isNotEmpty ? ' • ${context.appText.hymnsPopularityRanked}' : ''}',
-                      style: TextStyle(fontFamily: kSans, color: t.muted)),
-                  const SizedBox(height: 8),
-                  if (suggestions.isEmpty && !hasReadingRefs)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Text(context.appText.occasionNoSelections,
-                          style: TextStyle(color: t.muted)),
-                    ),
-                  for (final hymn in suggestions) ...[
-                    ListTile(
-                      key: ValueKey('occasion-${hymn.version}-${hymn.number}'),
-                      contentPadding: EdgeInsets.zero,
-                      leading: SizedBox(
-                        width: 46,
-                        child: Text('${hymn.number}',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: kSerif,
-                                fontSize: 20,
-                                color: t.accent)),
-                      ),
-                      title: Text(hymn.title.trim(),
-                          textDirection: hymnTextDirection(hymn),
-                          style: TextStyle(
-                              fontFamily: kSerif, fontSize: 19, color: t.ink)),
-                      trailing: Icon(Icons.chevron_right, color: t.faint),
-                      onTap: () => Navigator.push(
-                          context,
-                          slideRoute(HymnPage(
-                            hymn: hymn,
-                            hymns: List.unmodifiable(suggestions),
-                            categoryTitle: widget.occasion.title,
-                          ))),
-                    ),
-                    Divider(height: 1, color: t.line2),
-                  ],
-                  if (hasReadingRefs && _readings == null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: _readingsFailed
-                          ? TextButton(
-                              onPressed: _loadReadings,
-                              child: Text(context.appText.readingsLoadRetry))
-                          : const Center(child: CircularProgressIndicator()),
-                    ),
-                  if (readings.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    Text(context.appText.scriptureReadings,
-                        style: TextStyle(
-                            fontFamily: kSerif, fontSize: 22, color: t.ink)),
-                    for (final reading in readings)
-                      ListTile(
-                        key: ValueKey('occasion-reading-${reading.id}'),
-                        contentPadding: EdgeInsets.zero,
-                        leading: SizedBox(
-                            width: 46,
-                            child: Text('${reading.number}',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontFamily: kSerif,
-                                    fontSize: 20,
-                                    color: t.accent))),
-                        title: Text(reading.title,
-                            style: TextStyle(
-                                fontFamily: kSerif,
-                                fontSize: 19,
-                                color: t.ink)),
-                        subtitle: Text(
-                            '${context.appText.reading}${reading.scriptureReference == null ? '' : ' • ${reading.scriptureReference}'}'),
-                        trailing: Icon(Icons.chevron_right, color: t.faint),
-                        onTap: () => Navigator.push(
-                            context,
-                            slideRoute(AdditionalReadingPage(
-                              reading: reading,
-                              readings: readings,
-                              categoryTitle: widget.occasion.title,
-                            ))),
-                      ),
-                  ],
-                ],
-              ),
+              ],
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 6),
+            child: Text(
+                '${context.appText.hymnCount(suggestions.length)} • $readingCount${suggestions.isNotEmpty && _popularity.isNotEmpty ? ' • ${context.appText.hymnsPopularityRanked}' : ''}',
+                style: TextStyle(fontFamily: kSans, fontSize: 12, color: t.muted)),
+          ),
+          if (suggestions.isEmpty && !hasReadingRefs)
+            EmptyHint(title: context.appText.occasionNoSelections),
+          for (final hymn in suggestions)
+            HymnRow(
+              key: ValueKey('occasion-${hymn.version}-${hymn.number}'),
+              number: '${hymn.number}',
+              title: hymn.title.trim(),
+              textDirection: hymnTextDirection(hymn),
+              onTap: () => Navigator.push(
+                  context,
+                  slideRoute(HymnPage(
+                    hymn: hymn,
+                    hymns: List.unmodifiable(suggestions),
+                    categoryTitle: widget.occasion.title,
+                  ))),
+            ),
+          if (hasReadingRefs && _readings == null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: _readingsFailed
+                  ? Center(
+                      child: TextButton(
+                          onPressed: _loadReadings,
+                          child: Text(context.appText.readingsLoadRetry)))
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+          if (readings.isNotEmpty) ...[
+            SectionLabel(context.appText.scriptureReadings.toUpperCase(),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 6)),
+            for (final reading in readings)
+              HymnRow(
+                key: ValueKey('occasion-reading-${reading.id}'),
+                number: '${reading.number}',
+                title: reading.title,
+                subtitle:
+                    '${context.appText.reading}${reading.scriptureReference == null ? '' : ' • ${reading.scriptureReference}'}',
+                onTap: () => Navigator.push(
+                    context,
+                    slideRoute(AdditionalReadingPage(
+                      reading: reading,
+                      readings: readings,
+                      categoryTitle: widget.occasion.title,
+                    ))),
+              ),
           ],
-        ),
+        ],
       ),
     );
   }
