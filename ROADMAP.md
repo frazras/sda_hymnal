@@ -77,6 +77,12 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
       each in the audited source), plus optional Adventist Youth, Scripture-song,
       and supplemental songbooks. Preserve their source page numbering.
+      Tagalog and Cebuano (even pages 2–474 after six reviewed label
+      corrections) and Adventist Youth songs (10) are generated, pinned, and
+      listed in the trusted text-download catalog; app registration of their
+      IDs remains. The Scripture and special songbooks are withheld pending a
+      publication-rights review because they contain songs under active
+      copyright.
 - [ ] Let users download, update, and remove optional language and score
       packs. Keep audio on demand with bounded caching; full-edition audio
       downloads are deferred to preserve device storage. Show size and coverage, verify checksums, activate updates atomically,

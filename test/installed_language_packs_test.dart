@@ -31,11 +31,13 @@ void main() {
   // id when it is registered as a supported imported book; the catalog test
   // then validates it through the runtime parser like every other download.
   const awaitingRegistration = {
+    'sda-ceb-cebuano-hymns',
     'sda-sn-kristu-munzwiyo',
     'sda-toi-kristu-mu-nyimbo',
     'sda-tum-nyimbo-za-mpingo-wa-sda',
     'sda-luo-wende-nyasae',
     'sda-guz-ogotera-kwa-nyasae',
+    'sda-en-adventist-youth-songs',
     'sda-ki-nyimbo-cia-agendi',
     'sda-bem-klistu-mu-nyimbo',
     'sda-rw-indirimbo-zo-guhimbaza-imana',
@@ -47,6 +49,7 @@ void main() {
     'sda-nso-kreste-ka-kopelo',
     'sda-st-keresete-pineng',
     'sda-tn-keresete-mo-kopelong',
+    'sda-tl-tagalog-hymns',
     'sda-ve-ngosha-yadzingosha',
     'sda-tw-memeneda-akwanhwefo-nnwom',
     'sda-ts-tinsimu-ta-mhalamhala',
@@ -61,7 +64,7 @@ void main() {
         book['bookId'] as String:
             book['path'] as String? ?? 'assets/hymnals/${book['bookId']}.json'
     };
-    expect(downloads.length, 26);
+    expect(downloads.length, 29);
     expect(downloads.first.bookId, 'sda-es-2009');
     expect(downloads.first.hymnCount, 614);
     expect(downloads.first.topicCount, 47);

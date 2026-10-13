@@ -1,0 +1,68 @@
+{
+  "sourceRevision": "8fba6417536b1a36e7d35c5cea3773e5bea3c47b",
+  "evidence": {
+    "review": "philippine-numbering-review.json",
+    "alternateSource": {
+      "path": "sdahymnal.json",
+      "bytes": 544587,
+      "sha256": "eaaddaebb80a3ce207e0a1e8845ff98ad50ca864909a11fe9b7e7f58e36bc9d7"
+    },
+    "mirroredEnglishLabels": {
+      "path": "english.json",
+      "bytes": 343390,
+      "sha256": "e8e312bcb15e57759fad48f77754f8bcd1f085e41ac566560df9bdd5c20a641d",
+      "evenLabels": [
+        18,
+        142,
+        200,
+        236,
+        268,
+        464
+      ]
+    }
+  },
+  "labelCorrections": [
+    {
+      "sourceNumber": 19,
+      "sourceTitle": "Panginoon Iyong Dinggin",
+      "number": 18,
+      "reason": "sdahymnal.json at the same revision numbers \"Panginoon Iyong Dinggin\" 18. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 18 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 18 for \"How Pleasant, How Divinely Fair\", which sdahymnal.json numbers 19. The preceding English page, 17, is \"Lord, in the Morning\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    },
+    {
+      "sourceNumber": 143,
+      "sourceTitle": "Banal na Espiritu, Ilaw ng Kabanalan",
+      "number": 142,
+      "reason": "sdahymnal.json at the same revision numbers \"Banal na Espiritu, Ilaw ng Kabanalan\" 142. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 142 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 142 for \"Come, Holy Spirit\", which sdahymnal.json numbers 143. The preceding English page, 141, is \"Holy Spirit, Light Divine\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    },
+    {
+      "sourceNumber": 201,
+      "sourceTitle": "Upang Malapit sa Diyos",
+      "number": 200,
+      "reason": "sdahymnal.json at the same revision numbers \"Upang Malapit sa Diyos\" 200. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 200 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 200 for \"Must Jesus Bear the Cross Alone?\", which sdahymnal.json numbers 201. The preceding English page, 199, is \"O, for a Closer Walk!\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    },
+    {
+      "sourceNumber": 237,
+      "sourceTitle": "Pagpalain Nawa",
+      "number": 236,
+      "reason": "sdahymnal.json at the same revision numbers \"Pagpalain Nawa\" 236. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 236 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 236 for \"We Give This Child to You\", which sdahymnal.json numbers 237. The preceding English page, 235, is \"Blest Be the Tie That Binds\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    },
+    {
+      "sourceNumber": 269,
+      "sourceTitle": "Maluwalhating Araw",
+      "number": 268,
+      "reason": "sdahymnal.json at the same revision numbers \"Maluwalhating Araw\" 268. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 268 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 268 for \"Another Six Days' Work Is Done\", which sdahymnal.json numbers 269. The preceding English page, 267, is \"Welcome, Welcome, Day of Rest\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    },
+    {
+      "sourceNumber": 465,
+      "sourceTitle": "Dinggin, Pangino'n, ang Panalangin",
+      "number": 464,
+      "reason": "sdahymnal.json at the same revision numbers \"Dinggin, Pangino'n, ang Panalangin\" 464. The book prints English on odd pages 1–473 and Tagalog on even pages 2–474 (237 records each); page 464 is otherwise missing, and the six corrected labels exactly fill the six gaps in the even sequence. english.json carries the mirrored even label 464 for \"Praise God, From Whom All Blessings\", which sdahymnal.json numbers 465. The preceding English page, 463, is \"Hear Our Prayer, O Lord\".",
+      "reviewer": "Claude (automated source reconciliation)"
+    }
+  ]
+}

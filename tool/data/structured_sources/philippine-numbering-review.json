@@ -4,7 +4,7 @@
     "bytes": 544587,
     "sha256": "eaaddaebb80a3ce207e0a1e8845ff98ad50ca864909a11fe9b7e7f58e36bc9d7"
   },
-  "status": "Conflicting source labels; no correction applied",
+  "status": "Resolved by reviewed label corrections in tagalog.reviewed-overrides.json and cebuano.reviewed-overrides.json: the six odd labels become even pages 18, 142, 200, 236, 268 and 464.",
   "collections": {
     "tagalog": [
       {
@@ -80,6 +80,44 @@
         "sourceTitle": "Pamati, O Dios",
         "alternateNumber": 464,
         "alternateTitle": "Pamati, O Dios"
+      }
+    ]
+  },
+  "mirroredEnglishLabels": {
+    "url": "https://raw.githubusercontent.com/wanmigs/sda-hymnal-data/8fba6417536b1a36e7d35c5cea3773e5bea3c47b/english.json",
+    "bytes": 343390,
+    "sha256": "e8e312bcb15e57759fad48f77754f8bcd1f085e41ac566560df9bdd5c20a641d",
+    "note": "english.json uses the even labels 18, 142, 200, 236, 268 and 464 for the English hymns that sdahymnal.json numbers 19, 143, 201, 237, 269 and 465; every other English record is odd.",
+    "labels": [
+      {
+        "sourcePage": 18,
+        "title": "How Pleasant, How Divinely Fair",
+        "alternateNumber": 19
+      },
+      {
+        "sourcePage": 142,
+        "title": "Come, Holy Spirit",
+        "alternateNumber": 143
+      },
+      {
+        "sourcePage": 200,
+        "title": "Must Jesus Bear the Cross Alone?",
+        "alternateNumber": 201
+      },
+      {
+        "sourcePage": 236,
+        "title": "We Give This Child to You",
+        "alternateNumber": 237
+      },
+      {
+        "sourcePage": 268,
+        "title": "Another Six Days' Work Is Done",
+        "alternateNumber": 269
+      },
+      {
+        "sourcePage": 464,
+        "title": "Praise God, From Whom All Blessings",
+        "alternateNumber": 465
       }
     ]
   }

@@ -111,6 +111,76 @@ class StructuredImportTest(unittest.TestCase):
                                                 reason='No lyrics', reviewer='Source reviewer')]
         self.assertEqual([item['number'] for item in importer.convert(source, self.manifest)['items']], [2])
 
+    def test_reviewed_label_corrections_move_only_unexpected_source_labels(self):
+        self.manifest.update(format='structured-verses', sourceLanguage='tagalog', expectedNumbers=[2, 4, 6])
+        source = [dict(pageNumber=page, language='tagalog', title=f'Awit {page}',
+                       verses=[dict(number=1, lines=[f'Linya {page}'])]) for page in (2, 5, 6)]
+        correction = dict(sourceNumber=5, sourceTitle='Awit 5', number=4,
+                          reviewer='Source reviewer', reason='Alternate file and page layout')
+        overrides = dict(sourceRevision='pinned', labelCorrections=[correction])
+        with self.assertRaises(ValueError):
+            importer.convert(source, self.manifest)
+        pack = importer.convert(source, self.manifest, overrides)
+        self.assertEqual([item['number'] for item in pack['items']], [2, 4, 6])
+        self.assertEqual(pack['items'][1]['id'], '4')
+        self.assertEqual(pack['items'][1]['sourceRecord'], source[1])
+        self.assertEqual(pack['reviewedOverrides'], overrides)
+        self.assertTrue(pack['contentVersion'].startswith('pinned-review-'))
+        with_page_four = source + [dict(source[0], pageNumber=4, title='Awit 4')]
+        cases = [
+            ('stale title', source, [dict(correction, sourceTitle='Iba')]),
+            ('unexpected target', source, [dict(correction, number=8)]),
+            ('expected source label', source, [dict(correction, sourceNumber=6, sourceTitle='Awit 6')]),
+            ('unused correction', source, [correction, dict(correction, sourceNumber=7, number=2)]),
+            ('duplicate correction', source, [correction, correction]),
+            ('target collision', with_page_four, [correction]),
+            ('missing reviewer', source, [dict(correction, reviewer='')]),
+            ('identity only', source, [dict(correction, number='4')]),
+        ]
+        for label, records, corrections in cases:
+            with self.subTest(label), self.assertRaises(ValueError):
+                importer.convert(records, self.manifest, dict(overrides, labelCorrections=corrections))
+        unlabelled = importer.convert(source, dict(self.manifest, expectedNumbers=[2, 5, 6]))
+        with self.assertRaises(ValueError):
+            importer.apply_overrides(unlabelled, overrides)
+        with self.assertRaises(ValueError):
+            importer.apply_overrides(unlabelled, dict(sourceRevision='pinned', labelCorrections=[], changes=[]))
+
+    def test_philippine_page_labels_are_reviewed_and_complete(self):
+        for name in ('tagalog', 'cebuano'):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                manifest = ROOT / f'tool/data/structured_sources/{name}.manifest.json'
+                pack = importer.build(manifest, Path(directory) / 'pack.json')
+                self.assertEqual([item['number'] for item in pack['items']], list(range(2, 475, 2)))
+                moved = {item['sourceRecord']['pageNumber']: item['number'] for item in pack['items']
+                         if item['sourceRecord']['pageNumber'] != item['number']}
+                self.assertEqual(moved, {19: 18, 143: 142, 201: 200, 237: 236, 269: 268, 465: 464})
+                self.assertFalse(pack['coverage']['structurallyComplete'])
+
+    def test_manifest_pinned_overrides_are_verified_and_exclusive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'source.json').write_text(json.dumps(self.source))
+            data = (root / 'source.json').read_bytes()
+            overrides = json.dumps(dict(sourceRevision='pinned', changes=[
+                dict(itemId='4', field='title', before='Grâce', after='Titre revu',
+                     reviewer='Reviewer', reason='Printed title')])).encode()
+            (root / 'review.json').write_bytes(overrides)
+            manifest = copy.deepcopy(self.manifest)
+            manifest['snapshot'] = 'source.json'
+            manifest['source'].update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+            manifest['reviewedOverrides'] = dict(path='review.json', bytes=len(overrides),
+                                                 sha256=hashlib.sha256(overrides).hexdigest())
+            manifest_path = root / 'manifest.json'
+            manifest_path.write_text(json.dumps(manifest))
+            pack = importer.build(manifest_path, root / 'pack.json')
+            self.assertEqual(pack['items'][0]['title'], 'Titre revu')
+            with self.assertRaises(ValueError):
+                importer.build(manifest_path, root / 'other.json', root / 'review.json')
+            (root / 'review.json').write_bytes(overrides.replace(b'Titre revu', b'Titre modifie'))
+            with self.assertRaises(ValueError):
+                importer.build(manifest_path, root / 'pack.json', check=True)
+
     def test_reviewed_override_is_guarded_and_retains_original(self):
         pack = importer.convert(self.source, self.manifest)
         before = copy.deepcopy(pack)
@@ -178,7 +248,7 @@ class StructuredImportTest(unittest.TestCase):
                             ('kinyarwanda', 500), ('sepedi', 303), ('shona', 300), ('tswana', 300),
                             ('venda', 306), ('xhosa', 352), ('xitsonga', 311), ('kamba', 469), ('maasai', 243),
                             ('dholuo', 329), ('ekegusii', 365), ('sotho', 268), ('tonga', 339),
-                            ('tumbuka', 352), ('twi', 751)]:
+                            ('tumbuka', 352), ('twi', 751), ('ay-songs', 10)]:
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 manifest = ROOT / f'tool/data/structured_sources/{name}.manifest.json'
                 output = Path(directory) / 'pack.json'

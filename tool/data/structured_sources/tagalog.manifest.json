@@ -2,9 +2,10 @@
   "format": "structured-verses",
   "snapshot": "tagalog.source.json",
   "book": {
-    "id": "review-tl-philippine",
+    "id": "sda-tl-tagalog-hymns",
     "languageTag": "tl",
-    "displayName": "Tagalog · Partial collection"
+    "displayName": "Tagalog · Tagalog Hymns",
+    "year": null
   },
   "source": {
     "repository": "wanmigs/sda-hymnal-data",
@@ -13,6 +14,7 @@
     "bytes": 289915,
     "sha256": "91980b9ede3663660afeb2ac267fc4b15eb9e9b56c7722d7996cc2b393f99e68"
   },
+  "sourceLanguage": "tagalog",
   "expectedNumbers": [
     2,
     4,
@@ -22,7 +24,7 @@
     12,
     14,
     16,
-    19,
+    18,
     20,
     22,
     24,
@@ -84,7 +86,7 @@
     136,
     138,
     140,
-    143,
+    142,
     144,
     146,
     148,
@@ -113,7 +115,7 @@
     194,
     196,
     198,
-    201,
+    200,
     202,
     204,
     206,
@@ -131,7 +133,7 @@
     230,
     232,
     234,
-    237,
+    236,
     238,
     240,
     242,
@@ -147,7 +149,7 @@
     262,
     264,
     266,
-    269,
+    268,
     270,
     272,
     274,
@@ -245,14 +247,24 @@
     458,
     460,
     462,
-    465,
+    464,
     466,
     468,
     470,
     472,
     474
   ],
+  "reviewedOverrides": {
+    "path": "tagalog.reviewed-overrides.json",
+    "bytes": 4590,
+    "sha256": "65eb8b2b183fb7b9366654e2f4e8f645fd22d3c19104827fa9acdd2d21733eb4"
+  },
   "structurallyComplete": false,
-  "coverageNote": "Partial collection. Source page labels retained: six odd labels replace expected even pages; these discrepancies require editorial review before publication.",
-  "sourceLanguage": "tagalog"
+  "coverageNote": "Page-numbered partial collection: 237 songs of a printed bilingual hymnal, on its even pages 2–474; English occupies the odd pages. Numbers are page numbers, not hymn numbers. Source labels 19, 143, 201, 237, 269 and 465 are corrected to pages 18, 142, 200, 236, 268 and 464 by reviewed override. Print edition year not established; independent lyric review pending. No verified media attached.",
+  "notes": [
+    "Book title is the source manifest.json title for tagalog.json (\"Tagalog Hymns\"); the source names no printed edition.",
+    "Every record is labelled tagalog; the tag is tl (ISO 639-1).",
+    "tagalog.reviewed-overrides.json corrects the six odd source labels to the even pages that sdahymnal.json uses for the same titles; english.json carries the mirrored even labels. The original records, including their source labels, remain in each item's sourceRecord.",
+    "Records carry external audio links; they stay in the source record as unverified leads and are not activated."
+  ]
 }

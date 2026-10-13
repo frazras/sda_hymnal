@@ -2,9 +2,10 @@
   "format": "structured-verses",
   "snapshot": "cebuano.source.json",
   "book": {
-    "id": "review-ceb-philippine",
+    "id": "sda-ceb-cebuano-hymns",
     "languageTag": "ceb",
-    "displayName": "Cebuano · Partial collection"
+    "displayName": "Cebuano · Cebuano Hymns",
+    "year": null
   },
   "source": {
     "repository": "wanmigs/sda-hymnal-data",
@@ -23,7 +24,7 @@
     12,
     14,
     16,
-    19,
+    18,
     20,
     22,
     24,
@@ -85,7 +86,7 @@
     136,
     138,
     140,
-    143,
+    142,
     144,
     146,
     148,
@@ -114,7 +115,7 @@
     194,
     196,
     198,
-    201,
+    200,
     202,
     204,
     206,
@@ -132,7 +133,7 @@
     230,
     232,
     234,
-    237,
+    236,
     238,
     240,
     242,
@@ -148,7 +149,7 @@
     262,
     264,
     266,
-    269,
+    268,
     270,
     272,
     274,
@@ -246,13 +247,25 @@
     458,
     460,
     462,
-    465,
+    464,
     466,
     468,
     470,
     472,
     474
   ],
+  "reviewedOverrides": {
+    "path": "cebuano.reviewed-overrides.json",
+    "bytes": 4524,
+    "sha256": "e29647db844c8e10a642fcd4ba6b250f77614df20e13eda6e26413f25231c08e"
+  },
   "structurallyComplete": false,
-  "coverageNote": "Partial collection. Six source page labels disagree with the alternate stanza file: 19/18, 143/142, 201/200, 237/236, 269/268, 465/464. Retain source labels pending review."
+  "coverageNote": "Page-numbered partial collection: 237 songs of a printed bilingual hymnal, on its even pages 2–474; English occupies the odd pages. Numbers are page numbers, not hymn numbers. Source labels 19, 143, 201, 237, 269 and 465 are corrected to pages 18, 142, 200, 236, 268 and 464 by reviewed override. Page 142 repeats the song on page 140 (\"Hupnga Man sa Espiritu\") in both source files, although the preceding English page, 141, is \"Holy Spirit, Light Divine\"; its Cebuano text needs review. Print edition year not established; independent lyric review pending. No verified media attached.",
+  "notes": [
+    "Book title is the source manifest.json title for cebuano.json (\"Cebuano Hymns\"); the source names no printed edition.",
+    "Every record is labelled cebuano; the tag is ceb (ISO 639-2/3; Cebuano has no ISO 639-1 code).",
+    "cebuano.reviewed-overrides.json corrects the six odd source labels to the even pages that sdahymnal.json uses for the same titles; english.json carries the mirrored even labels. The original records, including their source labels, remain in each item's sourceRecord.",
+    "Records carry external audio links; they stay in the source record as unverified leads and are not activated.",
+    "Pages 140 and 142 (source label 143) have the same title and identical lyrics in cebuano.json and sdahymnal.json. Record 143 links to a recording of \"Holy Spirit, Light Divine\", the English hymn on page 141. The page is kept, as the record is internally consistent, and the duplication is disclosed in the coverage note."
+  ]
 }

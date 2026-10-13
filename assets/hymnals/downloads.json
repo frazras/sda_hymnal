@@ -4,12 +4,14 @@
     "repository": "frazras/sda_hymnal",
     "revision": "129eb7caf04d1a6e1c15655452d7ff6e2535eb4e",
     "optionalPacks": [
+      "resources/hymnals/sda-ceb-cebuano-hymns.json",
       "resources/hymnals/sda-ny-khristu-mu-nyimbo.json",
       "resources/hymnals/sda-sn-kristu-munzwiyo.json",
       "resources/hymnals/sda-toi-kristu-mu-nyimbo.json",
       "resources/hymnals/sda-tum-nyimbo-za-mpingo-wa-sda.json",
       "resources/hymnals/sda-luo-wende-nyasae.json",
       "resources/hymnals/sda-guz-ogotera-kwa-nyasae.json",
+      "resources/hymnals/sda-en-adventist-youth-songs.json",
       "resources/hymnals/sda-ki-nyimbo-cia-agendi.json",
       "resources/hymnals/sda-bem-klistu-mu-nyimbo.json",
       "resources/hymnals/sda-rw-indirimbo-zo-guhimbaza-imana.json",
@@ -21,6 +23,7 @@
       "resources/hymnals/sda-nso-kreste-ka-kopelo.json",
       "resources/hymnals/sda-st-keresete-pineng.json",
       "resources/hymnals/sda-tn-keresete-mo-kopelong.json",
+      "resources/hymnals/sda-tl-tagalog-hymns.json",
       "resources/hymnals/sda-ve-ngosha-yadzingosha.json",
       "resources/hymnals/sda-tw-memeneda-akwanhwefo-nnwom.json",
       "resources/hymnals/sda-ts-tinsimu-ta-mhalamhala.json"
@@ -124,6 +127,23 @@
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/assets/hymnals/sda-sw-nyimbo-za-kristo.json"
     },
     {
+      "bookId": "sda-ceb-cebuano-hymns",
+      "displayName": "Cebuano · Cebuano Hymns",
+      "languageTag": "ceb",
+      "year": null,
+      "path": "resources/hymnals/sda-ceb-cebuano-hymns.json",
+      "bytes": 673561,
+      "sha256": "a66001c1ea991fbc3fae8e8eaf3695217492fcd51515b1f5795cc926abc1bab7",
+      "hymnCount": 237,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 237,
+        "structurallyComplete": false,
+        "note": "Page-numbered partial collection: 237 songs of a printed bilingual hymnal, on its even pages 2–474; English occupies the odd pages. Numbers are page numbers, not hymn numbers. Source labels 19, 143, 201, 237, 269 and 465 are corrected to pages 18, 142, 200, 236, 268 and 464 by reviewed override. Page 142 repeats the song on page 140 (\"Hupnga Man sa Espiritu\") in both source files, although the preceding English page, 141, is \"Holy Spirit, Light Divine\"; its Cebuano text needs review. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-ceb-cebuano-hymns.json"
+    },
+    {
       "bookId": "sda-ny-khristu-mu-nyimbo",
       "displayName": "Chichewa · Khristu Mu Nyimbo",
       "languageTag": "ny",
@@ -224,6 +244,23 @@
         "note": "Partial collection: 365 of 370 numbered hymns. Omitted 13, 309, 327, 329 and 343: they have no lyrics in the pinned JSON or its VideoPsalm package. A second #86, \"(a) Ebisio Amang`ana Y`enkoro\", is omitted because lettered numbers are not supported. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
       },
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-guz-ogotera-kwa-nyasae.json"
+    },
+    {
+      "bookId": "sda-en-adventist-youth-songs",
+      "displayName": "English · Adventist Youth Songs",
+      "languageTag": "en",
+      "year": null,
+      "path": "resources/hymnals/sda-en-adventist-youth-songs.json",
+      "bytes": 23385,
+      "sha256": "929b99fd06e56dfa816edb46c379fb2f963fa427c8020e02c60599d90ef2d485",
+      "hymnCount": 10,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 10,
+        "structurallyComplete": true,
+        "note": "All 10 source entries included. Entries 3–5 are the AY Pledge, Aim and Motto, recited texts rather than songs. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-en-adventist-youth-songs.json"
     },
     {
       "bookId": "sda-ki-nyimbo-cia-agendi",
@@ -411,6 +448,23 @@
         "note": "All 300 source entries included. Print edition year not established; independent lyric review pending. No verified media attached."
       },
       "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-tn-keresete-mo-kopelong.json"
+    },
+    {
+      "bookId": "sda-tl-tagalog-hymns",
+      "displayName": "Tagalog · Tagalog Hymns",
+      "languageTag": "tl",
+      "year": null,
+      "path": "resources/hymnals/sda-tl-tagalog-hymns.json",
+      "bytes": 708642,
+      "sha256": "7cdaa25bcc59535dcf13881d2b5526127fa259a299779a52880094a30ba68b63",
+      "hymnCount": 237,
+      "topicCount": 0,
+      "coverage": {
+        "sourceRecords": 237,
+        "structurallyComplete": false,
+        "note": "Page-numbered partial collection: 237 songs of a printed bilingual hymnal, on its even pages 2–474; English occupies the odd pages. Numbers are page numbers, not hymn numbers. Source labels 19, 143, 201, 237, 269 and 465 are corrected to pages 18, 142, 200, 236, 268 and 464 by reviewed override. Print edition year not established; independent lyric review pending. No verified media attached."
+      },
+      "url": "https://raw.githubusercontent.com/frazras/sda_hymnal/129eb7caf04d1a6e1c15655452d7ff6e2535eb4e/resources/hymnals/sda-tl-tagalog-hymns.json"
     },
     {
       "bookId": "sda-ve-ngosha-yadzingosha",

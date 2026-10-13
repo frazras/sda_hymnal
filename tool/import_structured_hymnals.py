@@ -9,7 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from import_hymnals import json_bytes, text
+from import_hymnals import json_bytes, reviewed_overrides, text
 from validate_hymnal_content import inspect_pack, local_asset
 
 OMISSIONS = ('empty', 'invalidText', 'duplicateNumber', 'duplicateLyrics')
@@ -96,7 +96,37 @@ def omitted_records(records, manifest, fmt):
     return set(chosen)
 
 
-def convert(source, manifest):
+def label_corrections(overrides, expected):
+    """Reviewed source-label corrections, keyed by the pinned source number.
+
+    A correction may only move a label outside the expected numbering onto an
+    expected number, and only for the record whose source title it names.
+    """
+    if overrides is None:
+        return {}
+    if not isinstance(overrides, dict):
+        raise ValueError('Reviewed overrides must be an object')
+    corrections = overrides.get('labelCorrections', [])
+    if not isinstance(corrections, list):
+        raise ValueError('Label corrections must be a list')
+    result, targets = {}, set()
+    for correction in corrections:
+        if not isinstance(correction, dict):
+            raise ValueError('Invalid label correction')
+        source = positive_number(correction.get('sourceNumber'))
+        number = positive_number(correction.get('number'))
+        for field in ('sourceTitle', 'reviewer', 'reason'):
+            text(correction.get(field), field)
+        if source in result or number in targets:
+            raise ValueError('Duplicate label correction')
+        if source in expected or number not in expected:
+            raise ValueError('Label correction must move an unexpected label to an expected number')
+        result[source] = correction
+        targets.add(number)
+    return result
+
+
+def convert(source, manifest, overrides=None):
     fmt = manifest['format']
     if fmt == 'videopsalm':
         records = sequence(source.get('Songs') if isinstance(source, dict) else None, 'Songs')
@@ -110,6 +140,8 @@ def convert(source, manifest):
             or len(expected) != len(set(expected))):
         raise ValueError('Expected numbers must be explicit, positive and unique')
     omitted = omitted_records(records, manifest, fmt)
+    relabel = label_corrections(overrides, expected)
+    relabelled = set()
     items = []
     for index, record in enumerate(records):
         if index in omitted:
@@ -138,9 +170,18 @@ def convert(source, manifest):
                 if not isinstance(record['refrain'], dict):
                     raise ValueError('Invalid refrain')
                 blocks.append(dict(kind='refrain', text=lines(record['refrain'])))
+        correction = relabel.get(number)
+        if correction is not None:
+            # The original record, with its source label, stays in sourceRecord.
+            if number in relabelled or title != correction['sourceTitle']:
+                raise ValueError('Label correction precondition does not match source')
+            relabelled.add(number)
+            number = correction['number']
         items.append(dict(id=str(number), number=number, title=title,
                           sourceText='\n\n'.join(block['text'] for block in blocks),
                           blocks=blocks, sourceRecord=copy.deepcopy(record)))
+    if relabelled != set(relabel):
+        raise ValueError('Label correction does not match a source record')
     provenance = copy.deepcopy(manifest['source'])
     for field in ('repository', 'revision', 'path', 'sha256'):
         text(provenance.get(field), field)
@@ -152,6 +193,8 @@ def convert(source, manifest):
                 items=items, topics=[])
     if type(pack['coverage']['structurallyComplete']) is not bool:
         raise ValueError('Coverage must explicitly declare completeness')
+    if overrides is not None:
+        pack = apply_overrides(pack, overrides)
     errors = inspect_pack(pack, expected)['errors']
     if errors:
         raise ValueError(json.dumps(errors, ensure_ascii=False))
@@ -166,7 +209,23 @@ def apply_overrides(pack, overrides):
         raise ValueError('Reviewed overrides must be an object')
     if overrides.get('sourceRevision') != pack['source']['revision']:
         raise ValueError('Overrides target a different source revision')
-    changes = sequence(overrides.get('changes'), 'reviewed changes')
+    corrections = overrides.get('labelCorrections', [])
+    if not isinstance(corrections, list):
+        raise ValueError('Label corrections must be a list')
+    for correction in corrections:
+        # convert() applies label corrections before numbering is validated;
+        # never record a decision that the pack does not reflect.
+        matches = [item for item in result['items']
+                   if isinstance(correction, dict) and item['number'] == correction.get('number')]
+        if len(matches) > 1:
+            raise ValueError('Label correction collides with another record')
+        record = matches[0].get('sourceRecord') if matches else None
+        label = record.get('pageNumber', record.get('ID')) if isinstance(record, dict) else None
+        if label is None or label != correction.get('sourceNumber'):
+            raise ValueError('Label correction was not applied during conversion')
+    changes = overrides.get('changes', [])
+    if changes != [] or not corrections:
+        changes = sequence(changes, 'reviewed changes')
     seen = set()
     for change in changes:
         key = (change.get('itemId'), change.get('field'))
@@ -201,9 +260,13 @@ def build(manifest_path, output, overrides_path=None, check=False):
     source = manifest['source']
     if len(data) != source['bytes'] or hashlib.sha256(data).hexdigest() != source['sha256']:
         raise ValueError('Pinned source size/checksum mismatch')
-    pack = convert(json.loads(data), manifest)
-    overrides = json.loads(overrides_path.read_text()) if overrides_path else None
-    pack = apply_overrides(pack, overrides)
+    # Review decisions pinned by the manifest are verified by size and SHA-256.
+    overrides = reviewed_overrides(manifest, manifest_path.parent)
+    if overrides_path is not None:
+        if overrides is not None:
+            raise ValueError('The manifest already pins reviewed overrides')
+        overrides = json.loads(overrides_path.read_text())
+    pack = convert(json.loads(data), manifest, overrides)
     encoded = json_bytes(pack)
     if check:
         if not output.exists() or output.read_bytes() != encoded:

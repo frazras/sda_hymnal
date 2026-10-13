@@ -1,0 +1,556 @@
+{
+  "schemaVersion": 1,
+  "book": {
+    "id": "sda-en-adventist-youth-songs",
+    "languageTag": "en",
+    "displayName": "English · Adventist Youth Songs",
+    "year": null
+  },
+  "contentVersion": "8fba6417536b1a36e7d35c5cea3773e5bea3c47b",
+  "source": {
+    "repository": "wanmigs/sda-hymnal-data",
+    "revision": "8fba6417536b1a36e7d35c5cea3773e5bea3c47b",
+    "path": "ay-songs.json",
+    "bytes": 9242,
+    "sha256": "c01e921543a9e6cf1d6b6104ff11c01a995b9f4a152d0e2a5d782be586022ade"
+  },
+  "coverage": {
+    "sourceRecords": 10,
+    "structurallyComplete": true,
+    "note": "All 10 source entries included. Entries 3–5 are the AY Pledge, Aim and Motto, recited texts rather than songs. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached."
+  },
+  "items": [
+    {
+      "id": "1",
+      "number": 1,
+      "title": "Dare to Be a Daniel",
+      "sourceText": "Standing by a purpose true,\nHeeding God's command,\nHonor them, the faithful few!\nAll hail to Daniel's band!\n\nMany mighty men are lost,\nDaring not to stand,\nWho for God had been a host,\nBy joining Daniel's band.\n\nMany giants, great and tall,\nStalking through the land,\nHeadlong to the earth would fall,\nIf met by Daniel's band.\n\nHold the Gospel banner high!\nOn to victory grand!\nSatan and his hosts defy,\nAnd shout for Daniel's band.\n\nDare to be a Daniel,\nDare to stand alone!\nDare to have a purpose firm!\nDare to make it known.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "Standing by a purpose true,\nHeeding God's command,\nHonor them, the faithful few!\nAll hail to Daniel's band!"
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "Many mighty men are lost,\nDaring not to stand,\nWho for God had been a host,\nBy joining Daniel's band."
+        },
+        {
+          "kind": "verse",
+          "label": "3",
+          "text": "Many giants, great and tall,\nStalking through the land,\nHeadlong to the earth would fall,\nIf met by Daniel's band."
+        },
+        {
+          "kind": "verse",
+          "label": "4",
+          "text": "Hold the Gospel banner high!\nOn to victory grand!\nSatan and his hosts defy,\nAnd shout for Daniel's band."
+        },
+        {
+          "kind": "refrain",
+          "text": "Dare to be a Daniel,\nDare to stand alone!\nDare to have a purpose firm!\nDare to make it known."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 1,
+        "title": "Dare to Be a Daniel",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "Standing by a purpose true,",
+              "Heeding God's command,",
+              "Honor them, the faithful few!",
+              "All hail to Daniel's band!"
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "Many mighty men are lost,",
+              "Daring not to stand,",
+              "Who for God had been a host,",
+              "By joining Daniel's band."
+            ]
+          },
+          {
+            "number": 3,
+            "lines": [
+              "Many giants, great and tall,",
+              "Stalking through the land,",
+              "Headlong to the earth would fall,",
+              "If met by Daniel's band."
+            ]
+          },
+          {
+            "number": 4,
+            "lines": [
+              "Hold the Gospel banner high!",
+              "On to victory grand!",
+              "Satan and his hosts defy,",
+              "And shout for Daniel's band."
+            ]
+          }
+        ],
+        "refrain": {
+          "lines": [
+            "Dare to be a Daniel,",
+            "Dare to stand alone!",
+            "Dare to have a purpose firm!",
+            "Dare to make it known."
+          ]
+        },
+        "link": "https://www.dropbox.com/scl/fi/6y83pev0xnh4nd0g4cfz3/Dare-To-Be-A-Daniel-Hymns-Piano-Instrumental-with-Lyrics.mp3?rlkey=mmqn05bbnft5kkezgdr5118by&st=ta1igrq6&dl=1"
+      }
+    },
+    {
+      "id": "2",
+      "number": 2,
+      "title": "Give Me the Bible",
+      "sourceText": "Give me the Bible, star of gladness gleaming,\nTo cheer the wanderer lone and tempest tossed,\nNo storm can hide that peaceful radiance beaming,\nSince Jesus came to seek and save the lost.\n\nGive me the Bible when my heart is broken,\nWhen sin and grief have filled my soul with fear,\nGive me the precious words by Jesus spoken,\nHold up faith's lamp to show my Savior near.\n\nGive me the Bible, all my steps enlighten,\nTeach me the danger of these realms below,\nThat lamp of safety, o'er the gloom shall brighten,\nThat light alone the path of peace can show.\n\nGive me the Bible, lamp of life immortal,\nHold up that splendor by the open grave,\nShow me the light from heaven's shining portal,\nShow me the glory gilding Jordan's wave.\n\nGive me the Bible—holy message shining,\nThy light shall guide me in the narrow way.\nPrecept and promise, law and love combining,\n'Til night shall vanish in eternal day.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "Give me the Bible, star of gladness gleaming,\nTo cheer the wanderer lone and tempest tossed,\nNo storm can hide that peaceful radiance beaming,\nSince Jesus came to seek and save the lost."
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "Give me the Bible when my heart is broken,\nWhen sin and grief have filled my soul with fear,\nGive me the precious words by Jesus spoken,\nHold up faith's lamp to show my Savior near."
+        },
+        {
+          "kind": "verse",
+          "label": "3",
+          "text": "Give me the Bible, all my steps enlighten,\nTeach me the danger of these realms below,\nThat lamp of safety, o'er the gloom shall brighten,\nThat light alone the path of peace can show."
+        },
+        {
+          "kind": "verse",
+          "label": "4",
+          "text": "Give me the Bible, lamp of life immortal,\nHold up that splendor by the open grave,\nShow me the light from heaven's shining portal,\nShow me the glory gilding Jordan's wave."
+        },
+        {
+          "kind": "refrain",
+          "text": "Give me the Bible—holy message shining,\nThy light shall guide me in the narrow way.\nPrecept and promise, law and love combining,\n'Til night shall vanish in eternal day."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 2,
+        "title": "Give Me the Bible",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "Give me the Bible, star of gladness gleaming,",
+              "To cheer the wanderer lone and tempest tossed,",
+              "No storm can hide that peaceful radiance beaming,",
+              "Since Jesus came to seek and save the lost."
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "Give me the Bible when my heart is broken,",
+              "When sin and grief have filled my soul with fear,",
+              "Give me the precious words by Jesus spoken,",
+              "Hold up faith's lamp to show my Savior near."
+            ]
+          },
+          {
+            "number": 3,
+            "lines": [
+              "Give me the Bible, all my steps enlighten,",
+              "Teach me the danger of these realms below,",
+              "That lamp of safety, o'er the gloom shall brighten,",
+              "That light alone the path of peace can show."
+            ]
+          },
+          {
+            "number": 4,
+            "lines": [
+              "Give me the Bible, lamp of life immortal,",
+              "Hold up that splendor by the open grave,",
+              "Show me the light from heaven's shining portal,",
+              "Show me the glory gilding Jordan's wave."
+            ]
+          }
+        ],
+        "refrain": {
+          "lines": [
+            "Give me the Bible—holy message shining,",
+            "Thy light shall guide me in the narrow way.",
+            "Precept and promise, law and love combining,",
+            "'Til night shall vanish in eternal day."
+          ]
+        },
+        "link": "https://sdahymnals.com/Hymnal/mp3/272%20%E2%80%93%20Give%20Me%20the%20Bible.mp3"
+      }
+    },
+    {
+      "id": "3",
+      "number": 3,
+      "title": "The AY Pledge",
+      "sourceText": "By the grace of God,\nI will be pure and kind and true.\nI will keep the Adventist Youth Law.\nI will be a servant of God\nand a friend to man.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "By the grace of God,\nI will be pure and kind and true.\nI will keep the Adventist Youth Law.\nI will be a servant of God\nand a friend to man."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 3,
+        "title": "The AY Pledge",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "By the grace of God,",
+              "I will be pure and kind and true.",
+              "I will keep the Adventist Youth Law.",
+              "I will be a servant of God",
+              "and a friend to man."
+            ]
+          }
+        ],
+        "refrain": null
+      }
+    },
+    {
+      "id": "4",
+      "number": 4,
+      "title": "The AY Aim",
+      "sourceText": "The Advent Message\nto all the world\nin my generation.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "The Advent Message\nto all the world\nin my generation."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 4,
+        "title": "The AY Aim",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "The Advent Message",
+              "to all the world",
+              "in my generation."
+            ]
+          }
+        ],
+        "refrain": null
+      }
+    },
+    {
+      "id": "5",
+      "number": 5,
+      "title": "The AY Motto",
+      "sourceText": "The love of Christ\nconstrains us.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "The love of Christ\nconstrains us."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 5,
+        "title": "The AY Motto",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "The love of Christ",
+              "constrains us."
+            ]
+          }
+        ],
+        "refrain": null
+      }
+    },
+    {
+      "id": "6",
+      "number": 6,
+      "title": "We Are the Pathfinders Strong",
+      "sourceText": "We are the Pathfinders strong,\nThe servants of God are we,\nFaithful as we march along,\nIn kindness, truth, and purity.\nA message to tell to the world,\nA truth that will set us free,\nKing Jesus the Savior's coming back\nFor you and me.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "We are the Pathfinders strong,\nThe servants of God are we,\nFaithful as we march along,\nIn kindness, truth, and purity.\nA message to tell to the world,\nA truth that will set us free,\nKing Jesus the Savior's coming back\nFor you and me."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 6,
+        "title": "We Are the Pathfinders Strong",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "We are the Pathfinders strong,",
+              "The servants of God are we,",
+              "Faithful as we march along,",
+              "In kindness, truth, and purity.",
+              "A message to tell to the world,",
+              "A truth that will set us free,",
+              "King Jesus the Savior's coming back",
+              "For you and me."
+            ]
+          }
+        ],
+        "refrain": null,
+        "link": "https://www.dropbox.com/scl/fi/bvt5bmx027w2kw4zgq2yj/PATHFINDER-SONG-Instrumental-with-Lyrics.mp3?rlkey=icz51sw8v34w41f2uhsui9kdc&st=grrc4395&dl=1"
+      }
+    },
+    {
+      "id": "7",
+      "number": 7,
+      "title": "Onward Christian Soldiers",
+      "sourceText": "Onward, Christian soldiers, marching as to war,\nWith the cross of Jesus going on before.\nChrist, the royal Master, leads against the foe;\nForward into battle see His banners go!\n\nAt the sign of triumph Satan's host doth flee;\nOn then, Christian soldiers, on to victory!\nHell's foundations quiver at the shout of praise;\nBrothers, lift your voices, loud your anthems raise.\n\nLike a mighty army moves the church of God;\nBrothers, we are treading where the saints have trod.\nWe are not divided, all one body we,\nOne in hope and doctrine, one in charity.\n\nOnward, Christian soldiers, marching as to war,\nWith the cross of Jesus going on before.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "Onward, Christian soldiers, marching as to war,\nWith the cross of Jesus going on before.\nChrist, the royal Master, leads against the foe;\nForward into battle see His banners go!"
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "At the sign of triumph Satan's host doth flee;\nOn then, Christian soldiers, on to victory!\nHell's foundations quiver at the shout of praise;\nBrothers, lift your voices, loud your anthems raise."
+        },
+        {
+          "kind": "verse",
+          "label": "3",
+          "text": "Like a mighty army moves the church of God;\nBrothers, we are treading where the saints have trod.\nWe are not divided, all one body we,\nOne in hope and doctrine, one in charity."
+        },
+        {
+          "kind": "refrain",
+          "text": "Onward, Christian soldiers, marching as to war,\nWith the cross of Jesus going on before."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 7,
+        "title": "Onward Christian Soldiers",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "Onward, Christian soldiers, marching as to war,",
+              "With the cross of Jesus going on before.",
+              "Christ, the royal Master, leads against the foe;",
+              "Forward into battle see His banners go!"
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "At the sign of triumph Satan's host doth flee;",
+              "On then, Christian soldiers, on to victory!",
+              "Hell's foundations quiver at the shout of praise;",
+              "Brothers, lift your voices, loud your anthems raise."
+            ]
+          },
+          {
+            "number": 3,
+            "lines": [
+              "Like a mighty army moves the church of God;",
+              "Brothers, we are treading where the saints have trod.",
+              "We are not divided, all one body we,",
+              "One in hope and doctrine, one in charity."
+            ]
+          }
+        ],
+        "refrain": {
+          "lines": [
+            "Onward, Christian soldiers, marching as to war,",
+            "With the cross of Jesus going on before."
+          ]
+        },
+        "link": "https://sdahymnals.com/Hymnal/mp3/612%20%E2%80%93%20Onward%2C%20Christian%20Soldiers%21.mp3"
+      }
+    },
+    {
+      "id": "8",
+      "number": 8,
+      "title": "I Would Be True",
+      "sourceText": "I would be true, for there are those who trust me;\nI would be pure, for there are those who care;\nI would be strong, for there is much to suffer;\nI would be brave, for there is much to dare.\n\nI would be friend of all—the foe, the friendless;\nI would be giving, and forget the gift;\nI would be humble, for I know my weakness;\nI would look up, and laugh, and love, and lift.\n\nI would be learning, day by day, the lessons\nMy heavenly Father gives me in His Word;\nI would be quick to hear His lightest whisper,\nAnd prompt and glad to do the things I've heard.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "I would be true, for there are those who trust me;\nI would be pure, for there are those who care;\nI would be strong, for there is much to suffer;\nI would be brave, for there is much to dare."
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "I would be friend of all—the foe, the friendless;\nI would be giving, and forget the gift;\nI would be humble, for I know my weakness;\nI would look up, and laugh, and love, and lift."
+        },
+        {
+          "kind": "verse",
+          "label": "3",
+          "text": "I would be learning, day by day, the lessons\nMy heavenly Father gives me in His Word;\nI would be quick to hear His lightest whisper,\nAnd prompt and glad to do the things I've heard."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 8,
+        "title": "I Would Be True",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "I would be true, for there are those who trust me;",
+              "I would be pure, for there are those who care;",
+              "I would be strong, for there is much to suffer;",
+              "I would be brave, for there is much to dare."
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "I would be friend of all—the foe, the friendless;",
+              "I would be giving, and forget the gift;",
+              "I would be humble, for I know my weakness;",
+              "I would look up, and laugh, and love, and lift."
+            ]
+          },
+          {
+            "number": 3,
+            "lines": [
+              "I would be learning, day by day, the lessons",
+              "My heavenly Father gives me in His Word;",
+              "I would be quick to hear His lightest whisper,",
+              "And prompt and glad to do the things I've heard."
+            ]
+          }
+        ],
+        "refrain": null,
+        "link": "https://www.dropbox.com/scl/fi/fglx75j88771bfh5hwat2/SDAH-445-I-would-Be-True-SDA-Hymnal-Philippine-Edition.mp3?rlkey=x9nzom3wrwm111ngxebktuaq9&st=lplpnwex&dl=1"
+      }
+    },
+    {
+      "id": "9",
+      "number": 9,
+      "title": "This Little Light of Mine",
+      "sourceText": "This little light of mine,\nI'm gonna let it shine.\nThis little light of mine,\nI'm gonna let it shine.\nThis little light of mine,\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine.\n\nHide it under a bushel? No!\nI'm gonna let it shine.\nHide it under a bushel? No!\nI'm gonna let it shine.\nHide it under a bushel? No!\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine.\n\nDon't let Satan blow it out,\nI'm gonna let it shine.\nDon't let Satan blow it out,\nI'm gonna let it shine.\nDon't let Satan blow it out,\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "This little light of mine,\nI'm gonna let it shine.\nThis little light of mine,\nI'm gonna let it shine.\nThis little light of mine,\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine."
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "Hide it under a bushel? No!\nI'm gonna let it shine.\nHide it under a bushel? No!\nI'm gonna let it shine.\nHide it under a bushel? No!\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine."
+        },
+        {
+          "kind": "verse",
+          "label": "3",
+          "text": "Don't let Satan blow it out,\nI'm gonna let it shine.\nDon't let Satan blow it out,\nI'm gonna let it shine.\nDon't let Satan blow it out,\nI'm gonna let it shine,\nLet it shine, let it shine, let it shine."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 9,
+        "title": "This Little Light of Mine",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "This little light of mine,",
+              "I'm gonna let it shine.",
+              "This little light of mine,",
+              "I'm gonna let it shine.",
+              "This little light of mine,",
+              "I'm gonna let it shine,",
+              "Let it shine, let it shine, let it shine."
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "Hide it under a bushel? No!",
+              "I'm gonna let it shine.",
+              "Hide it under a bushel? No!",
+              "I'm gonna let it shine.",
+              "Hide it under a bushel? No!",
+              "I'm gonna let it shine,",
+              "Let it shine, let it shine, let it shine."
+            ]
+          },
+          {
+            "number": 3,
+            "lines": [
+              "Don't let Satan blow it out,",
+              "I'm gonna let it shine.",
+              "Don't let Satan blow it out,",
+              "I'm gonna let it shine.",
+              "Don't let Satan blow it out,",
+              "I'm gonna let it shine,",
+              "Let it shine, let it shine, let it shine."
+            ]
+          }
+        ],
+        "refrain": null,
+        "link": "https://sdahymnals.com/Hymnal/mp3/580%20%E2%80%93%20This%20Little%20Light%20of%20Mine.mp3"
+      }
+    },
+    {
+      "id": "10",
+      "number": 10,
+      "title": "Into My Heart",
+      "sourceText": "Into my heart, into my heart,\nCome into my heart, Lord Jesus.\nCome in today, come in to stay,\nCome into my heart, Lord Jesus.\n\nOut of my heart, out of my heart,\nShine out of my heart, Lord Jesus.\nShine out today, shine out alway,\nShine out of my heart, Lord Jesus.",
+      "blocks": [
+        {
+          "kind": "verse",
+          "label": "1",
+          "text": "Into my heart, into my heart,\nCome into my heart, Lord Jesus.\nCome in today, come in to stay,\nCome into my heart, Lord Jesus."
+        },
+        {
+          "kind": "verse",
+          "label": "2",
+          "text": "Out of my heart, out of my heart,\nShine out of my heart, Lord Jesus.\nShine out today, shine out alway,\nShine out of my heart, Lord Jesus."
+        }
+      ],
+      "sourceRecord": {
+        "pageNumber": 10,
+        "title": "Into My Heart",
+        "language": "english",
+        "verses": [
+          {
+            "number": 1,
+            "lines": [
+              "Into my heart, into my heart,",
+              "Come into my heart, Lord Jesus.",
+              "Come in today, come in to stay,",
+              "Come into my heart, Lord Jesus."
+            ]
+          },
+          {
+            "number": 2,
+            "lines": [
+              "Out of my heart, out of my heart,",
+              "Shine out of my heart, Lord Jesus.",
+              "Shine out today, shine out alway,",
+              "Shine out of my heart, Lord Jesus."
+            ]
+          }
+        ],
+        "refrain": null,
+        "link": "https://www.dropbox.com/scl/fi/kt3jxcbq8jvuexnhpt74l/Into-my-heart-Instrumental-Piano-with-Lyrics.mp3?rlkey=k3ux2s6wifx7mzv02dq0z0x2g&st=dmyq2g9l&dl=1"
+      }
+    }
+  ],
+  "topics": []
+}

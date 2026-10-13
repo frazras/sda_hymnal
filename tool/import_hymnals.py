@@ -161,14 +161,13 @@ def build(check=False):
                       'topicCount': len(pack['topics']), 'bytes': len(data),
                       'sha256': hashlib.sha256(data).hexdigest()})
     # Import lazily to avoid a module cycle with the shared text helpers.
-    from import_structured_hymnals import convert, apply_overrides
+    from import_structured_hymnals import convert
     for name in ('french', 'swahili'):
         manifest_path = ROOT / 'tool/data/structured_sources' / f'{name}.manifest.json'
         structured = json.loads(manifest_path.read_text())
         snapshot = manifest_path.parent / structured['snapshot']
         source = verified(snapshot.read_bytes(), structured['source'])
-        pack = apply_overrides(convert(source, structured),
-                               reviewed_overrides(structured, manifest_path.parent))
+        pack = convert(source, structured, reviewed_overrides(structured, manifest_path.parent))
         data = json_bytes(pack)
         asset = f'assets/hymnals/{pack["book"]["id"]}.json'
         outputs[ROOT / asset] = data

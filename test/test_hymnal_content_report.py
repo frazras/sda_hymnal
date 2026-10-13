@@ -13,12 +13,14 @@ spec.loader.exec_module(validator)
 
 # Published optional text downloads and their exact source-numbered hymn counts.
 OPTIONAL_HYMNS = {
+    'sda-ceb-cebuano-hymns': 237,
     'sda-ny-khristu-mu-nyimbo': 350,
     'sda-sn-kristu-munzwiyo': 300,
     'sda-toi-kristu-mu-nyimbo': 339,
     'sda-tum-nyimbo-za-mpingo-wa-sda': 352,
     'sda-luo-wende-nyasae': 329,
     'sda-guz-ogotera-kwa-nyasae': 365,
+    'sda-en-adventist-youth-songs': 10,
     'sda-ki-nyimbo-cia-agendi': 299,
     'sda-bem-klistu-mu-nyimbo': 311,
     'sda-rw-indirimbo-zo-guhimbaza-imana': 500,
@@ -30,6 +32,7 @@ OPTIONAL_HYMNS = {
     'sda-nso-kreste-ka-kopelo': 303,
     'sda-st-keresete-pineng': 268,
     'sda-tn-keresete-mo-kopelong': 300,
+    'sda-tl-tagalog-hymns': 237,
     'sda-ve-ngosha-yadzingosha': 306,
     'sda-tw-memeneda-akwanhwefo-nnwom': 751,
     'sda-ts-tinsimu-ta-mhalamhala': 311,

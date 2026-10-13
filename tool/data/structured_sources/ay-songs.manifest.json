@@ -1,0 +1,39 @@
+{
+  "format": "structured-verses",
+  "snapshot": "ay-songs.source.json",
+  "book": {
+    "id": "sda-en-adventist-youth-songs",
+    "languageTag": "en",
+    "displayName": "English · Adventist Youth Songs",
+    "year": null
+  },
+  "source": {
+    "repository": "wanmigs/sda-hymnal-data",
+    "revision": "8fba6417536b1a36e7d35c5cea3773e5bea3c47b",
+    "path": "ay-songs.json",
+    "bytes": 9242,
+    "sha256": "c01e921543a9e6cf1d6b6104ff11c01a995b9f4a152d0e2a5d782be586022ade"
+  },
+  "sourceLanguage": "english",
+  "expectedNumbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "structurallyComplete": true,
+  "coverageNote": "All 10 source entries included. Entries 3–5 are the AY Pledge, Aim and Motto, recited texts rather than songs. Source numbering is retained. Print edition year not established; independent lyric review pending. No verified media attached.",
+  "notes": [
+    "Book title is the source manifest.json title for ay-songs.json (\"Adventist Youth Songs\").",
+    "Every record is labelled english and its text is English (checked per record).",
+    "Entries 3–5 (\"The AY Pledge\", \"The AY Aim\", \"The AY Motto\") are recited texts; they keep their source numbers.",
+    "scripture-songs.json, the other small collection in this repository, is withheld pending a publication-rights review. It also numbers from 1, so the two stay separate books rather than being renumbered into one.",
+    "Some records carry external audio links; they stay in the source record as unverified leads and are not activated."
+  ]
+}
