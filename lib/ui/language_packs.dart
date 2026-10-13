@@ -7,6 +7,7 @@ import '../models/hymnal_pack.dart';
 import '../services/installed_language_packs.dart';
 import '../services/language_pack_download.dart';
 import '../services/language_pack_store.dart';
+import '../services/search_normalization.dart';
 import '../models/hymnal_book.dart';
 import '../theme.dart';
 import 'common.dart';
@@ -20,9 +21,14 @@ class LanguagePacksPage extends StatefulWidget {
   const LanguagePacksPage(
       {super.key,
       required this.onChanged,
+      this.onOpen,
       this.store,
       this.fetch = downloadLanguagePack});
   final Future<void> Function() onChanged;
+
+  /// Switches the app to a book. When set, a finished download offers
+  /// Open, which closes this page and shows the new book.
+  final ValueChanged<String>? onOpen;
   final LanguagePackStore? store;
   final PackFetch fetch;
 
@@ -37,6 +43,12 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
   final _partial = <String>{};
   final _bundled = <String>{};
   final _installed = <String>{};
+  // Rows keep the group they opened in, so a download never moves its row
+  // out of view; the groups refresh when the page is next opened.
+  final _grouped = <String>{};
+  bool _groupedOnce = false;
+  // Notices belong to this page and close with it.
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
   final _updates = <String>{};
   LanguagePackStore? _store;
   LanguagePackCancellation? _cancel;
@@ -45,6 +57,8 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
   double? _progress;
   bool _failed = false;
   bool _started = false;
+  final _search = TextEditingController();
+  String _query = '';
 
   @override
   void didChangeDependencies() {
@@ -97,6 +111,10 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
         _installed
           ..clear()
           ..addAll(installed);
+        if (!_groupedOnce) {
+          _groupedOnce = true;
+          _grouped.addAll(installed);
+        }
         _updates
           ..clear()
           ..addAll(updates);
@@ -110,6 +128,8 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
   Future<void> _change(LanguagePackDownload descriptor,
       {required bool remove}) async {
     if (_busy != null) return;
+    final id = descriptor.bookId;
+    final added = !remove && !_installed.contains(id);
     final cancellation = LanguagePackCancellation();
     setState(() {
       _busy = descriptor.bookId;
@@ -130,11 +150,12 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
       }
       await widget.onChanged();
       if (mounted) await _load();
+      if (added && mounted) _announceReady(id);
     } on LanguagePackCancelled {
       // Cancellation leaves the previous active copy unchanged.
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        _messenger.currentState?.showSnackBar(
             SnackBar(content: Text(context.appText.packDownloadFailed)));
       }
     } finally {
@@ -147,14 +168,56 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _cancel?.cancel();
-    super.dispose();
+  /// Confirms a new book and, where the caller can switch books, opens it.
+  void _announceReady(String id) {
+    final text = context.appText;
+    final open = widget.onOpen;
+    _messenger.currentState?.showSnackBar(SnackBar(
+      key: const ValueKey('pack-ready'),
+      content: Text(text.packReady(_names[id] ?? id)),
+      action: open == null
+          ? null
+          : SnackBarAction(
+              key: const ValueKey('pack-open'),
+              label: text.openAction,
+              onPressed: () {
+                Navigator.of(context).maybePop();
+                open(id);
+              }),
+    ));
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    _cancel?.cancel();
+    _search.dispose();
+    super.dispose();
+  }
+
+  /// Every query word must start a word of the book's native language name,
+  /// title, language code or English language name.
+  bool _matches(LanguagePackDownload download) {
+    final words = normalizeHymnSearch(_query).split(' ');
+    if (words.first.isEmpty) return true;
+    final id = download.bookId;
+    final tag = _tags[id] ?? '';
+    final name = _names[id] ?? id;
+    final language = tag.split('-').first.toLowerCase();
+    final known = normalizeHymnSearch([
+      name,
+      languageNameFor(tag, name),
+      language,
+      languageSearchAliases[language] ?? '',
+    ].join(' '))
+        .split(' ');
+    return words.every((word) => known.any((k) => k.startsWith(word)));
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      ScaffoldMessenger(key: _messenger, child: _page(context));
+
+  Widget _page(BuildContext context) {
     final text = context.appText;
     final t = context.tokens;
     final downloads = _downloads;
@@ -168,14 +231,14 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
             : const Center(child: CircularProgressIndicator()),
       );
     }
-    final optional =
-        downloads.where((d) => !_bundled.contains(d.bookId)).toList();
+    final searching = _query.trim().isNotEmpty;
+    final shown = downloads.where(_matches).toList();
+    final optional = shown.where((d) => !_bundled.contains(d.bookId)).toList();
     final installed =
-        optional.where((d) => _installed.contains(d.bookId)).toList();
+        optional.where((d) => _grouped.contains(d.bookId)).toList();
     final available =
-        optional.where((d) => !_installed.contains(d.bookId)).toList();
-    final included =
-        downloads.where((d) => _bundled.contains(d.bookId)).toList();
+        optional.where((d) => !_grouped.contains(d.bookId)).toList();
+    final included = shown.where((d) => _bundled.contains(d.bookId)).toList();
     Widget group(String label, List<LanguagePackDownload> books) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -203,19 +266,35 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
                     height: 1.4,
                     color: t.muted)),
           ),
-          HymnalCard(
-            child: SettingsRow(
-              key: const ValueKey('score-packs-link'),
-              leading: const RowIcon(Icons.library_music_outlined),
-              title: text.sheetMusic,
-              subtitle: text.scorePacksHelp,
-              onTap: () => Navigator.push(
-                  context, slideRoute(const ScorePacksPage())),
-            ),
+          HymnSearchField(
+            key: const ValueKey('language-packs-search'),
+            controller: _search,
+            hint: text.searchLanguages,
+            clearTooltip: text.clearSearch,
+            margin: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+            onChanged: (value) => setState(() => _query = value),
           ),
+          if (!searching)
+            HymnalCard(
+              child: SettingsRow(
+                key: const ValueKey('score-packs-link'),
+                leading: const RowIcon(Icons.library_music_outlined),
+                title: text.sheetMusic,
+                subtitle: text.scorePacksHelp,
+                onTap: () =>
+                    Navigator.push(context, slideRoute(const ScorePacksPage())),
+              ),
+            ),
           if (installed.isNotEmpty) group(text.packInstalled, installed),
           if (available.isNotEmpty) group(text.packAvailableSection, available),
           if (included.isNotEmpty) group(text.packBundled, included),
+          if (shown.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: EmptyHint(
+                  key: const ValueKey('language-packs-empty'),
+                  title: text.noResults),
+            ),
         ],
       ),
     );
@@ -231,8 +310,10 @@ class _LanguagePacksPageState extends State<LanguagePacksPage> {
     final busy = _busy == id;
     final details = [
       editionShortLabel(id, name),
-      text.packDetails(download.hymnCount,
-          (download.bytes / (1024 * 1024)).toStringAsFixed(1)),
+      text.packDetails(
+          download.hymnCount,
+          megabytesLabel(
+              download.bytes, Localizations.localeOf(context).toString())),
       if (_partial.contains(id)) text.packPartial,
       if (!bundled) text.packWordsOnly,
     ].join(' · ');

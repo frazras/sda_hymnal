@@ -2170,4 +2170,15 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get shareVideoPsalmHelp =>
       'Импортируйте файл .vpc в VideoPsalm, чтобы показывать эти песни';
+
+  @override
+  String get searchLanguages => 'Поиск языков';
+
+  @override
+  String packReady(String book) {
+    return 'Сборник «$book» загружен.';
+  }
+
+  @override
+  String get openAction => 'Открыть';
 }

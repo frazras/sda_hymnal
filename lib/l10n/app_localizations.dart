@@ -3755,6 +3755,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import the .vpc file in VideoPsalm to project these songs'**
   String get shareVideoPsalmHelp;
+
+  /// Hint in the search field on the Hymnal downloads page; filters books by language or title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search languages'**
+  String get searchLanguages;
+
+  /// Confirmation after a hymnal download finishes. {book} is the book's display name, e.g. 'isiZulu · UKrestu Esihlabelelweni'.
+  ///
+  /// In en, this message translates to:
+  /// **'{book} is ready to read.'**
+  String packReady(String book);
+
+  /// Action on the download confirmation that switches the app to the downloaded book.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get openAction;
 }
 
 class _AppLocalizationsDelegate

@@ -230,4 +230,75 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  testWidgets('a new download offers Open, which closes the page on that book',
+      (tester) async {
+    final directory = await tester
+        .runAsync(() => Directory.systemTemp.createTemp('pack-ui-open-'));
+    addTearDown(() async => directory!.delete(recursive: true));
+    final store = LanguagePackStore(directory!, download: (_) async => bytes);
+    String? opened;
+    await tester.runAsync(() async {
+      await tester.pumpWidget(MaterialApp(
+        home: DefaultAssetBundle(
+          bundle: FilePackBundle(),
+          child: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (_) => LanguagePacksPage(
+                            store: store,
+                            onChanged: () async {},
+                            onOpen: (id) => opened = id,
+                            fetch: (_, {cancellation, onProgress}) async =>
+                                Uint8List.fromList(bytes),
+                          ))),
+              child: const Text('Open downloads'),
+            ),
+          ),
+        ),
+      ));
+    });
+    await tester.tap(find.text('Open downloads'));
+    for (var attempt = 0; attempt < 50; attempt++) {
+      await tester.runAsync(() async {
+        await tester.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+      if (find.byType(LanguagePacksPage).evaluate().isNotEmpty &&
+          find.byType(CircularProgressIndicator).evaluate().isEmpty) {
+        break;
+      }
+    }
+    await tester.pumpAndSettle();
+    final download = chichewa('download');
+    await tester.scrollUntilVisible(download, 300, scrollable: pageList);
+    await tester.runAsync(() async {
+      await tester.tap(download);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+    });
+    for (var attempt = 0; attempt < 50; attempt++) {
+      await tester.runAsync(() async {
+        await tester.pump();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+      await tester.pump();
+      if (find.byKey(const ValueKey('pack-ready')).evaluate().isNotEmpty) {
+        break;
+      }
+    }
+    await tester.pumpAndSettle();
+    // The row stays where it was, now offering removal.
+    expect(chichewa('remove'), findsOneWidget);
+    expect(find.text('Chichewa · Khristu Mu Nyimbo is ready to read.'),
+        findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('pack-open')));
+    await tester.pumpAndSettle();
+    expect(opened, 'sda-ny-khristu-mu-nyimbo');
+    expect(find.byType(LanguagePacksPage), findsNothing);
+    expect(find.byKey(const ValueKey('pack-ready')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

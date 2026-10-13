@@ -74,12 +74,18 @@ class _TabsState extends State<Tabs> {
     if (!mounted || choice == null) return;
     if (choice == morePicksId) {
       await Navigator.push(
-          context, slideRoute(LanguagePacksPage(onChanged: _loadHymns)));
+          context,
+          slideRoute(
+              LanguagePacksPage(onChanged: _loadHymns, onOpen: _openBook)));
       return;
     }
+    _openBook(choice);
+  }
+
+  void _openBook(String id) {
     AppAnalytics.instance
-        .event('hymnal_select', variant: choice == 'all' ? 'all' : choice);
-    _selectBook(choice);
+        .event('hymnal_select', variant: id == 'all' ? 'all' : id);
+    _selectBook(id);
   }
 
   /// Short phones give the number pad the full height: no brand header.
@@ -352,6 +358,10 @@ class _TabsState extends State<Tabs> {
                                     _packs.expand((p) => p.hymns).toList()),
                             Settings(
                                 onPacksChanged: _loadHymns,
+                                onOpenBook: (id) {
+                                  _openBook(id);
+                                  _selectTab(0);
+                                },
                                 hymns: _hymns,
                                 historyHymns: [
                                   ..._hymns,

@@ -35,6 +35,40 @@ const nativeLanguageNames = <String, String>{
   'ceb': 'Cebuano',
 };
 
+/// English names and common spellings, used only to find a language by
+/// search ("Zulu" finds isiZulu, "Kikuyu" finds Gĩkũyũ). Never displayed.
+const languageSearchAliases = <String, String>{
+  'en': 'English',
+  'es': 'Spanish',
+  'pt': 'Portuguese',
+  'ru': 'Russian',
+  'fr': 'French',
+  'sw': 'Swahili',
+  'ny': 'Chewa Nyanja',
+  'luo': 'Luo',
+  'guz': 'Gusii Kisii',
+  'bem': 'Bemba',
+  'zu': 'Zulu',
+  'nd': 'Ndebele',
+  'kln': 'Kalenjin',
+  'ki': 'Kikuyu',
+  'rw': 'Kinyarwanda Rwanda',
+  'nso': 'Northern Sotho Pedi',
+  'sn': 'Shona',
+  'st': 'Sotho Southern Sotho',
+  'toi': 'Tonga',
+  'tn': 'Tswana',
+  'tum': 'Tumbuka',
+  'tw': 'Akan',
+  've': 'Venda',
+  'xh': 'Xhosa',
+  'ts': 'Tsonga Shangaan',
+  'kam': 'Kamba',
+  'mas': 'Maasai Masai',
+  'tl': 'Filipino',
+  'ceb': 'Bisaya Visayan',
+};
+
 String _languageOf(String tag) => tag.split('-').first.toLowerCase();
 
 /// The language half of a "Language · Title" display name, or a known name.
@@ -185,7 +219,8 @@ List<HymnalBook> buildHymnalBooks({
     books.add(HymnalBook(
       id: id,
       languageTag: p.edition.languageTag,
-      languageName: languageNameFor(p.edition.languageTag, p.edition.displayName),
+      languageName:
+          languageNameFor(p.edition.languageTag, p.edition.displayName),
       title: editionShortLabel(id, p.edition.displayName),
       primary: p.hymns,
       primaryLabel: editionShortLabel(id, p.edition.displayName),

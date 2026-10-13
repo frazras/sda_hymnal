@@ -1052,5 +1052,22 @@
   },
   "@sharePresentation": {
     "description": "Tooltip of the slide preview share button; opens a choice of slide formats."
+  },
+  "searchLanguages": "Search languages",
+  "@searchLanguages": {
+    "description": "Hint in the search field on the Hymnal downloads page; filters books by language or title."
+  },
+  "packReady": "{book} is ready to read.",
+  "@packReady": {
+    "description": "Confirmation after a hymnal download finishes. {book} is the book's display name, e.g. 'isiZulu · UKrestu Esihlabelelweni'.",
+    "placeholders": {
+      "book": {
+        "type": "String"
+      }
+    }
+  },
+  "openAction": "Open",
+  "@openAction": {
+    "description": "Action on the download confirmation that switches the app to the downloaded book."
   }
 }

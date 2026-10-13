@@ -198,8 +198,10 @@ class _ScorePacksPageState extends State<ScorePacksPage> {
       code: id.split('-')[1].toUpperCase(),
       title: name,
       details: [
-        text.scorePackDetails(download.pages.length,
-            (download.bytes / (1024 * 1024)).toStringAsFixed(1)),
+        text.scorePackDetails(
+            download.pages.length,
+            megabytesLabel(
+                download.bytes, Localizations.localeOf(context).toString())),
         if (bundled) text.packBundled,
       ].join(' · '),
       active: installed || bundled,

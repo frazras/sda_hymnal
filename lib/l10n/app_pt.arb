@@ -608,5 +608,8 @@
   "shareSlidesHtml": "Slides para o navegador",
   "shareSlidesHtmlHelp": "Uma página web offline que funciona em qualquer dispositivo",
   "shareVideoPsalm": "Cancioneiro do VideoPsalm",
-  "shareVideoPsalmHelp": "Importe o arquivo .vpc no VideoPsalm para projetar estes cânticos"
+  "shareVideoPsalmHelp": "Importe o arquivo .vpc no VideoPsalm para projetar estes cânticos",
+  "searchLanguages": "Buscar idiomas",
+  "packReady": "{book} já está disponível.",
+  "openAction": "Abrir"
 }

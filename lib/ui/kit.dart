@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/common.dart';
@@ -172,8 +173,7 @@ class SettingsRow extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             color: pressed ? t.surface2 : Colors.transparent,
-            border:
-                divider ? Border(bottom: BorderSide(color: t.line2)) : null,
+            border: divider ? Border(bottom: BorderSide(color: t.line2)) : null,
           ),
           child: Row(
             children: [
@@ -413,8 +413,7 @@ class SegmentedPills<T> extends StatelessWidget {
                       color: options[i].$1 == selected
                           ? (t.isDark ? const Color(0xFF243029) : t.surface)
                           : Colors.transparent,
-                      borderRadius:
-                          BorderRadius.circular(t.isClassic ? 3 : 9),
+                      borderRadius: BorderRadius.circular(t.isClassic ? 3 : 9),
                       boxShadow:
                           options[i].$1 == selected ? t.cardShadow : const [],
                     ),
@@ -980,45 +979,76 @@ class DownloadRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
+    final scale = MediaQuery.textScalerOf(context).scale(1);
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
       decoration: BoxDecoration(
           border: divider ? Border(bottom: BorderSide(color: t.line2)) : null),
-      child: Row(children: [
-        CodeTile(code, selected: active),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title,
-                style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: t.ink)),
-            const SizedBox(height: 2),
-            Text(details,
-                style: TextStyle(
-                    fontFamily: kSans, fontSize: 12, height: 1.3, color: t.muted)),
-            if (showProgress)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: LinearProgressIndicator(value: progress, minHeight: 3),
-              ),
-          ]),
-        ),
-        const SizedBox(width: 8),
-        ConstrainedBox(
+      child: LayoutBuilder(builder: (context, constraints) {
+        // The action sits beside the text while the title keeps a
+        // comfortable line; on narrow phones or with larger text it moves
+        // under the details so names never break mid-word.
+        final besideWidth =
+            constraints.maxWidth - 38 - 14 - 8 - (100 * scale).clamp(0, 132);
+        final stacked = besideWidth < 120 * scale;
+        final action = ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 132),
           child: trailing,
-        ),
-      ]),
+        );
+        return Row(
+            crossAxisAlignment:
+                stacked ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+            children: [
+              CodeTile(code, selected: active),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                          style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: t.ink)),
+                      const SizedBox(height: 2),
+                      Text(details,
+                          style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 12,
+                              height: 1.3,
+                              color: t.muted)),
+                      if (showProgress)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: LinearProgressIndicator(
+                              value: progress, minHeight: 3),
+                        ),
+                      if (stacked)
+                        Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: action),
+                    ]),
+              ),
+              if (!stacked) ...[const SizedBox(width: 8), action],
+            ]);
+      }),
     );
   }
 }
 
+/// Download size for "{size} MB" messages in the interface's number style
+/// ("0,6" in Spanish); tiny books read "<0.1", not "0.0".
+String megabytesLabel(int bytes, [String? locale]) {
+  final format = NumberFormat('0.0', locale);
+  final megabytes = bytes / (1024 * 1024);
+  return megabytes < 0.05 ? '<${format.format(0.1)}' : format.format(megabytes);
+}
+
 /// Spinner with a cancel button, shown while a download runs.
 class BusyAction extends StatelessWidget {
-  const BusyAction({super.key, this.progress, this.onCancel, this.cancelTooltip});
+  const BusyAction(
+      {super.key, this.progress, this.onCancel, this.cancelTooltip});
   final double? progress;
   final VoidCallback? onCancel;
   final String? cancelTooltip;

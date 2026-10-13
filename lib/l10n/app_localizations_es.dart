@@ -2132,4 +2132,15 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get shareVideoPsalmHelp =>
       'Importa el archivo .vpc en VideoPsalm para proyectar estos cantos';
+
+  @override
+  String get searchLanguages => 'Buscar idiomas';
+
+  @override
+  String packReady(String book) {
+    return '$book ya está disponible.';
+  }
+
+  @override
+  String get openAction => 'Abrir';
 }

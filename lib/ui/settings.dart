@@ -32,10 +32,14 @@ class Settings extends StatelessWidget {
       {super.key,
       this.hymns = const [],
       this.historyHymns,
-      this.onPacksChanged});
+      this.onPacksChanged,
+      this.onOpenBook});
   final List<Hymn> hymns;
   final List<Hymn>? historyHymns;
   final Future<void> Function()? onPacksChanged;
+
+  /// Shows a book on the number screen after it is downloaded.
+  final ValueChanged<String>? onOpenBook;
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +210,7 @@ class Settings extends StatelessWidget {
                   context,
                   slideRoute(LanguagePacksPage(
                     onChanged: onPacksChanged ?? () async {},
+                    onOpen: onOpenBook,
                   ))),
             ),
           ]),
@@ -357,12 +362,12 @@ class Settings extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text('Old & New SDA Hymnal',
-                  style:
-                      TextStyle(fontFamily: kSans, fontSize: 12, color: t.muted)),
+                  style: TextStyle(
+                      fontFamily: kSans, fontSize: 12, color: t.muted)),
               const SizedBox(height: 6),
               Text(text.versionLabel(appReleaseVersion),
-                  style:
-                      TextStyle(fontFamily: kSans, fontSize: 11, color: t.faint)),
+                  style: TextStyle(
+                      fontFamily: kSans, fontSize: 11, color: t.faint)),
             ],
           ),
         ),

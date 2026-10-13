@@ -608,5 +608,8 @@
   "shareSlidesHtml": "Слайды для браузера",
   "shareSlidesHtmlHelp": "Одна офлайн-страница, работает на любом устройстве",
   "shareVideoPsalm": "Сборник для VideoPsalm",
-  "shareVideoPsalmHelp": "Импортируйте файл .vpc в VideoPsalm, чтобы показывать эти песни"
+  "shareVideoPsalmHelp": "Импортируйте файл .vpc в VideoPsalm, чтобы показывать эти песни",
+  "searchLanguages": "Поиск языков",
+  "packReady": "Сборник «{book}» загружен.",
+  "openAction": "Открыть"
 }
