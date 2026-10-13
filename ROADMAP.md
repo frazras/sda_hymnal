@@ -10,14 +10,17 @@ small-screen layouts before adding more features.
 
 ## Recommended Next Work
 
-1. Maintain a consistent number-pad and reader experience across languages,
-   including paired Old/New Spanish hymnals. Preserve clarity and avoid crowding.
-2. Extend favorite ordering into service playlists as practical worship
-   tools while preserving the shared reader and uncluttered menus.
-3. Prioritize verified cross-language music, translated menus, background
-   playback, and optional downloadable packs. Continue reviewed language
-   expansion; explore presentation export later. Custom songbook imports are
-   outside the active roadmap.
+1. Check the remaining flows on physical phones: background audio with
+   lock-screen controls, a hymnal download, the share sheet, A–Z browsing,
+   and a VideoPsalm import.
+2. Ask fluent reviewers to sign off the Spanish, Portuguese and Russian
+   interface, and the lyrics of the new optional hymnals.
+3. Submit the corrected Google Play Data safety answers, and decide the
+   publication rights of the Scripture and special songbooks.
+4. Keep the shared design as features grow: one kit, one picker, one reader
+   options sheet, and no crowding on small phones. Add cross-language music
+   only where it is verified. Custom songbook imports are outside the active
+   roadmap.
 
 The [1 October 2026 project audit](docs/multilingual-resource-audit.md) compares
 five source projects and all 26 Rejnac language repositories with our code. It
@@ -67,29 +70,32 @@ Items below are plans, not claims that multilingual content is already installed
 - [x] Add French Hymnes et Louanges (520) and Swahili Nyimbo za Kristo (220)
       through the shared keypad/search/reader; retain unknown edition years and
       omit unavailable topics/media.
-- [ ] Expand to the remaining reviewed Rejnac collections.
+- [x] Expand to the remaining reviewed Rejnac collections.
       Validate edition/language labels and disclose partial coverage; resolve
       known empty entries and duplicate numbers instead of silently renumbering.
-      All 19 collections are generated, pinned, and listed in the trusted
-      text-download catalog: 13 complete and six explicitly partial after
-      reconciliation against their VideoPsalm packages. App registration of
-      their IDs remains.
-- [ ] Offer Tagalog and Cebuano as explicitly partial collections (237 records
-      each in the audited source), plus optional Adventist Youth, Scripture-song,
-      and supplemental songbooks. Preserve their source page numbering.
-      Tagalog and Cebuano (even pages 2–474 after six reviewed label
-      corrections) and Adventist Youth songs (10) are generated, pinned, and
-      listed in the trusted text-download catalog; app registration of their
-      IDs remains. The Scripture and special songbooks are withheld pending a
-      publication-rights review because they contain songs under active
-      copyright.
+      All 19 collections are optional downloads: 13 complete and six explicitly
+      partial after reconciliation against their VideoPsalm packages, with
+      each missing number listed in its coverage note.
+      [Collections and decisions](docs/language-packs.md#expanded-optional-text-collections).
+- [x] Offer Tagalog and Cebuano as explicitly partial collections (237 records
+      each in the audited source) and the optional Adventist Youth songbook.
+      Preserve their source page numbering. Tagalog and Cebuano keep even
+      pages 2–474 after six reviewed label corrections.
+- [ ] Publish the Scripture-song and supplemental ("special") songbooks after
+      a publication-rights review. Both contain songs under active copyright
+      (for example "Thy Word", 1984), and their source repository has no
+      license. They are prepared on the local `rights-review/scripture-special-songs`
+      branch and are not published.
 - [ ] Let users download, update, and remove optional language and score
       packs. Keep audio on demand with bounded caching; full-edition audio
       downloads are deferred to preserve device storage. Show size and coverage, verify checksums, activate updates atomically,
       preserve the last working version and saved favorites, and keep the current
       English books available offline. Settings text-pack download, cancellation,
-      update, removal, and live book refresh are implemented. Chichewa is the
-      first optional text collection. Score transport, atomic storage, viewer
+      update, removal, and live book refresh are implemented, with a language
+      search and an Open action after each download. All 23 optional text packs
+      were downloaded through the app's own download code from the pinned
+      GitHub commit and verified on 13 October 2026, after fixing rejection of
+      GitHub's gzip-compressed responses. Score transport, atomic storage, viewer
       integration, catalog publication, and management controls are implemented;
       current score collections remain included. Additional optional score
       collections and physical download-flow review remain.
@@ -100,7 +106,10 @@ Items below are plans, not claims that multilingual content is already installed
       labels, search, and favorites controls now consume translations; child
       screens are covered and an App language setting is exposed. Review CSV export
       and staged import with stale-text, ICU, and generated-API checks are implemented.
-      Fluent community review and future right-to-left book support remain.
+      Right-to-left books render independently of the interface direction, and
+      a terminology review of all Spanish, Portuguese and Russian messages is
+      applied ([glossary](docs/translation-glossary.md)). A fluent community
+      review of each language remains.
 - [x] Improve multilingual search with Unicode normalization, accent-insensitive
       matching where appropriate, book filters, and localized refrain handling.
       Retain exact-number/title ranking and benchmark a large installed catalog.
@@ -123,14 +132,15 @@ Items below are plans, not claims that multilingual content is already installed
 - [x] Add on-demand Spanish instrumental recordings for all 614 New and 527 Old
       hymns, with checked source files, bounded caching, shared playback controls,
       and active-engine completion handling. Retain MIDI controls for verified MIDI.
-- [ ] Offer sung versions and expand instrumental recordings where verified recordings
+- [x] Offer sung versions and expand instrumental recordings where verified recordings
       exist, alongside MIDI and video. Download individual recordings on demand
       with bounded caching and the same manual-start/pause/autoplay rules. Do not attach existing MIDI by
       matching hymn numbers across languages; musical styles and choir controls
       require verified MIDI assets or reviewed tune mappings. Audited sung
       Spanish 2009 and Portuguese 1996 and instrumental Russian 1997 recordings
-      now play on demand with a saved sung/instrumental preference; the
-      player's Sung/Instrumental control remains.
+      play on demand. Where a hymn has both, a Sung/Instrumental control in the
+      player and in reader options switches between them and saves the choice.
+      Further sources are added as they are verified.
 - [ ] Add persistent background audio with lock-screen/notification controls,
       headphone actions, interruption handling, and one shared playback queue.
       Start with audio playback; retain each medium's supported behavior. The existing
@@ -139,6 +149,15 @@ Items below are plans, not claims that multilingual content is already installed
       occurrence-aware service boundaries, system next/previous controls, and
       reader catch-up after background advancement are connected. Physical device
       validation remains.
+
+## Design and Consistency
+
+- [x] Give every screen, in every language and both designs, one shared
+      component kit: header, cards, rows, pills, search field and sheets, with
+      Material widgets mapped to the hymnal palette. Choose any hymnal from one
+      header picker; search, topics, A–Z and favorites share one design; the
+      reader gathers its options in one sheet. Short phones keep the typed
+      number and previews in view. [Design system](docs/design-system.md).
 
 ## Browsing and Favorites
 
@@ -172,8 +191,11 @@ Items below are plans, not claims that multilingual content is already installed
 - [ ] Explore presentation export for service playlists and lyric slides,
       including VideoPsalm compatibility. This is a proposed extension of the
       Rejnac presentation workflow; live casting is a separate future decision.
-      Source-order slides, preview, and offline HTML file sharing are connected;
-      physical share-sheet/browser and compatibility validation remain. [Progress](docs/service-presentation.md).
+      Source-order slides with whole stanzas, preview, offline HTML sharing, and
+      a VideoPsalm songbook (`.vpc`) export modelled on a real VideoPsalm file
+      are connected; the HTML slides were checked in a browser. Importing the
+      `.vpc` file into VideoPsalm on Windows and the physical share sheet remain
+      untested. [Progress](docs/service-presentation.md).
 
 ## Usage Insights
 
@@ -205,10 +227,13 @@ Items below are plans, not claims that multilingual content is already installed
 - [x] Publish the updated privacy policy from the live analytics endpoint and
       link it from Settings and About.
 - [ ] Verify Google Play Data Safety and Apple App Privacy declarations;
-      update them if needed to match the current app. The earlier analytics
-      handoff recorded no store-console changes; current console answers have
-      not been verified, so this is a verification follow-up, not a confirmed
-      missing submission.
+      update them if needed to match the current app. Verified 13 October 2026
+      (read-only): Play Console still answers **No** to collecting user data,
+      but since 4.3.0 the app collects default-on usage statistics, country,
+      diagnostics and optional error reports, so the answer must become **Yes**
+      with the data types in [store-privacy-declarations.md](docs/store-privacy-declarations.md).
+      The owner needs to submit that change; Apple's App Privacy answers apply
+      at the first App Store submission.
 - [x] Update the older GitHub Pages privacy-policy copy so older links and
       external references match the current policy. Published and verified
       29 September 2026: https://frazras.github.io/sda_hymnal/privacy-policy.html
