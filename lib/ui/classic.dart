@@ -1,3 +1,4 @@
+import 'common.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -335,6 +336,7 @@ class ClassicSearchRow extends StatelessWidget {
                       ? context.appText.newHymnal
                       : context.appText.oldHymnal),
           title: Text('${hymn.number}. ${hymn.title}',
+              textDirection: hymnTextDirection(hymn),
               style: TextStyle(fontWeight: FontWeight.bold, color: t.ink)),
           subtitle: hymn.isEnglishEdition ? null : Text(hymn.bookLabel),
           onTap: onTap,

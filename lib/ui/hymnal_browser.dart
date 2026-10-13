@@ -152,7 +152,8 @@ class _AllHymnalsSearchState extends State<AllHymnalsSearch> {
                     return ListTile(
                       key: ValueKey('all-book-${hymn.version}-${hymn.number}'),
                       leading: Text('${hymn.number}'),
-                      title: Text(hymn.title),
+                      title: Text(hymn.title,
+                          textDirection: hymnTextDirection(hymn)),
                       subtitle: Text(hymn.bookLabel),
                       onTap: () {
                         FocusScope.of(context).unfocus();
@@ -334,7 +335,9 @@ class _HymnalBrowserState extends State<HymnalBrowser> {
                               fontSize: 20,
                               color: t.accent,
                               fontWeight: FontWeight.bold)),
-                      title: Text(hymn.title, style: TextStyle(color: t.ink)),
+                      title: Text(hymn.title,
+                          textDirection: hymnTextDirection(hymn),
+                          style: TextStyle(color: t.ink)),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _open(hymn),
                     );

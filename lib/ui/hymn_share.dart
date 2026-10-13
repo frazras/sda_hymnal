@@ -1,3 +1,4 @@
+import 'common.dart';
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/services.dart';
@@ -89,8 +90,12 @@ class _HymnSharePageState extends State<HymnSharePage> {
               child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Align(
-                alignment: Alignment.topLeft,
+                alignment: widget.hymn.isRightToLeft
+                    ? Alignment.topRight
+                    : Alignment.topLeft,
                 child: SelectableText(_text,
+                    textDirection: hymnTextDirection(widget.hymn),
+                    textAlign: TextAlign.start,
                     key: const ValueKey('share-lyric-preview'),
                     style: Theme.of(context).textTheme.bodyLarge)),
           )),

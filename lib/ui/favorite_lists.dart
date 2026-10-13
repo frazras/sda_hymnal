@@ -1,3 +1,4 @@
+import 'common.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +35,8 @@ void saveFavorite(BuildContext context, Hymn hymn) {
               ListTile(
                 title: Text(context.appText.saveToFavorites,
                     style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(hymn.title.trim()),
+                subtitle: Text(hymn.title.trim(),
+                    textDirection: hymnTextDirection(hymn)),
                 trailing: TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(context.appText.done)),

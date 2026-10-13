@@ -1,8 +1,13 @@
+import '../models/hymn.dart';
 import 'package:sdahymnal/l10n/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:sdahymnal/theme.dart';
+
+/// Book text direction is independent of the interface language.
+TextDirection hymnTextDirection(Hymn hymn) =>
+    hymn.isRightToLeft ? TextDirection.rtl : TextDirection.ltr;
 
 // ---------------------------------------------------------------------------
 // Color helpers for templated SVG icons

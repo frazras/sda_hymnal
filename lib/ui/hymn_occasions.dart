@@ -248,6 +248,7 @@ class _OccasionHymnsPageState extends State<OccasionHymnsPage> {
                                 color: t.accent)),
                       ),
                       title: Text(hymn.title.trim(),
+                          textDirection: hymnTextDirection(hymn),
                           style: TextStyle(
                               fontFamily: kSerif, fontSize: 19, color: t.ink)),
                       trailing: Icon(Icons.chevron_right, color: t.faint),

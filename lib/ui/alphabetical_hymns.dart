@@ -152,7 +152,9 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
                                   'alphabetical-${hymn.version}-${hymn.number}'),
                               leading: Text('${hymn.number}'),
                               title: Text(hymn.title,
-                                  maxLines: 2, overflow: TextOverflow.ellipsis),
+                                  textDirection: hymnTextDirection(hymn),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis),
                               subtitle: Text(hymn.bookLabel,
                                   maxLines: 1, overflow: TextOverflow.ellipsis),
                               onTap: () => Navigator.push(

@@ -288,6 +288,7 @@ class _HymnListState extends State<HymnList> {
             Expanded(
               child: Text(
                 hymn.title,
+                textDirection: hymnTextDirection(hymn),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

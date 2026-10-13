@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart' show Bidi;
 import 'package:sdahymnal/models/hymn_metadata.dart';
 import 'package:sdahymnal/models/hymn_video.dart';
 import 'package:sdahymnal/models/hymn_ref.dart';
@@ -12,6 +13,8 @@ class Hymn {
   final String? bookTitle;
   final String languageTag;
   final String? credits;
+
+  bool get isRightToLeft => Bidi.isRtlLanguage(languageTag);
 
   bool get isEnglishEdition => version == 'new' || version == 'old';
   String get bookLabel =>

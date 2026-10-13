@@ -50,6 +50,12 @@ the complete translation roadmap item achieved.
 Use `context.appText` for screen messages. Its English fallback keeps isolated
 widget previews/tests working without application delegates. Production uses
 Flutter's locale-aware delegates, including built-in Material/Cupertino labels.
+Right-to-left books are supported independently of the interface: a book whose
+language tag is right-to-left (Arabic, Hebrew, Persian, Urdu, or an explicit
+`-Arab` script subtag) renders its titles, lyrics, credits and share preview
+right-to-left, while the surrounding controls follow the interface language.
+`test/rtl_hymn_test.dart` covers the language detection, both designs and both
+themes at 320×568, and the share preview. No right-to-left book ships yet.
 Right-to-left locales are not yet advertised; enabling one requires layout and
 script-font review as well as complete message coverage.
 

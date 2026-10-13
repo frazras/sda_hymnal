@@ -533,6 +533,7 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                   style: TextStyle(color: t.muted, fontSize: 11)),
             Text(
               '${widget.hymn.number} ${widget.hymn.title}',
+              textDirection: hymnTextDirection(widget.hymn),
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: t.ink, fontSize: 18, fontWeight: FontWeight.bold),
@@ -789,6 +790,7 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
             Flexible(
               child: Text(
                 widget.hymn.title,
+                textDirection: hymnTextDirection(widget.hymn),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: kSerif,
@@ -847,20 +849,29 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
                         ],
                       ],
                     ),
-                    Html(
-                      data: styleHymnBody(widget.hymn.readingBody, t, fontSize),
-                      style: {
-                        'html': Style(
-                          fontFamily: t.isClassic ? 'Roboto' : kSerif,
-                          fontSize: FontSize(fontSize),
-                          lineHeight: LineHeight(t.isClassic ? 1.45 : 1.7),
-                          color: t.ink,
-                        ),
-                        'body': Style(
-                          margin: Margins.zero,
-                          padding: HtmlPaddings.zero,
-                        ),
-                      },
+                    Directionality(
+                      key: const ValueKey('hymn-content-direction'),
+                      textDirection: hymnTextDirection(widget.hymn),
+                      child: Html(
+                        data:
+                            styleHymnBody(widget.hymn.readingBody, t, fontSize),
+                        style: {
+                          'html': Style(
+                            direction: hymnTextDirection(widget.hymn),
+                            textAlign: TextAlign.start,
+                            fontFamily: t.isClassic ? 'Roboto' : kSerif,
+                            fontSize: FontSize(fontSize),
+                            lineHeight: LineHeight(t.isClassic ? 1.45 : 1.7),
+                            color: t.ink,
+                          ),
+                          'body': Style(
+                            direction: hymnTextDirection(widget.hymn),
+                            textAlign: TextAlign.start,
+                            margin: Margins.zero,
+                            padding: HtmlPaddings.zero,
+                          ),
+                        },
+                      ),
                     ),
                     Padding(
                       key: const ValueKey('hymn-end-mark'),
@@ -906,7 +917,10 @@ class _HymnPageState extends State<HymnPage> with WidgetsBindingObserver {
     if (metadata == null) {
       final credits = widget.hymn.credits;
       if (credits == null || credits.isEmpty) return const SizedBox.shrink();
-      return Text(credits, style: TextStyle(color: t.muted, fontSize: 12));
+      return Text(credits,
+          textDirection: hymnTextDirection(widget.hymn),
+          textAlign: TextAlign.start,
+          style: TextStyle(color: t.muted, fontSize: 12));
     }
     final authors = metadata.authorsFor(
       widget.hymn.version,
