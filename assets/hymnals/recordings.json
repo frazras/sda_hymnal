@@ -1,15 +1,20 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "status": "All 1141 source files passed byte count, pinned Git blob hash, M4A header, and afinfo duration checks on 2026-10-07. Musical form and verse counts are source-supplied, not individually certified.",
   "repository": "isax5/hymnal",
   "revision": "dc744acaa3971fa630e6d68193d9ddfb4c11a710",
   "settingsUrl": "https://isax5.github.io/hymnal/backend-data/v1/settings.json",
-  "medium": "instrumentalRecording",
-  "books": [
+  "settingsPath": "backend-data/v1/settings.json",
+  "settingsGitBlobSha1": "f45543dcb307fc6b26150c7c354bd21c081258be",
+  "collections": [
     {
       "bookId": "sda-es-2009",
+      "medium": "instrumentalRecording",
+      "settingsId": "es-newVersion",
+      "directory": "music/spanish/2009 version/instrumental",
       "expectedCount": 614,
       "totalBytes": 1194774139,
+      "missingItemIds": [],
       "items": [
         {
           "itemId": "1",
@@ -3699,8 +3704,12 @@
     },
     {
       "bookId": "sda-es-1962",
+      "medium": "instrumentalRecording",
+      "settingsId": "es-oldVersion",
+      "directory": "music/spanish/1962 version/instrumental",
       "expectedCount": 527,
       "totalBytes": 771075461,
+      "missingItemIds": [],
       "items": [
         {
           "itemId": "1",

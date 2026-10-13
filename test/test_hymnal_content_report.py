@@ -95,53 +95,108 @@ class ContentReportTest(unittest.TestCase):
             result = validator.report(root)
             self.assertGreater(result['errorCount'], 0)
             self.assertEqual(result['books'][0]['media']['scoreHymns'], 0)
-            write('assets/hymnals/spanish_recordings.json', dict(
-                schemaVersion=1, repository='owner/repo', revision='a'*40,
-                books=[dict(bookId='unknown', expectedCount=1, totalBytes=100,
-                            items=[dict(itemId='1', path='wrong.m4a', bytes=100,
-                                        gitBlobSha1='b'*40)])]))
+            write('assets/hymnals/recordings.json', dict(
+                schemaVersion=2, repository='owner/repo', revision='a'*40,
+                collections=[dict(bookId='unknown', medium='sungRecording', expectedCount=1,
+                                  totalBytes=100, missingItemIds=[],
+                                  items=[dict(itemId='1', path='wrong.m4a', bytes=100,
+                                              gitBlobSha1='b'*40)])]))
             result = validator.report(root)
             self.assertIn('absent_recording_book',
                           {e['code'] for e in result['catalogErrors']})
             self.assertEqual(result['errorCount'], len(result['catalogErrors']) +
                              sum(len(book['errors']) for book in result['books']))
-            self.assertEqual(result['books'][0]['media']['instrumentalRecordingItemIds'], [])
+            media = result['books'][0]['media']
+            self.assertEqual((media['instrumentalRecordingItemIds'], media['sungRecordingItemIds']), ([], []))
+            self.assertEqual(media['missingSungRecordingItemIds'], ['1'])
+
+    @staticmethod
+    def recording_catalog(medium='instrumentalRecording', book='sda-es-2009',
+                          settings='es-newVersion', directory='music/spanish/2009 version/instrumental'):
+        item = dict(itemId='1', path=f'{directory}/001.m4a', bytes=100, gitBlobSha1='a' * 40)
+        return dict(schemaVersion=2, repository='owner/repo', revision='b' * 40, collections=[dict(
+            bookId=book, medium=medium, settingsId=settings, directory=directory,
+            expectedCount=1, totalBytes=100, missingItemIds=['2'], items=[item])])
 
     def test_recording_metadata_rejects_wrong_edition_duplicates_and_bad_hashes(self):
-        item = dict(itemId='1', path='music/spanish/2009 version/instrumental/001.m4a',
-                    bytes=100, gitBlobSha1='a' * 40)
-        catalog = dict(schemaVersion=1, repository='owner/repo', revision='b' * 40,
-                       books=[dict(bookId='sda-es-2009', expectedCount=1,
-                                   totalBytes=100, items=[item])])
+        catalog = self.recording_catalog()
+        item = catalog['collections'][0]['items'][0]
         identities = {'sda-es-2009': {'1', '2'}}
         available, errors = validator.inspect_recordings(catalog, identities)
         self.assertEqual(errors, [])
-        self.assertEqual(available, {'sda-es-2009': {'1'}})
+        self.assertEqual(available, {('sda-es-2009', 'instrumentalRecording'): {'1'}})
         before = copy.deepcopy(catalog)
         bad = copy.deepcopy(catalog)
-        bad['books'][0]['items'].append(copy.deepcopy(item))
-        bad['books'][0]['items'][1]['gitBlobSha1'] = 'not-a-hash'
-        bad['books'][0]['items'].append(dict(
+        bad['collections'][0]['items'].append(copy.deepcopy(item))
+        bad['collections'][0]['items'][1]['gitBlobSha1'] = 'not-a-hash'
+        bad['collections'][0]['items'].append(dict(
             itemId='999', path='../another-book.m4a', bytes=True, gitBlobSha1='a'*40))
         available, errors = validator.inspect_recordings(bad, identities)
         self.assertTrue({'duplicate_recording_reference', 'absent_recording_reference',
                          'invalid_recording_path', 'invalid_recording_integrity',
                          'recording_count_mismatch', 'recording_bytes_mismatch'} <=
                         {e['code'] for e in errors})
-        self.assertEqual(available['sda-es-2009'], set())
+        self.assertEqual(available[('sda-es-2009', 'instrumentalRecording')], set())
         self.assertEqual(catalog, before)
         bad = copy.deepcopy(catalog)
-        bad['books'][0]['items'][0]['path'] = 'music/spanish/1962 version/instrumental/001.m4a'
+        bad['collections'][0]['items'][0]['path'] = 'music/spanish/1962 version/instrumental/001.m4a'
         available, errors = validator.inspect_recordings(bad, identities)
-        self.assertEqual(available['sda-es-2009'], set())
+        self.assertEqual(available[('sda-es-2009', 'instrumentalRecording')], set())
         self.assertEqual(errors[0]['code'], 'invalid_recording_path')
-        bad['books'][0]['bookId'] = 'unknown'
+        bad['collections'][0]['bookId'] = 'unknown'
         _, errors = validator.inspect_recordings(bad, identities)
         self.assertIn('absent_recording_book', {e['code'] for e in errors})
 
+    def test_sung_and_instrumental_files_cannot_stand_in_for_each_other(self):
+        identities = {'sda-es-2009': {'1', '2'}, 'sda-pt-1996': {'1', '2'}, 'sda-ru-1997': {'1', '2'}}
+        sung = self.recording_catalog('sungRecording', directory='music/spanish/2009 version/sung')
+        available, errors = validator.inspect_recordings(sung, identities)
+        self.assertEqual((available, errors), ({('sda-es-2009', 'sungRecording'): {'1'}}, []))
+        both = copy.deepcopy(sung)
+        both['collections'] += self.recording_catalog()['collections']
+        available, errors = validator.inspect_recordings(both, identities)
+        self.assertEqual(errors, [])
+        self.assertEqual(set(available), {('sda-es-2009', 'sungRecording'),
+                                          ('sda-es-2009', 'instrumentalRecording')})
+        for change, code in [
+                (dict(directory='music/spanish/2009 version/instrumental'), 'invalid_recording_source'),
+                (dict(settingsId='es-oldVersion'), 'invalid_recording_source'),
+                (dict(medium='vocalGuess'), 'invalid_recording_collection'),
+                (dict(bookId='sda-ru-1997'), 'unreviewed_recording_source')]:
+            with self.subTest(change=change):
+                bad = copy.deepcopy(sung)
+                bad['collections'][0].update(change)
+                available, errors = validator.inspect_recordings(bad, identities)
+                self.assertIn(code, {e['code'] for e in errors})
+                self.assertFalse(any(available.values()))
+        # A Portuguese sung file cannot be reused for Russian instrumental playback.
+        borrowed = self.recording_catalog(book='sda-ru-1997', settings='ru-newVersion',
+                                          directory='music/portuguese/1996 version/sung')
+        available, errors = validator.inspect_recordings(borrowed, identities)
+        self.assertTrue({'invalid_recording_source', 'invalid_recording_path'} <= {e['code'] for e in errors})
+        self.assertEqual(available[('sda-ru-1997', 'instrumentalRecording')], set())
+        duplicate = copy.deepcopy(sung)
+        duplicate['collections'].append(copy.deepcopy(sung['collections'][0]))
+        self.assertIn('duplicate_recording_collection',
+                      {e['code'] for e in validator.inspect_recordings(duplicate, identities)[1]})
+
+    def test_missing_recordings_must_be_declared_gaps(self):
+        identities = {'sda-es-2009': {'1', '2', '3'}}
+        catalog = self.recording_catalog()
+        _, errors = validator.inspect_recordings(catalog, identities)
+        self.assertEqual(errors, [dict(code='undeclared_recording_gap',
+                                       location='sda-es-2009:instrumentalRecording:3')])
+        for gaps in [['2', '3', '3'], ['1', '2', '3'], ['2', '3', '4'], None]:
+            with self.subTest(gaps=gaps):
+                bad = copy.deepcopy(catalog)
+                bad['collections'][0]['missingItemIds'] = gaps
+                codes = {e['code'] for e in validator.inspect_recordings(bad, identities)[1]}
+                self.assertTrue(codes & {'invalid_recording_gap', 'invalid_recording_gaps'})
+
     def test_recording_shapes_and_provenance_fail_without_crashing(self):
-        for catalog in [None, [], {}, dict(schemaVersion=1, books=None),
-                        dict(schemaVersion=1, books=[None, {}])]:
+        for catalog in [None, [], {}, dict(schemaVersion=1, books=[]),
+                        dict(schemaVersion=2, collections=None),
+                        dict(schemaVersion=2, collections=[None, {}])]:
             with self.subTest(catalog=catalog):
                 _, errors = validator.inspect_recordings(catalog, {})
                 self.assertTrue(errors)
@@ -230,6 +285,9 @@ class ContentReportTest(unittest.TestCase):
             self.assertEqual(len(books[book]['media']['instrumentalRecordingItemIds']), count)
             self.assertEqual(books[book]['media']['missingInstrumentalRecordingItemIds'], [])
         self.assertEqual(len(books['sda-pt-1996']['media']['missingInstrumentalRecordingItemIds']), 610)
+        for book, count in [('sda-es-2009', 614), ('sda-pt-1996', 610), ('sda-ru-1997', 385)]:
+            self.assertEqual(books[book]['media']['sungRecordingItemIds'], [])
+            self.assertEqual(len(books[book]['media']['missingSungRecordingItemIds']), count)
 
 
 if __name__ == '__main__':

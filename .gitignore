@@ -45,3 +45,6 @@ android/key.properties
 ios/Flutter/ephemeral/
 android/build/
 ios/build/
+
+# Local scratch output (recording audits and other downloads)
+/tmp/

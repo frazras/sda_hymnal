@@ -25,7 +25,8 @@ void main() {
         sha1.convert([
           ...utf8.encode('blob ${bytes.length}\u0000'),
           ...bytes
-        ]).toString());
+        ]).toString(),
+        kind: RecordingKind.instrumental);
   }
 
   RecordingPack pack(int revision, [String book = 'sda-es-2009']) =>

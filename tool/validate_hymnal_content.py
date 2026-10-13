@@ -121,41 +121,66 @@ def local_asset(root, name):
     return path
 
 
+# Reviewed edition-specific recording sources: (book, medium) -> (source
+# settings ID, directory). The pinned source settings assign each directory to
+# that exact edition; a book or medium absent here cannot borrow another's files.
+RECORDING_MEDIA = ('instrumentalRecording', 'sungRecording')
+RECORDING_SOURCES = {
+    ('sda-es-2009', 'instrumentalRecording'): ('es-newVersion', 'music/spanish/2009 version/instrumental'),
+    ('sda-es-1962', 'instrumentalRecording'): ('es-oldVersion', 'music/spanish/1962 version/instrumental'),
+    ('sda-es-2009', 'sungRecording'): ('es-newVersion', 'music/spanish/2009 version/sung'),
+    ('sda-pt-1996', 'sungRecording'): ('pt-newVersion', 'music/portuguese/1996 version/sung'),
+    ('sda-ru-1997', 'instrumentalRecording'): ('ru-newVersion', 'music/russian/1997 version/instrumental'),
+}
+
+
 def inspect_recordings(catalog, book_items):
-    """Check exact-edition references and pinned metadata without fetching audio."""
+    """Check exact-edition references and pinned metadata without fetching audio.
+
+    Returns valid item IDs keyed by (book, medium) and collected errors.
+    """
     errors, available = [], {}
     def error(code, location):
         errors.append({'code': code, 'location': location})
-    if not isinstance(catalog, dict) or catalog.get('schemaVersion') != 1:
+    if not isinstance(catalog, dict) or catalog.get('schemaVersion') != 2:
         return {}, [{'code': 'invalid_recording_catalog', 'location': 'root'}]
     if (not isinstance(catalog.get('repository'), str)
             or not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', catalog['repository'])
             or not isinstance(catalog.get('revision'), str)
             or not re.fullmatch(r'[0-9a-f]{40}', catalog['revision'])):
         error('invalid_recording_provenance', 'source')
-    books = catalog.get('books')
-    if not isinstance(books, list):
-        return {}, errors + [{'code': 'invalid_recording_books', 'location': 'books'}]
-    seen_books = set()
-    years = {'sda-es-2009': '2009', 'sda-es-1962': '1962'}
-    for index, book in enumerate(books):
-        at = f'books[{index}]'
-        if not isinstance(book, dict) or not isinstance(book.get('bookId'), str):
-            error('invalid_recording_book', at)
+    collections = catalog.get('collections')
+    if not isinstance(collections, list):
+        return {}, errors + [{'code': 'invalid_recording_collections', 'location': 'collections'}]
+    seen_collections = set()
+    for index, collection in enumerate(collections):
+        at = f'collections[{index}]'
+        if (not isinstance(collection, dict) or not isinstance(collection.get('bookId'), str)
+                or collection.get('medium') not in RECORDING_MEDIA):
+            error('invalid_recording_collection', at)
             continue
-        identity = book['bookId']
-        if identity in seen_books:
-            error('duplicate_recording_book', identity)
-        seen_books.add(identity)
+        identity = collection['bookId']
+        key = (identity, collection['medium'])
+        label = f'{identity}:{key[1]}'
+        if key in seen_collections:
+            error('duplicate_recording_collection', label)
+        seen_collections.add(key)
         if identity not in book_items:
             error('absent_recording_book', identity)
-        items = book.get('items')
+        source = RECORDING_SOURCES.get(key)
+        if source is None:
+            error('unreviewed_recording_source', label)
+        elif (collection.get('settingsId'), collection.get('directory')) != source:
+            error('invalid_recording_source', label)
+            source = None  # Wrong provenance: nothing in this collection is usable.
+        items = collection.get('items')
         if not isinstance(items, list):
-            error('invalid_recording_items', identity)
+            error('invalid_recording_items', label)
             continue
+        known = book_items.get(identity, set())
         seen, duplicates, valid_ids, total = set(), set(), set(), 0
         for n, item in enumerate(items):
-            location = f'{identity}.items[{n}]'
+            location = f'{label}.items[{n}]'
             if not isinstance(item, dict) or not isinstance(item.get('itemId'), str):
                 error('invalid_recording_item', location)
                 continue
@@ -167,13 +192,12 @@ def inspect_recordings(catalog, book_items):
                 valid_ids.discard(ref)
                 valid = False
             seen.add(ref)
-            if ref not in book_items.get(identity, set()):
+            if ref not in known:
                 error('absent_recording_reference', location)
                 valid = False
             path = item.get('path')
-            canonical = bool(re.fullmatch(r'[1-9][0-9]*', ref))
-            expected = (f'music/spanish/{years[identity]} version/instrumental/{int(ref):03d}.m4a'
-                        if identity in years and canonical else None)
+            canonical = bool(re.fullmatch(r'[1-9][0-9]{0,2}', ref))
+            expected = f'{source[1]}/{int(ref):03d}.m4a' if source and canonical else None
             if not isinstance(path, str) or path != expected:
                 error('invalid_recording_path', location)
                 valid = False
@@ -186,11 +210,21 @@ def inspect_recordings(catalog, book_items):
                 total += size
             if valid:
                 valid_ids.add(ref)
-        if type(book.get('expectedCount')) is not int or book['expectedCount'] != len(items):
-            error('recording_count_mismatch', identity)
-        if type(book.get('totalBytes')) is not int or book['totalBytes'] != total:
-            error('recording_bytes_mismatch', identity)
-        available.setdefault(identity, set()).update(valid_ids - duplicates)
+        if type(collection.get('expectedCount')) is not int or collection['expectedCount'] != len(items):
+            error('recording_count_mismatch', label)
+        if type(collection.get('totalBytes')) is not int or collection['totalBytes'] != total:
+            error('recording_bytes_mismatch', label)
+        # Every item is either recorded or an explicitly declared gap.
+        gaps = collection.get('missingItemIds')
+        if not isinstance(gaps, list) or not all(isinstance(g, str) for g in gaps):
+            error('invalid_recording_gaps', label)
+            gaps = []
+        for gap, count in sorted(Counter(gaps).items()):
+            if count > 1 or gap in seen or gap not in known:
+                error('invalid_recording_gap', f'{label}:{gap}')
+        for ref in sorted(known - seen - set(gaps), key=lambda x: (len(x), x)):
+            error('undeclared_recording_gap', f'{label}:{ref}')
+        available.setdefault(key, set()).update(valid_ids - duplicates)
     return available, errors
 
 
@@ -257,7 +291,7 @@ def report(root=ROOT):
                 year=book['year'], optional=True))
     midi_catalog = root / 'assets/midi/verified_tunes.json'
     midi_data = json.loads(midi_catalog.read_text()) if midi_catalog.exists() else None
-    recording_catalog = root / 'assets/hymnals/spanish_recordings.json'
+    recording_catalog = root / 'assets/hymnals/recordings.json'
     recording_data = json.loads(recording_catalog.read_text()) if recording_catalog.exists() else None
     book_items = {}
     books = []
@@ -301,7 +335,7 @@ def report(root=ROOT):
                 'missingScoreItemIds': sorted(item_ids - available, key=lambda x: (len(x), x)),
                 'verifiedInstrumentalItemIds': [],
                 'instrumentalRecordingItemIds': [],
-                'vocals': 'No verified sung recordings in these language packs.'}
+                'sungRecordingItemIds': []}
         except (OSError, ValueError, KeyError, TypeError) as exc:
             result = {'bookId': entry.get('id'), 'errors': [
                 {'code': 'unreadable_pack', 'location': str(exc)}]}
@@ -310,13 +344,18 @@ def report(root=ROOT):
     recordings, catalog_errors = inspect_recordings(recording_data, book_items) if recording_data is not None else ({}, [])
     catalog_errors.extend(midi_errors)
     catalog_errors.extend(download_errors)
+    def ordered(ids):
+        return sorted(ids, key=lambda x: (len(x), x))
     for book in books:
         if 'media' in book:
-            book['media']['verifiedInstrumentalItemIds'] = sorted(midi.get(book['bookId'], set()), key=lambda x: (len(x), x))
-            valid = recordings.get(book['bookId'], set())
-            book['media']['instrumentalRecordingItemIds'] = sorted(valid, key=lambda x: (len(x), x))
-            book['media']['missingInstrumentalRecordingItemIds'] = sorted(
-                book_items.get(book['bookId'], set()) - valid, key=lambda x: (len(x), x))
+            book['media']['verifiedInstrumentalItemIds'] = ordered(midi.get(book['bookId'], set()))
+            for medium, present, missing in (
+                    ('instrumentalRecording', 'instrumentalRecordingItemIds',
+                     'missingInstrumentalRecordingItemIds'),
+                    ('sungRecording', 'sungRecordingItemIds', 'missingSungRecordingItemIds')):
+                valid = recordings.get((book['bookId'], medium), set())
+                book['media'][present] = ordered(valid)
+                book['media'][missing] = ordered(book_items.get(book['bookId'], set()) - valid)
     return {'schemaVersion': 1, 'catalogErrors': catalog_errors, 'scope': 'Bundled and published optional imported language packs',
             'errorCount': len(catalog_errors) + sum(len(b['errors']) for b in books), 'books': books}
 

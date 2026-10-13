@@ -20,6 +20,7 @@ def check(output):
         ['tool/validate_translations.py'],
         ['tool/build_language_download_catalog.py', '--check'],
         ['tool/build_score_download_catalog.py', '--check'],
+        ['tool/build_recording_catalog.py', '--check'],
         ['tool/validate_hymnal_content.py', '--output', str(output)],
     ]
     for command in commands:
