@@ -22,7 +22,10 @@ import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/settings.dart';
 import 'package:sdahymnal/ui/saved_hymn_notice.dart';
-import 'package:sdahymnal/ui/hymnal_browser.dart';
+import 'package:sdahymnal/models/hymnal_book.dart';
+import 'package:sdahymnal/ui/book_picker.dart';
+import 'package:sdahymnal/ui/book_topics.dart';
+import 'package:sdahymnal/ui/language_packs.dart';
 
 /// App shell: brand header + active tab + bottom nav.
 /// Tab screens are content-only; the header and nav live here.
@@ -45,27 +48,44 @@ class _TabsState extends State<Tabs> {
   bool _contentLoaded = false;
   Future<void>? _selectionSave;
 
-  HymnalPack? get _activePack {
-    for (final pack in _packs) {
-      if (pack.edition.id ==
-          (_selectedBook == 'spanish' ? 'sda-es-2009' : _selectedBook)) {
-        return pack;
-      }
+  List<HymnalBook> _books = const [];
+
+  HymnalBook get _book => _books.firstWhere((b) => b.id == _selectedBook,
+      orElse: () => _books.isEmpty
+          ? HymnalBook(
+              id: 'english',
+              languageTag: 'en',
+              languageName: 'English',
+              title: 'Old & New Hymnal',
+              primary: _hymnsNew,
+              secondary: _hymnsOld,
+              primaryLabel: 'New Hymnal',
+              secondaryLabel: 'Old Hymnal')
+          : _books.first);
+
+  void _openTopics() => Navigator.push(
+      context, slideRoute(BookTopicsPage(packs: _book.packs)));
+
+  Future<void> _pickBook() async {
+    final choice = await showHymnalPicker(context,
+        books: _books,
+        selected: _tab == 1 && _searchAllBooks ? 'all' : _selectedBook,
+        allowAll: _tab == 1);
+    if (!mounted || choice == null) return;
+    if (choice == morePicksId) {
+      await Navigator.push(context,
+          slideRoute(LanguagePacksPage(onChanged: _loadHymns)));
+      return;
     }
-    return null;
+    AppAnalytics.instance.event('hymnal_select',
+        variant: choice == 'all' ? 'all' : choice);
+    _selectBook(choice);
   }
 
-  List<HymnalPack> get _languagePacks => _selectedBook == 'spanish'
-      ? _packs.where((p) => p.edition.languageTag == 'es').toList()
-      : [if (_activePack case final pack?) pack];
-  List<Hymn> get _numberNew => _activePack?.hymns ?? _hymnsNew;
-  List<Hymn> get _numberOld => _selectedBook == 'spanish'
-      ? _packs.firstWhere((p) => p.edition.id == 'sda-es-1962').hymns
-      : _activePack == null
-          ? _hymnsOld
-          : const [];
-  void _openTopics() => Navigator.push(
-      context, slideRoute(HymnalTopicsPage(packs: _languagePacks)));
+  Widget _bookPill() => BookPill(
+      book: _book,
+      allLanguages: _tab == 1 && _searchAllBooks,
+      onTap: _pickBook);
 
   void _selectBook(String id) {
     setState(() {
@@ -183,6 +203,8 @@ class _TabsState extends State<Tabs> {
       ], readings: _readings.readings);
       _hymnsNew = repository.hymnsFor('sda-en-1985');
       _hymnsOld = repository.hymnsFor('sda-en-1941');
+      _books = buildHymnalBooks(
+          englishNew: _hymnsNew, englishOld: _hymnsOld, packs: packs);
       _contentLoaded = true;
     });
   }
@@ -228,18 +250,15 @@ class _TabsState extends State<Tabs> {
                   ClassicHeader(
                       active: _tab,
                       onSelect: _selectTab,
-                      onFavorites: () => _selectTab(2))
-                else if (!typing &&
-                    !(_tab == 0 && MediaQuery.sizeOf(context).height < 650))
-                  BrandHeader(onLogoTap: () => _selectTab(0)),
+                      onFavorites: () => _selectTab(2),
+                      leading: _tab <= 1 && _contentLoaded ? _bookPill() : null)
+                else if (!typing)
+                  BrandHeader(
+                      onLogoTap: () => _selectTab(0),
+                      compact: _tab == 0 && MediaQuery.sizeOf(context).height < 700,
+                      trailing:
+                          _tab <= 1 && _contentLoaded ? _bookPill() : null),
                 const SavedHymnNotice(),
-                if (!typing && _tab <= 1 && _packs.isNotEmpty)
-                  HymnalSelector(
-                      packs: _packs,
-                      value:
-                          _tab == 1 && _searchAllBooks ? 'all' : _selectedBook,
-                      allowAll: _tab == 1,
-                      onChanged: _selectBook),
                 if (_tab == 1 && _packsFailed)
                   TextButton(
                       onPressed: _loadHymns,
@@ -266,60 +285,48 @@ class _TabsState extends State<Tabs> {
                                             key: ValueKey(
                                                 'numbers-$_selectedBook'),
                                             active: _tab == 0,
-                                            english: _activePack == null,
-                                            newLabel: _selectedBook == 'spanish'
-                                                ? 'Nuevo'
-                                                : _activePack == null
-                                                    ? 'New Hymnal'
-                                                    : switch (_activePack!
-                                                        .edition.languageTag) {
-                                                        'pt' => 'Hinário',
-                                                        'ru' => 'Гимны',
-                                                        'fr' => 'Hymne',
-                                                        'sw' => 'Wimbo',
-                                                        _ => 'Hymn',
-                                                      },
-                                            oldLabel: _selectedBook == 'spanish'
-                                                ? 'Antiguo'
-                                                : 'Old Hymnal',
-                                            onTopics: _activePack == null ||
-                                                    _languagePacks.every(
-                                                        (p) => p.topics.isEmpty)
+                                            english: _book.english,
+                                            newLabel: _book.primaryLabel,
+                                            oldLabel: _book.secondaryLabel,
+                                            onTopics: _book.english ||
+                                                    !_book.hasTopics
                                                 ? null
                                                 : _openTopics,
-                                            hymnsOld: _numberOld,
-                                            hymnsNew: _numberNew,
-                                            additionalReadings: _activePack ==
-                                                    null
+                                            hymnsOld: _book.secondary,
+                                            hymnsNew: _book.primary,
+                                            additionalReadings: _book.english
                                                 ? _readings
                                                 : const AdditionalReadingCatalog(
                                                     []))))),
                             if (_searchAllBooks)
-                              AllHymnalsSearch(hymns: [
-                                ..._hymns,
-                                ..._packs.expand((p) => p.hymns)
-                              ], keyboardOpen: typing && _tab == 1)
-                            else if (_selectedBook == 'spanish')
                               HymnList(
-                                  key: const ValueKey('spanish-search'),
-                                  english: false,
-                                  onTopics: _openTopics,
+                                  key: const ValueKey('search-all'),
                                   active: _tab == 1,
-                                  hymns: [..._numberNew, ..._numberOld],
-                                  hymnsNew: _numberNew,
-                                  hymnsOld: _numberOld)
-                            else if (_activePack case final pack?)
-                              HymnalBrowser(
-                                  key: ValueKey('search-${pack.edition.id}'),
-                                  keyboardOpen: typing && _tab == 1,
-                                  pack: pack)
+                                  english: false,
+                                  allLanguages: true,
+                                  keyboardOpen: typing,
+                                  hymns: [
+                                    ..._hymns,
+                                    ..._packs.expand((p) => p.hymns)
+                                  ],
+                                  hymnsNew: const [],
+                                  hymnsOld: const [])
                             else
                               HymnList(
+                                  key: ValueKey('search-${_book.id}'),
                                   active: _tab == 1,
-                                  additionalReadings: _readings,
-                                  hymns: _hymns,
-                                  hymnsOld: _hymnsOld,
-                                  hymnsNew: _hymnsNew),
+                                  keyboardOpen: typing,
+                                  english: _book.english,
+                                  newLabel: _book.primaryLabel,
+                                  oldLabel: _book.secondaryLabel,
+                                  onTopics:
+                                      _book.hasTopics ? _openTopics : null,
+                                  additionalReadings: _book.english
+                                      ? _readings
+                                      : const AdditionalReadingCatalog([]),
+                                  hymns: _book.hymns,
+                                  hymnsNew: _book.primary,
+                                  hymnsOld: _book.secondary),
                             FavoritesTab(
                                 serviceRepository: HymnalRepository(editions: [
                                   HymnalEdition.englishNew,

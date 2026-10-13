@@ -78,8 +78,7 @@ void main() {
       hymn(2, 'Я', language: 'ru', version: 'sda-ru-2005'),
     ])));
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(DropdownButton<String>));
-    await tester.pumpAndSettle();
+    // Languages are pills; the other language is one tap away.
     await tester.tap(find.text('sda-ru-2005').last);
     await tester.pumpAndSettle();
     expect(requests, ['es', 'ru']);

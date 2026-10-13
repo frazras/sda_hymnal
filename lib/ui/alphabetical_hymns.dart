@@ -5,6 +5,8 @@ import 'package:sdahymnal/services/search_normalization.dart';
 import 'package:sdahymnal/services/title_collation.dart';
 import 'common.dart';
 import 'hymnPage.dart';
+import 'kit.dart';
+import 'package:sdahymnal/theme.dart';
 
 String titleInitial(Hymn hymn) {
   final title = normalizeHymnSearch(hymn.title, foldLatinAccents: false);
@@ -52,24 +54,18 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
     for (var i = 0; i < hymns.length; i++) {
       initials.putIfAbsent(titleInitial(hymns[i]), () => i);
     }
-    final index = await showModalBottomSheet<int>(
-      context: context,
-      builder: (context) => SafeArea(
-          child: SingleChildScrollView(
-              child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(context.appText.jumpToLetter,
-              style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 12),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            for (final entry in initials.entries)
-              OutlinedButton(
-                  onPressed: () => Navigator.pop(context, entry.value),
-                  child: Text(entry.key)),
-          ]),
+    final index = await showHymnalSheet<int>(
+      context,
+      title: context.appText.jumpToLetter,
+      builder: (sheet) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: Wrap(spacing: 8, runSpacing: 8, children: [
+          for (final entry in initials.entries)
+            _LetterKey(
+                letter: entry.key,
+                onTap: () => Navigator.pop(sheet, entry.value)),
         ]),
-      ))),
+      ),
     );
     if (!mounted || index == null || !_scroll.hasClients) return;
     await _scroll.animateTo(
@@ -78,46 +74,45 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
         curve: Curves.easeOut);
   }
 
+  String _languageLabel(String language) => widget.hymns
+      .where((h) => h.languageTag == language)
+      .map((h) => h.bookLabel)
+      .toSet()
+      .join(' · ');
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(context.appText.alphabeticalBrowse)),
+  Widget build(BuildContext context) => HymnalPage(
+        title: context.appText.alphabeticalBrowse,
         body: Column(children: [
           if (_languages.length > 1)
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DropdownButton<String>(
-                  value: _language,
-                  isExpanded: true,
-                  items: [
-                    for (final language in _languages)
-                      DropdownMenuItem(
-                          value: language,
-                          child: Text(
-                              widget.hymns
-                                  .where((h) => h.languageTag == language)
-                                  .map((h) => h.bookLabel)
-                                  .toSet()
-                                  .join(' · '),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis))
-                  ],
-                  onChanged: (language) {
-                    if (language != null) {
-                      setState(() {
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Row(children: [
+                for (final language in _languages)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 7),
+                    child: FilterPill(
+                      key: ValueKey('alphabet-language-$language'),
+                      label: _languageLabel(language),
+                      selected: language == _language,
+                      onTap: () => setState(() {
                         _language = language;
                         _ordered = _load();
-                      });
-                    }
-                  },
-                )),
+                      }),
+                    ),
+                  ),
+              ]),
+            ),
           Expanded(
               child: FutureBuilder<List<Hymn>>(
             key: ValueKey(_language),
             future: _ordered,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(
-                    child: TextButton.icon(
+                return EmptyHint(
+                    title: context.appText.noMatchingHymns,
+                    action: TextButton.icon(
                         onPressed: () => setState(() {
                               _ordered = _load();
                             }),
@@ -128,18 +123,34 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
                 return const Center(child: CircularProgressIndicator());
               }
               final hymns = snapshot.data!;
-              final extent = 96.0 *
+              final extent = 76.0 *
                   MediaQuery.textScalerOf(context)
                       .scale(1)
                       .clamp(1, double.infinity);
               return Column(children: [
-                Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                        onPressed:
-                            hymns.isEmpty ? null : () => _jump(hymns, extent),
-                        icon: const Icon(Icons.sort_by_alpha),
-                        label: Text(context.appText.jumpToLetter))),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+                  child: Row(children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(context.appText.hymnCount(hymns.length),
+                            style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 12,
+                                color: context.tokens.faint)),
+                      ),
+                    ),
+                    Flexible(
+                      child: LinkAction(
+                          icon: Icons.sort_by_alpha,
+                          label: context.appText.jumpToLetter,
+                          onTap: hymns.isEmpty
+                              ? null
+                              : () => _jump(hymns, extent)),
+                    ),
+                  ]),
+                ),
                 Expanded(
                     child: ListView.builder(
                         controller: _scroll,
@@ -147,16 +158,13 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
                         itemCount: hymns.length,
                         itemBuilder: (context, index) {
                           final hymn = hymns[index];
-                          return ListTile(
+                          return HymnRow(
                               key: ValueKey(
                                   'alphabetical-${hymn.version}-${hymn.number}'),
-                              leading: Text('${hymn.number}'),
-                              title: Text(hymn.title,
-                                  textDirection: hymnTextDirection(hymn),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis),
-                              subtitle: Text(hymn.bookLabel,
-                                  maxLines: 1, overflow: TextOverflow.ellipsis),
+                              number: '${hymn.number}',
+                              title: hymn.title,
+                              textDirection: hymnTextDirection(hymn),
+                              subtitle: hymn.bookLabel,
                               onTap: () => Navigator.push(
                                   context,
                                   slideRoute(HymnPage(
@@ -174,19 +182,34 @@ class _AlphabeticalHymnsState extends State<AlphabeticalHymns> {
       );
 }
 
-class AlphabeticalBrowseButton extends StatelessWidget {
-  const AlphabeticalBrowseButton({super.key, required this.hymns});
-  final List<Hymn> hymns;
+class _LetterKey extends StatelessWidget {
+  const _LetterKey({required this.letter, required this.onTap});
+  final String letter;
+  final VoidCallback onTap;
   @override
-  Widget build(BuildContext context) => IconButton(
-        tooltip: context.appText.alphabeticalBrowse,
-        icon: const Icon(Icons.sort_by_alpha),
-        onPressed: hymns.isEmpty
-            ? null
-            : () {
-                FocusScope.of(context).unfocus();
-                Navigator.push(
-                    context, slideRoute(AlphabeticalHymns(hymns: hymns)));
-              },
-      );
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return Semantics(
+      button: true,
+      child: Pressable(
+        onTap: onTap,
+        builder: (context, pressed) => Container(
+          width: 46,
+          height: 46,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: pressed ? t.tint : t.surface,
+            border: Border.all(color: t.line),
+            borderRadius: BorderRadius.circular(t.isClassic ? 4 : 12),
+          ),
+          child: Text(letter,
+              style: TextStyle(
+                  fontFamily: kSerif,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: t.accent)),
+        ),
+      ),
+    );
+  }
 }

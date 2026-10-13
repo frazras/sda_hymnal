@@ -13,7 +13,9 @@ import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/services/release_notes.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/favorites.dart';
-import 'package:sdahymnal/ui/hymnal_browser.dart';
+import 'package:sdahymnal/ui/book_picker.dart';
+import 'package:sdahymnal/ui/book_topics.dart';
+import 'package:sdahymnal/ui/hymnlist.dart';
 import 'package:sdahymnal/ui/alphabetical_hymns.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/tabs.dart';
@@ -206,7 +208,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('hymn-scroll-speed-menu-item')));
+    await tester.tap(find.byKey(const ValueKey('hymn-auto-scroll')));
     await tester.pumpAndSettle();
     await tester
         .tap(find.byKey(const ValueKey('hymn-scroll-toggle-sheet-button')));
@@ -245,12 +247,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
       }
       expect(find.byKey(const ValueKey('book-query')), findsNothing);
-      expect(
-          tester
-              .widget<DropdownButton<String>>(
-                  find.byKey(const ValueKey('hymnal-selector')))
-              .value,
-          'spanish');
+      expect(tester.widget<BookPill>(find.byType(BookPill)).book.id, 'spanish');
       for (final digit in ['3', '8', '8']) {
         await tester.tap(find.text(digit).last);
         await tester.pump();
@@ -274,9 +271,8 @@ void main() {
       expect(tester.widget<HymnPage>(find.byType(HymnPage)).hymn.number, 388);
       await tester.tap(find.byKey(const ValueKey('hymn-reader-options')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('hymn-scroll-speed-menu-item')),
-          findsOneWidget);
-      expect(find.text('Copy or share lyrics'), findsOneWidget);
+      expect(find.byKey(const ValueKey('hymn-auto-scroll')), findsOneWidget);
+      expect(find.byKey(const ValueKey('hymn-share-lyrics')), findsOneWidget);
       expect(find.text('Text size'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -295,11 +291,16 @@ void main() {
                 : HymnalTokens.light;
         await tester.pumpWidget(MaterialApp(
           theme: buildHymnalTheme(tokens, classic: classic),
-          home: Scaffold(body: HymnalBrowser(pack: russian, numbersOnly: true)),
+          home: Scaffold(
+              body: HymnList(
+                  english: false,
+                  hymns: russian.hymns,
+                  hymnsNew: russian.hymns,
+                  hymnsOld: const [])),
         ));
-        await tester.enterText(find.byKey(const ValueKey('book-query')), '385');
+        await tester.enterText(find.byType(TextField).first, '385');
         await tester.pump();
-        await tester.tap(find.byKey(const ValueKey('book-hymn-385')));
+        await tester.tap(find.byKey(const ValueKey('search-hymn-sda-ru-1997-385')));
         await tester.pumpAndSettle();
         final reader = tester.widget<HymnPage>(find.byType(HymnPage));
         expect(reader.hymn.version, 'sda-ru-1997');
@@ -399,7 +400,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField).first, '1');
           await tester.pumpAndSettle();
-          await tester.tap(find.byKey(const ValueKey('book-hymn-1')));
+          await tester.tap(find.byKey(ValueKey('search-hymn-$book-1')));
           await tester.pumpAndSettle();
           final reader = tester.widget<HymnPage>(find.byType(HymnPage));
           expect(reader.hymn.ref.bookId, book);
@@ -418,16 +419,13 @@ void main() {
   testWidgets('topics provide only their ordered book queue', (tester) async {
     await tester.pumpWidget(MaterialApp(
         theme: buildHymnalTheme(HymnalTokens.light),
-        home: Scaffold(body: HymnalBrowser(pack: spanish))));
-    await tester.tap(find.text('Topics'));
+        home: BookTopicsPage(packs: [spanish])));
     await tester.pumpAndSettle();
     final topic = spanish.topics.first;
-    await tester.tap(find.text(topic.group));
+    await tester.tap(find.byKey(ValueKey('topic-${topic.id}')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(topic.title));
-    await tester.pumpAndSettle();
-    await tester
-        .tap(find.byKey(ValueKey('book-hymn-${topic.hymns.first.number}')));
+    await tester.tap(find.byKey(ValueKey(
+        'topic-hymn-${topic.hymns.first.version}-${topic.hymns.first.number}')));
     await tester.pumpAndSettle();
     final reader = tester.widget<HymnPage>(find.byType(HymnPage));
     expect(reader.categoryTitle, topic.title);
@@ -445,12 +443,16 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       theme: buildHymnalTheme(HymnalTokens.light),
       home: Scaffold(
-          body: AllHymnalsSearch(hymns: [...spanish.hymns, ...russian.hymns])),
+          body: HymnList(
+              english: false,
+              allLanguages: true,
+              hymns: [...spanish.hymns, ...russian.hymns],
+              hymnsNew: const [],
+              hymnsOld: const [])),
     ));
-    await tester.enterText(
-        find.byKey(const ValueKey('all-books-query')), '388');
+    await tester.enterText(find.byType(TextField).first, '388');
     await tester.pump();
-    await tester.tap(find.byKey(const ValueKey('all-book-sda-es-2009-388')));
+    await tester.tap(find.byKey(const ValueKey('search-hymn-sda-es-2009-388')));
     await tester.pumpAndSettle();
     final reader = tester.widget<HymnPage>(find.byType(HymnPage));
     expect(reader.hymn.version, 'sda-es-2009');
@@ -493,8 +495,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     await tester.tap(find.byKey(const ValueKey('hymnal-selector')));
+    // The number caret blinks forever, so step the sheet's entrance.
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.text('Português · 1996').last);
+    await tester.tap(find.byKey(const ValueKey('hymnal-option-sda-pt-1996')));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect((await SharedPreferences.getInstance()).getString('selectedHymnal'),
         'sda-pt-1996');
@@ -503,17 +508,13 @@ void main() {
     expect(find.text('Ó Deus de Amor'), findsOneWidget);
     await tester.tap(find.text('Search').last);
     await tester.pumpAndSettle();
-    expect(find.text('Title, lyrics or number'), findsOneWidget);
+    expect(find.text('Search by title, lyrics or number'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await shell();
     for (var i = 0; i < 12; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(
-        tester
-            .widget<DropdownButton<String>>(
-                find.byKey(const ValueKey('hymnal-selector')))
-            .value,
+    expect(tester.widget<BookPill>(find.byType(BookPill)).book.id,
         'sda-pt-1996');
     expect(tester.takeException(), isNull);
   });
@@ -548,9 +549,10 @@ void main() {
       await tester.pump();
       tester.view.viewInsets = const FakeViewPadding(bottom: 250);
       await tester.pump();
-      await tester.enterText(find.byKey(const ValueKey('book-query')), '388');
+      await tester.enterText(find.byType(TextField).first, '388');
       await tester.pump();
-      expect(find.byKey(const ValueKey('book-hymn-388')), findsOneWidget);
+      expect(find.byKey(const ValueKey('search-hymn-sda-pt-1996-388')),
+          findsOneWidget);
       expect(find.text('Done'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

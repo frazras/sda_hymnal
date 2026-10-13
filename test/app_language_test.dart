@@ -8,7 +8,6 @@ import 'package:sdahymnal/ui/common.dart';
 import 'package:sdahymnal/ui/musical_style_sheet.dart';
 import 'package:sdahymnal/theme.dart';
 import 'package:sdahymnal/ui/hymnlist.dart';
-import 'package:sdahymnal/ui/hymnal_browser.dart';
 import 'package:sdahymnal/ui/favorites.dart';
 import 'package:sdahymnal/ui/favorite_lists.dart';
 import 'package:sdahymnal/ui/favorite_order.dart';
@@ -193,10 +192,16 @@ void main() {
           child: child!,
         ),
         home: const Scaffold(
-            body: AllHymnalsSearch(hymns: [], keyboardOpen: true)),
+            body: HymnList(
+                english: false,
+                allLanguages: true,
+                keyboardOpen: true,
+                hymns: [],
+                hymnsNew: [],
+                hymnsOld: [])),
       ));
       await tester.pumpAndSettle();
-      final context = tester.element(find.byType(AllHymnalsSearch));
+      final context = tester.element(find.byType(HymnList));
       expect(find.text(context.appText.done), findsOneWidget);
       expect(find.text(context.appText.noMatchingHymns), findsOneWidget);
       expect(tester.takeException(), isNull, reason: locale.languageCode);

@@ -5,6 +5,7 @@ import 'package:sdahymnal/services/trends.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/hymnal_book.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
@@ -636,6 +637,13 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
     );
   }
 
+  /// Paired books name the edition on each card; single books need none.
+  String? _badgeFor(bool isNew) {
+    if (widget.hymnsOld.isEmpty) return null;
+    final list = isNew ? widget.hymnsNew : widget.hymnsOld;
+    return list.isEmpty ? null : pairedBadgeLabel(list.first.version);
+  }
+
   Widget _previewCard(
     HymnalTokens t, {
     required bool isNew,
@@ -657,15 +665,10 @@ class _ButtonsState extends State<Buttons> with SingleTickerProviderStateMixin {
         ),
         child: Row(
           children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 90),
-              child: VersionBadge(
-                  isNew: isNew,
-                  label: widget.english
-                      ? null
-                      : (isNew ? widget.newLabel : widget.oldLabel)),
-            ),
-            const SizedBox(width: 12),
+            if (_badgeFor(isNew) case final label?) ...[
+              VersionBadge(isNew: isNew, label: label),
+              const SizedBox(width: 12),
+            ],
             Expanded(
               child: Text(
                 title,

@@ -13,11 +13,15 @@ class ClassicHeader extends StatelessWidget {
       {super.key,
       required this.active,
       required this.onSelect,
-      required this.onFavorites});
+      required this.onFavorites,
+      this.leading});
 
   final int active;
   final ValueChanged<int> onSelect;
   final VoidCallback onFavorites;
+
+  /// Left of the logo (the hymnal picker), balancing the favorites button.
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,17 @@ class ClassicHeader extends StatelessWidget {
         ColoredBox(
           color: Colors.white,
           child: Row(children: [
-            const SizedBox(width: 48),
+            SizedBox(
+                width: 76,
+                child: leading == null
+                    ? null
+                    : Theme(
+                        // The logo strip stays white in both brightnesses.
+                        data: buildHymnalTheme(HymnalTokens.light,
+                            classic: true),
+                        child: Center(
+                            child: FittedBox(
+                                fit: BoxFit.scaleDown, child: leading)))),
             Expanded(
                 child: InkWell(
               onTap: () => onSelect(0),
@@ -42,10 +56,13 @@ class ClassicHeader extends StatelessWidget {
                     semanticsLabel: context.appText.hymnalHome),
               ),
             )),
-            IconButton(
-                tooltip: context.appText.favorites,
-                onPressed: onFavorites,
-                icon: const Icon(Icons.favorite_border, color: Colors.black)),
+            SizedBox(
+              width: 76,
+              child: IconButton(
+                  tooltip: context.appText.favorites,
+                  onPressed: onFavorites,
+                  icon: const Icon(Icons.favorite_border, color: Colors.black)),
+            ),
           ]),
         ),
         Row(children: [
@@ -264,10 +281,12 @@ class ClassicSearchControls extends StatelessWidget {
       required this.controller,
       required this.filter,
       this.filterLabel,
+      this.showFilter = true,
       required this.onQuery,
       required this.onFilter});
   final TextEditingController controller;
   final String filter;
+  final bool showFilter;
   final ValueChanged<String> onQuery;
   final VoidCallback onFilter;
   final String? filterLabel;
@@ -293,8 +312,9 @@ class ClassicSearchControls extends StatelessWidget {
                   OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             ),
           )),
-          const SizedBox(width: 6),
-          Semantics(
+          if (showFilter) const SizedBox(width: 6),
+          if (showFilter)
+           Semantics(
               label: context.appText.hymnalFilter(filterLabel ?? filter),
               child: ElevatedButton(
                 onPressed: onFilter,

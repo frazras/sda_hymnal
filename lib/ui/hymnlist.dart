@@ -6,6 +6,7 @@ import 'package:sdahymnal/services/analytics.dart';
 import 'package:sdahymnal/services/hymn_search.dart';
 
 import 'package:sdahymnal/models/hymn.dart';
+import 'package:sdahymnal/models/hymnal_book.dart';
 import 'package:sdahymnal/models/additional_reading.dart';
 import 'package:sdahymnal/services/prefs.dart';
 import 'package:sdahymnal/theme.dart';
@@ -14,15 +15,29 @@ import 'package:sdahymnal/ui/classic.dart';
 import 'package:sdahymnal/ui/hymnPage.dart';
 import 'package:sdahymnal/ui/hymn_occasions.dart';
 import 'package:sdahymnal/ui/additional_readings.dart';
+import 'package:sdahymnal/ui/kit.dart';
 
-/// Search tab (content-only: the shell renders the brand header above and
-/// the bottom nav below). Mockup: Search v2.dc.html.
+/// Search tab, shared by every language (content-only: the shell renders the
+/// brand header above and the bottom nav below). Paired books offer
+/// All / New / Old pills; single books search their one edition; the
+/// all-languages scope labels every result with its book.
 class HymnList extends StatefulWidget {
   final List<Hymn> hymns;
   final List<Hymn> hymnsNew;
   final List<Hymn> hymnsOld;
   final bool active;
   final bool english;
+
+  /// Search every installed book; results carry a language badge.
+  final bool allLanguages;
+
+  /// The shell's Scaffold hides the keyboard inset from its body, so it
+  /// reports an open keyboard explicitly.
+  final bool keyboardOpen;
+
+  /// Edition pill labels for paired books (book's own names).
+  final String? newLabel;
+  final String? oldLabel;
   final VoidCallback? onTopics;
   final AdditionalReadingCatalog additionalReadings;
 
@@ -30,6 +45,10 @@ class HymnList extends StatefulWidget {
       {super.key,
       this.active = true,
       this.english = true,
+      this.allLanguages = false,
+      this.keyboardOpen = false,
+      this.newLabel,
+      this.oldLabel,
       this.onTopics,
       this.additionalReadings = const AdditionalReadingCatalog([]),
       required this.hymns,
@@ -48,6 +67,8 @@ class _HymnListState extends State<HymnList> {
   Timer? _searchTimer;
   final Stopwatch _searchWatch = Stopwatch();
   bool _pendingSearch = false;
+
+  bool get _paired => widget.hymnsOld.isNotEmpty && widget.hymnsNew.isNotEmpty;
 
   void _recordSearch() {
     _searchTimer?.cancel();
@@ -106,15 +127,18 @@ class _HymnListState extends State<HymnList> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.active && !widget.active) _abandonSearch();
     if (oldWidget.hymns != widget.hymns) {
+      if (!_paired) _filter = 'ALL';
       _applyFilter();
     }
   }
 
-  List<Hymn> get _currentHymns => (_filter == 'OLD')
-      ? widget.hymnsOld
-      : (_filter == 'NEW')
-          ? widget.hymnsNew
-          : widget.hymns;
+  List<Hymn> get _currentHymns => !_paired
+      ? widget.hymns
+      : (_filter == 'OLD')
+          ? widget.hymnsOld
+          : (_filter == 'NEW')
+              ? widget.hymnsNew
+              : widget.hymns;
 
   void _applyFilter() {
     _filteredHymns = searchHymns(_currentHymns, _query);
@@ -125,6 +149,7 @@ class _HymnListState extends State<HymnList> {
       : context.appText.matchCount(_filteredHymns.length);
 
   void _openHymn(Hymn hymn) {
+    FocusScope.of(context).unfocus();
     if (_searchTimer?.isActive ?? false) _recordSearch();
     if (_query.trim().isNotEmpty) {
       final rank = _filteredHymns.indexOf(hymn) + 1;
@@ -151,104 +176,68 @@ class _HymnListState extends State<HymnList> {
     );
   }
 
-  Widget _searchField(HymnalTokens t) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: t.surface,
-        border: Border.all(color: t.line),
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: t.cardShadow,
-      ),
-      child: Row(
-        children: [
-          HymnalIcons.magnifier(t.faint, size: 18, stroke: 1.8),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              onChanged: _setQuery,
-              cursorColor: t.accentHi,
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 15.5,
-                color: t.ink,
-              ),
-              decoration: InputDecoration(
-                isCollapsed: true,
-                border: InputBorder.none,
-                hintText: context.appText.searchByTitleLyricsNumber,
-                hintStyle: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 15.5,
-                  color: t.faint,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  String _editionLabel(bool isNew) => widget.english
+      ? (isNew ? context.appText.newHymnal : context.appText.oldHymnal)
+      : (isNew
+          ? (widget.newLabel ?? context.appText.newEdition)
+          : (widget.oldLabel ?? context.appText.oldEdition));
 
-  Widget _chip(HymnalTokens t, String key, String label) {
-    final selected = _filter == key;
-    return Pressable(
-      onTap: () {
-        setState(() {
+  Widget _chipsRow(HymnalTokens t) {
+    if (!_paired && _query.trim().isEmpty) return const SizedBox(height: 4);
+    void select(String key) => setState(() {
           _filter = key;
           AppAnalytics.instance.event('search_filter', variant: key);
           _applyFilter();
         });
-      },
-      builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected ? t.accent : Colors.transparent,
-          border: Border.all(color: selected ? t.accent : t.line),
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-            color: selected ? t.onAccent : t.muted,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _chipsRow(HymnalTokens t) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      alignment: Alignment.centerLeft,
       child: Wrap(
         spacing: 7,
         runSpacing: 6,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          _chip(t, 'ALL', context.appText.all),
-          _chip(
-              t,
-              'NEW',
-              widget.english
-                  ? context.appText.newHymnal
-                  : context.appText.newEdition),
-          _chip(
-              t,
-              'OLD',
-              widget.english
-                  ? context.appText.oldHymnal
-                  : context.appText.oldEdition),
-          Text(
-            _countText,
-            style: TextStyle(fontFamily: kSans, fontSize: 12, color: t.faint),
-          ),
+          if (_paired) ...[
+            FilterPill(
+                label: context.appText.all,
+                selected: _filter == 'ALL',
+                onTap: () => select('ALL')),
+            FilterPill(
+                label: _editionLabel(true),
+                selected: _filter == 'NEW',
+                onTap: () => select('NEW')),
+            FilterPill(
+                label: _editionLabel(false),
+                selected: _filter == 'OLD',
+                onTap: () => select('OLD')),
+          ],
+          if (_query.trim().isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(left: _paired ? 2 : 0, top: 4),
+              child: Text(
+                _countText,
+                style:
+                    TextStyle(fontFamily: kSans, fontSize: 12, color: t.faint),
+              ),
+            ),
         ],
       ),
+    );
+  }
+
+  Widget? _badge(Hymn hymn) {
+    if (widget.allLanguages) {
+      return _ScopeBadge(crossLanguageBadge(hymn));
+    }
+    if (!_paired) return null;
+    final label = pairedBadgeLabel(hymn.version);
+    if (label == null) return null;
+    return VersionBadge(
+      isNew: widget.hymnsNew.isNotEmpty &&
+          hymn.version == widget.hymnsNew.first.version,
+      label: label,
+      fontSize: 7.5,
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
     );
   }
 
@@ -257,73 +246,87 @@ class _HymnListState extends State<HymnList> {
     final hymn = _filteredHymns[index];
 
     if (t.isClassic) {
-      return ClassicSearchRow(hymn: hymn, onTap: () => _openHymn(hymn));
+      return KeyedSubtree(
+          key: ValueKey('search-hymn-${hymn.version}-${hymn.number}'),
+          child: ClassicSearchRow(hymn: hymn, onTap: () => _openHymn(hymn)));
     }
+    return ValueListenableBuilder<List<({int n, String v})>>(
+      valueListenable: Favorites.instance,
+      builder: (context, _, __) => HymnRow(
+        key: ValueKey('search-hymn-${hymn.version}-${hymn.number}'),
+        number: '${hymn.number}',
+        title: hymn.title,
+        textDirection: hymnTextDirection(hymn),
+        badge: _badge(hymn),
+        favorite: Favorites.instance.contains(hymn.number, hymn.version),
+        onTap: () => _openHymn(hymn),
+      ),
+    );
+  }
 
-    return Pressable(
-      onTap: () => _openHymn(hymn),
-      pressedScale: 1.0,
-      builder: (context, pressed) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          color: pressed ? t.surface2 : Colors.transparent,
-          border: Border(bottom: BorderSide(color: t.line2)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              constraints: const BoxConstraints(minWidth: 28),
-              alignment: Alignment.centerRight,
-              child: Text(
-                '${hymn.number}',
-                style: TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w600,
-                  color: t.accent,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                hymn.title,
-                textDirection: hymnTextDirection(hymn),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.12,
-                  color: t.ink,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            VersionBadge(
-              isNew: hymn.version == 'new',
-              label: widget.english
+  Widget _browseRow() {
+    final keyboard =
+        widget.keyboardOpen || MediaQuery.viewInsetsOf(context).bottom > 0;
+    final browse = _query.trim().isEmpty && !keyboard;
+    final topics = widget.english
+        ? (widget.hymns.isEmpty
+            ? null
+            : () {
+                FocusScope.of(context).unfocus();
+                Navigator.push(context,
+                    slideRoute(HymnOccasionsPage(hymns: widget.hymns)));
+              })
+        : widget.onTopics;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+      child: Row(
+        children: [
+          if (browse)
+            LinkAction(
+              icon: Icons.sort_by_alpha,
+              label: context.appText.alphabeticalShort,
+              onTap: _currentHymns.isEmpty
                   ? null
-                  : (hymn.version == 'sda-es-2009' ? 'Nuevo' : 'Antiguo'),
-              fontSize: 7.5,
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  : () {
+                      FocusScope.of(context).unfocus();
+                      Navigator.push(context,
+                          slideRoute(AlphabeticalHymns(hymns: _currentHymns)));
+                    },
             ),
-            // Static favorited indicator (the heart is toggled elsewhere).
-            ValueListenableBuilder<List<({int n, String v})>>(
-              valueListenable: Favorites.instance,
-              builder: (context, _, __) =>
-                  Favorites.instance.contains(hymn.number, hymn.version)
-                      ? Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: HymnalIcons.heart(t.accent, size: 13),
-                        )
-                      : const SizedBox.shrink(),
+          if (!widget.allLanguages && (widget.english || topics != null))
+            Flexible(
+              child: LinkAction(
+                icon: Icons.library_music_outlined,
+                label: widget.english
+                    ? context.appText.hymnsByOccasion
+                    : context.appText.topics,
+                onTap: topics,
+              ),
             ),
-            const SizedBox(width: 12),
-            HymnalIcons.rowChevron(t.faint, size: 14),
+          if (widget.english)
+            Flexible(
+              child: LinkAction(
+                icon: Icons.menu_book_outlined,
+                label: context.appText.additionalReadings,
+                onTap: widget.additionalReadings.readings.isEmpty
+                    ? null
+                    : () {
+                        FocusScope.of(context).unfocus();
+                        Navigator.push(
+                          context,
+                          slideRoute(AdditionalReadingsPage(
+                              catalog: widget.additionalReadings)),
+                        );
+                      },
+              ),
+            ),
+          if (keyboard) ...[
+            const Spacer(),
+            TextButton(
+                onPressed: () => FocusScope.of(context).unfocus(),
+                child: Text(context.appText.done)),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -337,9 +340,17 @@ class _HymnListState extends State<HymnList> {
           ClassicSearchControls(
               controller: _searchController,
               filter: _filter,
+              showFilter: _paired,
+              // Classic keeps the original short NEW / OLD wording.
               filterLabel: switch (_filter) {
-                'NEW' => context.appText.newEdition.toUpperCase(),
-                'OLD' => context.appText.oldEdition.toUpperCase(),
+                'NEW' => (widget.english
+                        ? context.appText.newEdition
+                        : _editionLabel(true))
+                    .toUpperCase(),
+                'OLD' => (widget.english
+                        ? context.appText.oldEdition
+                        : _editionLabel(false))
+                    .toUpperCase(),
                 _ => context.appText.all.toUpperCase(),
               },
               onQuery: _setQuery,
@@ -352,68 +363,65 @@ class _HymnListState extends State<HymnList> {
                     _applyFilter();
                   }))
         else ...[
-          _searchField(t),
+          HymnSearchField(
+            key: const ValueKey('search-query'),
+            controller: _searchController,
+            hint: widget.allLanguages
+                ? context.appText.searchAllLanguages
+                : context.appText.searchByTitleLyricsNumber,
+            clearTooltip: context.appText.clearSearch,
+            onChanged: _setQuery,
+            onSubmitted: (_) {
+              if (_filteredHymns.length == 1) _openHymn(_filteredHymns.single);
+            },
+          ),
           _chipsRow(t),
         ],
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: Row(
-            children: [
-              if (_query.trim().isEmpty &&
-                  MediaQuery.viewInsetsOf(context).bottom == 0)
-                AlphabeticalBrowseButton(hymns: _currentHymns),
-              Expanded(
-                child: TextButton.icon(
-                  onPressed: !widget.english
-                      ? widget.onTopics
-                      : widget.hymns.isEmpty
-                          ? null
-                          : () {
-                              FocusScope.of(context).unfocus();
-                              Navigator.push(
-                                  context,
-                                  slideRoute(
-                                      HymnOccasionsPage(hymns: widget.hymns)));
-                            },
-                  icon: const Icon(Icons.library_music_outlined, size: 18),
-                  label: Text(
-                      widget.english
-                          ? context.appText.hymnsByOccasion
-                          : context.appText.topics,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
-                ),
-              ),
-              if (widget.english)
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: widget.additionalReadings.readings.isEmpty
-                        ? null
-                        : () {
-                            FocusScope.of(context).unfocus();
-                            Navigator.push(
-                              context,
-                              slideRoute(AdditionalReadingsPage(
-                                  catalog: widget.additionalReadings)),
-                            );
-                          },
-                    icon: const Icon(Icons.menu_book_outlined, size: 18),
-                    label: Text(context.appText.additionalReadings,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 6),
+        _browseRow(),
+        const SizedBox(height: 4),
         Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: _filteredHymns.length,
-            itemBuilder: _buildRow,
-          ),
+          child: _filteredHymns.isEmpty
+              ? EmptyHint(
+                  title: context.appText.noMatchingHymns,
+                  message: widget.allLanguages
+                      ? null
+                      : context.appText.searchOtherLanguagesHint)
+              : ListView.builder(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.zero,
+                  itemCount: _filteredHymns.length,
+                  itemBuilder: _buildRow,
+                ),
         ),
       ],
+    );
+  }
+}
+
+/// One-line language/edition badge for all-language results.
+class _ScopeBadge extends StatelessWidget {
+  const _ScopeBadge(this.label);
+  final String label;
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: t.surface2,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: kSans,
+          fontSize: 8.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+          color: t.muted,
+        ),
+      ),
     );
   }
 }
