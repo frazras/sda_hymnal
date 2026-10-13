@@ -26,7 +26,7 @@ Compact-screen tests cover switching among all four locales in Modern/Classic
 and light/dark mode, persistent selection, preserved settings, and translated
 search/favorites/reader flows. Alphabetical shortcuts hide while typing to retain
 space for the translated result count and Done action above the keyboard.
-The 583-message catalogs remain draft translations needing fluent community
+The 622-message catalogs remain draft translations needing fluent community
 review. This technical rollout does not claim that review has happened or mark
 the complete translation roadmap item achieved.
 
@@ -198,7 +198,7 @@ action use translations. The heading scrolls with the release list so long
 translations cannot consume the list area on compact screens. Tests cover both
 automatic update notices and manually opened history across all locales, designs,
 and themes at 320×568 and 1.3 text scale, including older entries, dismissal, and
-seen-version persistence. All 40 published release descriptions are now translated. Dates are parsed from
+seen-version persistence. All 50 published release descriptions are now translated. Dates are parsed from
 the unchanged published catalog and formatted with the interface locale. A typed
 version-to-message adapter preserves version IDs and source ordering; unknown
 versions or mismatched feature counts fall back to their original notes. Coverage

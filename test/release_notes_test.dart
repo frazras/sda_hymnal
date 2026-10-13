@@ -202,7 +202,7 @@ void main() {
             expect(find.text(text.latestRelease), findsOneWidget);
             final date = MaterialLocalizations.of(tester
                     .element(find.byKey(const ValueKey('release-notes-done'))))
-                .formatMediumDate(DateTime(2026, 9, 25));
+                .formatMediumDate(DateTime(2026, 10, 13));
             expect(find.text(date), findsOneWidget);
             expect(find.text(text.versionLabel(appReleaseVersion)),
                 findsOneWidget);
@@ -212,6 +212,7 @@ void main() {
                 findsOneWidget);
             await tester.scrollUntilVisible(
                 find.text(text.versionLabel('4.0.0')), 250,
+                maxScrolls: 150,
                 scrollable: find.descendant(
                     of: find.byKey(const ValueKey('release-notes-history')),
                     matching: find.byType(Scrollable)));

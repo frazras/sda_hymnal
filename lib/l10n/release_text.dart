@@ -4,6 +4,18 @@ import 'package:sdahymnal/l10n/app_localizations.dart';
 List<String>? translatedReleaseFeatures(
         AppLocalizations text, String version) =>
     switch (version) {
+      '4.6.0' => [
+          text.release460Feature0,
+          text.release460Feature1,
+          text.release460Feature2,
+          text.release460Feature3,
+          text.release460Feature4,
+          text.release460Feature5,
+          text.release460Feature6,
+          text.release460Feature7,
+          text.release460Feature8,
+          text.release460Feature9,
+        ],
       '4.5.0' => [
           text.release450Feature0,
           text.release450Feature1,

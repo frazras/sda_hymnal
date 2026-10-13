@@ -649,5 +649,5 @@ The live catalogs are never overwritten; existing output directories are refused
 
 Fluent review remains pending for the current drafts. This workflow provides a
 way to receive and validate human corrections; it does not itself approve the
-583 existing messages. Publishing staged corrections still requires updating the
+622 existing messages. Publishing staged corrections still requires updating the
 catalog, regenerating localizations, and checking the affected app layouts.

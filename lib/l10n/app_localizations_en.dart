@@ -2126,4 +2126,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openAction => 'Open';
+
+  @override
+  String get release460Feature0 =>
+      'Read Spanish (2009 and 1962), Portuguese, Russian, French and Swahili hymnals offline.';
+
+  @override
+  String get release460Feature1 =>
+      'Download 22 more hymnals in African and Philippine languages, plus Adventist Youth songs, from Settings › Hymnal downloads.';
+
+  @override
+  String get release460Feature2 =>
+      'Switch hymnals with the button at the top of the number screen; search, topics and favorites work the same in every book.';
+
+  @override
+  String get release460Feature3 =>
+      'Use the app in English, Spanish, Portuguese or Russian, chosen separately from the hymnal you read.';
+
+  @override
+  String get release460Feature4 =>
+      'View sheet music for the New Hymnal and the 2009 Spanish and Russian hymnals, with zoom and page turns.';
+
+  @override
+  String get release460Feature5 =>
+      'Hear sung recordings in Spanish and Portuguese and instrumental ones in Spanish and Russian, and choose sung or instrumental from the player.';
+
+  @override
+  String get release460Feature6 =>
+      'Plan services with ordered playlists of hymns and readings, then present them as slides or export a VideoPsalm songbook.';
+
+  @override
+  String get release460Feature7 =>
+      'Browse any hymnal from A to Z with a letter index, and search every hymnal at once, with or without accents.';
+
+  @override
+  String get release460Feature8 =>
+      'Copy or share a whole hymn or chosen verses, reorder favorites, and find recent hymns from every book.';
+
+  @override
+  String get release460Feature9 =>
+      'Find every hymn option in one sheet, with a cleaner, consistent design throughout the app.';
 }

@@ -1069,5 +1069,15 @@
   "openAction": "Open",
   "@openAction": {
     "description": "Action on the download confirmation that switches the app to the downloaded book."
-  }
+  },
+  "release460Feature0": "Read Spanish (2009 and 1962), Portuguese, Russian, French and Swahili hymnals offline.",
+  "release460Feature1": "Download 22 more hymnals in African and Philippine languages, plus Adventist Youth songs, from Settings › Hymnal downloads.",
+  "release460Feature2": "Switch hymnals with the button at the top of the number screen; search, topics and favorites work the same in every book.",
+  "release460Feature3": "Use the app in English, Spanish, Portuguese or Russian, chosen separately from the hymnal you read.",
+  "release460Feature4": "View sheet music for the New Hymnal and the 2009 Spanish and Russian hymnals, with zoom and page turns.",
+  "release460Feature5": "Hear sung recordings in Spanish and Portuguese and instrumental ones in Spanish and Russian, and choose sung or instrumental from the player.",
+  "release460Feature6": "Plan services with ordered playlists of hymns and readings, then present them as slides or export a VideoPsalm songbook.",
+  "release460Feature7": "Browse any hymnal from A to Z with a letter index, and search every hymnal at once, with or without accents.",
+  "release460Feature8": "Copy or share a whole hymn or chosen verses, reorder favorites, and find recent hymns from every book.",
+  "release460Feature9": "Find every hymn option in one sheet, with a cleaner, consistent design throughout the app."
 }

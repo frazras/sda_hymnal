@@ -4,18 +4,66 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
-## Unreleased
+## 4.6.0 (40600) — prepared (2026-10-13)
 
-- Read 2,136 additional hymns offline in Spanish (2009 and 1962), Portuguese
-  (1996), and Russian (1997). Choose an edition from Numbers or Search, browse
-  its topics, and save favorites across books. Existing English music stays
-  separate from imported lyrics.
-- Prepare the shared hymnal catalog for additional languages, preserving saved
-  favorites, categories, and recent hymns with permanent book identities and
-  retained recovery copies. Unreadable saved lists show a retry message.
-- Read offline sheet music for all 695 New Hymnal numbers from the hymn menu.
-  Zoom and pan, move between score pages, and return to lyrics while music
-  continues. Available in Modern and Classic layouts, including dark mode.
+### Hymnals and languages
+- Read 2,876 hymns offline in Spanish (2009 and 1962), Portuguese (1996),
+  Russian (1997), French (Hymnes et Louanges) and Swahili (Nyimbo za Kristo),
+  with each book's topics where it has them.
+- Download 22 more hymnals as text from Settings › Hymnal downloads: Cebuano,
+  Chichewa, chiShona, Chitonga, Chitumbuka, Dholuo, Ekegusii, Gĩkũyũ,
+  Icibemba, Ikinyarwanda, isiXhosa, isiZulu, Kalenjin, Kikamba, Maa, Sepedi,
+  Sesotho, Setswana, Tagalog, Tshivenḓa, Twi and Xitsonga, plus the Adventist
+  Youth songbook. Partial collections say so and list their missing numbers.
+  Downloads show their size, verify a pinned checksum, update and remove
+  cleanly, and can be found with a language search. A new download offers
+  Open to switch straight to it.
+- Accept GitHub's gzip-compressed responses, which previously made every
+  optional download fail on a phone.
+- Choose any hymnal from the button at the top of the number screen. English
+  and Spanish pair their New and Old editions; search, topics, A–Z and
+  favorites share one design in every book, and search can cover every
+  installed hymnal at once.
+- Keep favorites, categories and recent hymns across books with permanent
+  book identities; unreadable saved lists show a retry instead of being lost.
+- Use the app in English, Spanish, Portuguese or Russian, chosen separately
+  from the hymnal. A terminology review of all three translations is applied;
+  a fluent community review is still pending.
+- Render right-to-left books (Arabic, Hebrew, Persian, Urdu) correctly,
+  independently of the interface language. None ships yet.
+
+### Music and recordings
+- Read offline sheet music for the New Hymnal (695 numbers), Spanish 2009 and
+  Russian 1997, with zoom, fit and page turns.
+- Play on-demand recordings: instrumental for every Spanish hymn (2009 and
+  1962) and the Russian hymnal, and sung for Spanish 2009 and Portuguese.
+  Where a hymn has both, switch between sung and instrumental from the player
+  or the reader options; the choice is saved.
+- Play verified Spanish tunes with all musical styles (Sublime gracia, Abre tu
+  corazón).
+- Publish system media controls, pause for interruptions and share one
+  playback queue across hymns and services (device validation pending).
+
+### Worship and sharing
+- Build ordered service playlists with hymns from any book and readings,
+  repeat entries, and read or play them in order.
+- Present a service as offline HTML slides that keep stanzas whole, or export
+  it as a VideoPsalm songbook (`.vpc`).
+- Copy or share a whole hymn or chosen verses with its title, number and book.
+- Reorder favorites and category lists; reading history now spans every book.
+- Browse any hymnal A–Z with native alphabetical order and a letter index.
+
+### Design
+- Share one component kit across every screen and both designs, with Material
+  controls mapped to the hymnal palette.
+- Gather the reader's options in one sheet: sheet music, video, text size and
+  sharing on top; style, player, chords, choir practice and auto-scroll below.
+- Restyle Settings, favorites, downloads and every sub-page; keep the typed
+  number and previews in view on short phones.
+- Remove the swipe caption and standalone navigation arrows from the reader.
+
+### Statistics and reports
+- Count hymns and error reports by native book in community statistics.
 
 ## 4.5.0 (40500) — prepared (2026-09-25)
 

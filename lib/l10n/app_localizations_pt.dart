@@ -2138,4 +2138,44 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get openAction => 'Abrir';
+
+  @override
+  String get release460Feature0 =>
+      'Leia offline os hinários em espanhol (2009 e 1962), português, russo, francês e suaíli.';
+
+  @override
+  String get release460Feature1 =>
+      'Baixe mais 22 hinários em línguas africanas e filipinas, além de cânticos dos Jovens Adventistas, em Configurações › Downloads de hinários.';
+
+  @override
+  String get release460Feature2 =>
+      'Troque de hinário com o botão no alto da tela de números; a busca, os temas e os favoritos funcionam igual em todos.';
+
+  @override
+  String get release460Feature3 =>
+      'Use o aplicativo em inglês, espanhol, português ou russo, independentemente do hinário que você lê.';
+
+  @override
+  String get release460Feature4 =>
+      'Veja as partituras do hinário novo em inglês e dos hinários em espanhol (2009) e russo, com zoom e virada de página.';
+
+  @override
+  String get release460Feature5 =>
+      'Ouça gravações cantadas em espanhol e português e instrumentais em espanhol e russo, e escolha cantada ou instrumental no reprodutor.';
+
+  @override
+  String get release460Feature6 =>
+      'Planeje o culto com listas ordenadas de hinos e leituras e depois apresente-as como slides ou exporte-as para o VideoPsalm.';
+
+  @override
+  String get release460Feature7 =>
+      'Navegue por qualquer hinário de A a Z com um índice de letras e busque em todos os hinários de uma vez, com ou sem acentos.';
+
+  @override
+  String get release460Feature8 =>
+      'Copie ou compartilhe um hino inteiro ou as estrofes escolhidas, reordene os favoritos e encontre os hinos recentes de todos os hinários.';
+
+  @override
+  String get release460Feature9 =>
+      'Encontre todas as opções do hino em um só painel, com um visual mais limpo e consistente em todo o aplicativo.';
 }

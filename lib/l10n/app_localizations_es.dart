@@ -2143,4 +2143,44 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get openAction => 'Abrir';
+
+  @override
+  String get release460Feature0 =>
+      'Lee sin conexión los himnarios en español (2009 y 1962), portugués, ruso, francés y suajili.';
+
+  @override
+  String get release460Feature1 =>
+      'Descarga 22 himnarios más en idiomas africanos y filipinos, además de cantos de los Jóvenes Adventistas, en Ajustes › Descargas de himnarios.';
+
+  @override
+  String get release460Feature2 =>
+      'Cambia de himnario con el botón en la parte superior de la pantalla de números; la búsqueda, los temas y los favoritos funcionan igual en todos.';
+
+  @override
+  String get release460Feature3 =>
+      'Usa la aplicación en inglés, español, portugués o ruso, independientemente del himnario que leas.';
+
+  @override
+  String get release460Feature4 =>
+      'Ve las partituras del himnario nuevo en inglés y de los himnarios en español (2009) y ruso, con zoom y paso de páginas.';
+
+  @override
+  String get release460Feature5 =>
+      'Escucha grabaciones cantadas en español y portugués e instrumentales en español y ruso, y elige cantada o instrumental desde el reproductor.';
+
+  @override
+  String get release460Feature6 =>
+      'Planifica el culto con listas ordenadas de himnos y lecturas, y luego preséntalas como diapositivas o expórtalas a VideoPsalm.';
+
+  @override
+  String get release460Feature7 =>
+      'Recorre cualquier himnario de la A a la Z con un índice de letras y busca en todos los himnarios a la vez, con o sin tildes.';
+
+  @override
+  String get release460Feature8 =>
+      'Copia o comparte un himno completo o las estrofas que elijas, reordena tus favoritos y encuentra los himnos recientes de todos los himnarios.';
+
+  @override
+  String get release460Feature9 =>
+      'Encuentra todas las opciones del himno en un solo panel, con un diseño más limpio y uniforme en toda la aplicación.';
 }

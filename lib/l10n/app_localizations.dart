@@ -3773,6 +3773,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get openAction;
+
+  /// No description provided for @release460Feature0.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Spanish (2009 and 1962), Portuguese, Russian, French and Swahili hymnals offline.'**
+  String get release460Feature0;
+
+  /// No description provided for @release460Feature1.
+  ///
+  /// In en, this message translates to:
+  /// **'Download 22 more hymnals in African and Philippine languages, plus Adventist Youth songs, from Settings › Hymnal downloads.'**
+  String get release460Feature1;
+
+  /// No description provided for @release460Feature2.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch hymnals with the button at the top of the number screen; search, topics and favorites work the same in every book.'**
+  String get release460Feature2;
+
+  /// No description provided for @release460Feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the app in English, Spanish, Portuguese or Russian, chosen separately from the hymnal you read.'**
+  String get release460Feature3;
+
+  /// No description provided for @release460Feature4.
+  ///
+  /// In en, this message translates to:
+  /// **'View sheet music for the New Hymnal and the 2009 Spanish and Russian hymnals, with zoom and page turns.'**
+  String get release460Feature4;
+
+  /// No description provided for @release460Feature5.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear sung recordings in Spanish and Portuguese and instrumental ones in Spanish and Russian, and choose sung or instrumental from the player.'**
+  String get release460Feature5;
+
+  /// No description provided for @release460Feature6.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan services with ordered playlists of hymns and readings, then present them as slides or export a VideoPsalm songbook.'**
+  String get release460Feature6;
+
+  /// No description provided for @release460Feature7.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse any hymnal from A to Z with a letter index, and search every hymnal at once, with or without accents.'**
+  String get release460Feature7;
+
+  /// No description provided for @release460Feature8.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy or share a whole hymn or chosen verses, reorder favorites, and find recent hymns from every book.'**
+  String get release460Feature8;
+
+  /// No description provided for @release460Feature9.
+  ///
+  /// In en, this message translates to:
+  /// **'Find every hymn option in one sheet, with a cleaner, consistent design throughout the app.'**
+  String get release460Feature9;
 }
 
 class _AppLocalizationsDelegate
