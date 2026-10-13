@@ -2,7 +2,10 @@
 
 ## Using the books
 
-Use the hymnal selector above the Numbers or Search tab to switch editions.
+Tap the language pill in the header of the Numbers or Search tab (for example
+**EN** or **ES**) to choose a hymnal. The picker lists every installed book by its
+native language name, offers **All languages** on the Search tab, and ends with
+**More languages**, which opens Hymnal downloads.
 Every language uses the shared number pad. English and Spanish each offer
 paired Old/New previews; Portuguese, Russian, French and Swahili show their single book.
 Search remains on the Search tab, with native topic lists available through

@@ -22,7 +22,7 @@ jump reaches its intended lazy-list row even for long titles. Labels fold Latin
 accents but retain Spanish Ñ and Russian letters, including Ё. Only initials
 present in the current list are offered.
 
-All-language browsing offers a language selector labelled with source book names;
+All-language browsing offers language pills labelled with source book names;
 only that language is sent to its collator. Paired editions retain edition labels.
 Opening a hymn gives the reader its alphabetically displayed, same-edition queue.
 The original search route retains query relevance ranking and original navigation.

@@ -23,3 +23,6 @@ an unrelated workflow just because an import uses a different data structure.
 - Validate both designs, light/dark modes, long native titles, larger text,
   correct edition selection, and retained English behavior. Feature checkboxes
   are not a substitute for checking the rendered experience.
+- Build screens from the shared kit described in [design-system.md](design-system.md)
+  (header, cards, rows, pills, sheets). A stock Material layout in one language
+  and a custom one in another is a regression.
