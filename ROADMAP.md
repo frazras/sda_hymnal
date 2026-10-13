@@ -243,3 +243,6 @@ Items below are plans, not claims that multilingual content is already installed
       offline batching, and the Statistics page.
 - [x] Prepare version 4.3.0 source, in-app update history, store notes, and
       signed release artifacts.
+- [x] Prepare version 4.6.0 source, translated in-app update history, store
+      notes, and a signed release bundle (13 October 2026). Upload to Google
+      Play remains the owner's step.
