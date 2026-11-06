@@ -1,0 +1,4 @@
+Jazz accompaniment with phrase-aware melody improvisation.
+Optional autoplay for music and hymn videos.
+Improved 6/8 timing and melody-track selection.
+Clearer number-screen layout and dark-mode menus.

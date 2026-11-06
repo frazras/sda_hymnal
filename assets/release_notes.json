@@ -1,6 +1,16 @@
 {
-  "current": "4.5.0",
+  "current": "4.5.1",
   "releases": [
+    {
+      "version": "4.5.1",
+      "date": "November 6, 2026",
+      "features": [
+        "Jazz accompaniment with phrase-aware melody improvisation.",
+        "Optional autoplay for music and hymn videos.",
+        "Improved 6/8 timing and melody-track selection.",
+        "Clearer number-screen layout and dark-mode menus."
+      ]
+    },
     {
       "version": "4.5.0",
       "date": "September 25, 2026",
