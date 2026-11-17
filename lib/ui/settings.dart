@@ -1,4 +1,5 @@
 import 'report_error.dart';
+import '../services/app_review.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'musical_style_sheet.dart';
@@ -243,6 +244,21 @@ class Settings extends StatelessWidget {
                 onTap: () => Navigator.push(
                     context, slideRoute(const ReportErrorPage())),
               ),
+              if (AppReviewService.instance.supportsManual)
+                _SettingsRow(
+                  leading: Icon(Icons.star_outline, color: t.muted),
+                  title: 'Rate this app',
+                  subtitle: 'Leave a rating or review on the store',
+                  divider: true,
+                  onTap: () async {
+                    final opened = await AppReviewService.instance.openStore();
+                    if (!opened && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text(
+                              'Unable to open the store. Please try again.')));
+                    }
+                  },
+                ),
               _SettingsRow(
                 leading: HymnalIcons.person(t.muted),
                 title: 'About Us',

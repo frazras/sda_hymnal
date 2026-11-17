@@ -39,6 +39,7 @@ dependencies:
   sqflite: ^2.4.3
   crypto: ^3.0.7
   sqflite_common: ^2.5.11
+  in_app_review: ^2.0.12
 
 flutter_launcher_icons:
   android: "launcher_icon"

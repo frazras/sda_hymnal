@@ -1,20 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/hymn.dart';
 import '../services/prefs.dart';
+import '../services/app_review.dart';
 
 /// Keep the one-tap heart when there are no lists. Once lists exist, save a
 /// new favorite immediately, then let the user adjust all memberships.
-void saveFavorite(BuildContext context, Hymn hymn) {
+Future<void> saveFavorite(BuildContext context, Hymn hymn) async {
   final favorites = Favorites.instance;
+  final wasFavorite = favorites.containsAnywhere(hymn.number, hymn.version);
   if (favorites.sublists.value.isEmpty) {
-    favorites.toggle(hymn);
+    await favorites.toggle(hymn);
+    if (!wasFavorite && context.mounted) {
+      unawaited(AppReviewService.instance.afterRoutine(context));
+    }
     return;
   }
   if (!favorites.containsAnywhere(hymn.number, hymn.version)) {
     favorites.toggle(hymn);
   }
-  showModalBottomSheet<void>(
+  var added = !wasFavorite;
+  await showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     builder: (context) => SafeArea(
@@ -40,7 +48,10 @@ void saveFavorite(BuildContext context, Hymn hymn) {
                 title: const Text('Favorites'),
                 subtitle: const Text('Main favorites list'),
                 value: favorites.contains(hymn.number, hymn.version),
-                onChanged: (_) => favorites.toggle(hymn),
+                onChanged: (selected) {
+                  if (selected == true) added = true;
+                  favorites.toggle(hymn);
+                },
               ),
               for (final list in favorites.sublists.value)
                 Padding(
@@ -50,8 +61,11 @@ void saveFavorite(BuildContext context, Hymn hymn) {
                     title: Text(list.name),
                     value:
                         list.hymns.contains((n: hymn.number, v: hymn.version)),
-                    onChanged: (selected) => favorites.setSublistHymn(
-                        list.id, hymn, selected ?? false),
+                    onChanged: (selected) {
+                      if (selected == true) added = true;
+                      favorites.setSublistHymn(
+                          list.id, hymn, selected ?? false);
+                    },
                   ),
                 ),
             ],
@@ -60,6 +74,11 @@ void saveFavorite(BuildContext context, Hymn hymn) {
       ),
     ),
   );
+  if (added &&
+      favorites.containsAnywhere(hymn.number, hymn.version) &&
+      context.mounted) {
+    unawaited(AppReviewService.instance.afterRoutine(context));
+  }
 }
 
 Future<void> editFavoriteSublist(BuildContext context,

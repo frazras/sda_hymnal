@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import '../services/app_review.dart';
 import 'package:sdahymnal/services/music_options.dart';
 import 'package:sdahymnal/services/analytics.dart';
 
@@ -201,6 +204,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   Duration? _estimated;
   bool _loading = false;
   bool _requested = false;
+  bool _reviewScrollEnded = false;
   bool _choirPractice = MusicOptions.instance.choirPractice;
   bool _followingMusic = false;
   bool _wasLoaded = false;
@@ -312,6 +316,7 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
     _progress.stop();
     _manualScrolling = false;
     _requested = false;
+    AppReviewService.instance.setActivity(this, false);
     if (rebuild && mounted) setState(() {});
   }
 
@@ -350,6 +355,8 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
       _musicAnchorProgress = 0;
       _followingMusic = true;
       _requested = true;
+      _reviewScrollEnded = false;
+      AppReviewService.instance.setActivity(this, true);
     } else if (!loaded && _wasLoaded) {
       final completed = _player.duration.value > Duration.zero &&
           _player.position.value >= _player.duration.value;
@@ -417,6 +424,10 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
                 _duration!.inMicroseconds *
                 _scrollSpeed)
         .clamp(0.0, 1.0);
+    if (_reviewScrollEnded && fraction < 1) {
+      _reviewScrollEnded = false;
+      AppReviewService.instance.setActivity(this, true);
+    }
     if (_player.current.value!.paused ||
         fraction == 1 ||
         fraction < _progress.value) {
@@ -444,6 +455,8 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
         .event('auto_scroll_start', variant: _loaded ? 'music' : 'silent');
     _followingMusic = _loaded;
     _requested = true;
+    _reviewScrollEnded = false;
+    AppReviewService.instance.setActivity(this, true);
     if (_followingMusic) {
       if (_speedTenths != 10 || _musicAnchorPosition != Duration.zero) {
         _musicAnchorPosition = _player.position.value;
@@ -460,11 +473,17 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
 
   void _onStatus(AnimationStatus status) {
     if (status == AnimationStatus.completed &&
-        !_followingMusic &&
+        _progress.value == 1 &&
+        _requested &&
+        !_reviewScrollEnded &&
         !_reanchoringManual) {
       AppAnalytics.instance.event('auto_scroll_complete');
       _pendingLayoutFraction = 1;
-      _requested = false;
+      _reviewScrollEnded = true;
+      if (!_followingMusic) _requested = false;
+      AppReviewService.instance.setActivity(this, false);
+      unawaited(AppReviewService.instance.afterAutoScroll(context,
+          isSafe: () => _reviewScrollEnded && _visible && _foreground));
       if (mounted) setState(() {});
     }
   }
@@ -513,6 +532,8 @@ class _HymnAutoScrollState extends State<HymnAutoScroll>
   @override
   void dispose() {
     ++_loadGeneration;
+    AppReviewService.instance.cancelPending(context);
+    AppReviewService.instance.setActivity(this, false);
     WidgetsBinding.instance.removeObserver(this);
     AutoScroll.instance.removeListener(_onSetting);
     InstrumentTheme.instance.removeListener(_loadTiming);

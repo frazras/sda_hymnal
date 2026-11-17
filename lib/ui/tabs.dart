@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:async';
+import '../services/app_review.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/analytics.dart';
@@ -39,7 +41,18 @@ class _TabsState extends State<Tabs> {
     if (tab == _tab) return;
     AppAnalytics.instance
         .screen(['numbers', 'search', 'favorites', 'settings'][tab]);
+    final returnedHome = _tab == 3 && tab == 0;
     setState(() => _tab = tab);
+    if (returnedHome) {
+      unawaited(AppReviewService.instance
+          .afterRoutine(context, isSafe: () => _tab == 0));
+    }
+  }
+
+  @override
+  void dispose() {
+    AppReviewService.instance.cancelPending(context);
+    super.dispose();
   }
 
   @override

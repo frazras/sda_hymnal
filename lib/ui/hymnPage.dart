@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../services/app_review.dart';
 import '../services/playback_continuation.dart';
 import '../services/error_reports.dart';
 
@@ -122,6 +123,12 @@ class _HymnPageState extends State<HymnPage> {
           finished.version == widget.hymn.version &&
           !_videoVisible) {
         _continue(HymnContinuation.midi);
+        if (mounted &&
+            !widget.cycleCategory &&
+            !Autoplay.instance.value &&
+            !_advancing) {
+          unawaited(AppReviewService.instance.afterRoutine(context));
+        }
       }
     });
     AppAnalytics.instance.openHymn(
@@ -163,6 +170,8 @@ class _HymnPageState extends State<HymnPage> {
       return;
     }
     _completionSubscription?.cancel();
+    AppReviewService.instance.cancelPending(context);
+    AppReviewService.instance.setActivity(this, false);
     AppAnalytics.instance.closeHymn(widget.hymn.number, widget.hymn.version);
     // Leaving the page (back, or prev/next replacing it) stops its playback;
     // guarded so it never cuts off a newer page that already started its own.
@@ -176,12 +185,14 @@ class _HymnPageState extends State<HymnPage> {
     AppAnalytics.instance.event('video_open',
         hymn: widget.hymn.number, edition: widget.hymn.version);
     MidiPlayer.instance.stopIfCurrent(widget.hymn);
+    AppReviewService.instance.setActivity(this, true);
     setState(() => _videoVisible = true);
   }
 
   void _closeVideo() {
     AppAnalytics.instance.event('video_close',
         hymn: widget.hymn.number, edition: widget.hymn.version);
+    AppReviewService.instance.setActivity(this, false);
     setState(() => _videoVisible = false);
   }
 

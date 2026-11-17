@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'services/app_review.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sdahymnal/services/music_options.dart';
@@ -60,6 +61,9 @@ class _HymnalState extends State<Hymnal> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      AppReviewService.instance.cancelAllPending();
+    }
     AppAnalytics.instance.lifecycle(state == AppLifecycleState.resumed);
     if (state == AppLifecycleState.resumed) {
       AppDesignController.instance.syncIcon();
@@ -80,6 +84,11 @@ class _HymnalState extends State<Hymnal> with WidgetsBindingObserver {
         AppDesignController.instance,
       ]),
       builder: (context, _) => MaterialApp(
+        builder: (context, child) => Listener(
+          onPointerDown: (_) => AppReviewService.instance.userInteracted(),
+          onPointerSignal: (_) => AppReviewService.instance.userInteracted(),
+          child: child,
+        ),
         title: 'Old & New SDA Hymnal',
         debugShowCheckedModeBanner: false,
         theme: buildHymnalTheme(HymnalTokens.light,
