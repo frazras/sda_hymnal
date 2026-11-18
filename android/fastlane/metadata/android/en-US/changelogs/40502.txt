@@ -1,0 +1,4 @@
+Corrected Old Hymnal 18 verse 2 and restored the right lyrics for Old 160 and 161.
+Fixed spelling in I Saw One Weary (Old 371 / New 441).
+Removed the unrelated video for Old Hymnal 314.
+Added Rate this app in Settings. Automatic review requests wait until activities finish, with a shared 30-day cooldown.

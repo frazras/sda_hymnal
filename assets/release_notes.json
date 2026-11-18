@@ -1,6 +1,17 @@
 {
-  "current": "4.5.1",
+  "current": "4.5.2",
   "releases": [
+    {
+      "version": "4.5.2",
+      "date": "November 17, 2026",
+      "features": [
+        "Correct the final line of Old Hymnal 18 verse 2 and nearby spelling errors.",
+        "Restore the correct lyrics for Old Hymnal 160 and 161.",
+        "Correct spelling in I Saw One Weary, Old 371 and New 441.",
+        "Remove the unrelated video assigned to Old Hymnal 314.",
+        "Rate the app from Settings. Automatic review requests wait for quiet routine endings and share a 30-day cooldown."
+      ]
+    },
     {
       "version": "4.5.1",
       "date": "November 6, 2026",

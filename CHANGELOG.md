@@ -4,6 +4,16 @@ Releases of Old & New Hymnal. The version code is `major * 10000 + minor * 100 +
 (see `pubspec.yaml`); the store "what's new" text for each release is the matching
 file under `android/fastlane/metadata/android/en-US/changelogs/`.
 
+## 4.5.2 (40502) — prepared (2026-11-17)
+
+- Correct Old Hymnal 18 verse 2 and spelling in Old 371 / New 441.
+- Restore the correct lyric bodies under Old Hymnal 160 and 161.
+- Remove the unrelated video assigned to Old 314 and block its regeneration.
+- Add native review requests after quiet routine endings, with a persisted
+  30-day cooldown across automatic triggers and a manual Play Store link
+  in Settings. Automatic iOS requests are supported. Its manual link becomes
+  available after an App Store ID is configured.
+
 ## 4.5.0 (40500) — prepared (2026-09-25)
 
 - Keep the actual melody in front when source voices share MIDI channels, including New 388.
