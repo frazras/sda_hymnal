@@ -28,6 +28,48 @@ void main() {
   ];
 
   group('hymns.json integrity', () {
+    test('reported Old Hymnal lyric corrections retain the right hymn', () {
+      // Old 18 is corroborated by Adventist Review, 22 November 1979, p. 7.
+      // Old 160/161 identities and stanzas match the 1941 edition at
+      // adventisthymns.com/en/1941/lyrics/160/o-thou-in-whose-presence and
+      // adventisthymns.com/en/1941/lyrics/161/o-could-i-speak-the-matchless-worth.
+      final heart = hymnByNumber(oldHymns, 18)!;
+      expect(heart.body, contains('Where Jesus reigns alone.'));
+      expect(heart.body, contains('Redeemer'));
+      expect(heart.body, contains('thought renewed'));
+      expect('So freely shed for me.'.allMatches(heart.body), hasLength(1));
+
+      final presence = hymnByNumber(oldHymns, 160)!;
+      final worth = hymnByNumber(oldHymns, 161)!;
+      expect(presence.title, 'O Thou in Whose Presence');
+      expect(presence.body,
+          contains('O Thou in whose presence my soul takes delight'));
+      expect(presence.body, contains('Re-echoes the praise of the Lord.'));
+      expect(worth.title, 'O Could I Speak the Matchless Worth');
+      expect(worth.body, contains('O could I speak the matchless worth'));
+      expect(worth.body, contains('Triumphant in His grace.'));
+      expect(worth.body, isNot(contains('Jesus, the very thought of Thee')));
+      for (final hymn in [presence, worth]) {
+        expect(RegExp(r'<b>(\d+)</b>').allMatches(hymn.body), hasLength(4));
+      }
+      expect(hymnByNumber(oldHymns, 158)!.body,
+          contains('Jesus, the very thought of Thee'));
+      expect(hymnByNumber(newHymns, 161)!.title, 'Throned Upon the Awful Tree');
+    });
+
+    test('I Saw One Weary has take and buoy spelled correctly in both editions',
+        () {
+      for (final hymn in [
+        hymnByNumber(oldHymns, 371)!,
+        hymnByNumber(newHymns, 441)!,
+      ]) {
+        expect(hymn.body, contains('To take His exile captives home,'));
+        expect(hymn.body, contains('buoy the spirits up?'));
+        expect(hymn.body, isNot(contains('tkae')));
+        expect(hymn.body, isNot(contains('bouy')));
+      }
+    });
+
     test('Old 533–535 have their own correct lyrics, not shifted bodies', () {
       final cross = hymnByNumber(oldHymns, 533)!;
       final story = hymnByNumber(oldHymns, 534)!;

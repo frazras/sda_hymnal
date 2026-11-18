@@ -3490,7 +3490,9 @@
     "channel": "JesusKing Official",
     "channelId": "UC4ujy5DS3D_MBGDAdhAjTvQ",
     "query": "\"When Darkness Gathers\" hymn lyrics",
-    "matchScore": 0.864
+    "matchScore": 0.864,
+    "rejected": true,
+    "rejectionReason": "Different modern song. Does not match Annie R. Smith's When Darkness Gathers (Old 314), set to REST by Frederick C. Maker."
   },
   "when-jesus-shall-gather-the-nations": {
     "youtubeVideoId": "GVcqq5-bic8",

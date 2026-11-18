@@ -16,6 +16,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "tool" / "data" / "hymn_metadata_sources"
 
+# A title search matched a different modern song to Old 314. Keep this
+# rejected even if the fallback search cache is refreshed in the future.
+REJECTED_VIDEO_IDS = {"sogoEzDcjtA"}
+
 VIDEO_TITLE_ALIASES = {
     "all hail the power of jesus": "all hail the power of jesus name",
     "it is well": "it is well with my soul",
@@ -146,7 +150,7 @@ def build() -> dict[str, Any]:
                     video = numbered[number]
                     break
         video = video or fallback_by_work.get(work["id"]) or searched_by_work.get(work["id"])
-        if video is not None:
+        if video is not None and video["youtubeVideoId"] not in REJECTED_VIDEO_IDS:
             work_video[work["id"]] = video
 
     for reference, work_id in metadata["lookup"].items():

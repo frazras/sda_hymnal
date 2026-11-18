@@ -37,8 +37,20 @@ void main() {
       for (final id in (data['lookup'] as Map<String, dynamic>).values) {
         expect(declared, contains(id));
       }
-      expect(data['statistics'], containsPair('assignedReferences', 1387));
-      expect(data['statistics'], containsPair('unmatchedReferences', 11));
+      expect(data['statistics'], containsPair('assignedReferences', 1386));
+      expect(data['statistics'], containsPair('unmatchedReferences', 12));
+    });
+
+    test('Old 314 never opens the unrelated modern song with a similar title',
+        () {
+      expect(videos.forHymn('old', 314), isNull);
+      expect(data['unmatchedReferences'], contains('old:314'));
+      expect((data['lookup'] as Map).values, isNot(contains('sogoEzDcjtA')));
+      final hymn = hymns
+          .singleWhere((hymn) => hymn.version == 'old' && hymn.number == 314);
+      expect(hymn.title, 'When Darkness Gathers');
+      expect(hymn.body, contains('When darkness gathers round thy way,'));
+      expect(hymn.video, isNull);
     });
 
     test('prioritizes Amazing Worship TV for Rejoice Ye Pure in Heart', () {

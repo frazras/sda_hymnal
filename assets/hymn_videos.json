@@ -28,10 +28,10 @@
   ],
   "statistics": {
     "hymnReferences": 1398,
-    "assignedReferences": 1387,
+    "assignedReferences": 1386,
     "preferredChannelReferences": 194,
-    "unmatchedReferences": 11,
-    "uniqueVideos": 1092
+    "unmatchedReferences": 12,
+    "uniqueVideos": 1091
   },
   "videos": [
     {
@@ -7553,13 +7553,6 @@
       "priority": 4
     },
     {
-      "youtubeVideoId": "sogoEzDcjtA",
-      "title": "When darkness gathers in a weary heart,#worshipsong (jesus)#christianworship #christianmusic",
-      "channel": "JesusKing Official",
-      "channelId": "UC4ujy5DS3D_MBGDAdhAjTvQ",
-      "priority": 4
-    },
-    {
       "youtubeVideoId": "lB5lPxBSsBQ",
       "title": "When Peace Like A River - Lor  | Hymn",
       "channel": "BEKOFI Creative Hub",
@@ -8608,7 +8601,6 @@
     "old:311": "fCOp4t1gcAw",
     "old:312": "E-v5CMaG2So",
     "old:313": "lB5lPxBSsBQ",
-    "old:314": "sogoEzDcjtA",
     "old:315": "jwW8YdW-3H8",
     "old:316": "OcU2qhK_zYg",
     "old:317": "M67QqPKMn8A",
@@ -9170,6 +9162,16 @@
       }
     },
     {
+      "id": "when-darkness-gathers",
+      "title": "When Darkness Gathers",
+      "numbers": {
+        "old": [
+          314
+        ],
+        "new": []
+      }
+    },
+    {
       "id": "whence-came-the-armies",
       "title": "Whence Came the Armies?",
       "numbers": {
@@ -9187,6 +9189,7 @@
     "old:216",
     "old:251",
     "old:281",
+    "old:314",
     "old:378",
     "old:389",
     "old:484",
